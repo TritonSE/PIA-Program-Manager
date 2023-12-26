@@ -1,0 +1,8 @@
+.env
+node_modules/
+.eslintcache
+
+#Compiled JavaScript files
+lib/**/*.js
+lib/**/*.js.map
+lib
