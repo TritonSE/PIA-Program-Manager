@@ -1,7 +1,8 @@
 import { json } from "body-parser";
 import express from "express";
+import mongoose from "mongoose";
 
-import { port } from "./config";
+import { mongoURI, port } from "./config";
 
 /**
  * Express server application class
@@ -12,6 +13,15 @@ class Server {
 
 // initialize server app
 const server = new Server();
+
+void mongoose
+  .connect(mongoURI)
+  .then(() => {
+    console.log("Connected to Database.");
+  })
+  .catch((error) => {
+    console.log(error);
+  });
 
 server.app.use(json());
 
