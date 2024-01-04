@@ -32,10 +32,11 @@ If this works properly you should see a message in the terminal saying `listenin
 
 ### Frontend
 
-1. `cd frontend`
-2. Run `npm install` to install all dependencies
-3. Run `npm run dev` to start development server
-4. Server is started on port 3000. Follow this [url](http://localhost:3000) and you should see the development page.
+1. Copy the frontend `.env` file into the frontend directory (see the google drive) 
+2. `cd frontend`
+3. Run `npm install` to install all dependencies
+4. Run `npm run dev` to start development server
+5. Server is started on port 3000. Follow this [url](http://localhost:3000) and you should see the development page.
 
 ## Linting
 Run these commands in the `backend` or `frontend` directories for linting and formating. Be sure to run these commands before pushing to github.
