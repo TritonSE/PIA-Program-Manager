@@ -17,10 +17,13 @@
   "dependencies": {
     "@testing-library/jest-dom": "^6.1.5",
     "@testing-library/react": "^14.1.2",
+    "autoprefixer": "^10.4.16",
     "firebase": "^10.7.1",
     "next": "14.0.4",
+    "postcss": "^8.4.33",
     "react": "^18",
     "react-dom": "^18",
+    "tailwindcss": "^3.4.1",
     "ts-jest": "^29.1.1"
   },
   "devDependencies": {
