@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from "express";
 import admin, { ServiceAccount } from "firebase-admin";
 
@@ -30,9 +29,7 @@ router.post(
   async (
     req: Request<Record<string, never>, Record<string, never>, CreateUserRequestBody>,
     res: Response,
-    // ): Promise<void> => {
-    ) => {
-
+  ) => {
     try {
       const { name, gender, accountType, approvalStatus, email, password } = req.body;
 
@@ -67,4 +64,3 @@ router.post(
 );
 
 export default router;
-
