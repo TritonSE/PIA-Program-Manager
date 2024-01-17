@@ -6,7 +6,7 @@ import User from "../models/User";
 const router = express.Router();
 
 // Initialize Firebase Admin SDK
-const serviceAccount = require("../../firebase/ServiceAccountKey.json"); 
+const serviceAccount = require("../../firebase/ServiceAccountKey.json");
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_DATABASE_URL,
@@ -14,17 +14,20 @@ admin.initializeApp({
 
 router.use(express.json());
 
-router.post("/api/createUser", async (req: Request, res: Response) => {
+router.post("/createUser", async (req: Request, res: Response) => {
   try {
     const { name, gender, accountType, approvalStatus, email, password } = req.body;
 
-    // Create user in Firebase 
+    // Create user in Firebase
     const userRecord = await admin.auth().createUser({
       email,
       password,
     });
 
-    // Create user in MongoDB 
+    // Set custom claim for accountType (“admin” | “team”)
+    await admin.auth().setCustomUserClaims(userRecord.uid, { accountType });
+
+    // Create user in MongoDB
     const newUser = new User({
       name,
       gender,
