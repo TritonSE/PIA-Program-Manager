@@ -1,5 +1,3 @@
-import path from "path";
-
 import express, { Request, Response } from "express";
 import admin from "firebase-admin";
 
@@ -8,8 +6,7 @@ import User from "../models/User";
 const router = express.Router();
 
 // Initialize Firebase Admin SDK
-const serviceAccountPath = path.resolve(__dirname, "../../firebase/ServiceAccountKey.json");
-const serviceAccount = require(serviceAccountPath);
+const serviceAccount = require("../../firebase/ServiceAccountKey.json"); 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: process.env.FIREBASE_DATABASE_URL,
