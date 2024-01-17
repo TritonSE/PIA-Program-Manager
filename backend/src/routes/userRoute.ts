@@ -1,12 +1,14 @@
-import express, { Request, Response } from 'express';
-import User from '../models/User'; 
-import admin from 'firebase-admin';
-import path from 'path';
+import path from "path";
+
+import express, { Request, Response } from "express";
+import admin from "firebase-admin";
+
+import User from "../models/User";
 
 const router = express.Router();
 
-// Initialize Firebase Admin SDK 
-const serviceAccountPath = path.resolve(__dirname, '../../firebase/ServiceAccountKey.json'); 
+// Initialize Firebase Admin SDK
+const serviceAccountPath = path.resolve(__dirname, "../../firebase/ServiceAccountKey.json");
 const serviceAccount = require(serviceAccountPath);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -15,17 +17,17 @@ admin.initializeApp({
 
 router.use(express.json());
 
-router.post('/api/createUser', async (req: Request, res: Response) => {
+router.post("/api/createUser", async (req: Request, res: Response) => {
   try {
     const { name, gender, accountType, approvalStatus, email, password } = req.body;
 
-    // Create user in Firebase Authentication
+    // Create user in Firebase 
     const userRecord = await admin.auth().createUser({
       email,
       password,
     });
 
-    // Create user in MongoDB with additional details
+    // Create user in MongoDB 
     const newUser = new User({
       name,
       gender,
@@ -36,10 +38,10 @@ router.post('/api/createUser', async (req: Request, res: Response) => {
 
     await newUser.save();
 
-    res.status(201).json({ message: 'User created successfully' });
+    res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
