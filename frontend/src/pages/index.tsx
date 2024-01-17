@@ -29,8 +29,13 @@ export default function Home() {
     <main className="flex gap-5 min-h-screen flex-col items-center justify-between p-24">
       <div className="grid gap-5">
         <Textfield innerRef={dateRef} label="Date" placeholder="00/00/0000" calendar={true} />
-        <Textfield innerRef={firstnameRef} label="First" placeholder="John" />
-        <Textfield innerRef={emailRef} label="Email" placeholder="johnsmith@gmail.com" />
+        <Textfield
+          innerRef={firstnameRef}
+          label="First"
+          placeholder="John"
+          className="border-blue-500"
+        />
+        <Textfield innerRef={emailRef} placeholder="Email" />
       </div>
 
       <div className="grid w-full sm:w-1/2 ">

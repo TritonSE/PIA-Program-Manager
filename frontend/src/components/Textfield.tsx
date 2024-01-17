@@ -4,32 +4,50 @@ import { RefObject, useEffect, useState } from "react";
 
 import { Calendar } from "../components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
+import { cn } from "../lib/utils";
 
 type TextFieldProps = {
   innerRef: RefObject<HTMLInputElement>;
   label?: string;
   placeholder: string;
   calendar?: boolean;
+  className?: string;
 };
 
-export function Textfield({ innerRef: ref, label, placeholder, calendar = false }: TextFieldProps) {
+export function Textfield({
+  innerRef: ref,
+  label,
+  placeholder,
+  calendar = false,
+  className,
+}: TextFieldProps) {
   const [date, setDate] = useState<Date>();
 
   useEffect(() => {
     if (date && ref.current) {
-      ref.current.value = date.toLocaleDateString();
+      ref.current.value = date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
     }
   }, [date]);
 
   return (
     <Popover>
-      <div className="border-pia_border focus-within:border-pia_dark_green relative flex rounded-md border-[1px] px-2 py-3">
+      <div
+        className={cn(
+          "border-pia_border focus-within:border-pia_dark_green relative flex rounded-md border-[1px] px-2 py-3",
+          className,
+        )}
+      >
         <input
-          className="placeholder-pia_accent focus-visible:out px-2 outline-none w-full"
+          className="appearance-none placeholder-pia_accent focus-visible:out px-2 outline-none w-full bg-inherit"
           ref={ref}
           id={label + placeholder}
           type="text"
           placeholder={placeholder}
+          maxLength={calendar ? 10 : 64}
         />
 
         {label ? (
