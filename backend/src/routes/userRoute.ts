@@ -18,24 +18,20 @@ type CreateUserRequestBody = {
 const router = express.Router();
 
 // Initialize Firebase Admin SDK
-// const serviceAccount = require("../firebase/ServiceAccountKey.json") as ServiceAccount;
 admin.initializeApp({
-  // credential: admin.credential.cert(serviceAccount), // Type assertion
   credential: admin.credential.cert(serviceAccount as ServiceAccount), // Type assertion
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
 router.use(express.json());
 
-// router.post("/createUser", async (req: Request<Record<string, never>, Record<string, never>, CreateUserRequestBody>, res: Response) => {
-// router.post("/createUser", async (req: Request<{}, {}, CreateUserRequestBody>, res: Response) => {
 router.post(
   "/createUser",
   async (
     req: Request<Record<string, never>, Record<string, never>, CreateUserRequestBody>,
     res: Response,
-  // ) => {
-  ): Promise<void> => {
+    // ): Promise<void> => {
+    ) => {
 
     try {
       const { name, gender, accountType, approvalStatus, email, password } = req.body;

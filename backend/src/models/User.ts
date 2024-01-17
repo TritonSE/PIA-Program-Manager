@@ -1,8 +1,5 @@
 import mongoose, { Document } from "mongoose";
 
-// email and password stored in Firebase
-// name, gender, account type (Admin/Team), and approval status stored in MongoDB
-
 export type UserDocument = {
   name: string;
   gender: string;
