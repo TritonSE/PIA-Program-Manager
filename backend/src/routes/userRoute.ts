@@ -6,7 +6,7 @@ import path from 'path';
 const router = express.Router();
 
 // Initialize Firebase Admin SDK 
-const serviceAccountPath = path.resolve(__dirname, '../../firebase/fb_service_account_key.json'); 
+const serviceAccountPath = path.resolve(__dirname, '../../firebase/ServiceAccountKey.json'); 
 const serviceAccount = require(serviceAccountPath);
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
