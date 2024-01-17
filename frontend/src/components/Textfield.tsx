@@ -64,8 +64,8 @@ export function Textfield({
         {calendar ? (
           <>
             <PopoverTrigger asChild>
-              {/* Calendar Icon */}
               <button>
+                {/* Calendar Icon */}
                 <svg
                   className="hover:cursor-pointer"
                   width="24"

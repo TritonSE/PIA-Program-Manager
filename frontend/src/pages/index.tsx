@@ -13,6 +13,7 @@ export default function Home() {
   //Checkbox Component
   const dietaryList = ["Nuts", "Eggs", "Seafood", "Pollen", "Dairy", "Other"];
   const [dietaryRestrictions, setDietaryRestriction] = useState<string[]>([]);
+  const otherRef = useRef<HTMLInputElement>(null);
 
   //Radio Component
   const [gender, setGender] = useState<string>("");
@@ -22,6 +23,7 @@ export default function Home() {
     console.log("First name: ", firstnameRef.current?.value);
     console.log("Email: ", emailRef.current?.value);
     console.log("Dietary Restrictions: ", dietaryRestrictions);
+    console.log("Dietary Restrictions Other: ", otherRef.current?.value);
     console.log("Gender: ", gender);
   }
 
@@ -42,6 +44,7 @@ export default function Home() {
         <h2 className="text-pia_accent mb-2">Dietary Restrictions</h2>
         <Checkbox
           options={dietaryList}
+          otherRef={otherRef}
           state={dietaryRestrictions}
           setState={setDietaryRestriction}
         />
