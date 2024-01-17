@@ -1,0 +1,83 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/**
+ * Functions that process task route requests.
+ */
+
+import { RequestHandler } from "express";
+import { validationResult } from "express-validator";
+
+import StudentModel from "../models/student";
+import validationErrorParser from "../util/validationErrorParser";
+
+export const createStudent: RequestHandler = async (req, res, next) => {
+  type contact = {
+    lastName: string;
+    firstName: string;
+    email: string;
+    phoneNumber: string;
+  };
+
+  type diet = {
+    nuts: boolean;
+    eggs: boolean;
+    seafood: boolean;
+    pollen: boolean;
+    dairy: boolean;
+    other: boolean;
+  };
+
+  type typedModel = {
+    student: contact;
+    emergency: contact;
+    serviceCoordinator: contact;
+    location: string;
+    medication: string;
+    birthday: string;
+    intakeDate: string;
+    tourDate: string;
+    prog1: string;
+    prog2: string;
+    dietary: diet;
+    otherString: string;
+  };
+
+  const errors = validationResult(req);
+
+  const {
+    student,
+    emergency,
+    serviceCoordinator,
+    location,
+    medication,
+    birthday,
+    intakeDate,
+    tourDate,
+    prog1,
+    prog2,
+    dietary,
+    otherString,
+  }: typedModel = req.body as typedModel; // ?????????
+
+  try {
+    validationErrorParser(errors);
+
+    const newStudent = await StudentModel.create({
+      student,
+      emergency,
+      serviceCoordinator,
+      location,
+      medication,
+      birthday,
+      intakeDate,
+      tourDate,
+      prog1,
+      prog2,
+      dietary,
+      otherString,
+    });
+
+    res.status(201).json(newStudent);
+  } catch (error) {
+    next(error);
+  }
+};
