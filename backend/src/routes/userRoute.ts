@@ -2,50 +2,73 @@
 import express, { Request, Response } from "express";
 import admin, { ServiceAccount } from "firebase-admin";
 
-import User from "../models/User";
+import * as serviceAccount from "../firebase/ServiceAccountKey.json";
+import User, { UserDocument } from "../models/User";
 
+// Define the type for req.body
+type CreateUserRequestBody = {
+  name: string;
+  gender: string;
+  accountType: "admin" | "team";
+  approvalStatus: string; // NOTE Should this be restricted to certain values?
+  email: string;
+  password: string;
+};
 
 const router = express.Router();
 
 // Initialize Firebase Admin SDK
-const serviceAccount = require("../firebase/ServiceAccountKey.json") as ServiceAccount;
+// const serviceAccount = require("../firebase/ServiceAccountKey.json") as ServiceAccount;
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount), // Use type assertion
+  // credential: admin.credential.cert(serviceAccount), // Type assertion
+  credential: admin.credential.cert(serviceAccount as ServiceAccount), // Type assertion
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
 router.use(express.json());
 
-router.post("/createUser", async (req: Request, res: Response) => {
-// router.post("/createUser", async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { name, gender, accountType, approvalStatus, email, password } = req.body;
+// router.post("/createUser", async (req: Request<Record<string, never>, Record<string, never>, CreateUserRequestBody>, res: Response) => {
+// router.post("/createUser", async (req: Request<{}, {}, CreateUserRequestBody>, res: Response) => {
+router.post(
+  "/createUser",
+  async (
+    req: Request<Record<string, never>, Record<string, never>, CreateUserRequestBody>,
+    res: Response,
+  // ) => {
+  ): Promise<void> => {
 
-    // Create user in Firebase
-    const userRecord = await admin.auth().createUser({
-      email,
-      password,
-    });
+    try {
+      const { name, gender, accountType, approvalStatus, email, password } = req.body;
 
-    // Set custom claim for accountType (“admin” | “team”)
-    await admin.auth().setCustomUserClaims(userRecord.uid, { accountType });
+      // Create user in Firebase
+      const userRecord = await admin.auth().createUser({
+        email,
+        password,
+      } as admin.auth.CreateRequest); // Type assertion
 
-    // Create user in MongoDB
-    const newUser = new User({
-      name,
-      gender,
-      accountType,
-      approvalStatus,
-      firebaseUid: userRecord.uid,
-    });
+      // Set custom claim for accountType (“admin” | “team”)
+      await admin.auth().setCustomUserClaims(userRecord.uid, { accountType });
 
-    await newUser.save();
+      // Create user in MongoDB
+      const newUser = new User({
+        name,
+        gender,
+        accountType,
+        approvalStatus,
+        firebaseUid: userRecord.uid,
+      } as UserDocument); // Type assertion
 
-    res.status(201).json({ message: "User created successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
+      await newUser.save();
+
+      res.status(201).json({ message: "User created successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+
+    return;
+  },
+);
 
 export default router;
+
