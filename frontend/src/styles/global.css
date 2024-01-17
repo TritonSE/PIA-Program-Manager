@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "alternate-gothic";
+  src: url("./Alternate\ Gothic\ No3\ D\ Regular.otf") format("opentype");
+  /* Add other font formats if necessary */
+  font-weight: normal;
+  font-style: normal;
+}
