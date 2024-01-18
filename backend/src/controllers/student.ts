@@ -18,15 +18,6 @@ export const createStudent: RequestHandler = async (req, res, next) => {
     phoneNumber: string;
   };
 
-  type diet = {
-    nuts: boolean;
-    eggs: boolean;
-    seafood: boolean;
-    pollen: boolean;
-    dairy: boolean;
-    other: boolean;
-  };
-
   type typedModel = {
     student: contact;
     emergency: contact;
@@ -38,7 +29,7 @@ export const createStudent: RequestHandler = async (req, res, next) => {
     tourDate: string;
     prog1: string;
     prog2: string;
-    dietary: diet;
+    dietary: string;
     otherString: string;
   };
 

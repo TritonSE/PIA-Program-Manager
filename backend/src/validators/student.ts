@@ -119,11 +119,17 @@ const makeProg2Validator = () =>
   body("prog2").optional().isString().withMessage("Program 2 must be a string");
 
 //dietary
-const makeDietaryValidator = () =>
-  body("dietary.**").optional().isBoolean().withMessage("Dietary restrictions must be boolean");
+//validates entire array
+const makeDietaryArrayValidator = () =>
+  body("dietary")
+    .optional()
+    .exists()
+    .isArray()
+    .withMessage("Dietary restrictions must be an array");
+//validates individual items
+const makeDietaryItemsValidator = () =>
+  body("dietary.*").exists().isString().withMessage("Dietary restriction element must be a string");
 
-//considering writing a custom validator to throw an error if the "other" field is filled but the "other"
-//boolean field is unchecked
 const makeDietaryOtherValidator = () =>
   body("otherString")
     .optional()
@@ -142,6 +148,7 @@ export const createStudent = [
   makeTourDateValidator(),
   makeProg1Validator(),
   makeProg2Validator(),
-  makeDietaryValidator(),
+  makeDietaryArrayValidator(),
+  makeDietaryItemsValidator(),
   makeDietaryOtherValidator(),
 ];

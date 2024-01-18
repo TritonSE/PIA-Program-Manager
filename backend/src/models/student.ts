@@ -38,19 +38,12 @@ const studentSchema = new Schema({
   //For now, chose to express these as strings. Will probably be replaced with
   //program subdocs in the future once they have been defined
   prog1: { type: String, required: true },
-  prog2: { type: String },
+  prog2: { type: String, default: "" },
 
-  //Clunky but functional for the time being
-  dietary: {
-    nuts: { type: Boolean, default: false },
-    eggs: { type: Boolean, default: false },
-    seafood: { type: Boolean, default: false },
-    pollen: { type: Boolean, default: false },
-    dairy: { type: Boolean, default: false },
-    other: { type: Boolean, default: false },
-  },
+  //Will contain list of all dietary restrictions
+  dietary: { type: [String] },
 
-  otherString: String,
+  otherString: { type: String, default: "" },
 });
 
 type Student = InferSchemaType<typeof studentSchema>;
