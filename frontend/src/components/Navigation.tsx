@@ -19,17 +19,22 @@ type LinkProps = {
 };
 
 // the logo and company name component
-const Logo = ({ setShelf, isMobile }: LinkProps) => {
+const Logo = ({ setShelf, isMobile, black }: LinkProps & { black?: boolean }) => {
   return (
     <Link
       href="/"
       onClick={() => {
         if (isMobile) setShelf(false);
       }}
-      className="flex items-center justify-between gap-2 pl-8 pr-8 max-sm:w-fit max-sm:justify-normal sm:max-lg:p-0"
+      className="flex items-center gap-2 pl-8 pr-8 max-sm:w-fit max-sm:justify-normal sm:max-lg:p-0"
     >
       <Image alt="company logo" src="/sidebar/logo.png" width={36} height={36} />
-      <h1 className="text-white font-[alternate-gothic] text-2xl max-sm:text-lg">PLANT IT AGAIN</h1>
+      <h1
+        className="text-white font-[alternate-gothic] text-2xl text-[white] max-lg:text-lg"
+        style={black ? { color: "black" } : {}}
+      >
+        PLANT IT AGAIN
+      </h1>
     </Link>
   );
 };
@@ -90,7 +95,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
           height={24}
         />
         <div className="m-auto translate-x-[-20px]">
-          <Logo setShelf={setShelf} isMobile={isMobile} />
+          <Logo setShelf={setShelf} isMobile={isMobile} black />
         </div>
       </div>
 
