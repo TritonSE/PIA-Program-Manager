@@ -12,6 +12,7 @@ const config: Config = {
     colors: {
       primaryDarkGreen: "#006867",
       accentGreen: "#A1DAD7",
+      neutralGray: "#D8D8D8",
     },
   },
   plugins: [],

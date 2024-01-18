@@ -5,7 +5,6 @@ export default function Document() {
     <Html>
       <Head>
         <meta charSet="UTF-8" />
-        <link href="./src/output.css" rel="stylesheet" />
       </Head>
       <body className="h-full">
         <Main />
