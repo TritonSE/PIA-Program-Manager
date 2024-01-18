@@ -6,3 +6,5 @@ node_modules/
 lib/**/*.js
 lib/**/*.js.map
 lib
+
+ServiceAccountKey.json
