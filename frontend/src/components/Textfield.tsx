@@ -1,35 +1,53 @@
 "use client";
 
-import { RefObject, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { Calendar } from "../components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import { cn } from "../lib/utils";
 
-type TextFieldProps = {
-  innerRef: RefObject<HTMLInputElement>;
+type BaseProps = {
+  register: UseFormRegister<FieldValues>;
+  name: string;
   label?: string;
+  type?: string;
   placeholder: string;
-  calendar?: boolean;
   className?: string;
 };
 
+type WithCalendarProps = BaseProps & {
+  calendar: true; // When calendar is true, setValue is required
+  setValue: UseFormSetValue<FieldValues>;
+};
+
+type WithoutCalendarProps = BaseProps & {
+  calendar?: false; // When calendar is false or not provided, setValue is optional
+  setValue?: UseFormSetValue<FieldValues>;
+};
+
+type TextFieldProps = WithCalendarProps | WithoutCalendarProps;
+
 export function Textfield({
-  innerRef: ref,
+  register,
+  setValue,
   label,
+  name,
   placeholder,
   calendar = false,
   className,
+  type = "text",
 }: TextFieldProps) {
   const [date, setDate] = useState<Date>();
 
   useEffect(() => {
-    if (date && ref.current) {
-      ref.current.value = date.toLocaleDateString(undefined, {
+    if (date && setValue) {
+      const parsedDate = date.toLocaleDateString(undefined, {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
       });
+      setValue(name, parsedDate);
     }
   }, [date]);
 
@@ -37,17 +55,16 @@ export function Textfield({
     <Popover>
       <div
         className={cn(
-          "border-pia_border focus-within:border-pia_dark_green relative flex rounded-md border-[1px] px-2 py-3",
+          "border-pia_border focus-within:border-pia_dark_green relative flex rounded-md border-[1px] px-2 py-3 ",
           className,
         )}
       >
         <input
+          {...register(name)}
           className="appearance-none placeholder-pia_accent focus-visible:out px-2 outline-none w-full bg-inherit"
-          ref={ref}
           id={label + placeholder}
-          type="text"
+          type={type}
           placeholder={placeholder}
-          maxLength={calendar ? 10 : 64}
         />
 
         {label ? (
