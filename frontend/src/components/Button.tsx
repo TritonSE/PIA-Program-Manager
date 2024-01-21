@@ -3,6 +3,17 @@ import React from "react";
 
 import styles from "../styles/Button.module.css";
 
+type ButtonStyles = {
+  button: string;
+  disabled: string;
+  secondary: string;
+  destructive: string;
+  destructiveSecondary: string;
+  primary: string;
+  small: string;
+  default: string;
+};
+
 const poppins = Poppins({ weight: "400", style: "normal", subsets: [] });
 
 export type ButtonProps = {
@@ -16,37 +27,39 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   { label, kind = "primary", size = "default", disabled = false, className, ...props }: ButtonProps,
   ref,
 ) {
-  let buttonClass = styles.button;
+  const buttonStyles: ButtonStyles = styles as ButtonStyles;
+
+  let buttonClass = buttonStyles.button;
 
   // All disabled buttons have same style, so we can ignore kind
   if (disabled) {
-    buttonClass += ` ${styles.disabled}`;
+    buttonClass += ` ${buttonStyles.disabled}`;
   }
 
   // If not disabled, assign style based on kind
   else {
     switch (kind) {
       case "secondary":
-        buttonClass += ` ${styles.secondary}`;
+        buttonClass += ` ${buttonStyles.secondary}`;
         break;
       case "destructive":
-        buttonClass += ` ${styles.destructive}`;
+        buttonClass += ` ${buttonStyles.destructive}`;
         break;
       case "destructive-secondary":
-        buttonClass += ` ${styles.destructiveSecondary}`;
+        buttonClass += ` ${buttonStyles.destructiveSecondary}`;
         break;
       default:
-        buttonClass += ` ${styles.primary}`;
+        buttonClass += ` ${buttonStyles.primary}`;
     }
   }
 
   // button size styling depends on size
   switch (size) {
     case "small":
-      buttonClass += ` ${styles.small}`;
+      buttonClass += ` ${buttonStyles.small}`;
       break;
     default:
-      buttonClass += ` ${styles.default}`;
+      buttonClass += ` ${buttonStyles.default}`;
       break;
   }
 

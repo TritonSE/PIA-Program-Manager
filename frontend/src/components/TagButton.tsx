@@ -3,6 +3,12 @@ import React from "react";
 
 import styles from "../styles/TagButton.module.css";
 
+type TagButtonStyles = {
+  button: string;
+  tagButton: string;
+  disabled: string;
+};
+
 const poppins = Poppins({ weight: "400", style: "normal", subsets: [] });
 
 export type TagButtonProps = {
@@ -14,13 +20,15 @@ export const TagButton = React.forwardRef<HTMLButtonElement, TagButtonProps>(fun
   { label, disabled = false, className, ...props }: TagButtonProps,
   ref,
 ) {
-  let buttonClass = styles.button;
+  const tagButtonStyles: TagButtonStyles = styles as TagButtonStyles;
+
+  let buttonClass = tagButtonStyles.button;
 
   // disabled buttons have different styling
   if (disabled) {
-    buttonClass += ` ${styles.disabled}`;
+    buttonClass += ` ${tagButtonStyles.disabled}`;
   } else {
-    buttonClass += ` ${styles.tagButton}`;
+    buttonClass += ` ${tagButtonStyles.tagButton}`;
   }
 
   // Lets developers apply their own styling
