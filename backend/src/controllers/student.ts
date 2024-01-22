@@ -35,41 +35,13 @@ export const createStudent: RequestHandler = async (req, res, next) => {
 
   const errors = validationResult(req);
 
-  const {
-    student,
-    emergency,
-    serviceCoordinator,
-    location,
-    medication,
-    birthday,
-    intakeDate,
-    tourDate,
-    prog1,
-    prog2,
-    dietary,
-    otherString,
-  }: typedModel = req.body as typedModel; // ?????????
-
   try {
     let errornum = 0;
     for (const error of errors.array()) {
       errorHandler(new CustomError(errornum++, 400, error.msg as string), req, res);
     }
 
-    const newStudent = await StudentModel.create({
-      student,
-      emergency,
-      serviceCoordinator,
-      location,
-      medication,
-      birthday,
-      intakeDate,
-      tourDate,
-      prog1,
-      prog2,
-      dietary,
-      otherString,
-    });
+    const newStudent = await StudentModel.create(req.body as typedModel);
 
     res.status(201).json(newStudent);
   } catch (error) {
