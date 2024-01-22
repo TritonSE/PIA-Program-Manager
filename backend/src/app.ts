@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import studentRoutes from "../src/routes/student";
 
 import { mongoURI, port } from "./config";
+import { errorHandler } from "./errors/handler";
 
 /**
  * Express server application class
@@ -27,7 +28,8 @@ void mongoose
 
 server.app.use(json());
 
-server.app.use("/api/student", studentRoutes);
+server.app.use("/student", studentRoutes);
+server.app.use(errorHandler);
 
 // make server listen on some port
 server.app.listen(port, () => {
