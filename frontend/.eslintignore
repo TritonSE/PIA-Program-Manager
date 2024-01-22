@@ -7,3 +7,6 @@ public/
 next.config.js
 vite.config.ts
 jest.config.js
+postcss.config.js
+tailwind.config.ts
+tailwind.config.js
