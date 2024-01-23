@@ -61,29 +61,29 @@ export type typeProgramForm = {
 export const createForm: RequestHandler = async (req, res, next) => {
   // extract any errors that were found by the validator
   const errors = validationResult(req);
-  /* eslint-disable */
-  const { name, abbreviation, type, startDate, endDate, color } = req.body;
-  /* eslint-enable */
+  const reqBody: typeProgramForm = req.body as typeProgramForm;
+  const { name, abbreviation, type, startDate, endDate, color } = reqBody;
 
   try {
     // if there are errors, then this function throws an exception
     validationErrorParser(errors); //errors
 
-    // if (!errors.isEmpty()) {
-    //   let errorString = "";
-    //   for (const error of errors.array()) {
-    //     errorString += error.msg + " ";
-    //   }
-    //   throw new ValidationError(errorString);
-    // }
+    // const programForm = await ProgramFormModel.create({
+    //   name: String,
+    //   abbreviation: String,
+    //   type: String,
+    //   startDate: Date,
+    //   endDate: Date,
+    //   color: Number,
+    // });
 
     const programForm = await ProgramFormModel.create({
-      name: String,
-      abbreviation: String,
-      type: String,
-      startDate: Date,
-      endDate: Date,
-      color: Number,
+      name,
+      abbreviation,
+      type,
+      startDate,
+      endDate,
+      color,
     });
 
     // 201 means a new resource has been created successfully

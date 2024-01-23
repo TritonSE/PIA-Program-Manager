@@ -35,7 +35,7 @@ const makeStartDateValidator = () =>
 const makeEndDateValidator = () =>
   body("endDate")
     .isISO8601()
-    .custom((value, { req }) => {
+    .custom((value: Date, { req }) => {
       const reqBody: typeProgramForm = req.body as typeProgramForm;
       if (value < reqBody.startDate) throw new Error("end date must be after start date");
       return true;
