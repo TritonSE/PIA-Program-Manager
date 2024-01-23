@@ -1,16 +1,13 @@
-// These styles apply to every route in the application
+import { AppProps } from "next/app";
+
+import Navigation from "../components/Navigation";
 import "../styles/global.css";
 
-import { Poppins } from "next/font/google";
-
-import type { AppProps } from "next/app";
-
-const poppins = Poppins({ subsets: ["latin"], weight: "400" });
-
-export default function App({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
-    <main className={poppins.className}>
-      <Component {...pageProps} />;
-    </main>
+    <Navigation>
+      <Component {...pageProps} />
+    </Navigation>
   );
 }
+export default App;

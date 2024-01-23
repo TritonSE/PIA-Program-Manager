@@ -55,13 +55,13 @@ export function Textfield({
     <Popover>
       <div
         className={cn(
-          "border-pia_border focus-within:border-pia_dark_green relative flex rounded-md border-[1px] px-2 py-3 ",
+          "relative flex rounded-md border-[1px] border-pia_border px-2 py-3 focus-within:border-pia_dark_green ",
           className,
         )}
       >
         <input
           {...register(name)}
-          className="appearance-none placeholder-pia_accent focus-visible:out px-2 outline-none w-full bg-inherit"
+          className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={label + placeholder}
           type={type}
           placeholder={placeholder}
@@ -69,7 +69,7 @@ export function Textfield({
 
         {label ? (
           <label
-            className="text-pia_border-200 absolute left-[1em] top-[-1em] bg-[white] p-[3px] text-xs select-none"
+            className="absolute left-[1em] top-[-1em] select-none bg-[white] p-[3px] text-xs text-pia_border-200"
             htmlFor={label + placeholder}
           >
             {label}

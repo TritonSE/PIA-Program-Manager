@@ -17,13 +17,13 @@ export default function Radio({ options, register, name, className }: RadioProps
           <div className="flex items-center" key={option + index}>
             <input
               {...register(name)}
-              className="w-5 h-5  accent-pia_dark_green hover:cursor-pointer"
+              className="h-5 w-5  accent-pia_dark_green hover:cursor-pointer"
               id={option + index}
               type="radio"
               value={option}
             />
             <label
-              className="select-none pl-5 flex-1 hover:cursor-pointer"
+              className="flex-1 select-none pl-5 hover:cursor-pointer"
               htmlFor={option + index}
             >
               {option}

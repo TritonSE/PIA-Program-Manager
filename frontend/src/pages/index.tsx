@@ -16,7 +16,7 @@ export default function Home() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex gap-10 min-h-screen flex-col items-center justify-between p-12"
+      className="flex flex-col items-center justify-between gap-10 p-12"
     >
       <div className="grid gap-5">
         <Textfield register={register} name={"firstname"} label="First" placeholder="John" />
@@ -38,16 +38,16 @@ export default function Home() {
       </div>
 
       <div className="grid w-full sm:w-1/2 ">
-        <h2 className="text-pia_accent mb-2">Dietary Restrictions</h2>
+        <h2 className="mb-2 text-pia_accent">Dietary Restrictions</h2>
         <Checkbox register={register} name="dietary" options={dietaryList} />
       </div>
 
       <div className="">
-        <h2 className="mb-5 font-bold text-2xl">Gender</h2>
+        <h2 className="mb-5 text-2xl font-bold">Gender</h2>
         <Radio register={register} name="gender" options={["Male", "Female", "Rather not say"]} />
       </div>
 
-      <button type="submit" className="bg-pia_dark_green text-white px-5 py-3 rounded-md">
+      <button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
         Submit
       </button>
     </form>

@@ -19,16 +19,16 @@ export default function OtherCheckbox({ register }: OtherCheckboxProps) {
       placeholder="Type Here..."
     />
   ) : (
-    <div className="flex justify-between content-center ">
+    <div className="flex content-center justify-between ">
       <label
-        className="justify-left grid flex-1 content-center select-none py-[15px] hover:cursor-pointer"
+        className="justify-left grid flex-1 select-none content-center py-[15px] hover:cursor-pointer"
         htmlFor={"Othercheckbox"}
       >
         {"Other"}
       </label>
       <input
         id={"Othercheckbox"}
-        className="checked:bg-pia_dark_green h-[40px] self-center w-[40px] appearance-none rounded-[10px] bg-[#D9D9D9] hover:cursor-pointer"
+        className="h-[40px] w-[40px] appearance-none self-center rounded-[10px] bg-[#D9D9D9] checked:bg-pia_dark_green hover:cursor-pointer"
         type="checkbox"
         onChange={() => {
           setChecked(true);
