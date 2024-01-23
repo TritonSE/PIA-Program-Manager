@@ -2,6 +2,8 @@ import { json } from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
 
+import programFormRoutes from "../src/routes/program-form";
+
 import { mongoURI, port } from "./config";
 
 /**
@@ -24,6 +26,7 @@ void mongoose
   });
 
 server.app.use(json());
+server.app.use("/api/programForm", programFormRoutes);
 
 // make server listen on some port
 server.app.listen(port, () => {
