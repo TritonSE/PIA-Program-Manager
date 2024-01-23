@@ -3,11 +3,11 @@ import { AppProps } from "next/app";
 import Navigation from "../components/Navigation";
 import "../styles/global.css";
 
-function MyApp({ Component, pageProps }: AppProps) {
+function App({ Component, pageProps }: AppProps) {
   return (
     <Navigation>
       <Component {...pageProps} />
     </Navigation>
   );
 }
-export default MyApp;
+export default App;

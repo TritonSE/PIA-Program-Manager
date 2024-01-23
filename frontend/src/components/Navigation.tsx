@@ -4,6 +4,7 @@
  * Wraps the content of the current page with the navbar
  * Uses the constant in `src/constants` to populate the actual sidebar
  */
+import { Poppins } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -11,7 +12,9 @@ import React, { useEffect, useMemo } from "react";
 
 import { navigation } from "../constants/navigation";
 import { useWindowSize } from "../hooks/useWindowSize";
-import { cn } from "../lib/util";
+import { cn } from "../lib/utils";
+
+const poppins = Poppins({ subsets: ["latin"], weight: "400" });
 
 type LinkProps = {
   setShelf: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,7 +39,7 @@ const Logo = ({ setShelf, isMobile, black }: LinkProps & { black?: boolean }) =>
         className="max-sm:w-6"
       />
       <h1
-        className="text-white font-[alternate-gothic] text-2xl text-[white] max-lg:text-lg"
+        className="font-[alternate-gothic] text-2xl text-white max-lg:text-lg"
         style={black ? { color: "black" } : {}}
       >
         PLANT IT AGAIN
@@ -56,7 +59,7 @@ const Links = ({ setShelf, isMobile }: LinkProps) => {
         onClick={() => {
           if (isMobile) setShelf(false);
         }}
-        className="relative flex h-10 items-center gap-4 fill-accentGreen pl-8 pr-8 max-sm:gap-2 sm:max-lg:p-0"
+        className="relative flex h-10 items-center gap-4 fill-pia_accent_green pl-8 pr-8 max-sm:gap-2 sm:max-lg:p-0"
         key={i}
         style={router.pathname === item.href ? { fill: "white" } : {}}
       >
@@ -87,9 +90,14 @@ function Navigation({ children }: { children: React.ReactNode }) {
   }, [router.pathname]);
 
   return (
-    <main className="flex h-screen w-full bg-primaryLightGreen max-sm:relative sm:max-lg:flex-col">
-      {/* mobile top bar */}
-      <div className="absolute z-10 flex h-10 w-full items-center border-[1px] border-solid border-neutralGray pl-4 sm:hidden">
+    <main
+      className={cn(
+        "flex h-screen w-full bg-pia_primary_light_green max-sm:relative sm:max-lg:flex-col",
+        poppins.className,
+      )}
+    >
+      {/* mobile top bar - is not visible in nonmobile viewports */}
+      <div className="border-neutralGray absolute z-10 flex h-10 w-full items-center border-[1px] border-solid pl-4 sm:hidden">
         <Image
           src="/sidebar/nav_menu.svg"
           alt="nav burger"
@@ -108,7 +116,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
       {/* navbar */}
       <nav
         className={cn(
-          "z-10 flex h-full w-[240px] flex-col gap-12 bg-primaryDarkGreen pt-16 text-accentGreen transition-transform",
+          "z-10 flex h-full w-[240px] flex-col gap-12 bg-pia_dark_green pt-16 text-pia_accent_green transition-transform",
           "max-sm:gap-8 max-sm:pt-5 sm:max-lg:h-10 sm:max-lg:w-full sm:max-lg:flex-row sm:max-lg:justify-between sm:max-lg:pl-12 sm:max-lg:pr-12 sm:max-lg:pt-0",
           shelf ? "" : "max-sm:-translate-x-full",
         )}
