@@ -28,7 +28,13 @@ const Logo = ({ setShelf, isMobile, black }: LinkProps & { black?: boolean }) =>
       }}
       className="flex items-center gap-2 pl-8 pr-8 max-sm:w-fit max-sm:justify-normal sm:max-lg:p-0"
     >
-      <Image alt="company logo" src="/sidebar/logo.png" width={36} height={36} />
+      <Image
+        alt="company logo"
+        src="/sidebar/logo.png"
+        width={36}
+        height={36}
+        className="max-sm:w-6"
+      />
       <h1
         className="text-white font-[alternate-gothic] text-2xl text-[white] max-lg:text-lg"
         style={black ? { color: "black" } : {}}
@@ -81,9 +87,9 @@ function Navigation({ children }: { children: React.ReactNode }) {
   }, [router.pathname]);
 
   return (
-    <main className="flex h-screen w-full max-sm:relative sm:max-lg:flex-col">
+    <main className="flex h-screen w-full bg-primaryLightGreen max-sm:relative sm:max-lg:flex-col">
       {/* mobile top bar */}
-      <div className="absolute z-10 flex h-10 w-full items-center bg-neutralGray pl-4 sm:hidden">
+      <div className="absolute z-10 flex h-10 w-full items-center border-[1px] border-solid border-neutralGray pl-4 sm:hidden">
         <Image
           src="/sidebar/nav_menu.svg"
           alt="nav burger"
@@ -118,9 +124,12 @@ function Navigation({ children }: { children: React.ReactNode }) {
       </nav>
 
       <div
-        className="h-full w-full p-[24px] max-lg:absolute max-lg:pt-10 lg:w-[calc(100%-240px)]"
-        onClick={() => {
-          if (isMobile) setShelf(false);
+        className="h-full w-full p-[24px] max-lg:absolute max-lg:pt-14 lg:w-[calc(100%-240px)]"
+        onClick={(e) => {
+          if (isMobile) {
+            e.stopPropagation();
+            setShelf(false);
+          }
         }}
       >
         {children}
