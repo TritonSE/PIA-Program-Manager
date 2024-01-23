@@ -7,6 +7,7 @@ dotenv.config({ path: ".env" });
 
 let portV = "";
 let mongoV = "";
+let serviceAccountKeyV = "";
 
 if (!process.env.APP_PORT) {
   throw InternalError.NO_APP_PORT;
@@ -20,11 +21,18 @@ if (!process.env.MONGO_URI) {
   mongoV = process.env.MONGO_URI;
 }
 
+if (!process.env.SERVICE_ACCOUNT_KEY) {
+  throw InternalError.NO_SERVICE_ACCOUNT_KEY;
+} else {
+  serviceAccountKeyV = process.env.SERVICE_ACCOUNT_KEY;
+}
+
 /**
  * Have to do this workaround since lint doesn't let
  * us export vars
  */
 const port = portV;
 const mongoURI = mongoV;
+const serviceAccountKey = serviceAccountKeyV;
 
-export { port, mongoURI };
+export { port, mongoURI, serviceAccountKey };
