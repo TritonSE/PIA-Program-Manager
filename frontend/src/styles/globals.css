@@ -1,0 +1,9 @@
+:root {
+  --primary-light-green: 238, 247, 247;
+  --primary-dark-green: 0, 104, 103;
+  --primary-text: 32, 33, 36;
+  --white: 255, 255, 255;
+  --error-red: 185, 59, 69;
+  --gray-2: 216, 216, 216;
+  --black: 0, 0, 0;
+}
