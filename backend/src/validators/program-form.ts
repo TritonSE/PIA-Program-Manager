@@ -26,15 +26,51 @@ import { typeProgramForm } from "../controllers/program-form";
 //     .bail()
 //     .notEmpty()
 //     .withMessage("title cannot be empty");
-const makeNameValidator = () => body("name").isString().withMessage("name must be a string");
+const makeNameValidator = () =>
+  body("name")
+    .exists()
+    .withMessage("name needed")
+    .bail()
+    .isString()
+    .withMessage("name must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("name must not be empty");
 const makeAbbreviationValidator = () =>
-  body("abbreviation").isString().withMessage("abbreviation must be a string");
-const makeTypeValidator = () => body("type").isString().withMessage("type must be a string");
+  body("abbreviation")
+    .exists()
+    .withMessage("abbreviation needed")
+    .bail()
+    .isString()
+    .withMessage("abbreviation must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("abbreviation must not be empty");
+const makeTypeValidator = () =>
+  body("type")
+    .exists()
+    .withMessage("type needed")
+    .bail()
+    .isString()
+    .withMessage("type must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("type must not be empty");
 const makeStartDateValidator = () =>
-  body("startDate").isISO8601().withMessage("startDate must be a valid date-time string");
+  body("startDate")
+    .exists()
+    .withMessage("start date needed")
+    .bail()
+    .isISO8601()
+    .withMessage("start date must be a valid date-time string");
 const makeEndDateValidator = () =>
   body("endDate")
+    .exists()
+    .withMessage("end date needed")
+    .bail()
     .isISO8601()
+    .withMessage("end date must be a valid date-time string")
+    .bail()
     .custom((value: Date, { req }) => {
       const reqBody: typeProgramForm = req.body as typeProgramForm;
       if (value < reqBody.startDate) throw new Error("end date must be after start date");
@@ -42,7 +78,12 @@ const makeEndDateValidator = () =>
     });
 const makeColorValidator = () =>
   body("color")
+    .exists()
+    .withMessage("color needed")
+    .bail()
     .isNumeric()
+    .withMessage("color should be number 1-4")
+    .bail()
     .custom((value) => {
       if (value < 1 || value > 4) {
         throw new Error("color must be an option number 1-4");
