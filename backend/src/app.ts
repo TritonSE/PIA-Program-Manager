@@ -3,8 +3,8 @@ import express from "express";
 import mongoose from "mongoose";
 
 import { mongoURI, port } from "./config";
-import { userRouter } from "./routes/userRoute";
 import { errorHandler } from "./errors/handler";
+import { userRouter } from "./routes/user";
 
 /**
  * Express server application class

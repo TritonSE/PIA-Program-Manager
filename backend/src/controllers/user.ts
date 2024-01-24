@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
+import { validationResult } from "express-validator";
 import admin from "firebase-admin";
 
-import { firebaseAuth } from "../firebase/firebase_config";
-import User, { UserDocument } from "../models/User";
 import { UserError } from "../errors";
 import { errorHandler } from "../errors/handler";
+import { firebaseAuth } from "../firebase/firebase_config";
+import User, { UserDocument } from "../models/User";
 
 // Define the type for req.body
 type CreateUserRequestBody = {
@@ -21,6 +22,20 @@ export const createUser = async (
   res: Response,
 ) => {
   try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   return res.status(400).json({ errors: errors.array() });
+    // }
+    if (!errors.isEmpty()) {
+      let errStr = "";
+      for (const err of errors.array()) {
+        errStr += err.msg + " ";
+      }
+      errStr = errStr.trim();
+      throw new UserError(0, 400, errStr);
+    }
+
     const { name, gender, accountType, approvalStatus, email, password } = req.body;
 
     // Create user in Firebase
