@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 // copied from onboarding repo - TODO
 // only need create
 

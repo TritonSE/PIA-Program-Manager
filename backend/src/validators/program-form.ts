@@ -60,6 +60,7 @@ const makeStartDateValidator = () =>
     .bail()
     .isISO8601()
     .withMessage("start date must be a valid date-time string");
+
 const makeEndDateValidator = () =>
   body("endDate")
     .exists()
@@ -68,9 +69,10 @@ const makeEndDateValidator = () =>
     .isISO8601()
     .withMessage("end date must be a valid date-time string")
     .bail()
-    .custom((value: Date, { req }) => {
+    .custom((value: string, { req }) => {
       const reqBody: typeProgramForm = req.body as typeProgramForm;
-      if (value < reqBody.startDate) throw new Error("end date must be after start date");
+      if (new Date(value) < new Date(reqBody.startDate))
+        throw new Error("end date must be after start date");
       return true;
     });
 const makeColorValidator = () =>
@@ -79,12 +81,10 @@ const makeColorValidator = () =>
     .withMessage("color needed")
     .bail()
     .isNumeric()
-    .withMessage("color should be number 1-4")
+    .withMessage("color should be int 1-4")
     .bail()
     .custom((value) => {
-      if (value < 1 || value > 4) {
-        throw new Error("color must be an option number 1-4");
-      }
+      if (value < 1 || value > 4) throw new Error("color must be an option number 1-4");
       return true;
     });
 
