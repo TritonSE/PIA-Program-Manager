@@ -8,16 +8,17 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 
+import { ValidationError } from "../errors/validation";
 import ProgramFormModel from "../models/program-form";
-import validationErrorParser from "../util/validationErrorParser";
+//import validationErrorParser from "../util/validationErrorParser";
 
 export type typeProgramForm = {
   name: string;
   abbreviation: string;
   type: string;
-  startDate: Date;
-  endDate: Date;
-  color: number;
+  startDate: string;
+  endDate: string;
+  color: string;
 };
 
 /**
@@ -59,17 +60,22 @@ export type typeProgramForm = {
 // };
 
 export const createForm: RequestHandler = async (req, res, next) => {
-  // extract any errors that were found by the validator
   const errors = validationResult(req);
 
   try {
-    // if there are errors, then this function throws an exception
-    validationErrorParser(errors); //errors
+    //validationErrorParser(errors);
+
+    if (!errors.isEmpty()) {
+      let errorString = "";
+
+      for (const error of errors.array()) {
+        errorString += error.msg + " ";
+      }
+      throw new ValidationError(errorString);
+    }
 
     const programForm = await ProgramFormModel.create(req.body as typeProgramForm);
 
-    // 201 means a new resource has been created successfully
-    // the newly created task is sent back to the user
     res.status(201).json(programForm);
   } catch (error) {
     next(error);

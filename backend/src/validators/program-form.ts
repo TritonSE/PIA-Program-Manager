@@ -2,10 +2,6 @@ import { body } from "express-validator";
 
 import { typeProgramForm } from "../controllers/program-form";
 
-// more info about validators:
-// https://express-validator.github.io/docs/guides/validation-chain
-// https://github.com/validatorjs/validator.js#validators
-
 // const makeIDValidator = () =>
 //   body("_id")
 //     .exists()
@@ -26,6 +22,7 @@ import { typeProgramForm } from "../controllers/program-form";
 //     .bail()
 //     .notEmpty()
 //     .withMessage("title cannot be empty");
+
 const makeNameValidator = () =>
   body("name")
     .exists()
@@ -96,6 +93,7 @@ const makeColorValidator = () =>
 //   body("assignee").optional().isMongoId().withMessage("assignee must be a MongoDB object ID");
 
 // establishes a set of rules that the body of the task creation route must follow
+
 export const createForm = [
   makeNameValidator(),
   makeAbbreviationValidator(),
