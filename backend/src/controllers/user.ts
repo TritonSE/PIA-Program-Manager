@@ -10,7 +10,6 @@ import User, { UserDocument } from "../models/User";
 // Define the type for req.body
 type CreateUserRequestBody = {
   name: string;
-  gender: string;
   accountType: "admin" | "team";
   approvalStatus: boolean;
   email: string;
@@ -36,7 +35,7 @@ export const createUser = async (
       throw new UserError(0, 400, errStr);
     }
 
-    const { name, gender, accountType, approvalStatus, email, password } = req.body;
+    const { name, accountType, approvalStatus, email, password } = req.body;
 
     // Create user in Firebase
     const userRecord = await firebaseAuth.createUser({
@@ -51,7 +50,6 @@ export const createUser = async (
     const newUser = new User({
       _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
       name,
-      gender,
       accountType,
       approvalStatus,
     } as UserDocument); // Type assertion
