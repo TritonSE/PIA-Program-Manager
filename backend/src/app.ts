@@ -3,7 +3,8 @@ import express from "express";
 import mongoose from "mongoose";
 
 import { mongoURI, port } from "./config";
-import userRoute from "./routes/userRoute";
+import { userRouter } from "./routes/userRoute";
+import { errorHandler } from "./errors/handler";
 
 /**
  * Express server application class
@@ -29,7 +30,10 @@ void mongoose
 server.app.use(json());
 
 // Routes
-server.app.use(userRoute);
+server.app.use(userRouter);
+
+// Error Handler
+server.app.use(errorHandler);
 
 // make server listen on some port
 server.app.listen(port, () => {

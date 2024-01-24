@@ -3,6 +3,8 @@ import admin from "firebase-admin";
 
 import { firebaseAuth } from "../firebase/firebase_config";
 import User, { UserDocument } from "../models/User";
+import { UserError } from "../errors";
+import { errorHandler } from "../errors/handler";
 
 // Define the type for req.body
 type CreateUserRequestBody = {
@@ -44,7 +46,7 @@ export const createUser = async (
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    errorHandler(UserError.USER_CREATION_UNSUCCESSFUL, req, res);
   }
 
   return;

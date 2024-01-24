@@ -8,4 +8,4 @@ router.use(express.json());
 
 router.post("/createUser", createUser);
 
-export default router;
+export { router as userRouter };
