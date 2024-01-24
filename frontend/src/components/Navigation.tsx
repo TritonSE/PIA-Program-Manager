@@ -63,7 +63,7 @@ const Links = ({ setShelf, isMobile }: LinkProps) => {
         key={i}
         style={router.pathname === item.href ? { fill: "white" } : {}}
       >
-        <div className="h-4 w-4 sm:h-6 sm:w-6">{item.icon}</div>
+        <div className="h-4 w-4 lg:h-6 lg:w-6 sm:w-[14px] sm:h-[14px]">{item.icon}</div>
         <div
           className="font-bold max-sm:text-sm sm:max-lg:hidden"
           style={router.pathname === item.href ? { color: "white" } : {}}
@@ -96,8 +96,8 @@ function Navigation({ children }: { children: React.ReactNode }) {
         poppins.className,
       )}
     >
-      {/* mobile top bar - is not visible in nonmobile viewports */}
-      <div className="border-neutralGray absolute z-10 flex h-10 w-full items-center border-[1px] border-solid pl-4 sm:hidden">
+      {/* mobile top bar - is not visible in non-mobile screens */}
+      <div className="bg-pia_primary_light_green border-neutralGray absolute z-10 flex h-10 w-full items-center border-[1px] border-solid pl-4 sm:hidden">
         <Image
           src="/sidebar/nav_menu.svg"
           alt="nav burger"
@@ -132,7 +132,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
       </nav>
 
       <div
-        className="h-full w-full p-[24px] max-lg:absolute max-lg:pt-14 lg:w-[calc(100%-240px)]"
+        className="h-full w-full p-[24px] max-lg:absolute max-lg:pt-14 lg:w-[calc(100%-240px)] overflow-y-auto"
         onClick={(e) => {
           if (isMobile) {
             e.stopPropagation();
