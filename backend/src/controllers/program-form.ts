@@ -61,30 +61,12 @@ export type typeProgramForm = {
 export const createForm: RequestHandler = async (req, res, next) => {
   // extract any errors that were found by the validator
   const errors = validationResult(req);
-  const reqBody: typeProgramForm = req.body as typeProgramForm;
-  const { name, abbreviation, type, startDate, endDate, color } = reqBody;
 
   try {
     // if there are errors, then this function throws an exception
     validationErrorParser(errors); //errors
 
-    // const programForm = await ProgramFormModel.create({
-    //   name: String,
-    //   abbreviation: String,
-    //   type: String,
-    //   startDate: Date,
-    //   endDate: Date,
-    //   color: Number,
-    // });
-
-    const programForm = await ProgramFormModel.create({
-      name,
-      abbreviation,
-      type,
-      startDate,
-      endDate,
-      color,
-    });
+    const programForm = await ProgramFormModel.create(req.body as typeProgramForm);
 
     // 201 means a new resource has been created successfully
     // the newly created task is sent back to the user
