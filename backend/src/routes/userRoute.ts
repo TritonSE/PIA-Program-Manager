@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import admin, { ServiceAccount } from "firebase-admin";
 
 import { serviceAccountKey } from "../config";
-
 import User, { UserDocument } from "../models/User";
 
 // Define the type for req.body
@@ -10,7 +9,7 @@ type CreateUserRequestBody = {
   name: string;
   gender: string;
   accountType: "admin" | "team";
-  approvalStatus: string; // NOTE Should this be restricted to certain values?
+  approvalStatus: boolean;
   email: string;
   password: string;
 };
