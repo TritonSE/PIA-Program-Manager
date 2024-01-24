@@ -1,7 +1,8 @@
 import express, { Request, Response } from "express";
 import admin, { ServiceAccount } from "firebase-admin";
 
-import * as serviceAccount from "../firebase/ServiceAccountKey.json";
+import { serviceAccountKey } from "../config";
+
 import User, { UserDocument } from "../models/User";
 
 // Define the type for req.body
@@ -18,7 +19,7 @@ const router = express.Router();
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as ServiceAccount), // Type assertion
+  credential: admin.credential.cert(serviceAccountKey as ServiceAccount), // Type assertion
   databaseURL: process.env.FIREBASE_DATABASE_URL,
 });
 
