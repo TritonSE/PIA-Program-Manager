@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
-import admin, { ServiceAccount } from "firebase-admin";
+import admin from "firebase-admin";
 
-import { serviceAccountKey } from "../config";
+import { firebaseAuth } from "../firebase/firebase_config";
 import User, { UserDocument } from "../models/User";
 
 // Define the type for req.body
@@ -16,12 +16,6 @@ type CreateUserRequestBody = {
 
 const router = express.Router();
 
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountKey as ServiceAccount), // Type assertion
-  databaseURL: process.env.FIREBASE_DATABASE_URL,
-});
-
 router.use(express.json());
 
 router.post(
@@ -34,17 +28,17 @@ router.post(
       const { name, gender, accountType, approvalStatus, email, password } = req.body;
 
       // Create user in Firebase
-      const userRecord = await admin.auth().createUser({
+      const userRecord = await firebaseAuth.createUser({
         email,
         password,
       } as admin.auth.CreateRequest); // Type assertion
 
       // Set custom claim for accountType (“admin” | “team”)
-      await admin.auth().setCustomUserClaims(userRecord.uid, { accountType });
+      await firebaseAuth.setCustomUserClaims(userRecord.uid, { accountType });
 
       // Create user in MongoDB
       const newUser = new User({
-        _id: userRecord.uid,  // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
+        _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
         name,
         gender,
         accountType,
