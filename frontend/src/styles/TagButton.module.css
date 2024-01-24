@@ -1,0 +1,28 @@
+.button {
+  width: auto;
+  height: 2.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  border-radius: 4rem;
+  cursor: pointer;
+  letter-spacing: 2%;
+  line-height: 150%;
+  font-size: 16px;
+}
+
+.tagButton {
+  border: 1px solid rgb(var(--black));
+  background-color: rgb(var(--white));
+}
+.tagButton:hover {
+  background-color: rgba(var(--white), 22%);
+}
+.tagButton:active {
+  background-color: rgba(var(--white), 20%);
+}
+
+.disabled {
+  background-color: rgb(var(--gray-2));
+  color: rgb(var(--white));
+  border: none;
+}
