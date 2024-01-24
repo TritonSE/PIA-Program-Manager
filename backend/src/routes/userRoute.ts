@@ -44,11 +44,11 @@ router.post(
 
       // Create user in MongoDB
       const newUser = new User({
+        _id: userRecord.uid,  // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
         name,
         gender,
         accountType,
         approvalStatus,
-        firebaseUid: userRecord.uid,
       } as UserDocument); // Type assertion
 
       await newUser.save();
