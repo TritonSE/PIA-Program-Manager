@@ -51,8 +51,10 @@ export default function Home() {
                 Sign in to PIA
               </h1>
               <h1 className="text-1xl max-lg:text-1xl mb-6 text-black text-pia_accent">
-                Don&lsquo;st have an account?{" "}
-                <a className="text-blue text-1xl max-lg:text-1xl text-pia_accent">Sign up</a>
+                Don&lsquo;t have an account?{" "}
+                <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
+                  Sign up
+                </a>
               </h1>
             </div>
           )}
@@ -75,9 +77,7 @@ export default function Home() {
                 />
               </div>
               <div>
-                <h1 className="text-lg font-light text-black text-pia_accent max-lg:text-lg">
-                  Password
-                </h1>
+                <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Password</h1>
                 <Textfield
                   register={register}
                   setValue={setValue}
@@ -87,9 +87,9 @@ export default function Home() {
                 />
                 <h1
                   className={cn(
-                    "mt-1 text-black text-pia_accent",
-                    isTablet ? "" : "text-right",
-                    isMobile ? "text-sm max-lg:text-sm" : "text-lg max-lg:text-lg",
+                    "mt-1 text-lg font-light text-pia_accent",
+                    isTablet ? "underline" : "text-right text-pia_dark_green",
+                    isMobile ? "text-sm underline max-lg:text-sm" : "text-lg max-lg:text-lg",
                   )}
                 >
                   Forgot Password?
@@ -99,10 +99,12 @@ export default function Home() {
                 Sign In
               </button>
               {isMobile && (
-                <h1 className={cn("text-sm text-black text-pia_accent max-lg:text-sm")}>
-                  Don&lsquo;t have an account?{" "}
-                  <a className="text-blue text-sm text-pia_accent max-lg:text-sm">Sign up</a>
-                </h1>
+                <div className="flex items-center justify-center">
+                  <h1 className={cn("text-sm text-black text-pia_accent max-lg:text-sm")}>
+                    Don&lsquo;t have an account?{" "}
+                    <a className="text-blue text-sm text-pia_accent max-lg:text-sm">Sign up</a>
+                  </h1>
+                </div>
               )}
             </form>
           </div>
