@@ -11,7 +11,7 @@ type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 /**
  * Throws an error if the status code of the HTTP response indicates an error. If an HTTP error was
  * raised, throws an error.
- * 
+ *
  * @param response A `Response` object returned by `fetch()`
  * @throws An `Error` object if the response status was not successful (2xx) or a redirect (3xx)
  */
@@ -32,7 +32,7 @@ async function assertOK(response: Response): Promise<void> {
 
 /**
  * Wrapper for the `fetch()` function.
- * 
+ *
  * @param method The HTTP method (see `Method`)
  * @param url The URL to request from
  * @param body The request body (or undefined, if none)
@@ -62,7 +62,7 @@ async function fetchRequest(
 
 /**
  * Sends a GET request to the indicated API URL.
- * 
+ *
  * @param url The URL to request from
  * @param headers The request headers
  * @returns A `Response` object returned by `fetch()`
@@ -73,7 +73,7 @@ export async function GET(url: string, headers: Record<string, string> = {}): Pr
 
 /**
  * Sends a POST request with the provided request body to the indicated API URL.
- * 
+ *
  * @param url The URL to request from
  * @param body The request body (or undefined, if none)
  * @param headers The request headers
@@ -89,7 +89,7 @@ export async function POST(
 
 /**
  * Sends a PUT request with the provided request body to the indicated API URL.
- * 
+ *
  * @param url The URL to request from
  * @param body The request body (or undefined, if none)
  * @param headers The request headers
@@ -105,7 +105,7 @@ export async function PUT(
 
 /**
  * Sends a PATCH request with the provided request body to the indicated API URL.
- * 
+ *
  * @param url The URL to request from
  * @param body The request body (or undefined, if none)
  * @param headers The request headers
@@ -121,7 +121,7 @@ export async function PATCH(
 
 /**
  * Sends a DELETE request with the provided request body to the indicated API URL.
- * 
+ *
  * @param url The URL to request from
  * @param body The request body (or undefined, if none)
  * @param headers The request headers
@@ -149,13 +149,13 @@ export type APIError = { success: false; error: string };
  * to perform more straightforward exception-checking without requiring
  * extensive `try`-`catch` hadnling, making use of TypeScript's type narrowing
  * feature.
- * 
+ *
  * By checking the value of the `success` field, it can be quickly determined
  * whether the `data` field (containing an actual API response) or the `error`
  * field (containing an error message) should be accessed.
- * 
+ *
  * Recommended usage:
- * 
+ *
  * ```
  * if (result.success) {
  *   console.log(result.data);
@@ -168,9 +168,9 @@ export type APIResult<T> = APIData<T> | APIError;
 
 /**
  * Helper function for API client functions for consistent error handling.
- * 
+ *
  * Recommended usage:
- * 
+ *
  * ```
  * try {
  *   ...
@@ -178,7 +178,7 @@ export type APIResult<T> = APIData<T> | APIError;
  *   return handleAPIError(error);
  * }
  * ```
- * 
+ *
  * @param error The error thrown by a lower-level API function
  * @returns An `APIError` object with a message from the given error
  */
