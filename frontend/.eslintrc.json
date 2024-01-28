@@ -29,6 +29,14 @@
     // "@typescript-eslint/no-non-null-assertion": "off",
 
     // Avoid bugs.
+    "@typescript-eslint/no-misused-promises": [
+      2,
+      {
+        "checksVoidReturn": {
+          "attributes": false
+        }
+      }
+    ],
     "@typescript-eslint/no-shadow": ["error", { "ignoreTypeValueShadow": true }],
     "@typescript-eslint/no-unsafe-unary-minus": "error",
     "@typescript-eslint/no-unused-expressions": "error",
