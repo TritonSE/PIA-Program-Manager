@@ -135,11 +135,11 @@ export default function Home() {
                   placeholder="Enter password"
                 />
                 {passwordError ? (
-                  <h1 className="mt-1 flex items-center text-sm font-light text-orange-700 text-pia_accent">
+                  <h1 className="mt-1 flex items-center text-sm font-light text-orange-700">
                     <AlertCircle className="mr-1 text-sm" /> At least 6 characters
                   </h1>
                 ) : (
-                  <h1 className="mt-1 flex items-center text-sm font-light text-green-700 text-pia_accent">
+                  <h1 className="mt-1 flex items-center text-sm font-light text-green-700">
                     <CheckCircle2 className="mr-1 text-sm" /> At least 6 characters
                   </h1>
                 )}
@@ -158,7 +158,7 @@ export default function Home() {
                   placeholder="Re-enter Password"
                 />
                 {matchError && (
-                  <h1 className="mt-1 flex items-center text-sm font-light text-orange-700 text-pia_accent">
+                  <h1 className="mt-1 flex items-center text-sm font-light text-orange-700">
                     <AlertCircle className="mr-1 text-sm" /> Passwords do not match.
                   </h1>
                 )}
