@@ -19,11 +19,13 @@ type BaseProps = {
 type WithCalendarProps = BaseProps & {
   calendar: true; // When calendar is true, setValue is required
   setValue: UseFormSetValue<FieldValues>;
+  handleInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 type WithoutCalendarProps = BaseProps & {
   calendar?: false; // When calendar is false or not provided, setValue is optional
   setValue?: UseFormSetValue<FieldValues>;
+  handleInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 type TextFieldProps = WithCalendarProps | WithoutCalendarProps;
@@ -31,6 +33,7 @@ type TextFieldProps = WithCalendarProps | WithoutCalendarProps;
 export function Textfield({
   register,
   setValue,
+  handleInputChange,
   label,
   name,
   placeholder,
@@ -64,6 +67,7 @@ export function Textfield({
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={label + placeholder}
           type={type}
+          onChange={handleInputChange}
           placeholder={placeholder}
         />
 
