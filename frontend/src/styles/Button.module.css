@@ -1,0 +1,75 @@
+.button {
+  width: auto;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  letter-spacing: 2%;
+  line-height: 150%;
+  font-size: 16px;
+}
+
+/* styling for default size */
+.default {
+  height: 3rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.small {
+  height: 2.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.disabled {
+  background-color: rgb(var(--gray-2));
+  color: rgb(--var(white));
+  border: none;
+}
+
+.primary {
+  background-color: rgb(var(--primary-dark-green));
+  color: rgb(var(--white));
+  border: none;
+}
+.primary:hover {
+  background-color: rgba(var(--primary-dark-green), 80%);
+}
+.primary:active {
+  background-color: rgba(var(--primary-dark-green), 88%);
+}
+
+.secondary {
+  background-color: rgb(var(--white));
+  color: rgb(var(--primary-dark-green));
+  border: 0.0625rem solid rgb(var(--primary-dark-green));
+}
+.secondary:hover {
+  background-color: rgba(var(--primary-dark-green), 22%);
+}
+.secondary:active {
+  background-color: rgba(var(--primary-dark-green), 20%);
+}
+
+.destructive {
+  background-color: rgb(var(--error-red));
+  color: rgb(var(--white));
+  border: none;
+}
+.destructive:hover {
+  background-color: rgba(var(--error-red), 88%);
+}
+.destructive:active {
+  background-color: rgba(var(--error-red), 92%);
+}
+
+.destructiveSecondary {
+  background-color: rgb(var(--white));
+  color: rgb(var(--error-red));
+  border: 0.0625rem solid rgb(var(--error-red));
+}
+.destructiveSecondary:hover {
+  background-color: rgba(var(--error-red), 22%);
+}
+.destructiveSecondary:active {
+  background-color: rgba(var(--error-red), 20%);
+}

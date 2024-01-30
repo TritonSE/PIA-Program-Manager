@@ -31,7 +31,7 @@
 
     // Uncomment this if you have verbatimModuleSyntax enabled and importing
     // .ts files with a .js extension gives lint errors.
-    // "import/no-unresolved": "off",
+    "import/no-unresolved": "off",
 
     // Uncomment these if you really need to.
     // "@typescript-eslint/ban-ts-comment": "off",

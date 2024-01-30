@@ -2,27 +2,6 @@ import { body } from "express-validator";
 
 import { typeProgramForm } from "../controllers/program-form";
 
-// const makeIDValidator = () =>
-//   body("_id")
-//     .exists()
-//     .withMessage("_id is required")
-//     .bail()
-//     .isMongoId()
-//     .withMessage("_id must be a MongoDB object ID");
-// const makeTitleValidator = () =>
-//   body("title")
-//     // title must exist, if not this message will be displayed
-//     .exists()
-//     .withMessage("title is required")
-//     // bail prevents the remainder of the validation chain for this field from being executed if
-//     // there was an error
-//     .bail()
-//     .isString()
-//     .withMessage("title must be a string")
-//     .bail()
-//     .notEmpty()
-//     .withMessage("title cannot be empty");
-
 const makeNameValidator = () =>
   body("name")
     .exists()
@@ -60,7 +39,6 @@ const makeStartDateValidator = () =>
     .bail()
     .isISO8601()
     .withMessage("start date must be a valid date-time string");
-
 const makeEndDateValidator = () =>
   body("endDate")
     .exists()
@@ -80,19 +58,15 @@ const makeColorValidator = () =>
     .exists()
     .withMessage("color needed")
     .bail()
-    .isNumeric()
-    .withMessage("color should be int 1-4")
+    .isString()
+    .withMessage("color hex should be string")
+    .isLength({ min: 7, max: 7 })
+    .withMessage("color hex should have 7 digits")
     .bail()
-    .custom((value) => {
-      if (value < 1 || value > 4) throw new Error("color must be an option number 1-4");
-      return true;
-    });
-
-// assignee is for Part 2.1
-// const makeAssigneeValidator = () =>
-//   body("assignee").optional().isMongoId().withMessage("assignee must be a MongoDB object ID");
-
-// establishes a set of rules that the body of the task creation route must follow
+    .notEmpty()
+    .withMessage("color hex required")
+    .bail();
+// check for first chara being # and others being 1-F
 
 export const createForm = [
   makeNameValidator(),
@@ -102,26 +76,3 @@ export const createForm = [
   makeEndDateValidator(),
   makeColorValidator(),
 ];
-
-// export function createForm() {
-//     makeIDValidator();
-//     makeNameValidator();
-//     makeAbbreviationValidator();
-//     makeTypeValidator();
-//     makeStartDateValidator();
-//     makeEndDateValidator();
-//     makeColorValidator();
-// }
-
-// export const updateForm = [
-//   //   makeIDValidator(),
-//   //   makeTitleValidator(),
-//   //   makeDescriptionValidator(),
-//   //   makeIsCheckedValidator(),
-//   //   makeDateCreatedValidator(),
-//   //   makeAssigneeValidator(), // for Part 2.1
-// ];
-
-// export function editForm(arg0: string, editForm: any, createForm: RequestHandler<ParamsDictionary, any, any, ParsedQs, Record<string, any>>) {
-//     throw new Error("Function not implemented.");
-// }

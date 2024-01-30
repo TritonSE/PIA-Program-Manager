@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "express-validator": "^7.0.1"
+    "express-validator": "^7.0.1",
+    "firebase-admin": "^12.0.0"
   }
 }
