@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import admin from "firebase-admin";
 
-import { UserError } from "../errors";
+import { ValidationError } from "../errors";
 import { errorHandler } from "../errors/handler";
 import User, { UserDocument } from "../models/user";
 import { firebaseAuth } from "../util/firebase";
@@ -31,7 +31,7 @@ export const createUser = async (
         errStr += err.msg + " ";
       }
       errStr = errStr.trim();
-      throw new UserError(0, 400, errStr);
+      throw new ValidationError(0, 400, errStr);
     }
 
     const { name, accountType, email, password } = req.body;
@@ -45,28 +45,28 @@ export const createUser = async (
     // Set custom claim for accountType (“admin” | “team”)
     await firebaseAuth.setCustomUserClaims(userRecord.uid, { accountType });
 
-    // // Create user in MongoDB
-    // const newUser: UserDocument = new User({
-    //   _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
-    //   name,
-    //   accountType,
-    //   // approvalStatus default false in User constructor
-    // } as UserDocument); // Type assertion
-
-    // await newUser.save();
-
-    const newUser = await User.create({
+    // Create user in MongoDB
+    const newUser: UserDocument = new User({
       _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
       name,
       accountType,
       // approvalStatus default false in User constructor
-    } as UserDocument);
+    } as UserDocument); // Type assertion
+
+    await newUser.save();
+
+    // const newUser = await User.create({
+    //   _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
+    //   name,
+    //   accountType,
+    //   // approvalStatus default false in User constructor
+    // } as UserDocument);
 
     res.status(201).json({ message: "User created successfully" });
-    res.status(201).json(newUser);
+    // res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
-    errorHandler(UserError.USER_CREATION_UNSUCCESSFUL, req, res);
+    errorHandler(ValidationError.USER_CREATION_UNSUCCESSFUL, req, res);
   }
 
   return;
