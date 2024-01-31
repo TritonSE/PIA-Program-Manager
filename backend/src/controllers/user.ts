@@ -46,7 +46,7 @@ export const createUser = async (
     await firebaseAuth.setCustomUserClaims(userRecord.uid, { accountType });
 
     // Create user in MongoDB
-    const newUser = new User({
+    const newUser: UserDocument = new User({
       _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
       name,
       accountType,
