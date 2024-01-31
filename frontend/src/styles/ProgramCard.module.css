@@ -1,0 +1,87 @@
+.outerDiv {
+  letter-spacing: 2%;
+  line-height: 150%;
+
+  flex-grow: 1;
+  flex-basis: 40%;
+
+  min-width: 260px;
+  max-width: 540px;
+  height: max(140px, min(22.7vw, 300px));
+  border-radius: 16px;
+  overflow: hidden;
+  color: rgb(var(--white));
+
+  padding: 0px;
+}
+
+.topDiv {
+  height: max(75px, min(12vw, 159px));
+}
+.teal {
+  background-color: rgb(var(--secondary-teal));
+}
+.yellow {
+  background-color: rgb(var(--secondary-yellow));
+}
+.red {
+  background-color: rgb(var(--secondary-red));
+}
+.green {
+  background-color: rgb(var(--secondary-green));
+}
+
+.botDiv {
+  height: 46.3%;
+  background-color: rgb(var(--white));
+  color: rgb(var(--black));
+}
+
+.type {
+  text-transform: uppercase;
+  position: relative;
+  top: max(8px, min(20px, 4vw - 24px));
+  left: max(12px, min(32px, 1.875vw));
+  font-size: max(10px, min(14px, 1.56vw));
+}
+
+.title {
+  text-transform: capitalize;
+  position: relative;
+
+  top: max(6px, min(40px, 6vw - 40px));
+  left: max(12px, min(32px, 1.875vw));
+  font-size: max(14px, min(28px, 2.11vw));
+  font-weight: 700;
+}
+
+.dates {
+  position: relative;
+  top: max(8px, min(24px, 1.875vw));
+  left: max(12px, min(32px, 1.875vw));
+  font-size: max(10px, min(16px, 1.56vw));
+}
+
+.numText {
+  line-height: max(20px, min(24px, 2.5vw));
+  font-size: max(10px, min(16px, 1.56vw));
+}
+
+.numStudents {
+  height: max(20px, min(32px, 2.12vw));
+  width: fill;
+  gap: 6px;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  top: max(12px, min(64px, 8vw - 36px));
+  left: max(12px, min(32px, 1.875vw));
+  vertical-align: top;
+}
+
+.icon {
+  height: max(7.6px, (min(12px, 1.12vw)));
+  width: max(12px, (min(18px, 1.68vw)));
+  position: relative;
+  top: 6px;
+}
