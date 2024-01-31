@@ -30,7 +30,7 @@ void mongoose
 server.app.use(json());
 
 // Routes
-server.app.use(userRouter);
+server.app.use("/user", userRouter);
 
 // Error Handler
 server.app.use(errorHandler);
