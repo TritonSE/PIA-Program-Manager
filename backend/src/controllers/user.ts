@@ -4,8 +4,8 @@ import admin from "firebase-admin";
 
 import { UserError } from "../errors";
 import { errorHandler } from "../errors/handler";
-import { firebaseAuth } from "../util/firebase";
 import User, { UserDocument } from "../models/user";
+import { firebaseAuth } from "../util/firebase";
 
 // Define the type for req.body
 type CreateUserRequestBody = {
