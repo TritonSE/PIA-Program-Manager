@@ -1,8 +1,7 @@
-import { title } from "process";
+import { League_Gothic } from "next/font/google";
+
 import { ProgramCard } from "../components/ProgramCard";
 import styles from "../styles/Programs.module.css";
-
-import { League_Gothic } from "next/font/google";
 
 const gothic = League_Gothic({ weight: ["400"], style: "normal", subsets: [] });
 

@@ -52,7 +52,7 @@ export function ProgramCard({ type, title, dates, numStudents, color, className 
   numClass += ` ${poppins.className}`;
 
   let numTextClass = styles.numText;
-  numTextClass = ` ${poppins.className}`;
+  numTextClass += ` ${poppins.className}`;
 
   const iconClass = styles.icon;
 
