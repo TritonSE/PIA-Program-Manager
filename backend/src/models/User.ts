@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
   _id: { type: String, required: true }, // Set _id to firebaseUid; Linkage between firebase account and user document on MongoDb
   name: { type: String, required: true },
   accountType: { type: String, enum: ["admin", "team"], required: true },
-  approvalStatus: { type: Boolean, required: true },
+  approvalStatus: { type: Boolean, default: false },
 });
 
 export default mongoose.model<UserDocument>("User", userSchema);

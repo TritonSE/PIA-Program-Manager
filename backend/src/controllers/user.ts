@@ -5,13 +5,12 @@ import admin from "firebase-admin";
 import { UserError } from "../errors";
 import { errorHandler } from "../errors/handler";
 import { firebaseAuth } from "../firebase/firebase_config";
-import User, { UserDocument } from "../models/User";
+import User, { UserDocument } from "../models/user";
 
 // Define the type for req.body
 type CreateUserRequestBody = {
   name: string;
   accountType: "admin" | "team";
-  approvalStatus: boolean;
   email: string;
   password: string;
 };
@@ -35,7 +34,7 @@ export const createUser = async (
       throw new UserError(0, 400, errStr);
     }
 
-    const { name, accountType, approvalStatus, email, password } = req.body;
+    const { name, accountType, email, password } = req.body;
 
     // Create user in Firebase
     const userRecord = await firebaseAuth.createUser({
@@ -51,7 +50,6 @@ export const createUser = async (
       _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
       name,
       accountType,
-      approvalStatus,
     } as UserDocument); // Type assertion
 
     await newUser.save();
