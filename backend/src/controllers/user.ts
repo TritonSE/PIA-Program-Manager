@@ -50,6 +50,10 @@ export const createUser = async (
       _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
       name,
       accountType,
+
+      // accountType false by default (User model contructor)
+      // but, adding this line to pass lint check
+      approvalStatus: false,
     } as UserDocument); // Type assertion
 
     await newUser.save();
