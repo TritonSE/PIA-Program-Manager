@@ -6,7 +6,7 @@
     background: var(--Primary-PIA---primary-white, #FFF);
 }
 
-.form-title {
+.formTitle {
     color: var(--Primary-PIA---primary-text, #202124);
 
     /* Title/Title - Small */
@@ -18,14 +18,14 @@
     letter-spacing: 0.48px;
 }
 
-.form-container {
+.formContainer {
     display: inline-flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 24px;
 }
 
-.program-name-label {
+.programNameLabel {
     color: var(--Neutral-Gray4, #909090);
     text-align: center;
     
@@ -37,7 +37,7 @@
     line-height: 150%; /* 24px */
 }
 
-.program-name-input {
+.programNameInput {
     color: var(--Primary-PIA---primary-text, #202124);
 
     /* Body/Medium (Regular) */
@@ -48,7 +48,7 @@
     line-height: 150%; /* 24px */
 }
 
-.program-abbr-label {
+.programAbbrLabel {
     color: var(--Neutral-Gray4, #909090);
 
     /* Body/Medium (Regular) */
@@ -59,7 +59,7 @@
     line-height: 150%; /* 24px */
 }
 
-.program-abbr-input {
+.programAbbrInput {
     color: var(--Primary-PIA---primary-text, #202124);
 
     /* Body/Medium (Regular) */
@@ -70,7 +70,7 @@
     line-height: 150%; /* 24px */
 }
 
-.program-type-label {
+.programTypeLabel {
     color: var(--Neutral-Gray4, #909090);
     text-align: center;
     
@@ -82,7 +82,7 @@
     line-height: 150%; /* 24px */
 }
 
-.program-type-selected {
+.programTypeSelected {
     display: flex;
     width: 144px;
     height: 48px;
@@ -98,7 +98,7 @@
     background: rgba(255, 255, 255, 0.00);
 }
 
-.program-type-unselected {
+.programTypeUnselected {
     display: flex;
     width: 144px;
     height: 48px;
@@ -114,7 +114,7 @@
     background: rgba(255, 255, 255, 0.00);
 }
 
-.program-date-label {
+.programDateLabel {
     color: var(--Neutral-Gray4, #909090);
 
     /* Body/Medium (Regular) */
@@ -125,7 +125,7 @@
     line-height: 150%; /* 24px */
 }
 
-.program-date-input {
+.programDateInput {
     display: inline-flex;
     padding: 8px 16px;
     align-items: center;
@@ -136,12 +136,12 @@
     background: var(--Neutral-Gray0, #F3F3F3);
 }
 
-.program-date-icon {
+.programDateIcon {
     width: 20px;
     height: 20px;
 }
 
-.program-date-date {
+.programDateDate {
     flex: 1 0 0;
 
     color: var(--Primary-PIA---primary-text, #202124);
@@ -154,14 +154,14 @@
     line-height: 150%; /* 24px */
 }
 
-.program-color-container {
+.programColorContainer {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
 }
 
-.program-color-label {
+.programColorLabel {
     color: var(--Neutral-Gray4, #909090);
     text-align: center;
     
@@ -173,13 +173,13 @@
     line-height: 150%; /* 24px */
 }
 
-.program-color-options-container {
+.programColorOptionsContainer {
     display: flex;
     align-items: flex-start;
     gap: 16px;
 }
 
-.program-color-option-teal {
+.programColorOptionTeal {
     width: 40px;
     height: 40px;
 
@@ -188,7 +188,7 @@
     stroke: var(--Neutral-Gray4, #909090);
 }
 
-.program-color-option-yellow {
+.programColorOptionYellow {
     width: 40px;
     height: 40px;
 
@@ -197,7 +197,7 @@
     stroke: var(--Neutral-Gray4, #909090);
 }
 
-.program-color-option-red {
+.programColorOptionRed {
     width: 40px;
     height: 40px;
 
@@ -206,7 +206,7 @@
     stroke: var(--Neutral-Gray4, #909090);
 }
 
-.program-color-option-green {
+.programColorOptionGreen {
     width: 40px;
     height: 40px;
 
