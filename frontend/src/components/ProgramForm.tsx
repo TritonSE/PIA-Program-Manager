@@ -19,10 +19,6 @@ export interface ProgramFormProperties {
 interface ProgramFormErrors {
     name?: boolean;
     abbr?: boolean;
-    type?: boolean;
-    start?: boolean;
-    end?: boolean;
-    color?: boolean;
 }
 
 
@@ -38,12 +34,35 @@ export function ProgramForm({ mode, program, onSubmit }: ProgramFormProperties) 
     const [errors, setErrors] = useState<ProgramFormErrors>({});
 
     const handleSubmit = () => {
+        // Preliminary input validation
         setErrors({});
-
-        // TODO: Input validation
+        if (name.length === 0) {
+            setErrors({ name: true });
+            return;
+        }
+        if (abbr.length === 0) {
+            setErrors({ abbr: true });
+            return;
+        }
 
         setLoading(true);
         createTask({ name, abbr, type, start, end, color }).then((result) => {
+            if (result.success) {
+                // Clear form
+                setName("");
+                setAbbr("");
+                setType("regular");
+                setStart(new Date());
+                setEnd(new Date());
+                setColor("teal");
+
+                if (onSubmit) {
+                    onSubmit(result.data);
+                }
+            } else {
+                alert(result.error);
+            }
+            
             setLoading(false);
         });
     }
