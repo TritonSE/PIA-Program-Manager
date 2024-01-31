@@ -2,6 +2,8 @@
  * 
  */
 
+import { type APIResult, GET, handleAPIError, POST } from "src/api/requests";
+
 
 /**
  * 
@@ -46,4 +48,49 @@ function parseProgram(program: ProgramJSON): Program {
         end: new Date(program.type),
         color: program.color
     };
+}
+
+
+/**
+ * 
+ */
+export interface ProgramRequest {
+    name: string;
+    abbr: string;
+    type: "regular" | "varying";
+    start: Date;
+    end: Date;
+    color: "teal" | "yellow" | "red" | "green";
+}
+
+
+/**
+ * 
+ * @param program 
+ * @returns 
+ */
+export async function createProgram(program: ProgramRequest): Promise<APIResult<Program>> {
+    try {
+        const response = await POST("/api/program", program);
+        const json = (await response.json()) as ProgramJSON;
+        return { success: true, data: parseProgram(json) };
+    } catch (error) {
+        handleAPIError(error);
+    }
+}
+
+
+/**
+ * 
+ * @param id 
+ * @returns 
+ */
+export async function getProgram(id: string): Promise<APIResult<Task>> {
+    try {
+        const response = await GET(`/api/program/${id}`);
+        const json = (await response.json()) as ProgramJSON;
+        return { success: true, data: parseProgram(json) };
+    } catch (error) {
+        return handleAPIError(error);
+    }
 }
