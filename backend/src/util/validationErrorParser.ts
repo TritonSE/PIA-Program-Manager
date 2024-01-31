@@ -1,5 +1,6 @@
 import { Result, ValidationError } from "express-validator";
-import createHttpError from "http-errors";
+
+import { ValidationError as InputError } from "../errors/validation";
 
 /**
  * Parses through errors thrown by validator (if any exist). Error messages are
@@ -18,7 +19,7 @@ const validationErrorParser = (errors: Result<ValidationError>) => {
     }
 
     // trim removes the trailing space created in the for loop
-    throw createHttpError(400, errorString.trim());
+    throw new InputError(errorString);
   }
 };
 

@@ -1,6 +1,6 @@
 import { body } from "express-validator";
 
-import { typeProgramForm } from "../controllers/program-form";
+import { Program } from "../controllers/program";
 
 const makeNameValidator = () =>
   body("name")
@@ -48,7 +48,7 @@ const makeEndDateValidator = () =>
     .withMessage("end date must be a valid date-time string")
     .bail()
     .custom((value: string, { req }) => {
-      const reqBody: typeProgramForm = req.body as typeProgramForm;
+      const reqBody: Program = req.body as Program;
       if (new Date(value) < new Date(reqBody.startDate))
         throw new Error("end date must be after start date");
       return true;
