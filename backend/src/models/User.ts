@@ -1,14 +1,5 @@
 import mongoose, { Document } from "mongoose";
 
-// // Did not fix lint errors ==========================================================
-// export type UserDocument = Partial<
-//   {
-//     name: string;
-//     accountType: "admin" | "team"; // NOTE Also stored on Firebase using Custom Claims
-//     approvalStatus: boolean;
-//   } & Document
-// >;
-
 export type UserDocument = {
   name: string;
   accountType: "admin" | "team"; // NOTE Also stored on Firebase using Custom Claims
