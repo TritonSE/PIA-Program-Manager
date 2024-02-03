@@ -35,10 +35,10 @@ const studentSchema = new Schema({
   intakeDate: { type: Date, required: true },
   tourDate: { type: Date, required: true },
 
-  //For now, chose to express these as strings. Will probably be replaced with
+  //For now, chose to express these as a list of strings. Will probably be replaced with
   //program subdocs in the future once they have been defined
-  prog1: { type: String, required: true },
-  prog2: { type: String, default: "" },
+  prog1: { type: [String], required: true },
+  prog2: { type: [String], default: "" },
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },

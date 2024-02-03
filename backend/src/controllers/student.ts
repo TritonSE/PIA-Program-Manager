@@ -25,9 +25,9 @@ export type typedModel = {
   birthday: string;
   intakeDate: string;
   tourDate: string;
-  prog1: string;
-  prog2: string;
-  dietary: string;
+  prog1: string[];
+  prog2: string[];
+  dietary: string[];
   otherString: string;
 };
 
