@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import admin from "firebase-admin";
 
-import UserModel, { UserDocument } from "../models/user";
+import UserModel from "../models/user";
 import { firebaseAuth } from "../util/firebase";
 import validationErrorParser from "../util/validationErrorParser";
 
@@ -36,14 +36,14 @@ export const createUser = async (
     // Set custom claim for accountType (“admin” | “team”)
     await firebaseAuth.setCustomUserClaims(userRecord.uid, { accountType });
 
-    const newUser2 = await UserModel.create({
+    const newUser = await UserModel.create({
       _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
       name,
       accountType,
       // approvalStatus default false in User constructor
-    } as UserDocument);
+    });
 
-    res.status(201).json(newUser2);
+    res.status(201).json(newUser);
   } catch (error) {
     console.error(error);
     nxt(error);
