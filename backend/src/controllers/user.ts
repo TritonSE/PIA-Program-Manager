@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import admin from "firebase-admin";
 
-import User, { UserDocument } from "../models/user";
+import UserModel, { UserDocument } from "../models/user";
 import { firebaseAuth } from "../util/firebase";
 import validationErrorParser from "../util/validationErrorParser";
 
@@ -36,7 +36,7 @@ export const createUser = async (
     // Set custom claim for accountType (“admin” | “team”)
     await firebaseAuth.setCustomUserClaims(userRecord.uid, { accountType });
 
-    const newUser2 = await User.create({
+    const newUser2 = await UserModel.create({
       _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
       name,
       accountType,

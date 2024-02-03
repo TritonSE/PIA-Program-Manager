@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document, InferSchemaType } from "mongoose";
 
 export type UserDocument = {
   name: string;
@@ -13,4 +13,6 @@ const userSchema = new mongoose.Schema({
   approvalStatus: { type: Boolean, default: false }, // default false
 });
 
-export default mongoose.model<UserDocument>("User", userSchema);
+type User = InferSchemaType<typeof userSchema>;
+
+export default mongoose.model<User>("User", userSchema);
