@@ -15,6 +15,8 @@
     "prepare": "cd .. && husky install .husky"
   },
   "dependencies": {
+    "@radix-ui/react-alert-dialog": "^1.0.5",
+    "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-slot": "^1.0.2",
     "@testing-library/jest-dom": "^6.1.5",
@@ -29,9 +31,9 @@
     "react": "^18",
     "react-day-picker": "^8.10.0",
     "react-dom": "^18",
-    "tailwindcss": "^3.4.1",
     "react-hook-form": "^7.49.3",
     "tailwind-merge": "^2.2.0",
+    "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",
     "ts-jest": "^29.1.1"
   },
@@ -49,9 +51,9 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "husky": "^8.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.11",
     "postcss": "^8.4.33",
     "prettier": "^3.1.1",
+    "prettier-plugin-tailwindcss": "^0.5.11",
     "tailwindcss": "^3.4.1",
     "ts-jest": "^29.1.1",
     "typescript": "^5"
