@@ -2,6 +2,8 @@ import { json } from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
 
+import studentRoutes from "../src/routes/student";
+
 import { mongoURI, port } from "./config";
 import { errorHandler } from "./errors/handler";
 import { userRouter } from "./routes/user";
@@ -31,7 +33,7 @@ server.app.use(json());
 
 // Routes
 server.app.use("/user", userRouter);
-
+server.app.use("/student", studentRoutes);
 // Error Handler
 server.app.use(errorHandler);
 
