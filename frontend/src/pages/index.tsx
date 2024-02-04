@@ -21,7 +21,7 @@ export default function Home() {
         <div
           className={cn(
             "flex h-full flex-col",
-            isMobile ? "pt-[20%] w-[80%]" : "mb-[8%] w-[65%] justify-center",
+            isMobile ? "w-[80%] pt-[20%]" : "mb-[8%] w-[65%] justify-center",
           )}
         >
           {isMobile && (
