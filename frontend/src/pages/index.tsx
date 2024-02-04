@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 export default function Home() {
   const { register, setValue, handleSubmit } = useForm();
 
-  const [passwordError, setPasswordError] = useState(false);
+  const [passwordError, setPasswordError] = useState(true);
   const [matchError, setMatchError] = useState(false);
   const [emailError, setEmailError] = useState(false);
 
@@ -63,9 +63,9 @@ export default function Home() {
                   />
                 </div>
                 <div className="mb-5 mt-5 flex flex-col items-center">
-                  <h1 className="font-[alternate-gothic] text-3xl max-lg:text-3xl">WELCOME TO</h1>
+                  <h1 className="font-[alternate-gothic] text-3xl max-lg:text-3xl">Welcome to</h1>
                   <h1 className="font-[alternate-gothic] text-3xl max-lg:text-3xl">
-                    PLANT IT AGAIN!
+                  Plant it Again!
                   </h1>
                 </div>
               </div>
@@ -74,7 +74,7 @@ export default function Home() {
           {!isMobile && (
             <div>
               <h1 className="font-[alternate-gothic] text-5xl text-black max-lg:text-5xl">
-                Create An Account
+                Create an Account
               </h1>
               <h1 className="text-1xl max-lg:text-1xl mb-6 text-black text-pia_accent">
                 Already have an account?{" "}
