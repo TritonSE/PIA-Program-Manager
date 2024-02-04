@@ -21,7 +21,7 @@ export default function Home() {
         <div
           className={cn(
             "flex h-full flex-col",
-            isMobile ? "mt-[20%] w-[80%]" : "mb-[8%] w-[65%] justify-center",
+            isMobile ? "pt-[20%] w-[80%]" : "mb-[8%] w-[65%] justify-center",
           )}
         >
           {isMobile && (
@@ -47,12 +47,10 @@ export default function Home() {
           )}
           {!isMobile && (
             <div>
-              <h1 className="font-[alternate-gothic] text-5xl text-black max-lg:text-5xl">
-                Sign in to PIA
-              </h1>
-              <h1 className="text-1xl max-lg:text-1xl mb-6 text-black text-pia_accent">
+              <h1 className="mb-2 text-4xl font-bold text-black ">Sign in to PIA</h1>
+              <h1 className="text-1xl max-lg:text-1xl mb-6 text-pia_accent">
                 Don&lsquo;t have an account?{" "}
-                <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
+                <a className="text-1xl max-lg:text-1xl font-bold text-pia_dark_green hover:cursor-pointer">
                   Sign up
                 </a>
               </h1>
@@ -65,9 +63,7 @@ export default function Home() {
               className="flex w-full flex-col justify-between gap-8"
             >
               <div>
-                <h1 className="text-lg font-light text-black text-pia_accent max-lg:text-lg">
-                  Email Address
-                </h1>
+                <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Email Address</h1>
                 <Textfield
                   register={register}
                   name={"email"}
@@ -87,7 +83,7 @@ export default function Home() {
                 />
                 <h1
                   className={cn(
-                    "mt-1 text-lg font-light text-pia_accent",
+                    "mt-1 text-lg font-light text-pia_accent hover:cursor-pointer",
                     isTablet ? "underline" : "text-right text-pia_dark_green",
                     isMobile ? "text-sm underline max-lg:text-sm" : "text-lg max-lg:text-lg",
                   )}
@@ -100,9 +96,11 @@ export default function Home() {
               </button>
               {isMobile && (
                 <div className="flex items-center justify-center">
-                  <h1 className={cn("text-sm text-black text-pia_accent max-lg:text-sm")}>
+                  <h1 className={cn("text-sm text-pia_accent max-lg:text-sm")}>
                     Don&lsquo;t have an account?{" "}
-                    <a className="text-blue text-sm text-pia_accent max-lg:text-sm">Sign up</a>
+                    <a className="text-sm font-bold text-pia_dark_green hover:cursor-pointer max-lg:text-sm">
+                      Sign up
+                    </a>
                   </h1>
                 </div>
               )}
