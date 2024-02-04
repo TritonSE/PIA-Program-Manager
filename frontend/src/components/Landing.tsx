@@ -20,7 +20,7 @@ const Logo = () => {
       <div className="mb-14 flex flex-col items-center">
         <h1 className="font-[alternate-gothic] text-6xl text-white max-lg:text-5xl">Welcome to</h1>
         <h1 className="font-[alternate-gothic] text-6xl text-white max-lg:text-5xl">
-        Plant it Again!
+          Plant it Again!
         </h1>
       </div>
       <div className="flex h-[50%] flex-col items-center">
