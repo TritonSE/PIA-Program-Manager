@@ -2,6 +2,8 @@ import { json } from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
 
+import studentRoutes from "../src/routes/student";
+
 import { mongoURI, port } from "./config";
 import { errorHandler } from "./errors/handler";
 import program from "./routes/program";
@@ -27,6 +29,9 @@ void mongoose
 
 server.app.use(json());
 server.app.use("/program", program);
+server.app.use(errorHandler);
+
+server.app.use("/student", studentRoutes);
 server.app.use(errorHandler);
 
 // make server listen on some port
