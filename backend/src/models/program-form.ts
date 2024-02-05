@@ -2,7 +2,7 @@
 
 import { InferSchemaType, Schema, model } from "mongoose";
 
-const programFormSchema = new Schema({
+const programSchema = new Schema({
   name: { type: String, required: true },
   abbreviation: { type: String, required: true }, // e.g. ENTR
   type: { type: String, required: true }, // regular vs. varying
@@ -11,6 +11,6 @@ const programFormSchema = new Schema({
   color: { type: String, required: true }, // options: 1 (teal, #4FA197), 2 (yellow, #FFB800), 3 (pink, #FF7A5E), 4 (olive, #B6BF0E)
 });
 
-type ProgramForm = InferSchemaType<typeof programFormSchema>;
+type ProgramForm = InferSchemaType<typeof programSchema>;
 
-export default model<ProgramForm>("ProgramForm", programFormSchema);
+export default model<ProgramForm>("ProgramForm", programSchema);

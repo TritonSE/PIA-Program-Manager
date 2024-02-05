@@ -61,11 +61,26 @@ const makeColorValidator = () =>
     .isString()
     .withMessage("color hex should be string")
     .isLength({ min: 7, max: 7 })
-    .withMessage("color hex should have 7 digits")
+    .withMessage("color hex should have 7 characters")
     .bail()
     .notEmpty()
     .withMessage("color hex required")
-    .bail();
+    .bail()
+    .custom((value: string) => {
+      if (value.length !== 7) throw new Error("color hex should have 7 characters");
+      if (value.startsWith("#")) throw new Error("color hex should start with #");
+      for (let i = 1; i <= 6; i++) {
+        const code = value.charCodeAt(i);
+        if (
+          !(code > 47 && code < 58) && // numeric (0-9)
+          !(code > 64 && code < 91)
+        ) {
+          // upper alpha (A-Z)
+          throw new Error("color hex must be a hex string, with characters 0-9 or A-F");
+        }
+      }
+      return true;
+    });
 // check for first chara being # and others being 1-F
 
 export const createForm = [
