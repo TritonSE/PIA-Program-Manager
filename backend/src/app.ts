@@ -7,6 +7,7 @@ import studentRoutes from "../src/routes/student";
 import { mongoURI, port } from "./config";
 import { errorHandler } from "./errors/handler";
 import program from "./routes/program";
+import { userRouter } from "./routes/user";
 
 /**
  * Express server application class
@@ -18,6 +19,7 @@ class Server {
 // initialize server app
 const server = new Server();
 
+// Connect to MongoDB
 void mongoose
   .connect(mongoURI)
   .then(() => {
@@ -27,11 +29,15 @@ void mongoose
     console.log(error);
   });
 
+// Middleware
 server.app.use(json());
 server.app.use("/program", program);
 server.app.use(errorHandler);
 
+// Routes
+server.app.use("/user", userRouter);
 server.app.use("/student", studentRoutes);
+// Error Handler
 server.app.use(errorHandler);
 
 // make server listen on some port
