@@ -1,53 +1,57 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { Calendar } from "../components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import { cn } from "../lib/utils";
 
+import { FormData } from "./StudentForm/types";
+
 type BaseProps = {
-  register: UseFormRegister<FieldValues>;
-  name: string;
+  register: UseFormRegister<FormData>;
+  name: keyof FormData;
   label?: string;
   type?: string;
   placeholder: string;
+  defaultValue?: string;
   className?: string;
 };
 
 type WithCalendarProps = BaseProps & {
-  calendar: true; // When calendar is true, setValue is required
-  setValue: UseFormSetValue<FieldValues>;
+  calendar: true; // When calendar is true, setCalendarValue is required
+  setCalendarValue: UseFormSetValue<FormData>;
 };
 
 type WithoutCalendarProps = BaseProps & {
-  calendar?: false; // When calendar is false or not provided, setValue is optional
-  setValue?: UseFormSetValue<FieldValues>;
+  calendar?: false; // When calendar is false or not provided, setCalendarValue is optional
+  setCalendarValue?: UseFormSetValue<FormData>;
 };
 
 type TextFieldProps = WithCalendarProps | WithoutCalendarProps;
 
 export function Textfield({
   register,
-  setValue,
+  setCalendarValue,
   label,
   name,
   placeholder,
   calendar = false,
   className,
   type = "text",
+  defaultValue = "",
 }: TextFieldProps) {
   const [date, setDate] = useState<Date>();
 
   useEffect(() => {
-    if (date && setValue) {
+    if (date && setCalendarValue) {
       const parsedDate = date.toLocaleDateString(undefined, {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
       });
-      setValue(name, parsedDate);
+      setCalendarValue(name, parsedDate);
     }
   }, [date]);
 
@@ -55,7 +59,7 @@ export function Textfield({
     <Popover>
       <div
         className={cn(
-          "relative flex rounded-md border-[1px] border-pia_border px-2 py-3 focus-within:border-pia_dark_green ",
+          "relative flex flex-grow rounded-md border-[1px] border-pia_border px-2 py-3 focus-within:border-pia_dark_green ",
           className,
         )}
       >
@@ -65,6 +69,15 @@ export function Textfield({
           id={label + placeholder}
           type={type}
           placeholder={placeholder}
+          defaultValue={
+            calendar && defaultValue
+              ? new Date(defaultValue).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })
+              : defaultValue
+          }
         />
 
         {label ? (
