@@ -31,7 +31,7 @@ export default function StudentFormButton({
   data = null,
   classname,
 }: StudentFormProps) {
-  const { register, setValue: setCalendarValue, handleSubmit } = useForm<FormData>();
+  const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<FormData>();
 
   const onSubmit: SubmitHandler<FormData> = (formData: FormData) => {
     const transformedData: StudentFormData = {
@@ -63,7 +63,7 @@ export default function StudentFormButton({
       dietary: formData.dietary,
       otherString: formData.other,
     };
-
+    reset(); //Clear form
     console.log(`${type} student data:`, transformedData);
   };
 
