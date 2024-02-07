@@ -53,4 +53,4 @@ export const getAllStudents: RequestHandler = async (_, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
