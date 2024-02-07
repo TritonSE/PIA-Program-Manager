@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 
 import { CustomError } from "./errors";
 import { InternalError } from "./internal";
@@ -6,7 +6,7 @@ import { InternalError } from "./internal";
 /**
  * Generic Error Handler
  */
-export const errorHandler = (err: Error, req: Request, res: Response) => {
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if (!err) return;
   if (err instanceof CustomError && !(err instanceof InternalError)) {
     console.log(err.displayMessage(true));
