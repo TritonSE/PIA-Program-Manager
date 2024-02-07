@@ -64,6 +64,7 @@ export default function StudentFormButton({
       otherString: formData.other,
     };
     reset(); //Clear form
+
     console.log(`${type} student data:`, transformedData);
   };
 
