@@ -1,4 +1,5 @@
 .env
+ServiceAccountKey.json
 node_modules/
 .eslintcache
 
