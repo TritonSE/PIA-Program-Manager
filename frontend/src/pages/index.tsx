@@ -2,12 +2,13 @@ import Image from "next/image";
 import { useMemo } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
+import { FormData } from "@/components/StudentForm/types";
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const { register, setValue, handleSubmit } = useForm();
+  const { register, setValue, handleSubmit } = useForm<FormData>();
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
@@ -66,7 +67,7 @@ export default function Home() {
                 <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Email Address</h1>
                 <Textfield
                   register={register}
-                  name={"email"}
+                  name="student_email"
                   label={""}
                   type="email"
                   placeholder="name@email.com"
@@ -76,9 +77,9 @@ export default function Home() {
                 <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Password</h1>
                 <Textfield
                   register={register}
-                  setValue={setValue}
-                  name={"date"}
+                  name={"student_password"}
                   label=""
+                  type="password"
                   placeholder="Enter Password"
                 />
                 <h1
