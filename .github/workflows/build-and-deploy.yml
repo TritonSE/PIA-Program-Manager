@@ -1,0 +1,50 @@
+name: Build and Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      firebaseProjectId:
+        required: true
+        type: string
+      firebaseHostingChannelId:
+        required: false
+        type: string
+
+jobs:
+  build_and_preview:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Create Frontend .env
+        run: |
+          cd frontend
+          touch .env
+          echo FIREBASE_CONFIG=${{ secrets.FIREBASE_CONFIG }} >> .env
+      - name: Create Backend .env
+        run: |
+          cd backend
+          touch .env
+          echo MONGO_URI=${{ secrets.MONGO_URI }} >> .env
+          echo SERVICE_ACCOUNT_KEY=${{ secrets.SERVICE_ACCOUNT_KEY }} >> .env
+          echo FRONTEND_ORIGIN=${{ vars.FRONTEND_ORIGIN }} >> .env
+      - name: Build Frontend
+        run: cd frontend && npm ci && npm run build
+      - name: Build Backend
+        run: |
+          cd backend
+          npm run build
+      - name: Deploy to Firebase
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: ${{ inputs.firebaseProjectId }}
+          channelId: ${{ inputs.firebaseHostingChannelId }}
+        env:
+          FIREBASE_CLI_EXPERIMENTS: pintags
