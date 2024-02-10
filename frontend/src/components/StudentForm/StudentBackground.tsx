@@ -4,13 +4,13 @@ import { cn } from "../../lib/utils";
 import { Checkbox } from "../Checkbox";
 import { Textfield } from "../Textfield";
 
-import { FormData, StudentFormData } from "./types";
+import { StudentData, StudentFormData } from "./types";
 
 type StudentBackgroundProps = {
-  register: UseFormRegister<FormData>;
+  register: UseFormRegister<StudentFormData>;
   classname?: string;
-  setCalendarValue: UseFormSetValue<FormData>;
-  data: StudentFormData | null;
+  setCalendarValue: UseFormSetValue<StudentFormData>;
+  data: StudentData | null;
 };
 
 const dietaryList = ["Nuts", "Eggs", "Seafood", "Pollen", "Dairy", "Other"];
