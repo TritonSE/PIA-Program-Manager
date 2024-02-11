@@ -5,7 +5,7 @@ export type Contact = {
   phoneNumber: string;
 };
 
-export type StudentFormData = {
+export type StudentData = {
   student: Contact;
   emergency: Contact;
   serviceCoordinator: Contact;
@@ -20,7 +20,7 @@ export type StudentFormData = {
   otherString: string;
 };
 
-export type FormData = {
+export type StudentFormData = {
   student_name: string;
   student_last: string;
   student_email: string;

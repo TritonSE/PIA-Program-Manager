@@ -7,7 +7,7 @@ import { Button } from "./Button";
 import ContactInfo from "./StudentForm/ContactInfo";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
-import { FormData, StudentFormData } from "./StudentForm/types";
+import { StudentData, StudentFormData } from "./StudentForm/types";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 type BaseProps = {
@@ -16,12 +16,12 @@ type BaseProps = {
 
 type EditProps = BaseProps & {
   type: "edit";
-  data: StudentFormData | null;
+  data: StudentData | null;
 };
 
 type AddProps = BaseProps & {
   type: "add";
-  data?: StudentFormData | null;
+  data?: StudentData | null;
 };
 
 type StudentFormProps = EditProps | AddProps;
@@ -31,10 +31,10 @@ export default function StudentFormButton({
   data = null,
   classname,
 }: StudentFormProps) {
-  const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<FormData>();
+  const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<StudentFormData>();
 
-  const onSubmit: SubmitHandler<FormData> = (formData: FormData) => {
-    const transformedData: StudentFormData = {
+  const onSubmit: SubmitHandler<StudentFormData> = (formData: StudentFormData) => {
+    const transformedData: StudentData = {
       student: {
         firstName: formData.student_name,
         lastName: formData.student_last,
