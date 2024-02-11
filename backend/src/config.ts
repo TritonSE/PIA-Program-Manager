@@ -6,9 +6,7 @@ import { InternalError } from "./errors";
 dotenv.config({ path: ".env" });
 
 function throwIfUndefined(envVar: string | undefined, error: InternalError) {
-  if (envVar === undefined) {
-    throw error;
-  }
+  if (!envVar) throw error;
   return envVar;
 }
 
