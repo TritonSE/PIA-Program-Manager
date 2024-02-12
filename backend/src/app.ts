@@ -1,6 +1,7 @@
 import { json } from "body-parser";
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 
 import studentRoutes from "../src/routes/student";
 
@@ -27,6 +28,12 @@ void mongoose
   .catch((error) => {
     console.log(error);
   });
+
+server.app.use(
+  cors({
+    origin: process.env.FRONTEND_ORIGIN,
+  }),
+);
 
 // Middleware
 server.app.use(json());

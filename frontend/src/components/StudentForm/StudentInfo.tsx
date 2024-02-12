@@ -62,7 +62,7 @@ export default function StudentInfo({
           <h3>Varying Programs</h3>
           <Checkbox
             register={register}
-            name="regular_programs"
+            name="varying_programs"
             options={varyingPrograms}
             defaultValue={data?.prog2}
           />

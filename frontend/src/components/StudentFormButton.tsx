@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import { createStudent } from "../api/students";
 import { cn } from "../lib/utils";
 
 import { Button } from "./Button";
@@ -55,15 +56,27 @@ export default function StudentFormButton({
       },
       location: formData.address,
       medication: formData.medication,
-      birthday: formData.birthdate,
-      intakeDate: formData.intake_date,
-      tourDate: formData.tour_date,
-      prog1: formData.regular_programs,
-      prog2: formData.regular_programs,
+      birthday: new Date(formData.birthdate).toISOString(),
+      intakeDate: new Date(formData.intake_date).toISOString(),
+      tourDate: new Date(formData.tour_date).toISOString(),
+      prog1: formData.regular_programs ? formData.regular_programs : ([] as string[]),
+      prog2: formData.varying_programs ? formData.varying_programs : ([] as string[]),
       dietary: formData.dietary,
       otherString: formData.other,
     };
-    reset(); //Clear form
+    //reset(); //Clear form
+    if (type === "add") {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      createStudent(transformedData).then((result) => {
+        if (result.success) {
+          reset();
+          handleSubmit?.(result.data);
+        } else {
+          console.log(result.error);
+          alert("Unable to create student: " + result.error);
+        }
+      });
+    }
 
     console.log(`${type} student data:`, transformedData);
   };

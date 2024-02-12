@@ -111,12 +111,12 @@ const makeProg1Validator = () =>
     .exists()
     .withMessage("Program 1 field required")
     .bail()
-    .isString()
-    .withMessage("Program 1 must be a string");
+    .isArray()
+    .withMessage("Program 1 must be an array");
 
 //prog2
 const makeProg2Validator = () =>
-  body("prog2").optional().isString().withMessage("Program 2 must be a string");
+  body("prog2").optional().isArray().withMessage("Program 2 must be an array");
 
 //dietary
 //validates entire array
@@ -151,4 +151,6 @@ export const createStudent = [
   makeDietaryArrayValidator(),
   makeDietaryItemsValidator(),
   makeDietaryOtherValidator(),
+  body("prog2.*").isString().withMessage("Programs must be strings"),
+  body("prog1.*").isString().withMessage("Programs must be strings"),
 ];

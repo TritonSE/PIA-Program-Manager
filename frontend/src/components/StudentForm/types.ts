@@ -41,4 +41,5 @@ export type FormData = {
   intake_date: string;
   tour_date: string;
   regular_programs: string[];
+  varying_programs: string[];
 };

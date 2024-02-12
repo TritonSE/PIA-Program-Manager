@@ -1,5 +1,5 @@
 import { POST, handleAPIError } from "../api/requests";
-import { Contact } from "../components/StudentForm/types";
+import { Contact, StudentFormData } from "../components/StudentForm/types";
 
 import type { APIResult } from "../api/requests";
 
@@ -19,20 +19,7 @@ export type Student = {
   otherString?: string;
 };
 
-export type CreateStudentRequest = {
-  student: Contact;
-  emergency: Contact;
-  serviceCoordinator: Contact;
-  location: string;
-  medication?: string;
-  birthday: Date;
-  intakeDate: Date;
-  tourDate: Date;
-  prog1: string[];
-  prog2: string[];
-  dietary: string[];
-  otherString?: string;
-};
+export type CreateStudentRequest = StudentFormData;
 
 type StudentJSON = {
   _id: string;
@@ -70,7 +57,7 @@ function parseStudent(studentJSON: StudentJSON): Student {
 
 export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {
   try {
-    const response = await POST("/", student);
+    const response = await POST("/student", student);
     const json = (await response.json()) as StudentJSON;
     return { success: true, data: parseStudent(json) };
   } catch (error) {
