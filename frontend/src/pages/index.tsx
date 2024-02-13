@@ -2,13 +2,12 @@ import Image from "next/image";
 import { useMemo } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-import { FormData } from "@/components/StudentForm/types";
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function Home() {
-  const { register, setValue, handleSubmit } = useForm<FormData>();
+  const { register, handleSubmit } = useForm();
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);

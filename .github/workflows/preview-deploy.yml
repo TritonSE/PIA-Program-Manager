@@ -1,0 +1,13 @@
+name: Deploy Branch Preview
+on:
+  pull_request:
+
+jobs:
+  deploy_preview:
+    name: Deploy Branch Preview
+    if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
+    uses: ./.github/workflows/build-and-deploy.yml
+    with:
+      environment: Preview
+      firebaseProjectId: pia-dev-60cea
+    secrets: inherit
