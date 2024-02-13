@@ -18,4 +18,9 @@ const serviceAccountKey = throwIfUndefined(
   InternalError.NO_SERVICE_ACCOUNT_KEY,
 );
 
-export { port, mongoURI, serviceAccountKey };
+const firebaseConfig = throwIfUndefined(
+  process.env.FIREBASE_CONFIG,
+  InternalError.NO_FIREBASE_CONFIG,
+);
+
+export { port, mongoURI, serviceAccountKey, firebaseConfig };
