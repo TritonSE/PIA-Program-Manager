@@ -33,6 +33,7 @@ jobs:
           echo MONGO_URI=${{ secrets.MONGO_URI }} >> .env
           echo SERVICE_ACCOUNT_KEY=${{ secrets.SERVICE_ACCOUNT_KEY }} >> .env
           echo APP_PORT=${{ secrets.APP_PORT }} >> .env
+          echo FIREBASE_CONFIG=${{ secrets.FIREBASE_CONFIG }} >> .env
       - name: Build Frontend
         run: cd frontend && npm ci && npm run build
       - name: Build Backend
