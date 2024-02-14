@@ -1,7 +1,7 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import User from "../../../backend/src/models/user";
@@ -20,7 +20,7 @@ export default function CreateUser() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [name, setName] = useState("");
-  const [email, setEmail] useState("");
+  const [email, setEmail] = useState("");
 
   const router = useRouter();
 
@@ -29,11 +29,10 @@ export default function CreateUser() {
     switch (event.target.name) {
       case "name":
         setName(event.target.value);   // Save user name 
-        console.log(name);             // Use for linter
-        break;      
+        break; 
       case "email":
-        setEmail(event.target.value);
-        console.log(email);           // Use for linter
+        setEmail(event.target.value);   // Save user name 
+        break; 
       case "password":
         console.log(event.target.value.length, passwordError);
         setPassword(event.target.value);
@@ -62,8 +61,6 @@ export default function CreateUser() {
       console.error("Error checking if email already in use: ", error);
     }
 
-    // setName(data.name);   // Save user name 
-    // setEmail(data.email); // Save user email
     void router.push("/create_user_2");
   };
   // const onSubmit: SubmitHandler<FieldValues> = (data) => {

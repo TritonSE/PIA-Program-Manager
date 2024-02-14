@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { MouseEvent, useMemo, useState } from "react";
+import { MouseEvent, useMemo, useState, useEffect } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { POST, handleAPIError } from "../api/requests";
@@ -11,21 +11,62 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function CreateUser() {
-  const [isAdmin, setIsAdmin] = useState(true);
 
   const router = useRouter();
+  const { name, email, password } = router.query;
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  const [isAdmin, setIsAdmin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [createSuccess, setCreateSuccess] = useState(true);
+
+
+  // const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  //   console.log(data);
+  //   void router.push("/create_user_3");
+  // };
+
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
+
+    try {
+      setLoading(true);
+
+      const accountType = isAdmin ? "admin" : "team";
+
+      const response = await POST("/api/user", {
+        name,
+        accountType,
+        email,
+        password,
+      });
+
+      console.log("User created successfully:", response);
+      // void router.push("/create_user_3");
+    } catch (error) {
+      setCreateSuccess(false);
+      console.error("Error creating user:", error);
+      handleAPIError(error);
+    } finally {
+      setLoading(false);
+    }
+
     void router.push("/create_user_3");
   };
 
+  // const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  //   console.log(data);
+  //   void router.push("/create_user_3");
+  // };
   const onBack: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
     void router.push("/create_user");
   };
   const { width } = useWindowSize();
   const isMobile = useMemo(() => width <= 640, [width]);
+
+  useEffect(() => {
+    console.log("isAdmin changed:", isAdmin);
+  }, [isAdmin]);  
 
   function handleClick(event: MouseEvent<HTMLButtonElement>): void {
     switch (event.currentTarget.name) {
