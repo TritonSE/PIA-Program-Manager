@@ -11,7 +11,7 @@ type NavigationEntry = {
 export const navigation: NavigationEntry[] = [
   {
     title: "Home",
-    href: "/",
+    href: "/home",
     icon: (
       <svg
         width="100%"
@@ -77,8 +77,8 @@ export const navigation: NavigationEntry[] = [
         fill="inherit"
       >
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M13 3C13 2.44772 12.5523 2 12 2C11.4477 2 11 2.44772 11 3V4.08296C8.16229 4.55904 6 7.027 6 10V14.6972L4.16795 17.4453C3.96338 17.7522 3.94431 18.1467 4.11833 18.4719C4.29235 18.797 4.63121 19 5 19H19C19.3688 19 19.7077 18.797 19.8817 18.4719C20.0557 18.1467 20.0366 17.7522 19.8321 17.4453L18 14.6972V10C18 7.027 15.8377 4.55904 13 4.08296V3ZM12 6C9.79086 6 8 7.79086 8 10V15C8 15.1974 7.94156 15.3904 7.83205 15.5547L6.86852 17H17.1315L16.168 15.5547C16.0584 15.3904 16 15.1974 16 15V10C16 7.79086 14.2091 6 12 6Z"
           fill="inherit"
         />
@@ -87,20 +87,20 @@ export const navigation: NavigationEntry[] = [
           fill="inherit"
         />
         <path
-          fill-rule="evenodd"
-          clip-rule="evenodd"
+          fillRule="evenodd"
+          clipRule="evenodd"
           d="M13 3C13 2.44772 12.5523 2 12 2C11.4477 2 11 2.44772 11 3V4.08296C8.16229 4.55904 6 7.027 6 10V14.6972L4.16795 17.4453C3.96338 17.7522 3.94431 18.1467 4.11833 18.4719C4.29235 18.797 4.63121 19 5 19H19C19.3688 19 19.7077 18.797 19.8817 18.4719C20.0557 18.1467 20.0366 17.7522 19.8321 17.4453L18 14.6972V10C18 7.027 15.8377 4.55904 13 4.08296V3ZM12 6C9.79086 6 8 7.79086 8 10V15C8 15.1974 7.94156 15.3904 7.83205 15.5547L6.86852 17H17.1315L16.168 15.5547C16.0584 15.3904 16 15.1974 16 15V10C16 7.79086 14.2091 6 12 6Z"
           stroke="inherit"
-          stroke-width="0.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
         <path
           d="M12 22C13.1046 22 14 21.1046 14 20H10C10 21.1046 10.8954 22 12 22Z"
           stroke="inherit"
-          stroke-width="0.5"
-          stroke-linecap="round"
-          stroke-linejoin="round"
+          strokeWidth="0.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
         />
       </svg>
     ),

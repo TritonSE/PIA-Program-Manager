@@ -25,7 +25,7 @@ type LinkProps = {
 const Logo = ({ setShelf, isMobile, black }: LinkProps & { black?: boolean }) => {
   return (
     <Link
-      href="/"
+      href="/home"
       onClick={() => {
         if (isMobile) setShelf(false);
       }}
@@ -85,7 +85,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const ordering = navigation.map((item) => item.href);
-    const idx = ordering.indexOf(router.pathname) | 0;
+    const idx = ordering.indexOf(router.pathname) || 0;
     setOffset(idx * 68);
   }, [router.pathname]);
 
@@ -123,10 +123,16 @@ function Navigation({ children }: { children: React.ReactNode }) {
       >
         <Logo setShelf={setShelf} isMobile={isMobile} />
         <div className="relative flex flex-col gap-7 max-sm:gap-2 sm:max-lg:flex-row">
-          <div
-            className="absolute h-10 w-2 rounded-br-lg rounded-tr-lg bg-[white] max-lg:hidden"
-            style={{ top: offset, transition: "0.2s all" }}
-          ></div>
+          {router.pathname !== "/" && (
+            <div
+              className="absolute h-10 w-2 rounded-br-lg rounded-tr-lg bg-[white] max-lg:w-1 sm:max-lg:hidden"
+              style={{
+                top: isMobile ? offset * (48 / 68) : offset,
+                transition: "0.2s all",
+              }}
+            ></div>
+          )}
+
           <Links setShelf={setShelf} isMobile={isMobile} />
         </div>
       </nav>

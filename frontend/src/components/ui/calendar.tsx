@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Poppins } from "next/font/google";
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
 
@@ -8,11 +9,13 @@ import { buttonVariants } from "./button";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
+const poppins = Poppins({ subsets: ["latin"], weight: "400" });
+
 function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
-      className={cn("p-3", className)}
+      className={cn("font-poppins p-3", className, poppins.className)}
       classNames={{
         months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
         month: "space-y-4",
@@ -36,7 +39,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ),
         day_range_end: "day-range-end",
         day_selected:
-          "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+          "bg-pia_dark_green text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-pia_dark_green focus:text-primary-foreground",
         day_today: "bg-accent text-accent-foreground",
         day_outside:
           "day-outside text-muted-foreground opacity-50 aria-selected:bg-accent/50 aria-selected:text-muted-foreground aria-selected:opacity-30",
