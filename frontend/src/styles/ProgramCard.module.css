@@ -6,7 +6,7 @@
   flex-basis: 40%;
 
   min-width: 260px;
-  max-width: 540px;
+  max-width: min(540px, max(400px, 40vw));
   height: max(140px, min(22.7vw, 300px));
   border-radius: 16px;
   overflow: hidden;

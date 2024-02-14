@@ -1,19 +1,27 @@
-import { League_Gothic } from "next/font/google";
-
+import { Button } from "../components/Button";
 import { ProgramCard } from "../components/ProgramCard";
 import styles from "../styles/Programs.module.css";
-
-const gothic = League_Gothic({ weight: ["400"], style: "normal", subsets: [] });
 
 export default function Programs() {
   const cardsClass = styles.cards;
   const mainClass = styles.main;
+  const headerClass = styles.header;
   let titleClass = styles.title;
-  titleClass += ` ${gothic.className}`;
+  titleClass += ` font-[alternate-gothic]`;
+  const spacerClass = styles.spacer;
+  const grouperClass = styles.group;
+  const addTaskClass = styles.addTask;
 
   return (
     <main className={mainClass}>
-      <h1 className={titleClass}>PROGRAMS</h1>
+      <div className={headerClass}>
+        <h1 className={titleClass}>Programs</h1>
+        <div className={spacerClass}></div>
+        <div className={grouperClass}>
+          {/* Should be replaced with Add Button when created */}
+          <Button label="+ Create Program" className={addTaskClass}></Button>
+        </div>
+      </div>
       <div className={cardsClass}>
         <ProgramCard
           type="Standard"
