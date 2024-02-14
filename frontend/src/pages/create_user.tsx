@@ -4,6 +4,8 @@ import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
+import User from "../../backend/src/models/user";
+
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
@@ -37,12 +39,28 @@ export default function CreateUser() {
     }
   };
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    setEmailError(false); // add email error logic here
-    console.log(data);
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    try {
+      setEmailError(false);
+
+      const existingUser = await User.findByEmail(data.email);
+
+      if (existingUser) {
+        setEmailError(true);
+        return;
+      }
+    } catch (error) {
+      console.error("Error checking if email already in use: ", error);
+    }
 
     void router.push("/create_user_2");
   };
+  // const onSubmit: SubmitHandler<FieldValues> = (data) => {
+  //   setEmailError(false); // add email error logic here
+  //   console.log(data);
+
+  //   void router.push("/create_user_2");
+  // };
   const { width } = useWindowSize();
   const isMobile = useMemo(() => width <= 640, [width]);
 

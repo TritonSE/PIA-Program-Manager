@@ -29,7 +29,7 @@ type WithoutCalendarProps = BaseProps & {
   handleInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-type TextFieldProps<T extends FieldValues> = WithCalendarProps<T> | WithoutCalendarProps<T>;
+type TextFieldProps<T extends FieldValues> = WithCalendarProps<T>;
 
 export function Textfield<T extends FieldValues>({
   register,

@@ -13,6 +13,15 @@ const userSchema = new mongoose.Schema({
   approvalStatus: { type: Boolean, default: false }, // default false
 });
 
-type User = InferSchemaType<typeof userSchema>;
+// userSchema.statics.findByEmail = async function (email: string): Promise<UserDocument | null> {
+//   return this.findOne({ email }).exec();
+// };
+
+userSchema.statics.findByEmail = async function (email: string): Promise<mongoose.Document | null> {
+  return this.findOne({ email }).exec();
+};
+
+// type User = InferSchemaType<typeof userSchema>;
+type User = InferSchemaType<typeof userSchema> & typeof userSchema.statics;
 
 export default mongoose.model<User>("User", userSchema);
