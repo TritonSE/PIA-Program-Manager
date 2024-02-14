@@ -2,34 +2,34 @@
  * 
  */
 
-import { type APIResult, GET, handleAPIError, POST } from "src/api/requests";
+import { APIResult, GET, POST, handleAPIError } from "./requests";
 
 
 /**
  * 
  */
-export interface Program {
+export type Program = {
     _id: string;
     name: string;
     abbr: string;
     type: "regular" | "varying";
     start: Date;
     end: Date;
-    color: "teal" | "yellow" | "red" | "green";
-}
+    color: string;
+};
 
 
 /**
  * 
  */
-export interface ProgramJSON {
+export type ProgramJSON = {
     _id: string;
     name: string;
     abbr: string;
     type: "regular" | "varying";
     start: string;
     end: string;
-    color: "teal" | "yellow" | "red" | "green";
+    color: string;
 }
 
 
@@ -54,13 +54,13 @@ function parseProgram(program: ProgramJSON): Program {
 /**
  * 
  */
-export interface ProgramRequest {
+export type ProgramRequest = {
     name: string;
     abbr: string;
     type: "regular" | "varying";
     start: Date;
     end: Date;
-    color: "teal" | "yellow" | "red" | "green";
+    color: string;
 }
 
 
@@ -75,7 +75,7 @@ export async function createProgram(program: ProgramRequest): Promise<APIResult<
         const json = (await response.json()) as ProgramJSON;
         return { success: true, data: parseProgram(json) };
     } catch (error) {
-        handleAPIError(error);
+        return handleAPIError(error);
     }
 }
 
@@ -85,7 +85,7 @@ export async function createProgram(program: ProgramRequest): Promise<APIResult<
  * @param id 
  * @returns 
  */
-export async function getProgram(id: string): Promise<APIResult<Task>> {
+export async function getProgram(id: string): Promise<APIResult<Program>> {
     try {
         const response = await GET(`/api/program/${id}`);
         const json = (await response.json()) as ProgramJSON;
