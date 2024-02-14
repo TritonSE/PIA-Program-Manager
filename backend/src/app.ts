@@ -1,7 +1,7 @@
 import { json } from "body-parser";
+import cors from "cors";
 import express from "express";
 import mongoose from "mongoose";
-import cors from "cors";
 
 import studentRoutes from "../src/routes/student";
 

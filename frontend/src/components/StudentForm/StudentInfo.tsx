@@ -13,6 +13,7 @@ type StudentInfoProps = {
   data: StudentFormData | null;
 };
 
+// Temporary as long as we are storing programs as strings instead of ids
 const regularPrograms = ["Intro", "ENTR"];
 const varyingPrograms = ["TDS", "SDP"];
 

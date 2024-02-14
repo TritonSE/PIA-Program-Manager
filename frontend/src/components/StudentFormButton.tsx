@@ -56,29 +56,35 @@ export default function StudentFormButton({
       },
       location: formData.address,
       medication: formData.medication,
-      birthday: new Date(formData.birthdate).toISOString(),
-      intakeDate: new Date(formData.intake_date).toISOString(),
-      tourDate: new Date(formData.tour_date).toISOString(),
+      // Syntax is to prevent runtime errors when attempting to make dates with invalid date strings
+      birthday: Date.parse(formData.birthdate) ? new Date(formData.birthdate).toISOString() : "",
+      intakeDate: Date.parse(formData.intake_date)
+        ? new Date(formData.intake_date).toISOString()
+        : "",
+      tourDate: Date.parse(formData.tour_date) ? new Date(formData.tour_date).toISOString() : "",
       prog1: formData.regular_programs ? formData.regular_programs : ([] as string[]),
       prog2: formData.varying_programs ? formData.varying_programs : ([] as string[]),
       dietary: formData.dietary,
       otherString: formData.other,
     };
-    //reset(); //Clear form
     if (type === "add") {
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      createStudent(transformedData).then((result) => {
-        if (result.success) {
-          reset();
-          handleSubmit?.(result.data);
-        } else {
-          console.log(result.error);
-          alert("Unable to create student: " + result.error);
-        }
-      });
+      createStudent(transformedData).then(
+        (result) => {
+          if (result.success) {
+            reset(); // only clear form on success
+            handleSubmit?.(result.data);
+          } else {
+            console.log(result.error);
+            alert("Unable to create student: " + result.error);
+          }
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
     }
-
-    console.log(`${type} student data:`, transformedData);
+    //uncomment for testing
+    //console.log(`${type} student data:`, transformedData);
   };
 
   const [openForm, setOpenForm] = useState(false);

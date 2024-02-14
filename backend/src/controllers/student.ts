@@ -6,8 +6,8 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 
+import { ValidationError } from "../errors/validation";
 import StudentModel from "../models/student";
-import validationErrorParser from "../util/validationErrorParser";
 
 export type contact = {
   lastName: string;
@@ -34,8 +34,13 @@ export type typedModel = {
 export const createStudent: RequestHandler = async (req, res, next) => {
   try {
     const errors = validationResult(req);
-
-    validationErrorParser(errors);
+    if (!errors.isEmpty()) {
+      let errorString = "";
+      for (const error of errors.array()) {
+        errorString += error.msg + " ";
+      }
+      throw new ValidationError(0, 400, errorString);
+    }
 
     const newStudent = await StudentModel.create(req.body as typedModel);
 

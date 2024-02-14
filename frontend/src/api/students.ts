@@ -13,8 +13,8 @@ export type Student = {
   birthday: Date;
   intakeDate: Date;
   tourDate: Date;
-  prog1: string[];
-  prog2: string[];
+  regular_programs: string[];
+  varying_programs: string[];
   dietary: string[];
   otherString?: string;
 };
@@ -31,8 +31,8 @@ type StudentJSON = {
   birthday: string;
   intakeDate: string;
   tourDate: string;
-  prog1: string[];
-  prog2: string[];
+  regular_programs: string[];
+  varying_programs: string[];
   dietary: string[];
   otherString?: string;
 };
@@ -48,8 +48,8 @@ function parseStudent(studentJSON: StudentJSON): Student {
     birthday: new Date(studentJSON.birthday),
     intakeDate: new Date(studentJSON.intakeDate),
     tourDate: new Date(studentJSON.tourDate),
-    prog1: studentJSON.prog1,
-    prog2: studentJSON.prog2,
+    regular_programs: studentJSON.regular_programs,
+    varying_programs: studentJSON.varying_programs,
     dietary: studentJSON.dietary,
     otherString: studentJSON.otherString,
   } as Student;
