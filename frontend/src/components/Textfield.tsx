@@ -17,21 +17,24 @@ type BaseProps<T extends FieldValues> = {
   className?: string;
 };
 
-type WithCalendarProps<T extends FieldValues> = BaseProps<T> & {
-  calendar?: true; // When calendar is false or not provided, setCalendarValue is optional
-  setCalendarValue?: UseFormSetValue<T>;
+type WithCalendarProps = BaseProps & {
+  calendar: true; // When calendar is true, setValue is required
+  setValue: UseFormSetValue<FieldValues>;
+  handleInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-type WithoutCalendarProps<T extends FieldValues> = BaseProps<T> & {
-  calendar?: false; // When calendar is false or not provided, setCalendarValue is optional
-  setCalendarValue?: UseFormSetValue<T>;
+type WithoutCalendarProps = BaseProps & {
+  calendar?: false; // When calendar is false or not provided, setValue is optional
+  setValue?: UseFormSetValue<FieldValues>;
+  handleInputChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 type TextFieldProps<T extends FieldValues> = WithCalendarProps<T> | WithoutCalendarProps<T>;
 
 export function Textfield<T extends FieldValues>({
   register,
-  setCalendarValue,
+  setValue,
+  handleInputChange,
   label,
   name, //Must be a key in form data type specified in useForm hook
   placeholder,
@@ -66,6 +69,7 @@ export function Textfield<T extends FieldValues>({
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={label + placeholder}
           type={type}
+          onChange={handleInputChange}
           placeholder={placeholder}
           defaultValue={
             calendar && defaultValue
