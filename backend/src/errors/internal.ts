@@ -8,5 +8,6 @@ export class InternalError extends CustomError {
   static NO_APP_PORT = new InternalError(0, 500, NO_APP_PORT);
 
   static NO_MONGO_URI = new InternalError(1, 500, NO_MONGO_URI);
+
   static NO_SERVICE_ACCOUNT_KEY = new InternalError(5, 500, NO_SERVICE_ACCOUNT_KEY);
 }
