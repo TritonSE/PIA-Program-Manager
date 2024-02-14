@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-import User from "../../backend/src/models/user";
+import User from "../../../backend/src/models/user";
 
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";

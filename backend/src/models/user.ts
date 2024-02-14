@@ -1,4 +1,4 @@
-import mongoose, { InferSchemaType } from "mongoose";
+import mongoose, { InferSchemaType, Model } from "mongoose";
 
 // export type UserDocument = {
 //   name: string;
@@ -21,7 +21,16 @@ userSchema.statics.findByEmail = async function (email: string): Promise<mongoos
   return this.findOne({ email }).exec();
 };
 
-// type User = InferSchemaType<typeof userSchema>;
-type User = InferSchemaType<typeof userSchema> & typeof userSchema.statics;
+type UserDocument = InferSchemaType<typeof userSchema>;
 
-export default mongoose.model<User>("User", userSchema);
+type UserModel = {
+  findByEmail(email: string): Promise<Document | null>;
+} & Model<UserDocument>;
+
+// type User = InferSchemaType<typeof userSchema>;
+// type User = InferSchemaType<typeof userSchema> & typeof userSchema.statics;
+
+const User = mongoose.model<UserDocument, UserModel>("User", userSchema);
+
+// export default mongoose.model<User>("User", userSchema);
+export default User;
