@@ -6,8 +6,8 @@ import mongoose from "mongoose";
 
 import { mongoURI, port } from "./config";
 import { errorHandler } from "./errors/handler";
+import router from "./routes/api";
 import program from "./routes/program";
-import { userRouter } from "./routes/user";
 
 /**
  * Express server application class
