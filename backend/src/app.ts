@@ -8,7 +8,6 @@ import { mongoURI, port } from "./config";
 import { errorHandler } from "./errors/handler";
 import program from "./routes/program";
 import { userRouter } from "./routes/user";
-import router from "./routes/api";
 
 /**
  * Express server application class
