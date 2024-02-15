@@ -31,7 +31,27 @@ const makeTypeValidator = () =>
     .withMessage("type must be a string")
     .bail()
     .notEmpty()
-    .withMessage("type must not be empty");
+    .withMessage("type must not be empty")
+    .custom((value: string) => {
+      if (value !== "regular" && value !== "varying")
+        throw new Error("program type must be regular or varying");
+      return true;
+    });
+const makeDaysOfWeekValidator = () =>
+  body("daysOfWeek")
+    .exists()
+    .withMessage("days of week selection needed")
+    .bail()
+    .isArray()
+    .withMessage("days of week selection must be an array")
+    .custom((value: string[]) => {
+      if (value.length === 0) throw new Error("days of week selection needed");
+      for (const valuei of value) {
+        if (valuei !== "M" && valuei !== "T" && valuei !== "W" && valuei !== "TH" && valuei !== "F")
+          throw new Error("days of week selection must be M, T, W, TH, or F");
+      }
+      return true;
+    });
 const makeStartDateValidator = () =>
   body("startDate")
     .exists()
@@ -68,7 +88,7 @@ const makeColorValidator = () =>
     .bail()
     .custom((value: string) => {
       if (value.length !== 7) throw new Error("color hex should have 7 characters");
-      if (value.startsWith("#")) throw new Error("color hex should start with #");
+      if (!value.startsWith("#")) throw new Error("color hex should start with #");
       for (let i = 1; i <= 6; i++) {
         const code = value.charCodeAt(i);
         if (
@@ -87,6 +107,7 @@ export const createForm = [
   makeNameValidator(),
   makeAbbreviationValidator(),
   makeTypeValidator(),
+  makeDaysOfWeekValidator(),
   makeStartDateValidator(),
   makeEndDateValidator(),
   makeColorValidator(),

@@ -9,6 +9,7 @@ export type Program = {
   name: string;
   abbreviation: string;
   type: string;
+  daysOfWeek: string[];
   startDate: string;
   endDate: string;
   color: string; //colorValueHex;
