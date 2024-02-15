@@ -66,7 +66,7 @@ export default function Home() {
                 <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Email Address</h1>
                 <Textfield
                   register={register}
-                  name="student_email"
+                  name="user_email"
                   label={""}
                   type="email"
                   placeholder="name@email.com"
@@ -76,7 +76,7 @@ export default function Home() {
                 <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Password</h1>
                 <Textfield
                   register={register}
-                  name={"student_password"}
+                  name={"user_password"}
                   label=""
                   type="password"
                   placeholder="Enter Password"

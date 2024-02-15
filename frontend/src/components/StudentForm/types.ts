@@ -24,7 +24,6 @@ export type StudentFormData = {
   student_name: string;
   student_last: string;
   student_email: string;
-  student_password: string;
   student_phone: string;
   emergency_name: string;
   emergency_last: string;
