@@ -1,55 +1,40 @@
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
+import { Button } from "../components/Button";
 import { Checkbox } from "../components/Checkbox";
-import Radio from "../components/Radio";
+import StudentFormButton from "../components/StudentFormButton";
 import { Textfield } from "../components/Textfield";
+import sampleStudentData from "../sampleStudentData.json";
+
+type FruitData = {
+  fruits: string[];
+  favoriteFruit: string;
+};
 
 export default function Home() {
-  const dietaryList = ["Nuts", "Eggs", "Seafood", "Pollen", "Dairy", "Other"];
+  const { register, handleSubmit, reset } = useForm<FruitData>();
 
-  const { register, setValue, handleSubmit } = useForm();
-
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
+  const onSubmit = (formData: FruitData) => {
+    console.log(formData);
+    reset();
   };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col items-center justify-between gap-10 p-12"
-    >
-      <div className="grid gap-5">
-        <Textfield register={register} name={"firstname"} label="First" placeholder="John" />
-        <Textfield
-          register={register}
-          name={"email"}
-          label={"Email"}
-          type="email"
-          placeholder="johnsmith@gmail.com"
-        />
-        <Textfield
-          register={register}
-          setValue={setValue}
-          name={"date"}
-          label="Date"
-          placeholder="00/00/0000"
-          calendar={true}
-        />
+    <div className="w-1/2">
+      <div className="flex gap-5">
+        <StudentFormButton type="edit" data={sampleStudentData} />
+        <StudentFormButton type="add" />
       </div>
 
-      <div className="grid w-full sm:w-1/2 ">
-        <h2 className="mb-2 text-pia_accent">Dietary Restrictions</h2>
-        <Checkbox register={register} name="dietary" options={dietaryList} />
+      {/* Example */}
+      <div className="mt-5">
+        <h2 className="text-2xl font-bold">Example</h2>
+        <form className="grid gap-5" onSubmit={handleSubmit(onSubmit)}>
+          <Checkbox name="fruits" register={register} options={["apples", "oranges", "bananas"]} />
+          <Textfield name="favoriteFruit" register={register} placeholder="Favorite Fruit" />
+          <Button label="Submit" />
+        </form>
       </div>
-
-      <div className="">
-        <h2 className="mb-5 text-2xl font-bold">Gender</h2>
-        <Radio register={register} name="gender" options={["Male", "Female", "Rather not say"]} />
-      </div>
-
-      <button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
-        Submit
-      </button>
-    </form>
+    </div>
   );
 }

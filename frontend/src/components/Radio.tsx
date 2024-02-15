@@ -1,15 +1,20 @@
-import { FieldValues, UseFormRegister } from "react-hook-form";
+import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
 import { cn } from "../lib/utils";
 
-type RadioProps = {
+type RadioProps<T extends FieldValues> = {
   options: string[];
   className?: string;
-  name: string;
-  register: UseFormRegister<FieldValues>;
+  name: Path<T>;
+  register: UseFormRegister<T>;
 };
 
-export default function Radio({ options, register, name, className }: RadioProps) {
+export default function Radio<T extends FieldValues>({
+  options,
+  register,
+  name,
+  className,
+}: RadioProps<T>) {
   return (
     <div className={cn("grid gap-3", className)}>
       {options.map((option, index) => {

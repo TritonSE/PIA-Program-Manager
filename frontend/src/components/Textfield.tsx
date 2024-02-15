@@ -1,53 +1,55 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { FieldValues, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { FieldValues, Path, PathValue, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { Calendar } from "../components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import { cn } from "../lib/utils";
 
-type BaseProps = {
-  register: UseFormRegister<FieldValues>;
-  name: string;
+type BaseProps<T extends FieldValues> = {
+  register: UseFormRegister<T>;
+  name: Path<T>;
   label?: string;
   type?: string;
   placeholder: string;
+  defaultValue?: string;
   className?: string;
 };
 
-type WithCalendarProps = BaseProps & {
-  calendar: true; // When calendar is true, setValue is required
-  setValue: UseFormSetValue<FieldValues>;
+type WithCalendarProps<T extends FieldValues> = BaseProps<T> & {
+  calendar?: true; // When calendar is false or not provided, setCalendarValue is optional
+  setCalendarValue?: UseFormSetValue<T>;
 };
 
-type WithoutCalendarProps = BaseProps & {
-  calendar?: false; // When calendar is false or not provided, setValue is optional
-  setValue?: UseFormSetValue<FieldValues>;
+type WithoutCalendarProps<T extends FieldValues> = BaseProps<T> & {
+  calendar?: false; // When calendar is false or not provided, setCalendarValue is optional
+  setCalendarValue?: UseFormSetValue<T>;
 };
 
-type TextFieldProps = WithCalendarProps | WithoutCalendarProps;
+type TextFieldProps<T extends FieldValues> = WithCalendarProps<T> | WithoutCalendarProps<T>;
 
-export function Textfield({
+export function Textfield<T extends FieldValues>({
   register,
-  setValue,
+  setCalendarValue,
   label,
-  name,
+  name, //Must be a key in form data type specified in useForm hook
   placeholder,
   calendar = false,
   className,
   type = "text",
-}: TextFieldProps) {
+  defaultValue = "",
+}: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
 
   useEffect(() => {
-    if (date && setValue) {
+    if (date && setCalendarValue) {
       const parsedDate = date.toLocaleDateString(undefined, {
         year: "numeric",
         month: "2-digit",
         day: "2-digit",
       });
-      setValue(name, parsedDate);
+      setCalendarValue(name, parsedDate as PathValue<T, Path<T>>);
     }
   }, [date]);
 
@@ -55,16 +57,25 @@ export function Textfield({
     <Popover>
       <div
         className={cn(
-          "relative flex rounded-md border-[1px] border-pia_border px-2 py-3 focus-within:border-pia_dark_green ",
+          "relative flex flex-grow rounded-md border-[1px] border-pia_border px-2 py-3 focus-within:border-pia_dark_green ",
           className,
         )}
       >
         <input
-          {...register(name)}
+          {...register(name as Path<T>)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={label + placeholder}
           type={type}
           placeholder={placeholder}
+          defaultValue={
+            calendar && defaultValue
+              ? new Date(defaultValue).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "2-digit",
+                  day: "2-digit",
+                })
+              : defaultValue
+          }
         />
 
         {label ? (
