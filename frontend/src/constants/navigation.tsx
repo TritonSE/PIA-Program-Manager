@@ -11,7 +11,7 @@ type NavigationEntry = {
 export const navigation: NavigationEntry[] = [
   {
     title: "Home",
-    href: "/",
+    href: "/home",
     icon: (
       <svg
         width="100%"
