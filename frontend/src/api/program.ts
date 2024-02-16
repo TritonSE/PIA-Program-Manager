@@ -8,13 +8,20 @@ import { APIResult, GET, POST, handleAPIError } from "./requests";
 /**
  * 
  */
+export type Day = "M" | "T" | "W" | "TH" | "F"
+
+
+/**
+ * 
+ */
 export type Program = {
     _id: string;
     name: string;
-    abbr: string;
+    abbreviation: string;
     type: "regular" | "varying";
-    start: Date;
-    end: Date;
+    days: Day[];
+    start: string;
+    end: string;
     color: string;
 };
 
@@ -25,8 +32,9 @@ export type Program = {
 export type ProgramJSON = {
     _id: string;
     name: string;
-    abbr: string;
+    abbreviation: string;
     type: "regular" | "varying";
+    days: Day[];
     start: string;
     end: string;
     color: string;
@@ -42,10 +50,11 @@ function parseProgram(program: ProgramJSON): Program {
     return {
         _id: program._id,
         name: program.name,
-        abbr: program.abbr,
+        abbreviation: program.abbreviation,
         type: program.type,
-        start: new Date(program.type),
-        end: new Date(program.type),
+        days: program.days,
+        start: program.start,
+        end: program.end,
         color: program.color
     };
 }
@@ -56,8 +65,9 @@ function parseProgram(program: ProgramJSON): Program {
  */
 export type ProgramRequest = {
     name: string;
-    abbr: string;
+    abbreviation: string;
     type: "regular" | "varying";
+    days: Day[];
     start: Date;
     end: Date;
     color: string;
