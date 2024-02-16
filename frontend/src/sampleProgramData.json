@@ -1,0 +1,9 @@
+{
+    "name": "Green Bay Packers",
+    "abbreviation": "GBP",
+    "type": "regular",
+    "days": ["M", "TH"],
+    "start": "2024-01-01T00:00:00Z",
+    "end": "2024-01-14T00:00:00Z",
+    "color": "#4FA197"
+}

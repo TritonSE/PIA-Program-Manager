@@ -2,8 +2,10 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "../components/Button";
 import { Checkbox } from "../components/Checkbox";
+import ProgramForm from "../components/ProgramForm";
 import StudentFormButton from "../components/StudentFormButton";
 import { Textfield } from "../components/Textfield";
+import sampleProgramData from "../sampleProgramData.json";
 import sampleStudentData from "../sampleStudentData.json";
 
 type FruitData = {
@@ -24,6 +26,10 @@ export default function Home() {
       <div className="flex gap-5">
         <StudentFormButton type="edit" data={sampleStudentData} />
         <StudentFormButton type="add" />
+      </div>
+      <div>
+        <ProgramForm type="edit" data={sampleProgramData}/>
+        <ProgramForm type="add"/>
       </div>
 
       {/* Example */}
