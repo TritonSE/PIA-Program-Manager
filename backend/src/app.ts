@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import { mongoURI, port } from "./config";
 import { errorHandler } from "./errors/handler";
 import router from "./routes/api";
+import program from "./routes/program";
 
 /**
  * Express server application class
@@ -30,6 +31,8 @@ void mongoose
 
 // Middleware
 server.app.use(json());
+server.app.use("/program", program);
+server.app.use(errorHandler);
 
 // sets the "Access-Control-Allow-Origin" header on all responses to allow
 server.app.use(cors());
