@@ -1,9 +1,10 @@
 import { UseFormRegister } from "react-hook-form";
 
+import { StudentJSON } from "../../api/students";
 import { cn } from "../../lib/utils";
 import { Textfield } from "../Textfield";
 
-import { StudentData, StudentFormData } from "./types";
+import { StudentFormData } from "./types";
 
 type ContactRole = "student" | "emergency" | "serviceCoordinator";
 
@@ -13,7 +14,7 @@ type ContactInfoProps = {
   register: UseFormRegister<StudentFormData>;
   classname?: string;
   type: "add" | "edit";
-  data: StudentData | null;
+  data: StudentJSON | null;
 };
 
 type FieldProps = {
