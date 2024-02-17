@@ -40,8 +40,10 @@ export default function StudentFormButton({
     setValue: setCalendarValue,
     reset,
     handleSubmit,
-  } = useForm<StudentFormData>({ defaultValues: { varying_programs: [], regular_programs: [] } });
-  //Default values can be set for all fields but I specified these two fields because the checkbox value can sometimes be a string if it's a single value rather than array of strings. https://github.com/react-hook-form/react-hook-form/releases/tag/v7.30.0
+  } = useForm<StudentFormData>({
+    defaultValues: { varying_programs: [], regular_programs: [], dietary: [] },
+  });
+  //Default values can be set for all fields but I specified these three fields because the checkbox value can sometimes be a string if it's a single value rather than array of strings. https://github.com/react-hook-form/react-hook-form/releases/tag/v7.30.0
 
   const [openForm, setOpenForm] = useState(false);
 
