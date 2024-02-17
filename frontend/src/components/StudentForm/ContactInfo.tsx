@@ -64,7 +64,8 @@ export default function ContactInfo({ register, type, data, classname }: Contact
 
   const toTitleCase = (word: string) => {
     return word
-      .split("_")
+      .replace(/[A-Z]/g, " $&")
+      .split(" ")
       .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
       .join(" ");
   };
