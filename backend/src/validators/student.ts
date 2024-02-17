@@ -119,8 +119,9 @@ const makeRegularProgramsValidator = () =>
     .exists()
     .withMessage("Regular Programs field required")
     .bail()
-    .isArray()
-    .withMessage("Regular Programs must be an array");
+    .isArray({ min: 1 })
+    .withMessage("Regular Programs must be a non-empty array")
+    .bail();
 
 //prog2
 const makeVaryingProgramsValidator = () =>
@@ -128,8 +129,8 @@ const makeVaryingProgramsValidator = () =>
     .exists()
     .withMessage("Varying Programs field required")
     .bail()
-    .isArray()
-    .withMessage("Varying Programs must be an array");
+    .isArray({ min: 1 })
+    .withMessage("Varying Programs must be a non-empty array");
 
 //dietary
 //validates entire array
