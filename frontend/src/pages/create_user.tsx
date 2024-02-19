@@ -101,7 +101,6 @@ export default function CreateUser() {
                 </h1>
                 <Textfield
                   register={register}
-                  setValue={setValue}
                   name={"name"}
                   label={""}
                   placeholder="Enter your full name"
@@ -113,7 +112,6 @@ export default function CreateUser() {
                 </h1>
                 <Textfield
                   register={register}
-                  setValue={setValue}
                   handleInputChange={onChange}
                   name={"email"}
                   label={""}

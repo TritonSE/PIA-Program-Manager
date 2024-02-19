@@ -13,6 +13,7 @@ type BaseProps<T extends FieldValues> = {
   label?: string;
   type?: string;
   placeholder: string;
+  handleInputChange?: React.ChangeEventHandler<HTMLInputElement>; 
   defaultValue?: string;
   className?: string;
 };
@@ -37,8 +38,10 @@ export function Textfield<T extends FieldValues>({
   placeholder,
   calendar = false,
   className,
+  handleInputChange = ()=>{},
   type = "text",
   defaultValue = "",
+
 }: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
 
@@ -66,6 +69,7 @@ export function Textfield<T extends FieldValues>({
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={label + placeholder}
           type={type}
+          onChange={handleInputChange}
           placeholder={placeholder}
           defaultValue={
             calendar && defaultValue
