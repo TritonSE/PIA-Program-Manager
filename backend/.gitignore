@@ -1,3 +1,6 @@
+# Firebase Service Account Key
+src/firebase/ServiceAccountKey.json
+
 .env
 node_modules/
 .eslintcache

@@ -29,7 +29,7 @@ export default function Profile() {
           />
           <Textfield
             register={register}
-            setValue={setValue}
+            setCalendarValue={setValue}
             name={"date"}
             label="Date"
             placeholder="00/00/0000"
