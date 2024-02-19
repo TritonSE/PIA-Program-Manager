@@ -38,7 +38,7 @@ export function Textfield<T extends FieldValues>({
   placeholder,
   calendar = false,
   className,
-  handleInputChange = ()=>{},
+handleInputChange = ()=> {/* do nothing */},
   type = "text",
   defaultValue = "",
 

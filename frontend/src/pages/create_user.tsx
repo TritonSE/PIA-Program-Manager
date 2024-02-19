@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 export default function CreateUser() {
   const { register, setValue, handleSubmit } = useForm();
+  const _setValue = setValue;
 
   const [passwordError, setPasswordError] = useState(true);
   const [matchError, setMatchError] = useState(false);
@@ -131,7 +132,6 @@ export default function CreateUser() {
                 <Textfield
                   register={register}
                   name={"password"}
-                  setValue={setValue}
                   handleInputChange={onChange}
                   label={""}
                   type="password"
@@ -153,7 +153,6 @@ export default function CreateUser() {
                 </h1>
                 <Textfield
                   register={register}
-                  setValue={setValue}
                   handleInputChange={onChange}
                   name={"confirm"}
                   label=""
