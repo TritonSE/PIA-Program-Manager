@@ -10,4 +10,4 @@ router.use(express.json());
 router.post("/login", UserValidator.loginUser, UserController.loginUser);
 router.post("/", UserValidator.createUser, UserController.createUser);
 
-export { router as userRouter };
+export default router;
