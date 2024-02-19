@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { StudentJSON, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
-import { StudentMap } from "../pages";
+import { StudentMap } from "../pages/home";
 
 import { Button } from "./Button";
 import ContactInfo from "./StudentForm/ContactInfo";
