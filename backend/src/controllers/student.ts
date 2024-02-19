@@ -9,8 +9,6 @@ import { validationResult } from "express-validator";
 import StudentModel from "../models/student";
 import validationErrorParser from "../util/validationErrorParser";
 
-import { StudentJSON } from "./../../../frontend/src/api/students";
-
 export type contact = {
   lastName: string;
   firstName: string;
@@ -31,6 +29,29 @@ export type typedModel = {
   varyingPrograms: string[];
   dietary: string[];
   otherString: string;
+};
+
+type Contact = {
+  lastName: string;
+  firstName: string;
+  email: string;
+  phoneNumber: string;
+};
+
+type StudentJSON = {
+  _id: string;
+  student: Contact;
+  emergency: Contact;
+  serviceCoordinator: Contact;
+  location: string;
+  medication?: string;
+  birthday: Date;
+  intakeDate: Date;
+  tourDate: Date;
+  regularPrograms: string[];
+  varyingPrograms: string[];
+  dietary: string[];
+  otherString?: string;
 };
 
 export const createStudent: RequestHandler = async (req, res, next) => {
