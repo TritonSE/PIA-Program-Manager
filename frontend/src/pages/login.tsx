@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 export default function Login() {
   const { register, setValue, handleSubmit } = useForm();
+  const _setValue = setValue;
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
@@ -80,7 +81,6 @@ export default function Login() {
                 <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Password</h1>
                 <Textfield
                   register={register}
-                  setValue={setValue}
                   name={"date"}
                   label=""
                   placeholder="Enter Password"
