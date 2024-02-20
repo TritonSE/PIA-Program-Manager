@@ -1,28 +1,27 @@
 "use client";
-import { UseFormRegister } from "react-hook-form";
+import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
 import { cn } from "../lib/utils";
 
 import OtherCheckbox from "./OtherCheckbox";
-import { FormData } from "./StudentForm/types";
 
-type CheckboxProps = {
+type CheckboxProps<T extends FieldValues> = {
   options: string[];
   className?: string;
-  name: keyof FormData;
+  name: Path<T>;
   defaultValue?: string[];
   defaultOtherValue?: string;
-  register: UseFormRegister<FormData>;
+  register: UseFormRegister<T>;
 };
 
-export function Checkbox({
+export function Checkbox<T extends FieldValues>({
   options,
   className,
   name,
   register,
   defaultValue,
   defaultOtherValue,
-}: CheckboxProps) {
+}: CheckboxProps<T>) {
   return (
     <div className={cn("sm:min-w-2/5 min-w-4/5 grid gap-x-5 gap-y-5 sm:grid-cols-3", className)}>
       {options.map((item, index) => {

@@ -5,34 +5,17 @@ import { InternalError } from "./errors";
 //load the env variables from .env file
 dotenv.config({ path: ".env" });
 
-let portV = "";
-let mongoV = "";
-let serviceAccountKeyV = "";
-
-if (!process.env.APP_PORT) {
-  throw InternalError.NO_APP_PORT;
-} else {
-  portV = process.env.APP_PORT;
+function throwIfUndefined(envVar: string | undefined, error: InternalError) {
+  if (!envVar) throw error;
+  return envVar;
 }
 
-if (!process.env.MONGO_URI) {
-  throw InternalError.NO_MONGO_URI;
-} else {
-  mongoV = process.env.MONGO_URI;
-}
-
-if (!process.env.SERVICE_ACCOUNT_KEY) {
-  throw InternalError.NO_SERVICE_ACCOUNT_KEY;
-} else {
-  serviceAccountKeyV = process.env.SERVICE_ACCOUNT_KEY;
-}
-
-/**
- * Have to do this workaround since lint doesn't let
- * us export vars
- */
-const port = portV;
-const mongoURI = mongoV;
-const serviceAccountKey = serviceAccountKeyV;
+// Check if the required env variables are defined
+const port = throwIfUndefined(process.env.APP_PORT, InternalError.NO_APP_PORT);
+const mongoURI = throwIfUndefined(process.env.MONGO_URI, InternalError.NO_MONGO_URI);
+const serviceAccountKey = throwIfUndefined(
+  process.env.SERVICE_ACCOUNT_KEY,
+  InternalError.NO_SERVICE_ACCOUNT_KEY,
+);
 
 export { port, mongoURI, serviceAccountKey };

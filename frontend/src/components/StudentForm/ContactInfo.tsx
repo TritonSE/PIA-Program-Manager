@@ -3,17 +3,17 @@ import { UseFormRegister } from "react-hook-form";
 import { cn } from "../../lib/utils";
 import { Textfield } from "../Textfield";
 
-import { FormData, StudentFormData } from "./types";
+import { StudentData, StudentFormData } from "./types";
 
 type ContactRole = "student" | "emergency" | "serviceCoordinator";
 
 type PersonalInfoField = "firstName" | "lastName" | "email" | "phoneNumber";
 
 type ContactInfoProps = {
-  register: UseFormRegister<FormData>;
+  register: UseFormRegister<StudentFormData>;
   classname?: string;
   type: "add" | "edit";
-  data: StudentFormData | null;
+  data: StudentData | null;
 };
 
 type FieldProps = {
@@ -25,7 +25,7 @@ type FieldProps = {
 };
 
 type FinalFieldProps = {
-  name: keyof FormData;
+  name: keyof StudentFormData;
   label: string;
   placeholder: string;
   type?: string;

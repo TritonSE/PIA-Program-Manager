@@ -6,7 +6,7 @@ import { InternalError } from "./internal";
 /**
  * Generic Error Handler
  */
-export const errorHandler = (err: Error, req: Request, res: Response, _: NextFunction) => {
+export const errorHandler = (err: Error, _req: Request, res: Response, _nxt: NextFunction) => {
   if (!err) return;
   if (err instanceof CustomError && !(err instanceof InternalError)) {
     console.log(err.displayMessage(true));
