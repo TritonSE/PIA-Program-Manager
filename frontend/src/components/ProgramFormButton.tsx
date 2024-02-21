@@ -43,32 +43,20 @@ export default function ProgramFormButton({type = "edit", data = null, classname
         <>
             <Dialog open={openForm} onOpenChange={setOpenForm}>
                 <DialogTrigger asChild>
-                    <Button label={type === "add" ? "Add Program": "Edit Program"} onClick={() => {setOpenForm(true);}}/>
+                    <Button label={type === "add" ? "Add Program" : "Edit Program"} onClick={() => {setOpenForm(true);}}/>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="w-[872px] h-[658px] p-8 bg-white rounded-lg flex-col justify-start items-start gap-6 inline-flex">
                     <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
+                        <h2 className="text-neutral-800 text-2xl font-bold font-['Poppins'] leading-9 tracking-wide">
+                            {type === "add" ? "Add new program" : data?.name}
+                        </h2>
                         <Program register={register} data={data ?? null} setCalendarValue={setCalendarValue}/>
                         <div>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button label="Cancel" kind="secondary"/>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <div>
-                                        <p>Leave without saving changes?</p>
-                                        <div>
-                                            <DialogClose asChild>
-                                                <Button label="Back" kind="secondary"/>
-                                            </DialogClose>
-                                            <DialogClose asChild>
-                                                <Button label="Continue" onClick={() => { setOpenForm(false); }}/>
-                                            </DialogClose>
-                                        </div>
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
+                            <DialogClose>
+                                <Button label="Cancel" kind="secondary" onClick={() => { setOpenForm(false); }}/>
+                            </DialogClose>
                             <DialogClose asChild>
-                                <Button label="Save Changes" type="submit"/>
+                                <Button label="Create" type="submit"/>
                             </DialogClose>
                         </div>
                     </form>
