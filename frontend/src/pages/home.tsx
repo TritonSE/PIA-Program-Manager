@@ -30,26 +30,23 @@ export default function Home() {
     );
   }, []);
 
+  if (isLoading) return <p>Loading...</p>;
+
+  if (Object.keys(allStudents).length === 0)
+    return <p className="text-red-500">Please add a student first!</p>;
+
   return (
     <div className="w-1/2 space-y-5">
       <StudentFormButton type="add" setAllStudents={setAllStudents} />
       <div className="flex gap-5">
-        {isLoading ? (
-          <p>Loading...</p>
-        ) : (
-          <ul className="grid gap-5">
-            {Object.keys(allStudents).length === 0 ? (
-              <p className="text-red-500">Please add a student first!</p>
-            ) : (
-              Object.values(allStudents).map((student) => (
-                <li className="flex items-center justify-between gap-5" key={student._id}>
-                  <p>{student.student.firstName + " " + student.student.lastName}</p>
-                  <StudentFormButton type="edit" data={student} setAllStudents={setAllStudents} />
-                </li>
-              ))
-            )}
-          </ul>
-        )}
+        <ul className="grid gap-5">
+          {Object.values(allStudents).map((student) => (
+            <li className="flex items-center justify-between gap-5" key={student._id}>
+              <p>{student.student.firstName + " " + student.student.lastName}</p>
+              <StudentFormButton type="edit" data={student} setAllStudents={setAllStudents} />
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
