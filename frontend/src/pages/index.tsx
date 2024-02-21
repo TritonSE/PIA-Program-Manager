@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 
 import { Button } from "../components/Button";
 import { Checkbox } from "../components/Checkbox";
-import ProgramForm from "../components/ProgramForm";
+import ProgramForm from "../components/ProgramFormButton";
 import StudentFormButton from "../components/StudentFormButton";
 import { Textfield } from "../components/Textfield";
 import sampleProgramData from "../sampleProgramData.json";
