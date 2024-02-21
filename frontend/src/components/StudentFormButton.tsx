@@ -72,7 +72,6 @@ export default function StudentFormButton({
         (result) => {
           if (result.success) {
             reset(); // only clear form on success
-            handleSubmit?.(result.data);
           } else {
             console.log(result.error);
             alert("Unable to create student: " + result.error);
