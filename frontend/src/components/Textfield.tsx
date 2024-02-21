@@ -1,47 +1,49 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { FieldValues, Path, PathValue, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { Calendar } from "../components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
 import { cn } from "../lib/utils";
 
-import { FormData } from "./StudentForm/types";
-
-type BaseProps = {
-  register: UseFormRegister<FormData>;
-  name: keyof FormData;
+type BaseProps<T extends FieldValues> = {
+  register: UseFormRegister<T>;
+  name: Path<T>;
   label?: string;
   type?: string;
   placeholder: string;
+  handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   className?: string;
 };
 
-type WithCalendarProps = BaseProps & {
-  calendar: true; // When calendar is true, setCalendarValue is required
-  setCalendarValue: UseFormSetValue<FormData>;
+type WithCalendarProps<T extends FieldValues> = BaseProps<T> & {
+  calendar?: true; // When calendar is false or not provided, setCalendarValue is optional
+  setCalendarValue?: UseFormSetValue<T>;
 };
 
-type WithoutCalendarProps = BaseProps & {
+type WithoutCalendarProps<T extends FieldValues> = BaseProps<T> & {
   calendar?: false; // When calendar is false or not provided, setCalendarValue is optional
-  setCalendarValue?: UseFormSetValue<FormData>;
+  setCalendarValue?: UseFormSetValue<T>;
 };
 
-type TextFieldProps = WithCalendarProps | WithoutCalendarProps;
+type TextFieldProps<T extends FieldValues> = WithCalendarProps<T> | WithoutCalendarProps<T>;
 
-export function Textfield({
+export function Textfield<T extends FieldValues>({
   register,
   setCalendarValue,
   label,
-  name,
+  name, //Must be a key in form data type specified in useForm hook
   placeholder,
   calendar = false,
   className,
+  handleInputChange = () => {
+    /* do nothing */
+  },
   type = "text",
   defaultValue = "",
-}: TextFieldProps) {
+}: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function Textfield({
         month: "2-digit",
         day: "2-digit",
       });
-      setCalendarValue(name, parsedDate);
+      setCalendarValue(name, parsedDate as PathValue<T, Path<T>>);
     }
   }, [date]);
 
@@ -64,10 +66,11 @@ export function Textfield({
         )}
       >
         <input
-          {...register(name)}
+          {...register(name as Path<T>)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={label + placeholder}
           type={type}
+          onChange={handleInputChange}
           placeholder={placeholder}
           defaultValue={
             calendar && defaultValue

@@ -1,14 +1,20 @@
 import { AppProps } from "next/app";
 
-import Navigation from "../components/Navigation";
+import Landing from "../components/Landing";
+
 import "../styles/global.css";
 import "../styles/globals.css";
 
+// import Navigation from "../components/Navigation";
+
 function App({ Component, pageProps }: AppProps) {
   return (
-    <Navigation>
+    <Landing {...pageProps}>
       <Component {...pageProps} />
-    </Navigation>
+    </Landing>
+    // <Navigation>
+    //   <Component {...pageProps} />
+    // </Navigation>
   );
 }
 export default App;

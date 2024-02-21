@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
-import { UseFormRegister } from "react-hook-form";
+import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
-import { FormData } from "./StudentForm/types";
 import { Textfield } from "./Textfield";
 
-type OtherCheckboxProps = {
-  register: UseFormRegister<FormData>;
+type OtherCheckboxProps<T extends FieldValues> = {
+  register: UseFormRegister<T>;
   defaultOtherValue?: string;
 };
 
-export default function OtherCheckbox({ register, defaultOtherValue = "" }: OtherCheckboxProps) {
+export default function OtherCheckbox<T extends FieldValues>({
+  register,
+  defaultOtherValue = "",
+}: OtherCheckboxProps<T>) {
   const [checked, setChecked] = useState(defaultOtherValue !== "");
 
   //Revert other checkbox when clicked outside
@@ -32,7 +34,7 @@ export default function OtherCheckbox({ register, defaultOtherValue = "" }: Othe
     <Textfield
       className="animate-in fade-in"
       register={register}
-      name="other"
+      name={"other" as Path<T>}
       label="Other"
       placeholder="Type Here..."
       defaultValue={defaultOtherValue}
