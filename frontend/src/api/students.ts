@@ -1,5 +1,5 @@
 import { POST, handleAPIError } from "../api/requests";
-import { Contact, StudentFormData } from "../components/StudentForm/types";
+import { Contact, StudentData } from "../components/StudentForm/types";
 
 import type { APIResult } from "../api/requests";
 
@@ -18,8 +18,6 @@ export type Student = {
   dietary: string[];
   otherString?: string;
 };
-
-export type CreateStudentRequest = StudentFormData;
 
 type StudentJSON = {
   _id: string;
@@ -55,7 +53,7 @@ function parseStudent(studentJSON: StudentJSON): Student {
   } as Student;
 }
 
-export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {
+export async function createStudent(student: StudentData): Promise<APIResult<Student>> {
   try {
     const response = await POST("/student", student);
     const json = (await response.json()) as StudentJSON;
