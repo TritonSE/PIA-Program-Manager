@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { StudentJSON, createStudent, editStudent } from "../api/students";
+import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
 import { StudentMap } from "../pages/home";
 
@@ -19,12 +19,12 @@ type BaseProps = {
 
 type EditProps = BaseProps & {
   type: "edit";
-  data: StudentJSON | null;
+  data: Student | null;
 };
 
 type AddProps = BaseProps & {
   type: "add";
-  data?: StudentJSON | null;
+  data?: Student | null;
 };
 
 type StudentFormProps = EditProps | AddProps;
@@ -100,7 +100,7 @@ export default function StudentFormButton({
     }
 
     if (type === "edit" && data) {
-      const editedData: StudentJSON = { ...transformedData, _id: data._id };
+      const editedData: Student = { ...transformedData, _id: data._id };
       editStudent(editedData).then(
         (result) => {
           if (result.success) {

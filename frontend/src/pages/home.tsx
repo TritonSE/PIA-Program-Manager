@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 
-import { StudentJSON, getAllStudents } from "../api/students";
+import { Student, getAllStudents } from "../api/students";
 import StudentFormButton from "../components/StudentFormButton";
 
-export type StudentMap = Record<string, StudentJSON>;
+export type StudentMap = Record<string, Student>;
 
 export default function Home() {
   const [allStudents, setAllStudents] = useState<StudentMap>({});

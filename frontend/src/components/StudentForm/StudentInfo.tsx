@@ -1,6 +1,6 @@
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 
-import { StudentJSON } from "../../api/students";
+import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
 import { Checkbox } from "../Checkbox";
 import { Textfield } from "../Textfield";
@@ -12,7 +12,7 @@ type StudentInfoProps = {
   register: UseFormRegister<StudentFormData>;
   classname?: string;
   setCalendarValue: UseFormSetValue<StudentFormData>;
-  data: StudentJSON | null;
+  data: Student | null;
 };
 
 const regularPrograms = ["Intro", "ENTR"];
