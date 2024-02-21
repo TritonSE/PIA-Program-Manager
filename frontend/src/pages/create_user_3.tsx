@@ -1,8 +1,9 @@
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { ReactElement, useMemo } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
+import Landing from "@/components/Landing";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
@@ -76,3 +77,7 @@ export default function CreateUser() {
     </main>
   );
 }
+
+CreateUser.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};

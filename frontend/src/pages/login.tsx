@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { useMemo } from "react";
+import { ReactElement, useMemo } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
+import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
@@ -113,3 +114,7 @@ export default function Login() {
     </main>
   );
 }
+
+Login.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};
