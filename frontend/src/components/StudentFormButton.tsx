@@ -1,7 +1,8 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
+import Image from "next/image";
 
-import { StudentJSON, createStudent, editStudent } from "../api/students";
+import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
 import { StudentMap } from "../pages/home";
 
@@ -19,12 +20,12 @@ type BaseProps = {
 
 type EditProps = BaseProps & {
   type: "edit";
-  data: StudentJSON | null;
+  data: Student | null;
 };
 
 type AddProps = BaseProps & {
   type: "add";
-  data?: StudentJSON | null;
+  data?: Student | null;
 };
 
 type StudentFormProps = EditProps | AddProps;
@@ -100,7 +101,7 @@ export default function StudentFormButton({
     }
 
     if (type === "edit" && data) {
-      const editedData: StudentJSON = { ...transformedData, _id: data._id };
+      const editedData: Student = { ...transformedData, _id: data._id };
       editStudent(editedData).then(
         (result) => {
           if (result.success) {
@@ -131,12 +132,22 @@ export default function StudentFormButton({
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         <DialogTrigger asChild>
-          <Button
-            label={type === "add" ? "Add Student" : "View Profile"}
-            onClick={() => {
-              setOpenForm(true);
-            }}
-          />
+          {type === "edit" ? (
+            <Image
+              src="eye.svg"
+              alt="view student"
+              width={40}
+              height={40}
+              className="cursor-pointer"
+            />
+          ) : (
+            <Button
+              label={"＋ Add Student"}
+              onClick={() => {
+                setOpenForm(true);
+              }}
+            />
+          )}
         </DialogTrigger>
         <DialogContent className="max-h-[95%] max-w-[98%] rounded-[13px] sm:max-w-[80%]">
           <form

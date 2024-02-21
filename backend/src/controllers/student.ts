@@ -38,7 +38,7 @@ type Contact = {
   phoneNumber: string;
 };
 
-type StudentJSON = {
+type Student = {
   _id: string;
   student: Contact;
   emergency: Contact;
@@ -75,7 +75,7 @@ export const editStudent: RequestHandler = async (req, res, next) => {
     validationErrorParser(errors);
 
     const studentId = req.params.id;
-    const studentData = req.body as StudentJSON;
+    const studentData = req.body as Student;
 
     if (studentId !== studentData._id) {
       return res.status(400).json({ message: "Invalid student ID" });

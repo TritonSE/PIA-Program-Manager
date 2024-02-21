@@ -1,9 +1,21 @@
-import { useEffect, useState } from "react";
-
-import { StudentJSON, getAllStudents } from "../api/students";
+import { useMemo, useEffect, useState } from "react";
+import { Student, getAllStudents } from "../api/students";
 import StudentFormButton from "../components/StudentFormButton";
-
-export type StudentMap = Record<string, StudentJSON>;
+import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  ColumnDef,
+} from "@tanstack/react-table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown"
+export type StudentMap = Record<string, Student>;
 
 export default function Home() {
   const [allStudents, setAllStudents] = useState<StudentMap>({});
@@ -30,6 +42,58 @@ export default function Home() {
     );
   }, []);
 
+  const columns: ColumnDef<Student, any>[] = [
+    {
+      accessorKey: "student",
+      header: "Name",
+      cell: (info) => <span>{info.getValue().firstName + " " + info.getValue().lastName}</span>,
+    },
+    {
+      accessorKey: "regularPrograms",
+      id: "Curr. Program 1",
+      header: "Curr. Program 1",
+      cell: (info) => <span>{info.getValue()[0] || ""}</span>,
+    },
+    {
+      accessorKey: "regularPrograms",
+      id: "Curr. Program 2",
+      header: "Curr. Program 2",
+      cell: (info) => <span>{info.getValue()[1] || ""}</span>,
+    },
+    {
+      accessorKey: "regularPrograms",
+      id: "Program History",
+      header: "Program History",
+      cell: (info) => <span>{info.getValue().length + " programs"}</span>,
+    },
+    {
+      accessorKey: "emergency",
+      header: "Emergency Contact",
+      cell: (info) => (
+        <div className="flex flex-col">
+          <span>{info.getValue().firstName + " " + info.getValue().lastName}</span>
+          <span className="text-pia_neutral_gray">{info.getValue().phoneNumber}</span>
+        </div>
+      ),
+    },
+    {
+      header: "None",
+      cell: (info) => {
+        return (
+          <StudentFormButton type="edit" data={info.row.original} setAllStudents={setAllStudents} />
+        );
+      },
+    },
+  ];
+
+  const data = useMemo(() => Object.values(allStudents), [allStudents]);
+
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   if (isLoading) return <p>Loading...</p>;
 
   if (Object.keys(allStudents).length === 0)
@@ -37,17 +101,44 @@ export default function Home() {
 
   return (
     <div className="w-1/2 space-y-5">
+      {/* <DropdownMenu>
+      <DropdownMenuTrigger>Program: </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem>Billing</DropdownMenuItem>
+        <DropdownMenuItem>Team</DropdownMenuItem>
+        <DropdownMenuItem>Subscription</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu> */}
+
       <StudentFormButton type="add" setAllStudents={setAllStudents} />
-      <div className="flex gap-5">
-        <ul className="grid gap-5">
-          {Object.values(allStudents).map((student) => (
-            <li className="flex items-center justify-between gap-5" key={student._id}>
-              <p>{student.student.firstName + " " + student.student.lastName}</p>
-              <StudentFormButton type="edit" data={student} setAllStudents={setAllStudents} />
-            </li>
+
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
           ))}
-        </ul>
-      </div>
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
