@@ -1,5 +1,5 @@
-import CreateUser from "./create_user";
+import Login from "./login";
 
 export default function Home() {
-  return <CreateUser />;
+  return <Login />;
 }
