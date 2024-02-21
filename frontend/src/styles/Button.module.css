@@ -14,6 +14,12 @@
   padding-right: 1.5rem;
 }
 
+.big {
+  height: 10rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
 .small {
   height: 2.5rem;
   padding-left: 1rem;
@@ -24,6 +30,10 @@
   background-color: rgb(var(--gray-2));
   color: rgb(--var(white));
   border: none;
+}
+
+.selected {
+  background-color: rgba(var(--primary-dark-green), 20%) !important;
 }
 
 .primary {
@@ -44,7 +54,7 @@
   border: 0.0625rem solid rgb(var(--primary-dark-green));
 }
 .secondary:hover {
-  background-color: rgba(var(--primary-dark-green), 22%);
+  background-color: rgba(var(--primary-dark-green), 8%);
 }
 .secondary:active {
   background-color: rgba(var(--primary-dark-green), 20%);

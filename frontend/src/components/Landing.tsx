@@ -18,9 +18,9 @@ const Logo = () => {
   return (
     <div className="flex h-full flex-col items-center justify-center">
       <div className="mb-14 flex flex-col items-center">
-        <h1 className="font-[alternate-gothic] text-6xl text-white max-lg:text-5xl">WELCOME TO</h1>
+        <h1 className="font-[alternate-gothic] text-6xl text-white max-lg:text-5xl">Welcome to</h1>
         <h1 className="font-[alternate-gothic] text-6xl text-white max-lg:text-5xl">
-          PLANT IT AGAIN!
+          Plant it Again!
         </h1>
       </div>
       <div className="flex h-[50%] flex-col items-center">
