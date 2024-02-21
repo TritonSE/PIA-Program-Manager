@@ -55,7 +55,7 @@ function parseStudent(studentJSON: StudentJSON): Student {
 
 export async function createStudent(student: StudentData): Promise<APIResult<Student>> {
   try {
-    const response = await POST("/student", student);
+    const response = await POST("/api/student", student);
     const json = (await response.json()) as StudentJSON;
     return { success: true, data: parseStudent(json) };
   } catch (error) {
