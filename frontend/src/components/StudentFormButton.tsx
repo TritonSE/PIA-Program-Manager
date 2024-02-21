@@ -83,7 +83,7 @@ export default function StudentFormButton({
       );
     }
     //uncomment for testing
-    //console.log(`${type} student data:`, transformedData);
+    console.log(`${type} student data:`, transformedData);
   };
 
   const [openForm, setOpenForm] = useState(false);
