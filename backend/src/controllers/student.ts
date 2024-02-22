@@ -44,3 +44,13 @@ export const createStudent: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getAllStudents: RequestHandler = async (_, res, next) => {
+  try {
+    const students = await StudentModel.find();
+
+    res.status(200).json(students);
+  } catch (error) {
+    next(error);
+  }
+};
