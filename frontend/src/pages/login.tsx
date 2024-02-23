@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
-
 export default function Login() {
   const { register, setValue, handleSubmit } = useForm();
   const _setValue = setValue;
