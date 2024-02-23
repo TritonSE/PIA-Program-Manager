@@ -5,6 +5,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export default function Login() {
   const { register, setValue, handleSubmit } = useForm();
@@ -95,9 +96,9 @@ export default function Login() {
                   Forgot Password?
                 </h1>
               </div>
-              <button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
+              <Button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
                 Sign In
-              </button>
+              </Button>
               {isMobile && (
                 <div className="flex items-center justify-center">
                   <h1 className={cn("text-sm text-black text-pia_accent max-lg:text-sm")}>
