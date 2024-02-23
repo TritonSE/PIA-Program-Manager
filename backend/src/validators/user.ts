@@ -1,10 +1,28 @@
 import { ValidationChain, body } from "express-validator";
 
 export const createUser: ValidationChain[] = [
-  body("name").notEmpty().isString().withMessage("Invaid name"),
-  body("accountType").notEmpty().isIn(["admin", "team"]).withMessage("Invaid accountType"),
-  body("email").notEmpty().isEmail().withMessage("Invaid email"),
-  body("password").notEmpty().isString().isLength({ min: 6 }).withMessage("Invaid password"),
+  body("name")
+    .notEmpty()
+    .withMessage("Body cannot be empty.")
+    .isString()
+    .withMessage("Invaid name format."),
+  body("accountType")
+    .notEmpty()
+    .withMessage("accountType cannot be empty.")
+    .isIn(["admin", "team"])
+    .withMessage("Invaid accountType."),
+  body("email")
+    .notEmpty()
+    .withMessage("Email cannot be empty.")
+    .isEmail()
+    .withMessage("Invaid email."),
+  body("password")
+    .notEmpty()
+    .withMessage("Password cannot be empty.")
+    .isString()
+    .withMessage("Invalid password format.")
+    .isLength({ min: 6 })
+    .withMessage("Invaid password length (>6)."),
 ];
 
 export const loginUser: ValidationChain[] = [
