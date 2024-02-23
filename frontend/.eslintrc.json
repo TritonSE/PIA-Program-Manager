@@ -28,6 +28,8 @@
     // "@typescript-eslint/no-explicit-any": "off",
     // "@typescript-eslint/no-non-null-assertion": "off",
 
+    "@typescript-eslint/no-unsafe-assignment": "warn",
+
     // Avoid bugs.
     "@typescript-eslint/no-misused-promises": [
       2,
