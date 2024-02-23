@@ -70,17 +70,21 @@ export const loginUser = async (
     validationErrorParser(errors);
 
     const { email, password } = req.body;
-
-    // Create user in Firebase
+    // Sign user into Firebase
     await signInWithEmailAndPassword(firebaseAuth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        res.status(200).json(user.uid);
+        return UserModel.findById(user.uid);
+      })
+      .then((user) => {
+        if (user !== null) {
+          res.status(200).json({ uid: user._id, approvalStatus: user.approvalStatus });
+        }
+        throw AuthError.LOGIN_ERROR;
       })
       .catch(() => {
         throw AuthError.LOGIN_ERROR;
-        // res.status(errorCode).json(errorMessage);
       });
   } catch (error) {
     console.error(error);
