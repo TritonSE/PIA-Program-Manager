@@ -4,6 +4,8 @@
 
 import { CustomError } from "./errors";
 
+const LOGIN_ERROR = "Login Failed. Please check the username and password.";
+
 const DECODE_ERROR = "Error decoding the auth token. Make sure the auth token is valid";
 const TOKEN_NOT_IN_HEADER =
   "Token was not found in the header. Be sure to use Bearer <Token> syntax";
@@ -15,4 +17,6 @@ export class AuthError extends CustomError {
   static TOKEN_NOT_IN_HEADER = new AuthError(1, 401, TOKEN_NOT_IN_HEADER);
 
   static INVALID_AUTH_TOKEN = new AuthError(2, 401, INVALID_AUTH_TOKEN);
+
+  static LOGIN_ERROR = new AuthError(3, 401, LOGIN_ERROR);
 }
