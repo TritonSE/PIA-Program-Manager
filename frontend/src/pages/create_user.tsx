@@ -20,12 +20,22 @@ export default function CreateUser() {
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
 
   const router = useRouter();
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.name);
     switch (event.target.name) {
+      case "name":
+        setName(event.target.value); // Save user name
+        console.log(name); // Use for linter
+        break;
+      case "email":
+        setEmail(event.target.value); // Save user email
+        console.log(email); // Use for linter
+        break;
       case "password":
         console.log(event.target.value.length, passwordError);
         setPassword(event.target.value);
@@ -55,6 +65,8 @@ export default function CreateUser() {
       console.error("Error checking if email already in use: ", error);
     }
 
+    // setName(data.name);   // Save user name
+    // setEmail(data.email); // Save user email
     void router.push("/create_user_2");
   };
   // const onSubmit: SubmitHandler<FieldValues> = (data) => {
@@ -121,6 +133,7 @@ export default function CreateUser() {
                 </h1>
                 <Textfield
                   register={register}
+                  handleInputChange={onChange}
                   name={"name"}
                   label={""}
                   placeholder="Enter your full name"
