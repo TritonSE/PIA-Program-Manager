@@ -6,7 +6,7 @@
  */
 
 import * as firebase from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
 import * as firebaseAdmin from "firebase-admin/app";
 import { getAuth as getAdminAuth } from "firebase-admin/auth";
 
@@ -26,4 +26,15 @@ const firebaseApp = firebase.initializeApp(JSON.parse(firebaseConfig) as object)
 const firebaseAdminAuth = getAdminAuth();
 const firebaseAuth = getAuth(firebaseApp);
 
-export { firebaseAdminAuth, firebaseAuth };
+const checkEmailExists = async (email: string) => {
+  try {
+    const methods = await fetchSignInMethodsForEmail(firebaseAuth, email);
+
+    return methods && methods.length > 0;
+  } catch (error) {
+    console.error("Error checking if email exists: ", error);
+    return false;
+  }
+};
+
+export { firebaseAdminAuth, firebaseAuth, checkEmailExists };
