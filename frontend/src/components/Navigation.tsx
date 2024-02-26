@@ -25,7 +25,7 @@ type LinkProps = {
 const Logo = ({ setShelf, isMobile, black }: LinkProps & { black?: boolean }) => {
   return (
     <Link
-      href="/"
+      href="/home"
       onClick={() => {
         if (isMobile) setShelf(false);
       }}
@@ -63,7 +63,7 @@ const Links = ({ setShelf, isMobile }: LinkProps) => {
         key={i}
         style={router.pathname === item.href ? { fill: "white" } : {}}
       >
-        <div className="h-4 w-4 sm:h-6 sm:w-6">{item.icon}</div>
+        <div className="h-4 w-4 sm:h-[14px] sm:w-[14px] lg:h-6 lg:w-6">{item.icon}</div>
         <div
           className="font-bold max-sm:text-sm sm:max-lg:hidden"
           style={router.pathname === item.href ? { color: "white" } : {}}
@@ -85,7 +85,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const ordering = navigation.map((item) => item.href);
-    const idx = ordering.indexOf(router.pathname) | 0;
+    const idx = ordering.indexOf(router.pathname) || 0;
     setOffset(idx * 68);
   }, [router.pathname]);
 
@@ -96,8 +96,8 @@ function Navigation({ children }: { children: React.ReactNode }) {
         poppins.className,
       )}
     >
-      {/* mobile top bar - is not visible in nonmobile viewports */}
-      <div className="border-neutralGray absolute z-10 flex h-10 w-full items-center border-[1px] border-solid pl-4 sm:hidden">
+      {/* mobile top bar - is not visible in non-mobile screens */}
+      <div className="border-neutralGray absolute z-10 flex h-10 w-full items-center border-[1px] border-solid bg-pia_primary_light_green pl-4 sm:hidden">
         <Image
           src="/sidebar/nav_menu.svg"
           alt="nav burger"
@@ -123,16 +123,22 @@ function Navigation({ children }: { children: React.ReactNode }) {
       >
         <Logo setShelf={setShelf} isMobile={isMobile} />
         <div className="relative flex flex-col gap-7 max-sm:gap-2 sm:max-lg:flex-row">
-          <div
-            className="absolute h-10 w-2 rounded-br-lg rounded-tr-lg bg-[white] max-lg:hidden"
-            style={{ top: offset, transition: "0.2s all" }}
-          ></div>
+          {router.pathname !== "/" && (
+            <div
+              className="absolute h-10 w-2 rounded-br-lg rounded-tr-lg bg-[white] max-lg:w-1 sm:max-lg:hidden"
+              style={{
+                top: isMobile ? offset * (48 / 68) : offset,
+                transition: "0.2s all",
+              }}
+            ></div>
+          )}
+
           <Links setShelf={setShelf} isMobile={isMobile} />
         </div>
       </nav>
 
       <div
-        className="h-full w-full p-[24px] max-lg:absolute max-lg:pt-14 lg:w-[calc(100%-240px)]"
+        className="h-full w-full overflow-x-auto overflow-y-auto p-[24px] max-lg:absolute max-lg:pt-14 lg:w-[calc(100%-240px)]"
         onClick={(e) => {
           if (isMobile) {
             e.stopPropagation();

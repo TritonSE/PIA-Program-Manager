@@ -2,14 +2,15 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/app.js",
   "scripts": {
     "dev": "npx ts-node-dev src/app.ts",
+    "build": "npm ci && tsc && tsc-alias",
     "format": "npm run check-git-hooks && prettier --write .",
     "lint-fix": "npm run check-git-hooks && (eslint --fix --cache --report-unused-disable-directives . || true) && prettier --write .",
     "lint-check": "npm run check-git-hooks && eslint --cache --report-unused-disable-directives . && prettier --check .",
     "check-git-hooks": "cd .. && node .secret-scan/secret-scan.js -- --check-git-hooks",
-    "prepare": "cd .. && husky install .husky"
+    "prepare": "if [ -z \"$GOOGLE_FUNCTION_TARGET\" ]; then cd .. && husky install .husky; fi"
   },
   "keywords": [],
   "author": "",
@@ -18,9 +19,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
+    "express-validator": "^7.0.1",
+    "firebase": "^10.8.0",
     "firebase-admin": "^12.0.0",
+    "firebase-functions": "^4.7.0",
     "mongodb": "^6.3.0",
-    "mongoose": "^8.0.3"
+    "mongoose": "^8.0.3",
+    "tsc-alias": "^1.8.8"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
