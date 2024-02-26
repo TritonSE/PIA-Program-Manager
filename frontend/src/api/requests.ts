@@ -67,8 +67,12 @@ async function fetchRequest(
  * @param headers The request headers
  * @returns A `Response` object returned by `fetch()`
  */
-export async function GET(url: string, headers: Record<string, string> = {}): Promise<Response> {
-  return await fetchRequest("GET", url, undefined, headers);
+export async function GET(
+  url: string,
+  headers: Record<string, string> = {},
+  body: unknown = undefined,
+): Promise<Response> {
+  return await fetchRequest("GET", url, body, headers);
 }
 
 /**
@@ -84,7 +88,14 @@ export async function POST(
   body: unknown,
   headers: Record<string, string> = {},
 ): Promise<Response> {
-  return await fetchRequest("POST", url, body, headers);
+  const response = await fetchRequest("POST", url, body, headers);
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(errorText);
+  }
+
+  return response;
 }
 
 /**

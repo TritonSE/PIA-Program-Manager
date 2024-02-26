@@ -18,6 +18,9 @@ class Server {
 // initialize server app
 const server = new Server();
 
+// sets the "Access-Control-Allow-Origin" header on all responses to allow
+server.app.use(cors());
+
 // Connect to MongoDB
 void mongoose
   .connect(mongoURI)
@@ -30,9 +33,6 @@ void mongoose
 
 // Middleware
 server.app.use(json());
-
-// sets the "Access-Control-Allow-Origin" header on all responses to allow
-server.app.use(cors());
 
 // Prepend /api to all routes defined in /routes/api.ts
 server.app.use("/api", router);

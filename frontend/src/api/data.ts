@@ -1,5 +1,9 @@
-export interface User {
-    email: string;
-    userType: "admin" | "team";
-    token: string;
-}
+export type User = {
+  uid: string;
+  approvalStatus: boolean;
+};
+
+export type LoginResult = {
+  uid: string;
+  approvalStatus: boolean;
+};

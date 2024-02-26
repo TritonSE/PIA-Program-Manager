@@ -1,5 +1,5 @@
+import { LoginResult } from "./data";
 import { POST } from "./requests";
-import { type User } from "./data";
 
 const register = async (
   userFullName: string,
@@ -15,7 +15,7 @@ const register = async (
     throw Error("Please enter your full name.");
   }
   const response = await POST(
-    "http://localhost:3001/user/",
+    "http://localhost:4000/api/user/",
     JSON.stringify({
       name: userFullName,
       accountType,
@@ -28,30 +28,20 @@ const register = async (
   return response;
 };
 
-const loginUser = async (loginPassword: string, loginEmail: string): Promise<Response> => {
-  const response = await POST(
-    "http://localhost:3001/user/login",
+const loginUser = async (loginEmail: string, loginPassword: string): Promise<LoginResult> => {
+  console.log(
     JSON.stringify({
       email: loginEmail,
       password: loginPassword,
     }),
-  ).catch((error: Error) => {
+  );
+  const response = await POST("http://localhost:4000/api/user/login", {
+    email: loginEmail,
+    password: loginPassword,
+  }).catch((error: Error) => {
     throw error;
   });
-  return response;
-};
-
-const getUser = async (email: string): Promise<User | null> => {
-  const requestOptions = {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  };
-  const requestLink = "http://localhost:3001/user/";
-  const response = await fetch(requestLink.concat(email), requestOptions);
-  if (response.status === 404) {
-    return null;
-  }
-  return (await response.json()) as User;
+  return (await response.json()) as LoginResult;
 };
 
 export { register, loginUser };

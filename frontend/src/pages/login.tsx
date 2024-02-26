@@ -1,6 +1,11 @@
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useMemo } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useDispatch } from "react-redux";
+
+import { useAppSelector } from "../hooks/redux";
+import { selectLogin, selectLoginError, selectUser } from "../redux-sagas/slices/loginSlice";
 
 import { Textfield } from "@/components/Textfield";
 import { Button } from "@/components/ui/button";
@@ -8,15 +13,32 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function Login() {
-  const { register, setValue, handleSubmit } = useForm();
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const _setValue = setValue;
+
+  const inputError = useAppSelector(selectLoginError);
+  const dispatch = useDispatch();
+  const user = useAppSelector(selectUser);
+  const logged_in = useAppSelector(selectLogin);
+
+  // const router = useRouter();
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
+    dispatch({
+      type: "LOGIN_USER",
+      payload: { ...data },
+    });
   };
   const { width } = useWindowSize();
   const isMobile = useMemo(() => width <= 640, [width]);
   const isTablet = useMemo(() => width <= 1300, [width]);
+
   return (
     <main className="flex h-screen w-full items-center justify-center">
       <div className="flex h-full w-full items-center justify-center">
@@ -76,16 +98,37 @@ export default function Login() {
                   label={""}
                   type="email"
                   placeholder="name@email.com"
+                  registerOptions={{ required: "Email cannot be empty" }}
                 />
+                {errors.email && (
+                  <h1 className="mt-1 flex items-center text-sm font-light text-orange-700">
+                    <AlertCircle className="mr-1 text-sm" />{" "}
+                    {typeof errors.email.message === "string" ? errors.email.message : null}
+                  </h1>
+                )}
               </div>
               <div>
                 <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Password</h1>
                 <Textfield
                   register={register}
-                  name={"date"}
+                  name={"password"}
                   label=""
                   placeholder="Enter Password"
+                  type="password"
+                  registerOptions={{
+                    required: "Password cannot be empty",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters.",
+                    },
+                  }}
                 />
+                {errors.password && (
+                  <h1 className="mt-1 flex items-center text-sm font-light text-orange-700">
+                    <AlertCircle className="mr-1 text-sm" />{" "}
+                    {typeof errors.password.message === "string" ? errors.password.message : null}
+                  </h1>
+                )}
                 <h1
                   className={cn(
                     "mt-1 text-lg font-light text-pia_accent",
@@ -108,6 +151,21 @@ export default function Login() {
                 </div>
               )}
             </form>
+            {logged_in && (
+              <h1 className="mt-1 flex items-center text-sm font-light text-green-700">
+                <CheckCircle2 className="mr-1 text-sm" /> Logged in with uid {user?.uid}
+              </h1>
+            )}
+            {!logged_in && inputError.unknownError && (
+              <h1 className="flex items-center text-sm font-light text-orange-700">
+                <AlertCircle className="mr-1 text-sm" /> {inputError.unknownError}
+              </h1>
+            )}
+            {!logged_in && inputError.authError && (
+              <h1 className="flex items-center text-sm font-light text-orange-700">
+                <AlertCircle className="mr-1 text-sm" /> {inputError.authError}
+              </h1>
+            )}
           </div>
         </div>
       </div>

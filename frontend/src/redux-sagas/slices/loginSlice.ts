@@ -1,24 +1,22 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
-import { type RootState } from "../store";
-import { type LoginError, type SignUpError } from "../error_handling/auth";
+import { createSlice } from "@reduxjs/toolkit";
 
-import { type User } from "../../api/data";
+import type { User } from "../../api/data";
+import type { LoginError, SignUpError } from "../error_handling/auth";
+import type { RootState } from "../store";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
-export interface LoginState {
+export type authState = {
   value: boolean;
-  loadingUser: boolean;
   user: User | null;
   loginError: LoginError;
   signUpError: SignUpError;
-}
+};
 
-const initialState: LoginState = {
+const initialState: authState = {
   value: false,
-  loadingUser: true,
   user: null,
   loginError: {
-    emailError: "",
-    passwordError: "",
+    authError: "",
     unknownError: "",
   },
   signUpError: {
@@ -33,34 +31,26 @@ export const loginSlice = createSlice({
   name: "login",
   initialState,
   reducers: {
-    login: (state) => {
+    login: (state: authState, action: PayloadAction<User>) => {
+      console.log(action);
       state.value = true;
+      state.user = action.payload;
     },
-    logout: (state) => {
+    logout: (state: authState) => {
       state.value = false;
       state.user = null;
     },
-    updateUser: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
-    },
-    storeUser: (state, action: PayloadAction<User>) => {
-      state.user = action.payload;
-      state.loadingUser = false;
-    },
-    setLoginError: (state, action) => {
+    setLoginError: (state: authState, action: PayloadAction<LoginError>) => {
       state.loginError = action.payload;
     },
-    setSignUpError: (state, action) => {
+    setSignUpError: (state: authState, action: PayloadAction<SignUpError>) => {
       state.signUpError = action.payload;
     },
   },
 });
-export const { login, logout, storeUser, setLoginError, setSignUpError, updateUser } =
-  loginSlice.actions;
+export const { login, logout, setLoginError, setSignUpError } = loginSlice.actions;
 
 export const selectLogin = (state: RootState): boolean => state.login.value;
-export const selectLoadingUser = (state: RootState): boolean => state.login.loadingUser;
-
 export const selectLoginError = (state: RootState): LoginError => state.login.loginError;
 
 export const selectSignUpError = (state: RootState): SignUpError => state.login.signUpError;
