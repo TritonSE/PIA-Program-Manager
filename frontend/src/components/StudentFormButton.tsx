@@ -4,11 +4,12 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { cn } from "../lib/utils";
 
 import { Button } from "./Button";
+import SaveCancelButtons from "./SaveCancelButtons";
 import ContactInfo from "./StudentForm/ContactInfo";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 
 type BaseProps = {
   classname?: string;
@@ -108,35 +109,7 @@ export default function StudentFormButton({
                 setCalendarValue={setCalendarValue}
               />
             </fieldset>
-            <div className="ml-auto mt-5 flex gap-5">
-              {/* Modal Confirmation Dialog */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button label="Cancel" kind="secondary" />
-                </DialogTrigger>
-                <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
-                  <div className="p-3 min-[450px]:p-10">
-                    <p className="my-10 text-center">Leave without saving changes?</p>
-                    <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
-                      <DialogClose asChild>
-                        <Button label="Back" kind="secondary" />
-                      </DialogClose>
-                      <DialogClose asChild>
-                        <Button
-                          label="Continue"
-                          onClick={() => {
-                            setOpenForm(false);
-                          }}
-                        />
-                      </DialogClose>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-              <DialogClose asChild>
-                <Button label="Save Changes" type="submit" />
-              </DialogClose>
-            </div>
+            <SaveCancelButtons setOpen={setOpenForm} />
           </form>
         </DialogContent>
       </Dialog>
