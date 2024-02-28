@@ -15,6 +15,8 @@ export default function Profile() {
   const { width } = useWindowSize();
   const isMobile = useMemo(() => width <= 640, [width]);
   const [basicInfoData, setBasicInfoData] = useState({ name: "John Smith", image: "" });
+  const [contactInfoData, setContactInfoData] = useState({ email: "johnsmith@gmail.com"});
+  const [passwordData, setPasswordData] = useState({ last_changed: new Date("01/08/2024")});
 
   const frameFormat =
     "border-pia_neutral_gray flex w-full flex-grow-0 flex-col place-content-stretch overflow-hidden rounded-lg border-[2px] bg-white";
@@ -43,12 +45,16 @@ export default function Profile() {
             email="JohnSmith@gmail.com"
             isMobile={isMobile}
             frameFormat={frameFormat}
+            data={contactInfoData}
+            setData={setContactInfoData}
           />
           <PasswordFrame
             className=""
             passwordLength={10}
             isMobile={isMobile}
             frameFormat={frameFormat}
+            data={passwordData}
+            setData={setPasswordData}
           />
         </div>
       </div>

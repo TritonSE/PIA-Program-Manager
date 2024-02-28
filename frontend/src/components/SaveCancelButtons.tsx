@@ -5,14 +5,16 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 type SaveCancelButtonsProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  onCancelClick?: () => void;
+  onSaveClick?: () => void;
 };
 
-export default function SaveCancelButtons({ setOpen }: SaveCancelButtonsProps) {
+export default function SaveCancelButtons({ setOpen, onCancelClick, onSaveClick}: SaveCancelButtonsProps) {
   return (
     <div className="ml-auto mt-5 flex w-fit gap-5">
       <Dialog>
         <DialogTrigger asChild>
-          <Button label="Cancel" kind="secondary" />
+          <Button label="Cancel" kind="secondary" onClick={onCancelClick}/>
         </DialogTrigger>
         <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
           <div className="p-3 min-[450px]:p-10">
@@ -34,7 +36,7 @@ export default function SaveCancelButtons({ setOpen }: SaveCancelButtonsProps) {
         </DialogContent>
       </Dialog>
       <DialogClose asChild>
-        <Button label="Save Changes" type="submit" />
+        <Button label="Save Changes" type="submit" onClick={onSaveClick}/>
       </DialogClose>
     </div>
   );

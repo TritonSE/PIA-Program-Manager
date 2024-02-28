@@ -68,7 +68,7 @@ export function Textfield<T extends FieldValues>({
         <input
           {...register(name as Path<T>)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
-          id={label + placeholder}
+          id={name + label + placeholder}
           type={type}
           onChange={handleInputChange}
           placeholder={placeholder}

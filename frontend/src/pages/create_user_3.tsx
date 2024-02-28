@@ -3,9 +3,9 @@ import { useRouter } from "next/router";
 import { ReactElement, useMemo } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
+import Landing from "@/components/Landing";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
-import Landing from "@/components/Landing";
 
 export default function CreateUser() {
   const router = useRouter();

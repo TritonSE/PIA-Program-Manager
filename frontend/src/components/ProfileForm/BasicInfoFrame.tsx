@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { cn } from "../../lib/utils";
@@ -38,21 +38,36 @@ export function BasicInfoFrame({
   const [openNameForm, setOpenNameForm] = useState(false);
   const fileUploadRef = useRef<HTMLInputElement>(null);
   const [imageFile, setImageFile] = useState<string>();
-  const { register, reset: _reset, handleSubmit } = useForm<ProfileBasicInfoFormData>();
+  const [clickedAddProfile, setClickedAddProfile] = useState(false);
+  const { register, handleSubmit } = useForm<ProfileBasicInfoFormData>();
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target?.files?.[0]) {
-      console.log(e.target.files[0]);
-      setImageFile(URL.createObjectURL(e.target.files[0]));
-    }
-  };
+  const oldImage = data.image;
+
+  const onCancelClick = () => {
+    setClickedAddProfile(false);
+    setImageFile(oldImage)
+  }
 
   const onSubmit = (formData: ProfileBasicInfoFormData) => {
     if (formData.name === data.name) return;
-    console.log(formData);
-    console.log(formData.name);
     setData({ name: formData.name, image: "" });
   };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target?.files?.[0]) {
+      setImageFile(URL.createObjectURL(e.target.files[0]));
+    }
+    setClickedAddProfile(true);
+  };
+
+  //Prevent memory leaks 
+  useEffect(() => {
+    return () => {
+      if (imageFile) {
+        URL.revokeObjectURL(imageFile);
+      }
+    };
+  }, [imageFile]);
 
   return (
     <section className={cn(frameFormat, className)}>
@@ -79,8 +94,8 @@ export function BasicInfoFrame({
                   </div>
                   <Image
                     alt="Profile Picture"
-                    src="/sidebar/logo.png"
-                    className="m-2 flex items-center "
+                    src={imageFile ? imageFile : "/sidebar/logo.png"}
+                    className="m-2 flex items-center rounded-full"
                     width={isMobile ? 50 : 80}
                     height={isMobile ? 50 : 80}
                   />
@@ -92,31 +107,37 @@ export function BasicInfoFrame({
               description="A profile picture helps people in PIA recognize you."
             >
               <>
-                <div className="relative h-80 ">
+                <div className="relative h-80  ">
                   <Image
                     alt="Profile Picture"
                     src={imageFile ? imageFile : "/sidebar/logo.png"}
-                    layout="fill"
-                    objectFit="contain"
+                    className="object-contain"
+                    fill={true}
                   />
                 </div>
-                {/* <Button label="Add a profile picture" /> */}
-                <label htmlFor="image_upload" className="grid">
-                  <Button
-                    onClick={() => {
-                      fileUploadRef.current?.click();
-                    }}
-                    label="Add a profile picture"
+                {clickedAddProfile ? (
+                  <SaveCancelButtons
+                    setOpen={setOpenProfileForm}
+                    onCancelClick={onCancelClick}
                   />
-                  <input
-                    onChange={handleImageUpload}
-                    ref={fileUploadRef}
-                    className="hidden"
-                    id="image_upload"
-                    type="file"
-                    accept=".png, .jpg, .jpeg, .webp"
-                  ></input>
-                </label>
+                ) : (
+                  <label htmlFor="image_upload" className="grid">
+                    <Button
+                      onClick={() => {
+                        fileUploadRef.current?.click();
+                      }}
+                      label="Add a profile picture"
+                    />
+                    <input
+                      onChange={handleImageUpload}
+                      ref={fileUploadRef}
+                      className="hidden"
+                      id="image_upload"
+                      type="file"
+                      accept=".png, .jpg, .jpeg, .webp"
+                    ></input>
+                  </label>
+                )}
               </>
             </ProfileDialogContent>
           </Dialog>
