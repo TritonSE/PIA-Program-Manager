@@ -1,6 +1,6 @@
+import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import Image from "next/image";
 
 import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
