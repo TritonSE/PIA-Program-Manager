@@ -1,14 +1,25 @@
 import { AppProps } from "next/app";
-
-import Navigation from "../components/Navigation";
 import "../styles/global.css";
 import "../styles/globals.css";
+import { ReactElement, ReactNode } from "react";
 
-function App({ Component, pageProps }: AppProps) {
-  return (
-    <Navigation>
-      <Component {...pageProps} />
-    </Navigation>
-  );
+import Navigation from "../components/Navigation";
+
+// eslint-disable-next-line import/order
+import { NextPage } from "next";
+
+export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+//Unless specified, the default layout will have the Navigation bar
+function App({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => <Navigation>{page}</Navigation>);
+  return getLayout(<Component {...pageProps} />);
 }
+
 export default App;

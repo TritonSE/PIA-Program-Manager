@@ -11,4 +11,6 @@ const router = express.Router();
 
 router.post("/", StudentValidator.createStudent, StudentController.createStudent);
 
+router.get("/all", StudentController.getAllStudents);
+
 export default router;
