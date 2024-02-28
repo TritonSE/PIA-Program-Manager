@@ -74,12 +74,12 @@ export const loginUser = async (
     await signInWithEmailAndPassword(firebaseAuth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
-        console.log(user);
         return UserModel.findById(user.uid);
       })
       .then((user) => {
         if (user !== null) {
           res.status(200).json({ uid: user._id, approvalStatus: user.approvalStatus });
+          return;
         }
         throw AuthError.LOGIN_ERROR;
       })
@@ -90,6 +90,4 @@ export const loginUser = async (
     console.error(error);
     nxt(error);
   }
-
-  return;
 };

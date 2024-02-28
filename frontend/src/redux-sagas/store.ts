@@ -17,7 +17,6 @@ const redux_store = configureStore({
 
 sagaMiddleware.run(rootSaga);
 
-
 export type AppDispatch = typeof redux_store.dispatch;
 export type RootState = ReturnType<typeof redux_store.getState>;
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action>;

@@ -7,7 +7,6 @@ import { wrapper } from "../redux-sagas/store";
 import "../styles/global.css";
 import "../styles/globals.css";
 
-
 // import Navigation from "../components/Navigation";
 
 function App({ Component, ...pageProps }: AppProps) {

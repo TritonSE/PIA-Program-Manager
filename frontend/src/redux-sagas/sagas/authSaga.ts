@@ -1,13 +1,17 @@
 import { call, put, takeEvery, takeLatest } from "redux-saga/effects";
 
 import { loginUser, register } from "../../api/auth";
-import { LoginError, SignUpError, logInErrorHandler, signUpErrorHandler } from "../error_handling/auth";
+import {
+  LoginError,
+  SignUpError,
+  logInErrorHandler,
+  signUpErrorHandler,
+} from "../error_handling/auth";
 import { login, setLoginError, setSignUpError } from "../slices/loginSlice";
 
 import { LoginRequest } from "./data";
 
 import type { LoginResult } from "../../api/data";
-
 
 // import { updateUserDetails } from "../api/consumer";
 /*
