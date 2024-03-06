@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { FieldValues, Path, PathValue, UseFormSetValue } from "react-hook-form";
 
@@ -34,6 +35,7 @@ export function Dropdown<T extends FieldValues>({
   className,
 }: DropdownProps<T>) {
   const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     if (selectedOption && setDropdownValue) {
@@ -42,19 +44,32 @@ export function Dropdown<T extends FieldValues>({
   }, [selectedOption]);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      open={open}
+      onOpenChange={() => {
+        setOpen(!open);
+      }}
+    >
       <DropdownMenuTrigger
         className={cn(
-          "inline-flex h-[46px] w-[244px] items-start justify-start gap-2 rounded-sm border border-pia_border px-4 py-3",
+          "relative inline-flex h-[46px] w-[244px] items-center justify-start gap-2 rounded-sm border border-pia_border px-4 py-3 outline-none",
           className,
         )}
       >
         <span className="text-neutral-400">{label + ": "}</span>
         <span className="text-neutral-800">{selectedOption ?? ""}</span>
+        <Image
+          src="/ic_round-arrow-drop-up.svg"
+          width={40}
+          height={40}
+          alt="dropdown toggle"
+          className="absolute right-0 transition-transform"
+          style={{ transform: open ? "rotate(0deg)" : "rotate(180deg)" }}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem
-          className="h-10 w-[244px] hover:bg-slate-100"
+          className="h-10 w-[244px] hover:bg-pia_primary_light_green"
           key={""}
           onSelect={() => {
             onChange("");
@@ -65,7 +80,7 @@ export function Dropdown<T extends FieldValues>({
         </DropdownMenuItem>
         {options.map((option) => (
           <DropdownMenuItem
-            className="h-10 w-[244px] hover:bg-slate-100"
+            className="h-10 w-[244px] hover:bg-pia_primary_light_green"
             key={option}
             onSelect={() => {
               onChange(option);
