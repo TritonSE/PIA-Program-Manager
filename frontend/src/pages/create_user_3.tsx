@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/router";
-import { ReactElement, useMemo } from "react";
+import { ReactElement } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import Landing from "@/components/Landing";
@@ -14,8 +14,7 @@ export default function CreateUser() {
     console.log(data);
     void router.push("/create_user_2");
   };
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
+  const { isMobile } = useWindowSize();
 
   return (
     <main className="flex h-screen w-full justify-center">

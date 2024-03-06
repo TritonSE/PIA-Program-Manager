@@ -8,6 +8,7 @@ import ProgramFilter from "./ProgramFilter";
 import { StudentMap } from "./types";
 
 import { Student } from "@/api/students";
+import { useWindowSize } from "@/hooks/useWindowSize";
 
 function TableActionsHeader({
   headerGroup,
@@ -20,6 +21,8 @@ function TableActionsHeader({
   setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
   setAllStudents: React.Dispatch<React.SetStateAction<StudentMap>>;
 }) {
+  const { isTablet } = useWindowSize();
+
   return (
     <TableRow key={headerGroup.id + "1"} className="border-b">
       <TableHead className="h-6 w-full px-10 py-5" colSpan={6}>
@@ -41,7 +44,7 @@ function TableActionsHeader({
               />
             </div>
           </span>
-          <StudentFormButton type="add" setAllStudents={setAllStudents} />
+          {!isTablet && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
         </div>
       </TableHead>
     </TableRow>

@@ -1,7 +1,7 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { Textfield } from "@/components/Textfield";
@@ -44,8 +44,7 @@ export default function CreateUser() {
 
     void router.push("/create_user_2");
   };
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
+  const { isMobile } = useWindowSize();
 
   return (
     <main className="flex h-screen w-full items-center justify-center">

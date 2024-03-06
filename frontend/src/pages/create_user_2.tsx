@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { MouseEvent, ReactElement, useMemo, useState } from "react";
+import { MouseEvent, ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { Button } from "@/components/Button";
@@ -23,8 +23,7 @@ export default function CreateUser() {
     console.log(data);
     void router.push("/create_user");
   };
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
+  const { isMobile } = useWindowSize();
 
   function handleClick(event: MouseEvent<HTMLButtonElement>): void {
     switch (event.currentTarget.name) {

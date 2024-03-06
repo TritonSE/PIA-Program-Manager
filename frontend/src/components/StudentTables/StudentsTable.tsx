@@ -11,18 +11,23 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import { getAllStudents } from "../../api/students";
 import { fuzzyFilter } from "../../lib/fuzzyFilter";
+import StudentFormButton from "../StudentFormButton";
 import { Table } from "../ui/table";
 
-import TBody from "./TableBody";
-import THead from "./TableHeader";
+import TBody from "./TBody";
+import THead from "./THead";
 import { StudentMap } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
+
+import { useWindowSize } from "@/hooks/useWindowSize";
+import { cn } from "@/lib/utils";
 
 export default function StudentTable() {
   const [allStudents, setAllStudents] = useState<StudentMap>({});
   const [isLoading, setIsLoading] = useState(true);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const { isTablet } = useWindowSize();
 
   useEffect(() => {
     getAllStudents().then(
@@ -72,10 +77,6 @@ export default function StudentTable() {
     debugTable: true,
     debugHeaders: true,
     debugColumns: false,
-    defaultColumn: {
-      size: 0,
-      maxSize: 300,
-    },
   });
 
   if (isLoading) return <p>Loading...</p>;
@@ -84,9 +85,24 @@ export default function StudentTable() {
     return <p className="text-red-500">Please add a student first!</p>;
 
   return (
-    <div className="w-fit space-y-5 overflow-x-auto">
-      <h1 className="text-[40px] font-medium text-neutral-800">Students</h1>
-      <Table className="h-fit w-[1120px] border-collapse rounded-lg bg-pia_primary_white">
+    <div className="w-full space-y-5 overflow-x-auto">
+      <div className="flex w-full items-center justify-between">
+        <h1
+          className={cn(
+            "font-['Alternate Gothic No3 D'] text-[40px] font-medium text-neutral-800",
+            isTablet && "text-2xl",
+          )}
+        >
+          Students
+        </h1>
+        {isTablet && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
+      </div>
+      <Table
+        className={cn(
+          "h-fit w-[100%] min-w-[640px] max-w-[1120px] border-collapse rounded-lg bg-pia_primary_white",
+          isTablet && "text-[12px]",
+        )}
+      >
         <THead
           table={table}
           globalFilter={globalFilter}
