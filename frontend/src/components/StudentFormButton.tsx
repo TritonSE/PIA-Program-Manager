@@ -86,7 +86,7 @@ export default function StudentFormButton({
             const newStudent = result.data;
             reset(); // only clear form on success
             setOpenForm(false);
-            setAllStudents((prevStudents) => {
+            setAllStudents((prevStudents: Student) => {
               return { ...prevStudents, [newStudent._id]: newStudent };
             });
           } else {
@@ -107,7 +107,7 @@ export default function StudentFormButton({
           if (result.success) {
             const editedStudent = result.data;
             setOpenForm(false);
-            setAllStudents((prevStudents) => {
+            setAllStudents((prevStudents: Student) => {
               if (Object.keys(prevStudents).includes(editedStudent._id)) {
                 return { ...prevStudents, [editedStudent._id]: editedStudent };
               } else {
