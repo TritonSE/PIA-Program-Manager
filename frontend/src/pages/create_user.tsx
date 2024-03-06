@@ -1,9 +1,10 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
+import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
@@ -182,3 +183,7 @@ export default function CreateUser() {
     </main>
   );
 }
+
+CreateUser.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};
