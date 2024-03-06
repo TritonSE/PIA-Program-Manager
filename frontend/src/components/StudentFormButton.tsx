@@ -134,7 +134,7 @@ export default function StudentFormButton({
         <DialogTrigger asChild>
           {type === "edit" ? (
             <Image
-              src="eye.svg"
+              src="/eye.svg"
               alt="view student"
               width={40}
               height={40}
