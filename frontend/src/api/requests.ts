@@ -7,6 +7,7 @@
  * Custom type definition for the HTTP methods handled by this module.
  */
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 /**
  * Throws an error if the status code of the HTTP response indicates an error. If an HTTP error was
@@ -68,7 +69,7 @@ async function fetchRequest(
  * @returns A `Response` object returned by `fetch()`
  */
 export async function GET(url: string, headers: Record<string, string> = {}): Promise<Response> {
-  return await fetchRequest("GET", url, undefined, headers);
+  return await fetchRequest("GET", API_BASE_URL + url, undefined, headers);
 }
 
 /**
@@ -84,7 +85,7 @@ export async function POST(
   body: unknown,
   headers: Record<string, string> = {},
 ): Promise<Response> {
-  return await fetchRequest("POST", url, body, headers);
+  return await fetchRequest("POST", API_BASE_URL + url, body, headers);
 }
 
 /**
@@ -100,7 +101,7 @@ export async function PUT(
   body: unknown,
   headers: Record<string, string> = {},
 ): Promise<Response> {
-  return await fetchRequest("PUT", url, body, headers);
+  return await fetchRequest("PUT", API_BASE_URL + url, body, headers);
 }
 
 /**
@@ -116,7 +117,7 @@ export async function PATCH(
   body: unknown,
   headers: Record<string, string> = {},
 ): Promise<Response> {
-  return await fetchRequest("PATCH", url, body, headers);
+  return await fetchRequest("PATCH", API_BASE_URL + url, body, headers);
 }
 
 /**
@@ -132,7 +133,7 @@ export async function DELETE(
   body: unknown,
   headers: Record<string, string> = {},
 ): Promise<Response> {
-  return await fetchRequest("DELETE", url, body, headers);
+  return await fetchRequest("DELETE", API_BASE_URL + url, body, headers);
 }
 
 /**

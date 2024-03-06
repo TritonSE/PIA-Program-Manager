@@ -18,7 +18,7 @@ type PasswordFrameProps = {
 
 type PasswordLastChangedData = {
   last_changed: Date;
-}
+};
 
 type OldPasswordFormData = {
   old_password: string;
@@ -53,18 +53,18 @@ export function PasswordFrame({
 
   const onOldPasswordSubmit = (formData: OldPasswordFormData) => {
     //Ensure that old password is correct
-    console.log(formData)
+    console.log(formData);
   };
 
   const onNewPasswordSubmit = (formData: NewPasswordFormData) => {
     setData({
-      last_changed: new Date()
+      last_changed: new Date(),
     });
     if (formData.new_password !== formData.confirm_password) {
-      console.log("Passwords don't match!")
+      console.log("Passwords don't match!");
     } else {
       //Add password and last_changed to database
-    } 
+    }
   };
 
   //TODO: minimum 6 characters check

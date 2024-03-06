@@ -20,7 +20,7 @@ export default function ProfileDialogContent({
       <div className="grid gap-5 px-[40px] py-[30px]">
         {backIcon ? (
           <svg
-          className="transition-opacity hover:opacity-50 cursor-pointer"
+            className="cursor-pointer transition-opacity hover:opacity-50"
             onClick={onBackClick}
             width="30"
             height="30"

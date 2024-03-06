@@ -45,8 +45,8 @@ export function BasicInfoFrame({
 
   const onCancelClick = () => {
     setClickedAddProfile(false);
-    setImageFile(oldImage)
-  }
+    setImageFile(oldImage);
+  };
 
   const onSubmit = (formData: ProfileBasicInfoFormData) => {
     if (formData.name === data.name) return;
@@ -60,7 +60,7 @@ export function BasicInfoFrame({
     setClickedAddProfile(true);
   };
 
-  //Prevent memory leaks 
+  //Prevent memory leaks
   useEffect(() => {
     return () => {
       if (imageFile) {
@@ -116,10 +116,7 @@ export function BasicInfoFrame({
                   />
                 </div>
                 {clickedAddProfile ? (
-                  <SaveCancelButtons
-                    setOpen={setOpenProfileForm}
-                    onCancelClick={onCancelClick}
-                  />
+                  <SaveCancelButtons setOpen={setOpenProfileForm} onCancelClick={onCancelClick} />
                 ) : (
                   <label htmlFor="image_upload" className="grid">
                     <Button

@@ -1,4 +1,3 @@
-"use client";
 import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
 import { cn } from "../lib/utils";
@@ -22,6 +21,8 @@ export function Checkbox<T extends FieldValues>({
   defaultValue,
   defaultOtherValue,
 }: CheckboxProps<T>) {
+  defaultValue = defaultValue?.map((item) => item.toLowerCase());
+
   return (
     <div className={cn("sm:min-w-2/5 min-w-4/5 grid gap-x-5 gap-y-5 sm:grid-cols-3", className)}>
       {options.map((item, index) => {

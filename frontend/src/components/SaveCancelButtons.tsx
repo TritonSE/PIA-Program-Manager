@@ -9,12 +9,16 @@ type SaveCancelButtonsProps = {
   onSaveClick?: () => void;
 };
 
-export default function SaveCancelButtons({ setOpen, onCancelClick, onSaveClick}: SaveCancelButtonsProps) {
+export default function SaveCancelButtons({
+  setOpen,
+  onCancelClick,
+  onSaveClick,
+}: SaveCancelButtonsProps) {
   return (
     <div className="ml-auto mt-5 flex w-fit gap-5">
       <Dialog>
         <DialogTrigger asChild>
-          <Button label="Cancel" kind="secondary" onClick={onCancelClick}/>
+          <Button label="Cancel" kind="secondary" onClick={onCancelClick} />
         </DialogTrigger>
         <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
           <div className="p-3 min-[450px]:p-10">
@@ -36,7 +40,7 @@ export default function SaveCancelButtons({ setOpen, onCancelClick, onSaveClick}
         </DialogContent>
       </Dialog>
       <DialogClose asChild>
-        <Button label="Save Changes" type="submit" onClick={onSaveClick}/>
+        <Button label="Save Changes" type="submit" onClick={onSaveClick} />
       </DialogClose>
     </div>
   );
