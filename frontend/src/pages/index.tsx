@@ -1,11 +1,11 @@
 import { ReactElement } from "react";
 
-import CreateUser from "./create_user";
+import Login from "./login";
 
 import Landing from "@/components/Landing";
 
 export default function Home() {
-  return <CreateUser />;
+  return <Login />;
 }
 
 Home.getLayout = function getLayout(page: ReactElement) {

@@ -22,7 +22,7 @@ import { useColumnSchema } from "./useColumnSchema";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
-export default function StudentTable() {
+export default function StudentsTable() {
   const [allStudents, setAllStudents] = useState<StudentMap>({});
   const [isLoading, setIsLoading] = useState(true);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

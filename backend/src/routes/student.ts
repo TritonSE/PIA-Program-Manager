@@ -13,4 +13,6 @@ router.post("/create", StudentValidator.createStudent, StudentController.createS
 router.put("/edit/:id", StudentValidator.editStudent, StudentController.editStudent);
 router.get("/all", StudentController.getAllStudents);
 
+router.get("/all", StudentController.getAllStudents);
+
 export default router;
