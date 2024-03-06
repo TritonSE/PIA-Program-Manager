@@ -3,14 +3,16 @@ import { FilterFn } from "@tanstack/react-table";
 
 import { Student } from "@/api/students";
 
+/* eslint-disable */
 declare module "@tanstack/table-core" {
-  type FilterFns = {
+  interface FilterFns {
     fuzzy: FilterFn<unknown>;
-  };
-  type FilterMeta = {
+  }
+  interface FilterMeta {
     itemRank: RankingInfo;
-  };
+  }
 }
+/* eslint-enable */
 
 export const fuzzyFilter: FilterFn<Student> = (row, columnId, value, addMeta) => {
   // Rank the item
