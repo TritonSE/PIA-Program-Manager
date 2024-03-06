@@ -7,7 +7,7 @@
  * Custom type definition for the HTTP methods handled by this module.
  */
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
 /**
  * Throws an error if the status code of the HTTP response indicates an error. If an HTTP error was
