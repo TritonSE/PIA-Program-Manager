@@ -4,13 +4,13 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
-import { StudentMap } from "./StudentsTable/types";
 
 import { Button } from "./Button";
 import ContactInfo from "./StudentForm/ContactInfo";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
+import { StudentMap } from "./StudentsTable/types";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 type BaseProps = {
@@ -86,7 +86,7 @@ export default function StudentFormButton({
             const newStudent = result.data;
             reset(); // only clear form on success
             setOpenForm(false);
-            setAllStudents((prevStudents: Student) => {
+            setAllStudents((prevStudents: StudentMap) => {
               return { ...prevStudents, [newStudent._id]: newStudent };
             });
           } else {
@@ -107,7 +107,7 @@ export default function StudentFormButton({
           if (result.success) {
             const editedStudent = result.data;
             setOpenForm(false);
-            setAllStudents((prevStudents: Student) => {
+            setAllStudents((prevStudents: StudentMap) => {
               if (Object.keys(prevStudents).includes(editedStudent._id)) {
                 return { ...prevStudents, [editedStudent._id]: editedStudent };
               } else {
