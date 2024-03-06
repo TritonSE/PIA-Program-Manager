@@ -8,6 +8,8 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown";
 
+import { cn } from "@/lib/utils";
+
 type BaseProps<T extends FieldValues> = {
   name: Path<T>;
   label?: string;
@@ -41,7 +43,12 @@ export function Dropdown<T extends FieldValues>({
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex w-[244px] items-start justify-start gap-2 rounded-sm border border-pia_border px-4 py-3">
+      <DropdownMenuTrigger
+        className={cn(
+          "inline-flex h-[46px] w-[244px] items-start justify-start gap-2 rounded-sm border border-pia_border px-4 py-3",
+          className,
+        )}
+      >
         <span className="text-neutral-400">{label + ": "}</span>
         <span className="text-neutral-800">{selectedOption ?? ""}</span>
       </DropdownMenuTrigger>

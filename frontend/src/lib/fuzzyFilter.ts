@@ -1,6 +1,8 @@
 import { RankingInfo, rankItem } from "@tanstack/match-sorter-utils";
 import { FilterFn } from "@tanstack/react-table";
 
+import { Student } from "@/api/students";
+
 declare module "@tanstack/table-core" {
   type FilterFns = {
     fuzzy: FilterFn<unknown>;
@@ -10,9 +12,9 @@ declare module "@tanstack/table-core" {
   };
 }
 
-export const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+export const fuzzyFilter: FilterFn<Student> = (row, columnId, value, addMeta) => {
   // Rank the item
-  const itemRank = rankItem(row.getValue(columnId), value);
+  const itemRank = rankItem(row.getValue(columnId), value as string);
 
   // Store the itemRank info
   addMeta({
