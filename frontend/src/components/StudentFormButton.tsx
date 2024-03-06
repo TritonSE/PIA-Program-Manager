@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
-import { StudentMap } from "../pages/home";
+import { StudentMap } from "./StudentsTable/types";
 
 import { Button } from "./Button";
 import ContactInfo from "./StudentForm/ContactInfo";
