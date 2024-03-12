@@ -12,19 +12,31 @@ type ButtonStyles = {
   primary: string;
   small: string;
   default: string;
+  selected: string;
+  big: string;
 };
 
 const poppins = Poppins({ weight: "400", style: "normal", subsets: [] });
 
 export type ButtonProps = {
-  label: string;
+  label: React.ReactNode | string;
+
   kind?: "primary" | "secondary" | "destructive" | "destructive-secondary";
-  size?: "default" | "small";
+  size?: "default" | "small" | "big";
   disabled?: boolean;
+  selected?: boolean;
 } & React.ComponentProps<"button">;
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { label, kind = "primary", size = "default", disabled = false, className, ...props }: ButtonProps,
+  {
+    label,
+    kind = "primary",
+    size = "default",
+    disabled = false,
+    selected = false,
+    className,
+    ...props
+  }: ButtonProps,
   ref,
 ) {
   const buttonStyles: ButtonStyles = styles as ButtonStyles;
@@ -58,9 +70,16 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     case "small":
       buttonClass += ` ${buttonStyles.small}`;
       break;
+    case "big":
+      buttonClass += ` ${buttonStyles.big}`;
+      break;
     default:
       buttonClass += ` ${buttonStyles.default}`;
       break;
+  }
+
+  if (selected) {
+    buttonClass += ` ${buttonStyles.selected}`;
   }
 
   // Lets developers apply their own styling
@@ -70,7 +89,6 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
 
   // Set font to poppins
   buttonClass += ` ${poppins.className}`;
-
   return (
     <button ref={ref} className={buttonClass} {...props}>
       {label}

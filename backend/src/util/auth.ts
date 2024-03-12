@@ -7,7 +7,7 @@
 
 import { AuthError } from "../errors/auth";
 
-import { firebaseAuth } from "./firebase";
+import { firebaseAdminAuth } from "./firebase";
 
 /**
  * This function verifies a token and returns a user from firebase.
@@ -16,7 +16,7 @@ import { firebaseAuth } from "./firebase";
  */
 async function decodeAuthToken(token: string) {
   try {
-    const userInfo = await firebaseAuth.verifyIdToken(token);
+    const userInfo = await firebaseAdminAuth.verifyIdToken(token);
     return userInfo;
   } catch (e) {
     throw AuthError.DECODE_ERROR;

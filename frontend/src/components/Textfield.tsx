@@ -13,8 +13,10 @@ type BaseProps<T extends FieldValues> = {
   label?: string;
   type?: string;
   placeholder: string;
+  handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   className?: string;
+  mode?: "filled" | "outlined";
 };
 
 type WithCalendarProps<T extends FieldValues> = BaseProps<T> & {
@@ -37,8 +39,12 @@ export function Textfield<T extends FieldValues>({
   placeholder,
   calendar = false,
   className,
+  handleInputChange = () => {
+    /* do nothing */
+  },
   type = "text",
   defaultValue = "",
+  mode = "outlined",
 }: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
 
@@ -53,7 +59,7 @@ export function Textfield<T extends FieldValues>({
     }
   }, [date]);
 
-  return (
+  return mode === "outlined" ? (
     <Popover>
       <div
         className={cn(
@@ -66,6 +72,7 @@ export function Textfield<T extends FieldValues>({
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={label + placeholder}
           type={type}
+          onChange={handleInputChange}
           placeholder={placeholder}
           defaultValue={
             calendar && defaultValue
@@ -118,5 +125,21 @@ export function Textfield<T extends FieldValues>({
         )}
       </div>
     </Popover>
+  ) : (
+    <div
+      className={cn(
+        "relative flex flex-grow flex-col border-b-2 border-pia_accent py-1 focus-within:border-pia_dark_green",
+        className,
+      )}
+    >
+      <input
+        {...register(name as Path<T>)}
+        className="focus-visible:out w-full appearance-none bg-inherit placeholder-pia_accent outline-none placeholder:italic"
+        id={label + placeholder}
+        type={type}
+        onChange={handleInputChange}
+        placeholder={placeholder}
+      />
+    </div>
   );
 }
