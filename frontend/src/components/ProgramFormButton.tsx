@@ -8,6 +8,7 @@ import { Button } from "./Button";
 import ProgramInfo from "./ProgramForm/ProgramInfo";
 import { ProgramData } from "./ProgramForm/types";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
+import { ColorRadio } from "./Radio";
 
 type BaseProperties = {
   classname?: string;
@@ -62,7 +63,6 @@ export default function ProgramFormButton({
               register={register}
               data={data ?? null}
               setCalendarValue={setCalendarValue}
-              isMobile={false}
             />
 
             <div className="flex flex-row items-end gap-3">
@@ -70,12 +70,12 @@ export default function ProgramFormButton({
                 <div className="text-center text-base font-normal text-neutral-400">
                   Color (Cover)
                 </div>
-                <div className="inline-flex items-start justify-end gap-4">
-                  <div className="h-10 w-10 rounded-full border border-neutral-400 bg-red-400" />
-                  <div className="h-10 w-10 rounded-full border border-neutral-400 bg-yellow-500" />
-                  <div className="h-10 w-10 rounded-full border border-neutral-400 bg-lime-500" />
-                  <div className="h-10 w-10 rounded-full border border-neutral-400 bg-slate-500" />
-                </div>
+
+                <ColorRadio
+                  options={["teal", "yellow", "red", "green"]}
+                  name="color"
+                  register={register}
+                />
               </div>
               <DialogClose>
                 <Button
@@ -115,18 +115,16 @@ export default function ProgramFormButton({
               register={register}
               data={data ?? null}
               setCalendarValue={setCalendarValue}
-              isMobile={true}
             />
             <div className="stretch mb-4 flex w-full flex-col items-start gap-2">
               <div className="text-center text-base font-normal text-neutral-400">
                 Color (Cover)
               </div>
-              <div className="inline-flex items-start justify-end gap-4">
-                <div className="h-10 w-10 rounded-full border border-neutral-400 bg-red-400" />
-                <div className="h-10 w-10 rounded-full border border-neutral-400 bg-yellow-500" />
-                <div className="h-10 w-10 rounded-full border border-neutral-400 bg-lime-500" />
-                <div className="h-10 w-10 rounded-full border border-neutral-400 bg-slate-500" />
-              </div>
+              <ColorRadio
+                options={["teal", "yellow", "red", "green"]}
+                name="color"
+                register={register}
+              />
             </div>
 
             <DialogClose asChild>
