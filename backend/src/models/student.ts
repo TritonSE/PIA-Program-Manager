@@ -37,8 +37,8 @@ const studentSchema = new Schema({
 
   //For now, chose to express these as a list of strings. Will probably be replaced with
   //program subdocs in the future once they have been defined
-  prog1: { type: [String], required: true },
-  prog2: { type: [String], default: "" },
+  regularPrograms: { type: [String], required: true },
+  varyingPrograms: { type: [String], required: true },
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },

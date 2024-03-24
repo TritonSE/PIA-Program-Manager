@@ -1,19 +1,30 @@
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 
+import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
 import { Checkbox } from "../Checkbox";
 import { Textfield } from "../Textfield";
 
-import { StudentData, StudentFormData } from "./types";
+import { StudentFormData } from "./types";
 
 type StudentBackgroundProps = {
   register: UseFormRegister<StudentFormData>;
   classname?: string;
   setCalendarValue: UseFormSetValue<StudentFormData>;
-  data: StudentData | null;
+  data: Student | null;
 };
 
 const dietaryList = ["Nuts", "Eggs", "Seafood", "Pollen", "Dairy", "Other"];
+
+export const convertDateToString = (date: Date | undefined) => {
+  return date
+    ? new Date(date).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+    : "";
+};
 
 export default function StudentBackground({
   data,
@@ -41,7 +52,7 @@ export default function StudentBackground({
             placeholder="00/00/0000"
             calendar={true}
             setCalendarValue={setCalendarValue}
-            defaultValue={data?.birthday}
+            defaultValue={convertDateToString(data?.birthday)}
           />
         </div>
         <div>
@@ -60,7 +71,7 @@ export default function StudentBackground({
           register={register}
           name="dietary"
           options={dietaryList}
-          defaultValue={data?.dietary.map((item) => item.toLowerCase())}
+          defaultValue={data?.dietary}
           defaultOtherValue={data?.otherString}
           className="sm:grid-cols-2 min-[1150px]:grid-cols-3"
         />

@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { useMemo } from "react";
+import { ReactElement } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
+import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { Button } from "@/components/ui/button";
 import { useWindowSize } from "@/hooks/useWindowSize";
@@ -14,9 +15,8 @@ export default function Login() {
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
   };
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
-  const isTablet = useMemo(() => width <= 1300, [width]);
+  const { isMobile, isTablet } = useWindowSize();
+
   return (
     <main className="flex h-screen w-full items-center justify-center">
       <div className="flex h-full w-full items-center justify-center">
@@ -114,3 +114,7 @@ export default function Login() {
     </main>
   );
 }
+
+Login.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};

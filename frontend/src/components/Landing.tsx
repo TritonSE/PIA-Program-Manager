@@ -6,7 +6,7 @@
  */
 import { Poppins } from "next/font/google";
 import Image from "next/image";
-import React, { useMemo } from "react";
+import React from "react";
 
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
@@ -32,8 +32,7 @@ const Logo = () => {
 
 // Navigation component that wraps the content of the page
 function Landing({ children }: { children: React.ReactNode }) {
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
+  const { isMobile } = useWindowSize();
 
   return (
     <main
