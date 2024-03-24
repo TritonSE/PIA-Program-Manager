@@ -3,6 +3,12 @@
   --primary-dark-green: 0, 104, 103;
   --primary-text: 32, 33, 36;
   --white: 255, 255, 255;
+
+  --secondary-yellow: 255, 184, 0;
+  --secondary-red: 255, 122, 94;
+  --secondary-teal: 79, 161, 151;
+  --secondary-green: 182, 191, 14;
+
   --error-red: 185, 59, 69;
   --gray-2: 216, 216, 216;
   --black: 0, 0, 0;
