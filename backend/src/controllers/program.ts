@@ -2,7 +2,7 @@
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 
-import ProgramFormModel from "../models/program-form";
+import ProgramModel from "../models/program";
 import validationErrorParser from "../util/validationErrorParser";
 
 export type Program = {
@@ -15,15 +15,25 @@ export type Program = {
   color: string; //colorValueHex;
 };
 
-export const createForm: RequestHandler = async (req, res, next) => {
+export const createProgram: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
 
   try {
     validationErrorParser(errors);
 
-    const programForm = await ProgramFormModel.create(req.body as Program);
+    const programForm = await ProgramModel.create(req.body as Program);
 
     res.status(201).json(programForm);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllPrograms: RequestHandler = async (_, res, next) => {
+  try {
+    const programs = await ProgramModel.find();
+
+    res.status(200).json(programs);
   } catch (error) {
     next(error);
   }

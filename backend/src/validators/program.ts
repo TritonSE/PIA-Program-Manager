@@ -108,7 +108,7 @@ const makeColorValidator = () =>
     });
 // check for first chara being # and others being 1-F
 
-export const createForm = [
+export const createProgram = [
   makeNameValidator(),
   makeAbbreviationValidator(),
   makeTypeValidator(),

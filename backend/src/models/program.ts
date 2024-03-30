@@ -12,6 +12,6 @@ const programSchema = new Schema({
   color: { type: String, required: true }, // options: 1 (teal, #4FA197), 2 (yellow, #FFB800), 3 (pink, #FF7A5E), 4 (olive, #B6BF0E)
 });
 
-type ProgramForm = InferSchemaType<typeof programSchema>;
+type ProgramModel = InferSchemaType<typeof programSchema>;
 
-export default model<ProgramForm>("ProgramForm", programSchema);
+export default model<ProgramModel>("ProgramForm", programSchema);
