@@ -4,10 +4,8 @@ import { ProgramCard } from "../components/ProgramCard";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 export default function Programs() {
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width < 640, [width]);
-  const isTablet = useMemo(() => width < 1024, [width]);
-  const extraLarge = useMemo(() => width >= 2000, [width]);
+  const { windowSize, isMobile, isTablet } = useWindowSize();
+  const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar";
   let titleClass = "font-[alternate-gothic]";

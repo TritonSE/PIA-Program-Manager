@@ -1,6 +1,6 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
-import React, { useMemo } from "react";
+import React from "react";
 
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
@@ -17,8 +17,7 @@ export type CardProps = {
 };
 
 export function ProgramCard({ type, title, dates, numStudents, color, className }: CardProps) {
-  const { width } = useWindowSize();
-  const isTablet = useMemo(() => width < 1024, [width]);
+  const { isTablet } = useWindowSize();
 
   let outerDivClass = "text-white grow overflow-hidden tracking-wide leading-6";
   let topDivClass = "";
