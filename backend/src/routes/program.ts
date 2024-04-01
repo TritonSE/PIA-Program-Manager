@@ -10,5 +10,6 @@ import * as ProgramValidator from "../validators/program";
 const router = express.Router();
 
 router.post("/", ProgramValidator.createForm, ProgramController.createForm);
+router.patch("/:id", ProgramValidator.updateForm, ProgramController.updateForm);
 
 export default router;

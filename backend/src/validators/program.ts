@@ -101,9 +101,27 @@ const makeColorValidator = () =>
       }
       return true;
     });
-// check for first chara being # and others being 1-F
+const makeIDValidator = () =>
+  // mongoID
+  body("_id")
+    .exists()
+    .withMessage("_id is required")
+    .bail()
+    .isMongoId()
+    .withMessage("_id must be a MongoDB object ID");
 
 export const createForm = [
+  makeNameValidator(),
+  makeAbbreviationValidator(),
+  makeTypeValidator(),
+  makeDaysOfWeekValidator(),
+  makeStartDateValidator(),
+  makeEndDateValidator(),
+  makeColorValidator(),
+];
+
+export const updateForm = [
+  makeIDValidator(),
   makeNameValidator(),
   makeAbbreviationValidator(),
   makeTypeValidator(),
