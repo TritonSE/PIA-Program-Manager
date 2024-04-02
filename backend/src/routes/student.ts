@@ -9,7 +9,9 @@ import * as StudentValidator from "../validators/student";
 
 const router = express.Router();
 
-router.post("/", StudentValidator.createStudent, StudentController.createStudent);
+router.post("/create", StudentValidator.createStudent, StudentController.createStudent);
+router.put("/edit/:id", StudentValidator.editStudent, StudentController.editStudent);
+router.get("/all", StudentController.getAllStudents);
 
 router.get("/all", StudentController.getAllStudents);
 

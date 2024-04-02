@@ -6,6 +6,9 @@ import { useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { GET } from "@/api/requests";
+import { ReactElement } from "react";
+
+import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { Button } from "@/components/ui/button";
 import { initFirebase } from "@/firebase/firebase";
@@ -65,9 +68,7 @@ export default function Login() {
       });
     router.push("/profile");
   };
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
-  const isTablet = useMemo(() => width <= 1300, [width]);
+  const { isMobile, isTablet } = useWindowSize();
 
   return (
     <main className="flex h-screen w-full items-center justify-center">
@@ -192,3 +193,7 @@ export default function Login() {
     </main>
   );
 }
+
+Login.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};

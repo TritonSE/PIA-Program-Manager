@@ -1,9 +1,10 @@
 import { UseFormRegister } from "react-hook-form";
 
+import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
 import { Textfield } from "../Textfield";
 
-import { StudentData, StudentFormData } from "./types";
+import { StudentFormData } from "./types";
 
 type ContactRole = "student" | "emergency" | "serviceCoordinator";
 
@@ -13,7 +14,7 @@ type ContactInfoProps = {
   register: UseFormRegister<StudentFormData>;
   classname?: string;
   type: "add" | "edit";
-  data: StudentData | null;
+  data: Student | null;
 };
 
 type FieldProps = {
@@ -63,7 +64,8 @@ export default function ContactInfo({ register, type, data, classname }: Contact
 
   const toTitleCase = (word: string) => {
     return word
-      .split("_")
+      .replace(/[A-Z]/g, " $&")
+      .split(" ")
       .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
       .join(" ");
   };

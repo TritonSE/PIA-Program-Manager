@@ -1,16 +1,18 @@
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 
+import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
 import { Checkbox } from "../Checkbox";
 import { Textfield } from "../Textfield";
 
-import { StudentData, StudentFormData } from "./types";
+import { convertDateToString } from "./StudentBackground";
+import { StudentFormData } from "./types";
 
 type StudentInfoProps = {
   register: UseFormRegister<StudentFormData>;
   classname?: string;
   setCalendarValue: UseFormSetValue<StudentFormData>;
-  data: StudentData | null;
+  data: Student | null;
 };
 
 const regularPrograms = ["Intro", "ENTR"];
@@ -33,7 +35,7 @@ export default function StudentInfo({
             placeholder="00/00/0000"
             calendar={true}
             setCalendarValue={setCalendarValue}
-            defaultValue={data?.intakeDate}
+            defaultValue={convertDateToString(data?.intakeDate)}
           />
         </div>
         <div>
@@ -44,7 +46,7 @@ export default function StudentInfo({
             placeholder="00/00/0000"
             calendar={true}
             setCalendarValue={setCalendarValue}
-            defaultValue={data?.tourDate}
+            defaultValue={convertDateToString(data?.tourDate)}
           />
         </div>
       </div>
@@ -55,16 +57,16 @@ export default function StudentInfo({
             register={register}
             name="regular_programs"
             options={regularPrograms}
-            defaultValue={data?.prog1}
+            defaultValue={data?.regularPrograms}
           />
         </div>
         <div>
           <h3>Varying Programs</h3>
           <Checkbox
             register={register}
-            name="regular_programs"
+            name="varying_programs"
             options={varyingPrograms}
-            defaultValue={data?.prog2}
+            defaultValue={data?.varyingPrograms}
           />
         </div>
       </div>
