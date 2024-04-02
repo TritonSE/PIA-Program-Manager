@@ -24,3 +24,16 @@ export const createUser: ValidationChain[] = [
     .isLength({ min: 6 })
     .withMessage("Invaid password length (>6)."),
 ];
+
+export const loginUser: ValidationChain[] = [
+  body("uid")
+    .notEmpty()
+    .withMessage("Email cannot be empty.")
+    .isEmail()
+    .withMessage("Invalid email format."),
+  body("password")
+    .notEmpty()
+    .withMessage("Email cannot be empty.")
+    .isString()
+    .withMessage("Invalid password format."),
+];

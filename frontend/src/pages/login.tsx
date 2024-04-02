@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
+import { GET } from "@/api/requests";
 import { Textfield } from "@/components/Textfield";
 import { Button } from "@/components/ui/button";
 import { initFirebase } from "@/firebase/firebase";
@@ -26,16 +27,43 @@ export default function Login() {
   const router = useRouter();
 
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password).then((_) => {
-      router.push("/profile");
-    });
+    return await signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        return userCredential.user.getIdToken();
+      })
+      .then((token) => {
+        return token;
+      });
+  };
+
+  const sendTokenToBackend = async (token: string) => {
+    try {
+      const response = await GET(`http://localhost:4000/api/user/`, {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      });
+
+      if (response.ok) {
+        const userInfo = await response.json();
+        console.log(userInfo);
+      } else {
+        console.error("Failed to get user info from JWT Token");
+      }
+    } catch (error) {
+      console.error("error sending JWT token to backend", error);
+    }
   };
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
-    login(data.email as string, data.password as string).catch((_) => {
-      setFirebaseError("Invalid login. Please check your username and password.");
-    });
+    login(data.email as string, data.password as string)
+      .then((token: string) => {
+        void sendTokenToBackend(token);
+      })
+      .catch((_) => {
+        setFirebaseError("Invalid login. Please check your username and password.");
+      });
+    router.push("/profile");
   };
   const { width } = useWindowSize();
   const isMobile = useMemo(() => width <= 640, [width]);

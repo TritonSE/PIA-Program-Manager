@@ -1,14 +1,19 @@
+import path from "path";
+
+import dotenv from "dotenv";
 import { FirebaseOptions, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-import env from "@/lib/validateEnv";
+dotenv.config({
+  path: path.resolve(__dirname, "../../.env"),
+});
 
 export const initFirebase = () => {
-  if (!env.NEXT_PUBLIC_FIREBASE_SETTINGS) {
-    throw new Error("Cannot get firebase settings");
+  if (!process.env.NEXT_PUBLIC_FIREBASE_CONFIG) {
+    throw new Error("Firebase configuration not found.");
   }
 
-  const firebaseConfig = env.NEXT_PUBLIC_FIREBASE_SETTINGS as FirebaseOptions;
+  const firebaseConfig = JSON.parse(process.env.NEXT_PUBLIC_FIREBASE_CONFIG) as FirebaseOptions;
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);

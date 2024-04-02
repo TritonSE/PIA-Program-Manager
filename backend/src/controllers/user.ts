@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import admin from "firebase-admin";
 
+import { ValidationError } from "../errors/validation";
 import UserModel from "../models/user";
 import { firebaseAdminAuth } from "../util/firebase";
 import validationErrorParser from "../util/validationErrorParser";
@@ -12,6 +13,10 @@ type CreateUserRequestBody = {
   accountType: "admin" | "team";
   email: string;
   password: string;
+};
+
+type LoginUserRequestBody = {
+  uid: string;
 };
 
 export const createUser = async (
@@ -50,4 +55,26 @@ export const createUser = async (
   }
 
   return;
+};
+
+export const loginUser = async (
+  req: Request<Record<string, never>, Record<string, never>, LoginUserRequestBody>,
+  res: Response,
+  nxt: NextFunction,
+) => {
+  try {
+    const uid = req.body.uid;
+    const user = await UserModel.findById(uid);
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+    res.status(200).json({ uid: user._id, approvalStatus: user.approvalStatus });
+    return;
+  } catch (e) {
+    nxt();
+    console.log(e);
+    return res.status(400).json({
+      error: e,
+    });
+  }
 };
