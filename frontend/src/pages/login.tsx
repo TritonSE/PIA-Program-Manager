@@ -45,8 +45,7 @@ export default function Login() {
       });
 
       if (response.ok) {
-        const userInfo = await response.json();
-        console.log(userInfo);
+        console.log(await response.json());
       } else {
         console.error("Failed to get user info from JWT Token");
       }
