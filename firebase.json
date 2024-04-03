@@ -1,7 +1,7 @@
 {
   "functions": [
     {
-      "runtime": "nodejs20",
+      "runtime": "nodejs18",
       "source": "backend",
       "codebase": "default",
       "ignore": [
