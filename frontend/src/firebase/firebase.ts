@@ -1,12 +1,8 @@
-import path from "path";
-
 import dotenv from "dotenv";
 import { FirebaseOptions, initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 
-dotenv.config({
-  path: path.resolve(__dirname, "../../.env"),
-});
+dotenv.config();
 
 export const initFirebase = () => {
   if (!process.env.NEXT_PUBLIC_FIREBASE_CONFIG) {
