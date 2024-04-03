@@ -63,7 +63,7 @@ export default function Login() {
       .catch((_) => {
         setFirebaseError("Invalid login. Please check your username and password.");
       });
-    router.push("/profile");
+    router.push("/home");
   };
   const { isMobile, isTablet } = useWindowSize();
 
