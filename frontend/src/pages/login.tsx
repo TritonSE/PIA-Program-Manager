@@ -39,7 +39,7 @@ export default function Login() {
 
   const sendTokenToBackend = async (token: string) => {
     try {
-      const response = await GET(`/user`, {
+      const response = await GET(`http://localhost:4000/api/user/`, {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       });
