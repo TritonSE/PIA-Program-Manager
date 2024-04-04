@@ -32,6 +32,7 @@ export default function StudentsTable() {
   useEffect(() => {
     getAllStudents().then(
       (result) => {
+        console.log(result);
         if (result.success) {
           // Convert student array to object with keys as ids and values as corresponding student
           const studentsObject = result.data.reduce((obj, student) => {
