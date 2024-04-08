@@ -139,6 +139,7 @@ export function Textfield<T extends FieldValues>({
         type={type}
         onChange={handleInputChange}
         placeholder={placeholder}
+        defaultValue={defaultValue}
       />
     </div>
   );

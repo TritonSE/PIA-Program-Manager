@@ -5,10 +5,9 @@ import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
 import { Button } from "./Button";
-import ProgramInfo from "./ProgramForm/ProgramInfo";
+import { ProgramInfo } from "./ProgramForm/ProgramInfo";
 import { ProgramData } from "./ProgramForm/types";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
-import { ColorRadio } from "./Radio";
+import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
 
 type BaseProperties = {
   classname?: string;
@@ -53,7 +52,7 @@ export default function ProgramFormButton({
             }}
           />
         </DialogTrigger>
-        <DialogContent className="max-w-screen h-auto w-full rounded-lg bg-white p-6 sm:w-[50%]">
+        <DialogContentSlide className="w-full bg-white object-right p-6 sm:w-[50%]">
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             <h2 className="mb-4 text-2xl font-bold text-neutral-800">
               {type === "add" ? "Add new program" : data?.name}
@@ -65,18 +64,10 @@ export default function ProgramFormButton({
               setCalendarValue={setCalendarValue}
             />
 
-            <div className="flex flex-row items-end gap-3">
-              <div className="stretch flex w-full flex-col items-start gap-2">
-                <div className="text-center text-base font-normal text-neutral-400">
-                  Color (Cover)
-                </div>
-
-                <ColorRadio
-                  options={["teal", "yellow", "red", "green"]}
-                  name="color"
-                  register={register}
-                />
-              </div>
+            <div className="flex flex-row-reverse items-end gap-3">
+              <DialogClose asChild>
+                <Button label="Create" type="submit" />
+              </DialogClose>
               <DialogClose>
                 <Button
                   label="Cancel"
@@ -86,12 +77,9 @@ export default function ProgramFormButton({
                   }}
                 />
               </DialogClose>
-              <DialogClose asChild>
-                <Button label="Create" type="submit" />
-              </DialogClose>
             </div>
           </form>
-        </DialogContent>
+        </DialogContentSlide>
       </Dialog>
     </>
   ) : (
@@ -105,9 +93,12 @@ export default function ProgramFormButton({
             }}
           />
         </DialogTrigger>
-        <DialogContent className="h-screen w-full rounded-lg bg-white p-6 sm:w-[50%]">
+        <DialogContent className="bg-white p-3">
+          <DialogClose asChild>
+            <div className="absolute cursor-pointer pl-3 pt-4 text-sm text-neutral-400">Cancel</div>
+          </DialogClose>
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
-            <h2 className="mb-4 text-2xl font-bold text-neutral-800">
+            <h2 className="pb-6 text-center text-xl font-bold text-neutral-800">
               {type === "add" ? "Add new program" : data?.name}
             </h2>
             <ProgramInfo
@@ -116,19 +107,10 @@ export default function ProgramFormButton({
               data={data ?? null}
               setCalendarValue={setCalendarValue}
             />
-            <div className="stretch mb-4 flex w-full flex-col items-start gap-2">
-              <div className="text-center text-base font-normal text-neutral-400">
-                Color (Cover)
-              </div>
-              <ColorRadio
-                options={["teal", "yellow", "red", "green"]}
-                name="color"
-                register={register}
-              />
-            </div>
-
             <DialogClose asChild>
-              <Button className="stretch" label="Create" type="submit" />
+              <div className="pt-6">
+                <Button size="wide" label="Create" type="submit" />
+              </div>
             </DialogClose>
           </form>
         </DialogContent>

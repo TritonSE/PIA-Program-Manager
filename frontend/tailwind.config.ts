@@ -164,6 +164,15 @@ module.exports = {
         secondary_green: {
           DEFAULT: "#B6BF0E",
         },
+        secondary_blue: {
+          DEFAULT: "#5DADE2",
+        },
+        secondary_violet: {
+          DEFAULT: "#7986CB",
+        },
+        secondary_fuchsia: {
+          DEFAULT: "#EE6CEE",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -183,6 +192,9 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      transitionProperty: {
+        height: "height",
       },
     },
   },

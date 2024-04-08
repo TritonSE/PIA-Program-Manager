@@ -2,14 +2,15 @@ import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
 import { cn } from "../lib/utils";
 
+import { programColor } from "./ProgramForm/types";
+
 type RadioProps<T extends FieldValues> = {
   options: string[];
   className?: string;
   name: Path<T>;
   register: UseFormRegister<T>;
+  defaultValue?: programColor | undefined;
 };
-
-type programColor = "teal" | "green" | "red" | "yellow";
 
 type ColorRadioProps<T extends FieldValues> = RadioProps<T> & {
   options: programColor[];
@@ -20,6 +21,9 @@ const programColors = {
   green: "bg-secondary_green",
   red: "bg-secondary_red",
   yellow: "bg-secondary_yellow",
+  blue: "bg-secondary_blue",
+  violet: "bg-secondary_violet",
+  fuchsia: "bg-secondary_fuchsia",
 };
 
 export function Radio<T extends FieldValues>({
@@ -57,24 +61,26 @@ export function ColorRadio<T extends FieldValues>({
   register,
   name,
   className,
+  defaultValue,
 }: ColorRadioProps<T>) {
   return (
-    <div className={cn("flex flex-row gap-3", className)}>
+    <div className={cn("flex flex-row gap-2 sm:gap-3", className)}>
       {options.map((option, index) => {
         return (
           <div className="relative flex items-center" key={option + index}>
             <input
               {...register(name)}
               className={cn(
-                "peer flex h-12 w-12 appearance-none rounded-full border-[2px] border-pia_border transition-colors hover:cursor-pointer focus-visible:bg-[#00686766]",
-                programColors[option],
+                "peer flex h-10 w-10 appearance-none rounded-full border-[1px] border-pia_border transition-colors hover:cursor-pointer focus-visible:bg-[#00686766] sm:h-12 sm:w-12 sm:border-[2px]",
+                programColors[option as programColor],
               )}
               id={option + index}
               type="radio"
               value={option}
+              checked={defaultValue === option}
             />
             <svg
-              className="invisible absolute inset-3 peer-checked:visible"
+              className="invisible absolute inset-2 peer-checked:visible sm:inset-3"
               width="25"
               height="25"
               viewBox="0 0 13 11"
@@ -92,4 +98,3 @@ export function ColorRadio<T extends FieldValues>({
     </div>
   );
 }
-
