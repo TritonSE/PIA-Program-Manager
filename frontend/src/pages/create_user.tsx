@@ -1,11 +1,12 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useMemo, useState } from "react";
+import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-import { checkEmailExists } from "../../../backend/src/util/firebase";
+// import { checkEmailExists } from "../../../backend/src/util/firebase";
 
+import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
@@ -75,14 +76,18 @@ export default function CreateUser() {
     // setEmail(data.email); // Save user email
     void router.push("/create_user_2");
   };
+
   // const onSubmit: SubmitHandler<FieldValues> = (data) => {
   //   setEmailError(false); // add email error logic here
   //   console.log(data);
 
   //   void router.push("/create_user_2");
   // };
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
+
+  // const { width } = useWindowSize();
+  // const isMobile = useMemo(() => width <= 640, [width]);
+
+  const { isMobile } = useWindowSize();
 
   return (
     <main className="flex h-screen w-full items-center justify-center">
@@ -221,3 +226,7 @@ export default function CreateUser() {
     </main>
   );
 }
+
+CreateUser.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};
