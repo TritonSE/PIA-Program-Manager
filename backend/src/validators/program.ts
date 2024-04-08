@@ -1,7 +1,7 @@
 import { body } from "express-validator";
+import mongoose from "mongoose";
 
 import { Program } from "../controllers/program";
-import mongoose from "mongoose";
 
 const makeNameValidator = () =>
   body("name")
@@ -110,7 +110,7 @@ const makeColorValidator = () =>
 // check for first chara being # and others being 1-F
 
 // verify student ids passed in, if any, are valid
-const makeStudentsValidator = () => 
+const makeStudentsValidator = () =>
   body("students")
     .optional()
     .isArray()
@@ -125,7 +125,6 @@ const makeStudentsValidator = () =>
     })
     .bail()
     .withMessage("students must be valid student ids");
-
 
 export const createForm = [
   makeNameValidator(),

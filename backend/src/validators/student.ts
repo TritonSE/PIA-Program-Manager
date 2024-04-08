@@ -5,6 +5,8 @@
 import { body } from "express-validator";
 import mongoose from "mongoose";
 
+import { programValidatorUtil } from "../util/student";
+
 //designed these to use the globstar operator from express-validator to more cleanly
 
 const makeIdValidator = () =>
@@ -113,13 +115,6 @@ const makeTourDateValidator = () =>
     .toDate()
     .withMessage("Tour Date string must be a valid date-time string");
 
-interface programLink {
-  programId: string;
-  status: string;
-  dateUpdated: string;
-  hoursLeft: number;
-}
-
 const makeRegularProgramsValidator = () =>
   body("regularPrograms")
     .exists()
@@ -128,18 +123,7 @@ const makeRegularProgramsValidator = () =>
     .isArray({ min: 1 })
     .withMessage("Regular Programs must be a non-empty array")
     .bail()
-    .custom((regularPrograms: programLink[]) => {
-      const allowedStatuses = ["Joined", "Waitlisted", "Archived", "Not a fit"];
-      regularPrograms.forEach((program) => {
-        if (!mongoose.Types.ObjectId.isValid(program.programId)) {
-          throw new Error("Program ID format is invalid");
-        }
-        if (!allowedStatuses.includes(program.status)) {
-          throw new Error("Status must be one of: " + allowedStatuses.join(", "));
-        }
-      });
-      return true;
-    });
+    .custom(programValidatorUtil);
 
 const makeVaryingProgramsValidator = () =>
   body("varyingPrograms")
@@ -149,18 +133,7 @@ const makeVaryingProgramsValidator = () =>
     .isArray({ min: 1 })
     .withMessage("Varying Programs must be a non-empty array")
     .bail()
-    .custom((varyingPrograms: programLink[]) => {
-      const allowedStatuses = ["Joined", "Waitlisted", "Archived", "Not a fit"];
-      varyingPrograms.forEach((program) => {
-        if (!mongoose.Types.ObjectId.isValid(program.programId)) {
-          throw new Error("Program ID format is invalid");
-        }
-        if (!allowedStatuses.includes(program.status)) {
-          throw new Error("Status must be one of: " + allowedStatuses.join(", "));
-        }
-      });
-      return true;
-    });
+    .custom(programValidatorUtil);
 
 //dietary
 //validates entire array
