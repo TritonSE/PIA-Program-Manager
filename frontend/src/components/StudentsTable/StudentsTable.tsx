@@ -19,11 +19,13 @@ import THead from "./THead";
 import { StudentMap } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
 
+import { Program, getAllPrograms } from "@/api/programs";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function StudentsTable() {
   const [allStudents, setAllStudents] = useState<StudentMap>({});
+  const [allPrograms, setAllPrograms] = useState<Record<string, Program>>({}); // map from program id to program
   const [isLoading, setIsLoading] = useState(true);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -51,6 +53,18 @@ export default function StudentsTable() {
         console.log(error);
       },
     );
+    getAllPrograms().then((result) => {
+      if (result.success) {
+        const programsObject = result.data.reduce(
+          (obj, program) => {
+            obj[program._id] = program;
+            return obj;
+          },
+          {} as Record<string, Program>,
+        );
+        setAllPrograms(programsObject);
+      }
+    });
   }, []);
 
   const columns = useColumnSchema({ setAllStudents });

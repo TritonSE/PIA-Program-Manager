@@ -5,19 +5,26 @@ export type Contact = {
   phoneNumber: string;
 };
 
+export type ProgramLink = {
+  programId: string;
+  status: string;
+  dateUpdated?: Date;
+  hoursLeft: number;
+};
+
 export type StudentData = {
   student: Contact;
   emergency: Contact;
   serviceCoordinator: Contact;
   location: string;
-  medication: string;
+  medication?: string;
   birthday: Date;
   intakeDate: Date;
   tourDate: Date;
-  regularPrograms: string[];
-  varyingPrograms: string[];
+  regularPrograms: ProgramLink[];
+  varyingPrograms: ProgramLink[];
   dietary: string[];
-  otherString: string;
+  otherString?: string;
 };
 
 export type StudentFormData = {

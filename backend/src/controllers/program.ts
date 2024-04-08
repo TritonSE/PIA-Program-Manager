@@ -28,3 +28,13 @@ export const createForm: RequestHandler = async (req, res, next) => {
     next(error);
   }
 };
+
+export const getAllPrograms: RequestHandler = async (req, res, next) => {
+  try {
+    const programs = await ProgramFormModel.find();
+
+    res.status(200).json(programs);
+  } catch (error) {
+    next(error);
+  }
+}

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import ProgramForm from "../models/program-form";
+import ProgramFormModel from "../models/program-form";
 import { programLink } from "../types/programLink";
 
 type ObjectId = mongoose.Types.ObjectId;
@@ -26,7 +26,7 @@ export const programValidatorUtil = (programs: programLink[]) => {
 export const addStudentToPrograms = async (studentId: ObjectId, programIds: ObjectId[]) => {
   await Promise.all(
     programIds.map(async (programId) => {
-      await ProgramForm.findByIdAndUpdate(
+      await ProgramFormModel.findByIdAndUpdate(
         programId,
         { $push: { students: studentId } },
         { new: true },
@@ -38,7 +38,7 @@ export const addStudentToPrograms = async (studentId: ObjectId, programIds: Obje
 export const removeStudentFromPrograms = async (studentId: ObjectId, programIds: ObjectId[]) => {
   await Promise.all(
     programIds.map(async (programId) => {
-      await ProgramForm.findByIdAndUpdate(
+      await ProgramFormModel.findByIdAndUpdate(
         programId,
         { $pull: { students: studentId } },
         { new: true },
