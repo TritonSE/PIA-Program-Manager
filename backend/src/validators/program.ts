@@ -1,6 +1,7 @@
 import { body } from "express-validator";
 
 import { Program } from "../controllers/program";
+import mongoose from "mongoose";
 
 const makeNameValidator = () =>
   body("name")
@@ -108,6 +109,24 @@ const makeColorValidator = () =>
     });
 // check for first chara being # and others being 1-F
 
+// verify student ids passed in, if any, are valid
+const makeStudentsValidator = () => 
+  body("students")
+    .optional()
+    .isArray()
+    .bail()
+    .withMessage("students must be an array")
+    .custom((students: string[]) => {
+      students.forEach((studentId) => {
+        if (!mongoose.Types.ObjectId.isValid(studentId))
+          throw new Error("students must be valid student ids");
+      });
+      return true;
+    })
+    .bail()
+    .withMessage("students must be valid student ids");
+
+
 export const createForm = [
   makeNameValidator(),
   makeAbbreviationValidator(),
@@ -116,4 +135,5 @@ export const createForm = [
   makeStartDateValidator(),
   makeEndDateValidator(),
   makeColorValidator(),
+  makeStudentsValidator(),
 ];

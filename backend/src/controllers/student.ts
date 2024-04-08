@@ -104,3 +104,13 @@ export const getAllStudents: RequestHandler = async (_, res, next) => {
     next(error);
   }
 };
+
+export const deleteAllStudents: RequestHandler = async (_, res, next) => {
+  try {
+    await StudentModel.deleteMany();
+
+    res.status(204).end();
+  } catch (error) {
+    next(error);
+  }
+}

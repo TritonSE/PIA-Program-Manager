@@ -113,7 +113,13 @@ const makeTourDateValidator = () =>
     .toDate()
     .withMessage("Tour Date string must be a valid date-time string");
 
-//prog1 --placeholder, will later validate for a program objectid
+interface programLink {
+  programId: string;
+  status: string;
+  dateUpdated: string;
+  hoursLeft: number;
+}
+
 const makeRegularProgramsValidator = () =>
   body("regularPrograms")
     .exists()
@@ -121,16 +127,40 @@ const makeRegularProgramsValidator = () =>
     .bail()
     .isArray({ min: 1 })
     .withMessage("Regular Programs must be a non-empty array")
-    .bail();
+    .bail()
+    .custom((regularPrograms: programLink[]) => {
+      const allowedStatuses = ["Joined", "Waitlisted", "Archived", "Not a fit"];
+      regularPrograms.forEach((program) => {
+        if (!mongoose.Types.ObjectId.isValid(program.programId)) {
+          throw new Error("Program ID format is invalid");
+        }
+        if (!allowedStatuses.includes(program.status)) {
+          throw new Error("Status must be one of: " + allowedStatuses.join(", "));
+        }
+      });
+      return true;
+    });
 
-//prog2
 const makeVaryingProgramsValidator = () =>
   body("varyingPrograms")
     .exists()
     .withMessage("Varying Programs field required")
     .bail()
     .isArray({ min: 1 })
-    .withMessage("Varying Programs must be a non-empty array");
+    .withMessage("Varying Programs must be a non-empty array")
+    .bail()
+    .custom((varyingPrograms: programLink[]) => {
+      const allowedStatuses = ["Joined", "Waitlisted", "Archived", "Not a fit"];
+      varyingPrograms.forEach((program) => {
+        if (!mongoose.Types.ObjectId.isValid(program.programId)) {
+          throw new Error("Program ID format is invalid");
+        }
+        if (!allowedStatuses.includes(program.status)) {
+          throw new Error("Status must be one of: " + allowedStatuses.join(", "));
+        }
+      });
+      return true;
+    });
 
 //dietary
 //validates entire array

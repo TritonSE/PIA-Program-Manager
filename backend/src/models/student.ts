@@ -35,10 +35,29 @@ const studentSchema = new Schema({
   intakeDate: { type: Date, required: true },
   tourDate: { type: Date, required: true },
 
-  //For now, chose to express these as a list of strings. Will probably be replaced with
-  //program subdocs in the future once they have been defined
-  regularPrograms: { type: [String], required: true },
-  varyingPrograms: { type: [String], required: true },
+  regularPrograms: {
+    type: [
+      {
+        programId: { type: Schema.Types.ObjectId, ref: "ProgramForm", required: true },
+        status: { type: String, required: true },
+        dateUpdated: { type: Date, required: true, default: Date.now },
+        hoursLeft: { type: Number, required: true },
+      },
+    ],
+    required: true,
+  },
+
+  varyingPrograms: {
+    type: [
+      {
+        programId: { type: Schema.Types.ObjectId, ref: "ProgramForm", required: true },
+        status: { type: String, required: true },
+        dateUpdated: { type: Date, default: Date.now },
+        hoursLeft: { type: Number, required: true },
+      },
+    ],
+    required: true,
+  },
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },
