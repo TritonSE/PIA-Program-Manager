@@ -37,7 +37,8 @@ export default function CreateUser() {
 
       const accountType = isAdmin ? "admin" : "team";
 
-      const response = await POST("/api/user", {
+      // const response = await POST("/api/user", {
+      const response = await POST(`/user/`, {
         name,
         accountType,
         email,
