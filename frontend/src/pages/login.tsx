@@ -1,7 +1,6 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { AlertCircle } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
@@ -10,12 +9,11 @@ import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/firebase/firebase";
+import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
-import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 
 export default function Login() {
-
   useRedirectToHomeIfSignedIn();
 
   const {

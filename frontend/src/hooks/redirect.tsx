@@ -1,8 +1,9 @@
-import { User } from "@/api/user";
-import { UserContext } from "@/contexts/user";
 import { User as FirebaseUser } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect } from "react";
+
+import { User } from "@/api/user";
+import { UserContext } from "@/contexts/user";
 
 export const LOGIN_URL = "/login";
 export const HOME_URL = "/home";
@@ -11,10 +12,10 @@ export const NOT_FOUND_URL = "/404-not-found";
 /**
  * An interface for the user's current authentication credentials
  */
-export interface AuthCredentials {
+export type AuthCredentials = {
   firebaseUser: FirebaseUser | null;
   piaUser: User | null;
-}
+};
 
 /**
  * A type for a function that determines whether the user should be redirected
@@ -22,10 +23,10 @@ export interface AuthCredentials {
  */
 export type CheckShouldRedirect = (authCredentials: AuthCredentials) => boolean;
 
-export interface UseRedirectionProps {
+export type UseRedirectionProps = {
   checkShouldRedirect: CheckShouldRedirect;
   redirectURL: string;
-}
+};
 
 /**
  * A base hook that redirects the user to redirectURL if checkShouldRedirect returns true
@@ -62,8 +63,8 @@ export const useRedirectToHomeIfSignedIn = () => {
 export const useRedirectToLoginIfNotSignedIn = () => {
   useRedirection({
     checkShouldRedirect: ({ firebaseUser, piaUser }) => {
-        console.log(firebaseUser);
-        return firebaseUser === null || piaUser === null
+      console.log(firebaseUser);
+      return firebaseUser === null || piaUser === null;
     },
     redirectURL: LOGIN_URL,
   });
@@ -73,8 +74,8 @@ export const useRedirectToLoginIfNotSignedIn = () => {
  * A hook that redirects the user to the 404 page if they are not an admin
  */
 export const useRedirectTo404IfNotAdmin = () => {
-    useRedirection({
-      checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null,
-      redirectURL: NOT_FOUND_URL,
-    });
-  };
+  useRedirection({
+    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null,
+    redirectURL: NOT_FOUND_URL,
+  });
+};

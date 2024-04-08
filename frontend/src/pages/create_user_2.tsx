@@ -6,9 +6,9 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { Button } from "@/components/Button";
 import Landing from "@/components/Landing";
+import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
-import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 
 export default function CreateUser() {
   useRedirectToHomeIfSignedIn();

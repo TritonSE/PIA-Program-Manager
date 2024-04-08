@@ -1,10 +1,10 @@
 import { APIResult, GET, handleAPIError } from "@/api/requests";
 
-export interface User {
+export type User = {
   _id: string;
   uid: string;
   role: string;
-}
+};
 
 export const createAuthHeader = (firebaseToken: string) => ({
   Authorization: `Bearer ${firebaseToken}`,

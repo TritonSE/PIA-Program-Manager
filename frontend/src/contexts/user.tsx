@@ -1,16 +1,17 @@
 "use client";
 
-import { ReactNode, createContext, useEffect, useState } from "react";
 import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
-import { initFirebase } from "@/firebase/firebase";
-import { User, verifyUser } from "@/api/user";
+import { ReactNode, createContext, useEffect, useState } from "react";
 
-interface IUserContext {
+import { User, verifyUser } from "@/api/user";
+import { initFirebase } from "@/firebase/firebase";
+
+type IUserContext = {
   firebaseUser: FirebaseUser | null;
   piaUser: User | null;
   loadingUser: boolean;
   reloadUser: () => unknown;
-}
+};
 
 /**
  * A context that provides the current Firebase and PAP (MongoDB) user data,
@@ -38,8 +39,8 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   /**
    * Callback triggered by Firebase when the user logs in/out, or on page load
    */
-  onAuthStateChanged(auth, (firebaseUser) => {
-    setFirebaseUser(firebaseUser);
+  onAuthStateChanged(auth, (user) => {
+    setFirebaseUser(user);
     setInitialLoading(false);
   });
 
@@ -52,16 +53,21 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
     if (firebaseUser === null) {
       setLoadingUser(false);
     } else {
-      firebaseUser.getIdToken().then((token) =>
-        verifyUser(token).then((res) => {
-          if (res.success) {
-            setpiaUser(res.data);
-          } else {
-            setpiaUser(null);
-          }
-          setLoadingUser(false);
-        }),
-      );
+      firebaseUser
+        .getIdToken()
+        .then((token) =>
+          verifyUser(token).then((res) => {
+            if (res.success) {
+              setpiaUser(res.data);
+            } else {
+              setpiaUser(null);
+            }
+            setLoadingUser(false);
+          }),
+        )
+        .catch((error) => {
+          console.error(error);
+        });
     }
   };
 
