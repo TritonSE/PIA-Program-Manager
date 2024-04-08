@@ -17,10 +17,10 @@ function processDate(startString: Date): string {
 }
 
 export default function Programs() {
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width < 640, [width]);
-  const isTablet = useMemo(() => width < 1024, [width]);
-  const extraLarge = useMemo(() => width >= 2000, [width]);
+  const { windowSize } = useWindowSize();
+  const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);
+  const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);
+  const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
 
   const [programs, setPrograms] = useState<Program[]>([]);
 
