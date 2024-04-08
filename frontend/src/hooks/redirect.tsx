@@ -76,7 +76,8 @@ export const useRedirectToLoginIfNotSignedIn = () => {
  */
 export const useRedirectTo404IfNotAdmin = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null || piaUser.role !== 'admin',
+    checkShouldRedirect: ({ firebaseUser, piaUser }) =>
+      firebaseUser === null || piaUser === null || piaUser.role !== "admin",
     redirectURL: NOT_FOUND_URL,
   });
 };
@@ -86,8 +87,8 @@ export const useRedirectTo404IfNotAdmin = () => {
  */
 export const useRedirectToNotApproved = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null || !piaUser.approvalStatus,
+    checkShouldRedirect: ({ firebaseUser, piaUser }) =>
+      firebaseUser === null || piaUser === null || !piaUser.approvalStatus,
     redirectURL: NOT_FOUND_URL,
   });
 };
-

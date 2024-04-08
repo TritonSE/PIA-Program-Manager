@@ -2,7 +2,7 @@ import { APIResult, GET, handleAPIError } from "@/api/requests";
 
 export type User = {
   uid: string;
-  role: 'admin' | 'team';
+  role: "admin" | "team";
   approvalStatus: boolean;
 };
 
