@@ -1,7 +1,5 @@
+import StudentsTable from "../components/StudentsTable/StudentsTable";
+
 export default function Home() {
-  return (
-    <main>
-      <h1>PIA Home Page!</h1>
-    </main>
-  );
+  return <StudentsTable />;
 }

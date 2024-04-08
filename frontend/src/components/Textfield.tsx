@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { FieldValues, Path, PathValue, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
@@ -74,15 +72,7 @@ export function Textfield<T extends FieldValues>({
           type={type}
           onChange={handleInputChange}
           placeholder={placeholder}
-          defaultValue={
-            calendar && defaultValue
-              ? new Date(defaultValue).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                })
-              : defaultValue
-          }
+          defaultValue={defaultValue}
         />
 
         {label ? (

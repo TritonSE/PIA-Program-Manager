@@ -128,6 +128,9 @@ module.exports = {
         pia_neutral_gray: {
           DEFAULT: "#D8D8D8",
         },
+        pia_primary_white: {
+          DEFAULT: "#FFF",
+        },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
