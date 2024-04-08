@@ -8,6 +8,7 @@ import { UserContext } from "@/contexts/user";
 export const LOGIN_URL = "/login";
 export const HOME_URL = "/home";
 export const NOT_FOUND_URL = "/404-not-found";
+export const NOT_APPROVED_URL = "/create_user_3";
 
 /**
  * An interface for the user's current authentication credentials
@@ -75,7 +76,18 @@ export const useRedirectToLoginIfNotSignedIn = () => {
  */
 export const useRedirectTo404IfNotAdmin = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null,
+    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null || piaUser.role !== 'admin',
     redirectURL: NOT_FOUND_URL,
   });
 };
+
+/**
+ * A hook that redirects the user to the Not Approved page if they are not approved yet
+ */
+export const useRedirectToNotApproved = () => {
+  useRedirection({
+    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null || !piaUser.approvalStatus,
+    redirectURL: NOT_FOUND_URL,
+  });
+};
+
