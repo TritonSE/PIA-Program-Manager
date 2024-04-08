@@ -13,7 +13,7 @@ function processDate(startString: Date): string {
     day: "numeric",
   } as const;
 
-  return "Started on " + startDate.toLocaleDateString("en-US", options);
+  return "Started " + startDate.toLocaleDateString("en-US", options);
 }
 
 export default function Programs() {
