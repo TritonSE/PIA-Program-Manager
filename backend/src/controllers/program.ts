@@ -17,7 +17,7 @@ export type Program = {
   color: string; //colorValueHex;
 };
 
-export const createForm: RequestHandler = async (req, res, next) => {
+export const createProgram: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
 
   try {
@@ -31,18 +31,14 @@ export const createForm: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const updateForm: RequestHandler = async (req, res, next) => {
+export const updateProgram: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
   try {
     validationErrorParser(errors);
 
     const programId = req.params.id;
     const programData = req.body as Program;
-
-    if (programId !== programData._id) {
-      return res.status(400).json({ message: "Invalid student ID" });
-    }
-
+    
     const editedProgram = await ProgramFormModel.findOneAndUpdate({ _id: programId }, programData, {
       new: true,
     });

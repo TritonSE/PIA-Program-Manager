@@ -101,16 +101,8 @@ const makeColorValidator = () =>
       }
       return true;
     });
-const makeIDValidator = () =>
-  // mongoID
-  body("_id")
-    .exists()
-    .withMessage("_id is required")
-    .bail()
-    .isMongoId()
-    .withMessage("_id must be a MongoDB object ID");
-
-export const createForm = [
+    
+export const createProgram = [
   makeNameValidator(),
   makeAbbreviationValidator(),
   makeTypeValidator(),
@@ -120,8 +112,7 @@ export const createForm = [
   makeColorValidator(),
 ];
 
-export const updateForm = [
-  makeIDValidator(),
+export const updateProgram = [
   makeNameValidator(),
   makeAbbreviationValidator(),
   makeTypeValidator(),
