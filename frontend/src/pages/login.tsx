@@ -5,15 +5,19 @@ import { useRouter } from "next/navigation";
 import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-import { GET } from "@/api/requests";
+import { verifyUser } from "@/api/user";
 import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { Button } from "@/components/ui/button";
 import { auth } from "@/firebase/firebase";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
+import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 
 export default function Login() {
+
+  useRedirectToHomeIfSignedIn();
+
   const {
     register,
     setValue,
@@ -36,29 +40,11 @@ export default function Login() {
       });
   };
 
-  const sendTokenToBackend = async (token: string) => {
-    try {
-      const response = await GET(`/user/`, {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      });
-
-      if (response.ok) {
-        console.log(await response.json());
-      } else {
-        console.error("Failed to get user info from JWT Token");
-      }
-    } catch (error) {
-      console.error("error sending JWT token to backend", error);
-    }
-  };
-
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
     login(data.email as string, data.password as string)
       .then((token: string) => {
-        void sendTokenToBackend(token);
-        router.push("/home");
+        void verifyUser(token);
       })
       .catch((_) => {
         setFirebaseError("Invalid login. Please check your username and password.");

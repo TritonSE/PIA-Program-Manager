@@ -8,8 +8,12 @@ import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
+import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 
 export default function CreateUser() {
+
+  useRedirectToHomeIfSignedIn();
+
   const { register, setValue, handleSubmit } = useForm();
   const _setValue = setValue;
 

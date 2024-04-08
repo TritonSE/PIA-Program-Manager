@@ -68,7 +68,7 @@ export const loginUser = async (
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
-    res.status(200).json({ uid: user._id, approvalStatus: user.approvalStatus });
+    res.status(200).json({ uid: user._id, role: user.accountType, approvalStatus: user.approvalStatus });
     return;
   } catch (e) {
     nxt();

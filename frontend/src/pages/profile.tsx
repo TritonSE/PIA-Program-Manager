@@ -3,8 +3,10 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Checkbox } from "../components/Checkbox";
 import Radio from "../components/Radio";
 import { Textfield } from "../components/Textfield";
+import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export default function Profile() {
+  useRedirectToLoginIfNotSignedIn();
   const dietaryList = ["Nuts", "Eggs", "Seafood", "Pollen", "Dairy", "Other"];
 
   const { register, setValue, handleSubmit } = useForm();
