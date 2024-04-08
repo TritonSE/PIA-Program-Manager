@@ -16,3 +16,7 @@ export const initFirebase = () => {
 
   return { app, auth };
 };
+
+const { app, auth } = initFirebase();
+
+export { app, auth };

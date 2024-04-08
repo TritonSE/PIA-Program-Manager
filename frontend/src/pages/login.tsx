@@ -9,7 +9,7 @@ import { GET } from "@/api/requests";
 import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { Button } from "@/components/ui/button";
-import { initFirebase } from "@/firebase/firebase";
+import { auth } from "@/firebase/firebase";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
@@ -24,7 +24,6 @@ export default function Login() {
 
   const [firebaseError, setFirebaseError] = useState("");
 
-  const { auth } = initFirebase();
   const router = useRouter();
 
   const login = async (email: string, password: string) => {
@@ -59,11 +58,11 @@ export default function Login() {
     login(data.email as string, data.password as string)
       .then((token: string) => {
         void sendTokenToBackend(token);
+        router.push("/home");
       })
       .catch((_) => {
         setFirebaseError("Invalid login. Please check your username and password.");
       });
-    router.push("/home");
   };
   const { isMobile, isTablet } = useWindowSize();
 
