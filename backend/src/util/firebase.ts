@@ -16,7 +16,7 @@ import { firebaseConfig, serviceAccountKey } from "../config";
  * This will initialize the firebase app to store
  * user credentials
  */
-console.log(`SERVICE_ACCOUNT_KEY: ${serviceAccountKey}`);
+// console.log(`SERVICE_ACCOUNT_KEY: ${serviceAccountKey}`);
 
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.cert(JSON.parse(serviceAccountKey) as string),
