@@ -89,6 +89,6 @@ export const useRedirectToNotApproved = () => {
   useRedirection({
     checkShouldRedirect: ({ firebaseUser, piaUser }) =>
       firebaseUser === null || piaUser === null || !piaUser.approvalStatus,
-    redirectURL: NOT_FOUND_URL,
+    redirectURL: NOT_APPROVED_URL,
   });
 };
