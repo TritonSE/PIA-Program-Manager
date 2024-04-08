@@ -1,5 +1,5 @@
 import { Poppins } from "next/font/google";
-import Image from "next/image";
+//import Image from "next/image";
 import React from "react";
 
 import { useWindowSize } from "../hooks/useWindowSize";
@@ -11,12 +11,11 @@ export type CardProps = {
   type: string;
   title: string;
   dates: string;
-  numStudents: number;
   color: number;
   className?: string;
 };
 
-export function ProgramCard({ type, title, dates, numStudents, color, className }: CardProps) {
+export function ProgramCard({ type, title, dates, color, className }: CardProps) {
   const { isTablet } = useWindowSize();
 
   let outerDivClass = "text-white grow overflow-hidden tracking-wide leading-6";
@@ -25,9 +24,9 @@ export function ProgramCard({ type, title, dates, numStudents, color, className 
   let typeClass;
   let titleClass;
   let dateClass;
-  let numClass;
-  let numTextClass;
-  let iconClass = "relative";
+  // let numClass;
+  // let numTextClass;
+  // let iconClass = "relative";
 
   if (isTablet) {
     outerDivClass += " rounded-lg h-36";
@@ -36,9 +35,9 @@ export function ProgramCard({ type, title, dates, numStudents, color, className 
     typeClass = cn("uppercase relative text-[10px] top-2 left-3", poppins.className);
     titleClass = cn("capitalize relative text-sm top-2 left-3 font-bold", poppins.className);
     dateClass = cn("relative text-[10px] top-2 left-3", poppins.className);
-    numClass = "h-5 gap-x-1.5 flex flex-row relative top-2 left-3";
-    numTextClass = cn("text-[10px]", poppins.className);
-    iconClass = "h-2 w-3 mt-[7px]";
+    // numClass = "h-5 gap-x-1.5 flex flex-row relative top-2 left-3";
+    // numTextClass = cn("text-[10px]", poppins.className);
+    // iconClass = "h-2 w-3 mt-[7px]";
   } else {
     outerDivClass += " rounded-2xl h-68";
     topDivClass += " h-36";
@@ -46,9 +45,9 @@ export function ProgramCard({ type, title, dates, numStudents, color, className 
     typeClass = cn("uppercase relative text-sm top-5 left-7", poppins.className);
     titleClass = cn("capitalize relative text-3xl top-8 left-7 font-bold", poppins.className);
     dateClass = cn("relative text-base top-5 left-7", poppins.className);
-    numClass = "h-8 gap-x-1.5 flex flex-row relative top-14 left-7";
-    numTextClass = cn("text-base", poppins.className);
-    iconClass = "h-3 w-[18px] mt-[5px]";
+    // numClass = "h-8 gap-x-1.5 flex flex-row relative top-14 left-7";
+    // numTextClass = cn("text-base", poppins.className);
+    // iconClass = "h-3 w-[18px] mt-[5px]";
   }
 
   switch (color) {
@@ -81,6 +80,7 @@ export function ProgramCard({ type, title, dates, numStudents, color, className 
       </div>
       <div className={botDivClass}>
         <p className={dateClass}>{dates}</p>
+        {/*
         <div className={numClass}>
           <Image
             alt="students"
@@ -91,6 +91,7 @@ export function ProgramCard({ type, title, dates, numStudents, color, className 
           />
           <p className={numTextClass}>{numStudents} Students</p>
         </div>
+        */}
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ export type Program = {
   color: string;
 };
 
-export async function getAllStudents(): Promise<APIResult<[Program]>> {
+export async function getAllPrograms(): Promise<APIResult<[Program]>> {
   try {
     const response = await GET("/program/all");
     const json = (await response.json()) as [Program];

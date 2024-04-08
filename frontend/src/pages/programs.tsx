@@ -1,11 +1,43 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
+import { Program, getAllPrograms } from "../api/programs";
 import { ProgramCard } from "../components/ProgramCard";
 import { useWindowSize } from "../hooks/useWindowSize";
 
+function processDate(startString: Date): string {
+  const startDate = new Date(startString);
+
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  } as const;
+
+  return "Started on " + startDate.toLocaleDateString("en-US", options);
+}
+
 export default function Programs() {
-  const { windowSize, isMobile, isTablet } = useWindowSize();
-  const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
+  const { width } = useWindowSize();
+  const isMobile = useMemo(() => width < 640, [width]);
+  const isTablet = useMemo(() => width < 1024, [width]);
+  const extraLarge = useMemo(() => width >= 2000, [width]);
+
+  const [programs, setPrograms] = useState<Program[]>([]);
+
+  useEffect(() => {
+    getAllPrograms().then(
+      (result) => {
+        if (result.success) {
+          setPrograms(result.data);
+        } else {
+          alert(result.error);
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+  }, []);
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar";
   let titleClass = "font-[alternate-gothic]";
@@ -57,39 +89,21 @@ export default function Programs() {
         <div className={cardClass}>
           <ProgramCard
             type="Standard"
-            title="Intro"
+            title="Sample Card"
             dates="Jun 12, 2023 - Jun 12, 2024"
-            numStudents={1}
             color={1}
           />
         </div>
-        <div className={cardClass}>
-          <ProgramCard
-            type="Standard"
-            title="Intro"
-            dates="Jun 12, 2023 - Jun 12, 2024"
-            numStudents={1}
-            color={1}
-          />
-        </div>
-        <div className={cardClass}>
-          <ProgramCard
-            type="Standard"
-            title="Intro"
-            dates="Jun 12, 2023 - Jun 12, 2024"
-            numStudents={1}
-            color={1}
-          />
-        </div>
-        <div className={cardClass}>
-          <ProgramCard
-            type="Standard"
-            title="Intro"
-            dates="Jun 12, 2023 - Jun 12, 2024"
-            numStudents={1}
-            color={1}
-          />
-        </div>
+        {programs.map((program) => (
+          <div className={cardClass} key={program._id}>
+            <ProgramCard
+              type={program.type}
+              title={program.name}
+              dates={processDate(program.startDate)}
+              color={Number(program.color)}
+            />
+          </div>
+        ))}
       </div>
     </main>
   );
