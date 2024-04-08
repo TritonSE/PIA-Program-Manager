@@ -5,6 +5,7 @@ import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 // import { checkEmailExists } from "../../../backend/src/util/firebase";
+import { checkEmailExists } from "../firebase/firebase";
 
 import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
