@@ -61,7 +61,10 @@ export const useRedirectToHomeIfSignedIn = () => {
  */
 export const useRedirectToLoginIfNotSignedIn = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null,
+    checkShouldRedirect: ({ firebaseUser, piaUser }) => {
+        console.log(firebaseUser);
+        return firebaseUser === null || piaUser === null
+    },
     redirectURL: LOGIN_URL,
   });
 };

@@ -1,6 +1,7 @@
-import { useRedirectTo404IfNotAdmin } from "@/hooks/redirect";
+import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export default function Programs() {
+  useRedirectToLoginIfNotSignedIn();
   useRedirectTo404IfNotAdmin();
   return (
     <main>

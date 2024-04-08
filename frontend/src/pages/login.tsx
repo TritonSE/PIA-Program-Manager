@@ -28,8 +28,6 @@ export default function Login() {
 
   const [firebaseError, setFirebaseError] = useState("");
 
-  const router = useRouter();
-
   const login = async (email: string, password: string) => {
     return await signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {

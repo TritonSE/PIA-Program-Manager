@@ -12,7 +12,7 @@ export const createAuthHeader = (firebaseToken: string) => ({
 
 export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>> => {
   try {
-    const response = await GET("/api/user/", createAuthHeader(firebaseToken));
+    const response = await GET("/user", createAuthHeader(firebaseToken));
     const json = (await response.json()) as User;
     return { success: true, data: json };
   } catch (error) {
