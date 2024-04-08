@@ -73,9 +73,15 @@ export default function CreateUser() {
       console.error("Error checking if email already in use: ", error);
     }
 
-    // setName(data.name);   // Save user name
-    // setEmail(data.email); // Save user email
-    void router.push("/create_user_2");
+    // void router.push("/create_user_2");
+    void router.push({
+      pathname: "/create_user_2",
+      query: {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      },
+    });
   };
 
   // const onSubmit: SubmitHandler<FieldValues> = (data) => {

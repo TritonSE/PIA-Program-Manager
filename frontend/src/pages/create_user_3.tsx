@@ -11,7 +11,6 @@ export default function CreateUser() {
   const router = useRouter();
 
   const { createSuccess } = router.query;
-
   console.log("createSuccess:", createSuccess);
 
   const onBack: SubmitHandler<FieldValues> = (data) => {
@@ -19,6 +18,7 @@ export default function CreateUser() {
     void router.push("/create_user_2");
   };
 
+  // const isSuccess = createSuccess === true;
   const isSuccess = createSuccess === "true";
 
   // const { width } = useWindowSize();

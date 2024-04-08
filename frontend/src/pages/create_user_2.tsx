@@ -1,11 +1,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-
-// import { MouseEvent, useEffect, useMemo, useState } from "react";
 import { MouseEvent, ReactElement, useEffect, useState } from "react";
-// import { MouseEvent, ReactElement, useState } from "react";
-
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { POST, handleAPIError } from "../api/requests";
@@ -18,7 +14,9 @@ import { cn } from "@/lib/utils";
 export default function CreateUser() {
   const router = useRouter();
 
-  const { name, email, password } = router.query;
+  const { query } = router;
+  console.log("Query:", query);
+  // const { name, email, password } = router.query;
 
   const [isAdmin, setIsAdmin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -37,13 +35,30 @@ export default function CreateUser() {
 
       const accountType = isAdmin ? "admin" : "team";
 
-      // const response = await POST("/api/user", {
+      console.log("Name:", query.name);
+      console.log("Account Type:", accountType);
+      console.log("Email:", query.email);
+      console.log("Password:", query.password);
+
       const response = await POST(`/user/`, {
-        name,
+        name: query.name,
         accountType,
-        email,
-        password,
+        email: query.email,
+        password: query.password,
       });
+
+      // console.log("Name:", name);
+      // console.log("Account Type:", accountType);
+      // console.log("Email:", email);
+      // console.log("Password:", password);
+
+      // // const response = await POST("/api/user", {
+      // const response = await POST(`/user/`, {
+      //   name,
+      //   accountType,
+      //   email,
+      //   password,
+      // });
 
       console.log("User created successfully:", response);
       // void router.push("/create_user_3");
@@ -58,7 +73,13 @@ export default function CreateUser() {
     console.log(createSuccess);
     console.log(loading);
 
-    void router.push("/create_user_3");
+    // void router.push("/create_user_3");
+    void router.push({
+      pathname: "/create_user_3",
+      query: {
+        createSuccess,
+      },
+    });
   };
 
   const onBack: SubmitHandler<FieldValues> = (data) => {
