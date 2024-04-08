@@ -1,6 +1,7 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { AlertCircle } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
@@ -25,6 +26,7 @@ export default function Login() {
   const _setValue = setValue;
 
   const [firebaseError, setFirebaseError] = useState("");
+  const router = useRouter();
 
   const login = async (email: string, password: string) => {
     return await signInWithEmailAndPassword(auth, email, password)
@@ -41,6 +43,7 @@ export default function Login() {
     login(data.email as string, data.password as string)
       .then((token: string) => {
         void verifyUser(token);
+        router.push("/home");
       })
       .catch((_) => {
         setFirebaseError("Invalid login. Please check your username and password.");
