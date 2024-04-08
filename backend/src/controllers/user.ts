@@ -1,11 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
-import { signInWithEmailAndPassword } from "firebase/auth";
 import admin from "firebase-admin";
 
-import { AuthError } from "../errors/auth";
+import { ValidationError } from "../errors/validation";
 import UserModel from "../models/user";
-import { firebaseAdminAuth, firebaseAuth } from "../util/firebase";
+import { firebaseAdminAuth } from "../util/firebase";
 import validationErrorParser from "../util/validationErrorParser";
 
 // Define the type for req.body
@@ -17,8 +16,7 @@ type CreateUserRequestBody = {
 };
 
 type LoginUserRequestBody = {
-  email: string;
-  password: string;
+  uid: string;
 };
 
 export const createUser = async (
@@ -65,31 +63,18 @@ export const loginUser = async (
   nxt: NextFunction,
 ) => {
   try {
-    // Check for validation errors
-    const errors = validationResult(req);
-    validationErrorParser(errors);
-
-    const { email, password } = req.body;
-    // Sign user into Firebase
-    await signInWithEmailAndPassword(firebaseAuth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        console.log(user);
-        return UserModel.findById(user.uid);
-      })
-      .then((user) => {
-        if (user !== null) {
-          res.status(200).json({ uid: user._id, approvalStatus: user.approvalStatus });
-        }
-        throw AuthError.LOGIN_ERROR;
-      })
-      .catch(() => {
-        throw AuthError.LOGIN_ERROR;
-      });
-  } catch (error) {
-    console.error(error);
-    nxt(error);
+    const uid = req.body.uid;
+    const user = await UserModel.findById(uid);
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+    res.status(200).json({ uid: user._id, approvalStatus: user.approvalStatus });
+    return;
+  } catch (e) {
+    nxt();
+    console.log(e);
+    return res.status(400).json({
+      error: e,
+    });
   }
-
-  return;
 };
