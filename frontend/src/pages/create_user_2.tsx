@@ -16,16 +16,10 @@ export default function CreateUser() {
 
   const { query } = router;
   console.log("Query:", query);
-  // const { name, email, password } = router.query;
 
   const [isAdmin, setIsAdmin] = useState(true);
   const [loading, setLoading] = useState(false);
   const [createSuccess, setCreateSuccess] = useState(true);
-
-  // const onSubmit: SubmitHandler<FieldValues> = (data) => {
-  //   console.log(data);
-  //   void router.push("/create_user_3");
-  // };
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
@@ -47,21 +41,7 @@ export default function CreateUser() {
         password: query.password,
       });
 
-      // console.log("Name:", name);
-      // console.log("Account Type:", accountType);
-      // console.log("Email:", email);
-      // console.log("Password:", password);
-
-      // // const response = await POST("/api/user", {
-      // const response = await POST(`/user/`, {
-      //   name,
-      //   accountType,
-      //   email,
-      //   password,
-      // });
-
       console.log("User created successfully:", response);
-      // void router.push("/create_user_3");
     } catch (error) {
       setCreateSuccess(false);
       console.error("Error creating user:", error);
@@ -73,7 +53,6 @@ export default function CreateUser() {
     console.log(createSuccess);
     console.log(loading);
 
-    // void router.push("/create_user_3");
     void router.push({
       pathname: "/create_user_3",
       query: {

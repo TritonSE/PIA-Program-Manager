@@ -18,11 +18,7 @@ export default function CreateUser() {
     void router.push("/create_user_2");
   };
 
-  // const isSuccess = createSuccess === true;
   const isSuccess = createSuccess === "true";
-
-  // const { width } = useWindowSize();
-  // const isMobile = useMemo(() => width <= 640, [width]);
 
   const { isMobile } = useWindowSize();
 

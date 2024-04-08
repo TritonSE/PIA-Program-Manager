@@ -4,7 +4,6 @@ import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-// import { checkEmailExists } from "../../../backend/src/util/firebase";
 import { checkEmailExists } from "../firebase/firebase";
 
 import Landing from "@/components/Landing";
@@ -84,16 +83,8 @@ export default function CreateUser() {
     });
   };
 
-  // const onSubmit: SubmitHandler<FieldValues> = (data) => {
-  //   setEmailError(false); // add email error logic here
-  //   console.log(data);
-
-  //   void router.push("/create_user_2");
-  // };
-
   // const { width } = useWindowSize();
   // const isMobile = useMemo(() => width <= 640, [width]);
-
   const { isMobile } = useWindowSize();
 
   return (
