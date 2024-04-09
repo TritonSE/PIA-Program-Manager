@@ -11,10 +11,7 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 import { formatPhoneNumber } from "@/lib/formatPhoneNumber";
 
 const ProgramPill = ({ name, color }: { name: string; color: string }) => (
-  <span
-    className="rounded-[20px] px-2.5 text-sm"
-    style={{ background: `${color}45`, color: `${color}` }}
-  >
+  <span className="rounded-[20px] px-2.5 text-sm" style={{ background: `${color}45`, color }}>
     {name}
   </span>
 );
@@ -118,6 +115,7 @@ export function useColumnSchema({
       cell: (info) => {
         const programs = info.getValue() as unknown as ProgramLink[];
         const link = programs.filter((prog) => prog.status === "Joined")[0];
+        if (!link) return null;
         const program = allPrograms[link.programId];
         return <ProgramPopover link={link} program={program} />;
       },
@@ -129,6 +127,7 @@ export function useColumnSchema({
       cell: (info) => {
         const programs = info.getValue() as unknown as ProgramLink[];
         const link = programs.filter((prog) => prog.status === "Joined")[1];
+        if (!link) return null;
         const program = allPrograms[link.programId];
         return <ProgramPopover link={link} program={program} />;
       },
@@ -174,6 +173,7 @@ export function useColumnSchema({
           </div>
         );
       },
+      enableColumnFilter: false,
     },
   ];
 

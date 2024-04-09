@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Student, createStudent, editStudent } from "../api/students";
@@ -10,6 +10,7 @@ import ContactInfo from "./StudentForm/ContactInfo";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
+import { ProgramsContext } from "./StudentsTable/StudentsTable";
 import { StudentMap } from "./StudentsTable/types";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
@@ -47,8 +48,13 @@ export default function StudentFormButton({
   //Default values can be set for all fields but I specified these three fields because the checkbox value can sometimes be a string if it's a single value rather than array of strings. https://github.com/react-hook-form/react-hook-form/releases/tag/v7.30.0
 
   const [openForm, setOpenForm] = useState(false);
+  const programsMap = useContext(ProgramsContext);
+  const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
 
   const onFormSubmit: SubmitHandler<StudentFormData> = (formData: StudentFormData) => {
+    const programAbbreviationToId = {} as Record<string, string>; // abbreviation -> programId
+    allPrograms.forEach((program) => (programAbbreviationToId[program.abbreviation] = program._id));
+
     const transformedData: StudentData = {
       student: {
         firstName: formData.student_name,
@@ -73,18 +79,21 @@ export default function StudentFormButton({
       birthday: new Date(formData.birthdate),
       intakeDate: new Date(formData.intake_date),
       tourDate: new Date(formData.tour_date),
-      regularPrograms: formData.regular_programs.map((programId) => ({
-        programId,
-        status: "Joined",
-        dateUpdated: new Date(),
-        hoursLeft: 0,
-      })),
-      varyingPrograms: formData.varying_programs.map((programId) => ({
-        programId,
-        status: "Joined",
-        dateUpdated: new Date(),
-        hoursLeft: 0,
-      })),
+      programs: formData.regular_programs
+        .map((abbreviation) => ({
+          programId: programAbbreviationToId[abbreviation],
+          status: "Joined",
+          dateUpdated: new Date(),
+          hoursLeft: 0,
+        }))
+        .concat(
+          formData.varying_programs.map((abbreviation) => ({
+            programId: programAbbreviationToId[abbreviation],
+            status: "Joined",
+            dateUpdated: new Date(),
+            hoursLeft: 0,
+          })),
+        ),
       dietary: formData.dietary,
       otherString: formData.other,
     };

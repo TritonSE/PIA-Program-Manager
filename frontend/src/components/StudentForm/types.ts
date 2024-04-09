@@ -46,5 +46,6 @@ export type StudentFormData = {
   other: string;
   intake_date: Date;
   tour_date: Date;
-  programs: string[];
+  regular_programs: string[];
+  varying_programs: string[];
 };

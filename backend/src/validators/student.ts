@@ -118,10 +118,10 @@ const makeTourDateValidator = () =>
 const makePrograms = () =>
   body("programs")
     .exists()
-    .withMessage("Regular Programs field required")
+    .withMessage("Programs field required")
     .bail()
     .isArray()
-    .withMessage("Regular Programs must be a non-empty array")
+    .withMessage("Programs must be a non-empty array")
     .bail()
     .custom(programValidatorUtil);
 

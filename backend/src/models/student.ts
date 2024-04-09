@@ -40,7 +40,7 @@ const studentSchema = new Schema({
       {
         programId: { type: Schema.Types.ObjectId, ref: "Program", required: true },
         status: { type: String, required: true },
-        dateUpdated: { type: Date, required: true, default: Date.now },
+        dateUpdated: { type: Date, required: true, default: Date.now() },
         hoursLeft: { type: Number, required: true },
       },
     ],

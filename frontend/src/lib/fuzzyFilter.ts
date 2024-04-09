@@ -1,7 +1,6 @@
 import { RankingInfo, rankItem } from "@tanstack/match-sorter-utils";
 import { FilterFn } from "@tanstack/react-table";
 
-import { Student } from "@/api/students";
 import { StudentTableRow } from "@/components/StudentsTable/types";
 
 /* eslint-disable */

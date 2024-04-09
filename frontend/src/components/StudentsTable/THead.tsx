@@ -27,11 +27,11 @@ function TableActionsHeader({
       <TableHead className="h-6 w-full px-10 py-5" colSpan={6}>
         <div className="flex justify-between">
           <span className="flex gap-6">
-            {/* {headerGroup.headers.map((header) =>
+            {headerGroup.headers.map((header) =>
               header.column.getCanFilter() ? (
                 <ProgramFilter key={header.id} column={header.column} />
               ) : null,
-            )} */}
+            )}
             <div className="w-[200px]">
               <DebouncedInput
                 value={globalFilter ?? ""}

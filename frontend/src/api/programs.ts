@@ -1,4 +1,4 @@
-import { GET, POST, PUT, handleAPIError } from "../api/requests";
+import { GET, POST, handleAPIError } from "../api/requests";
 
 import type { APIResult } from "../api/requests";
 
