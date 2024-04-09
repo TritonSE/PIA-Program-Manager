@@ -1,5 +1,13 @@
-import Programs from "./programs";
+import { ReactElement } from "react";
 
-export default function Home() {
-  return <Programs />;
+import Login from "./login";
+
+import Landing from "@/components/Landing";
+
+export default function MyApp() {
+  return <Login />;
 }
+
+MyApp.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};
