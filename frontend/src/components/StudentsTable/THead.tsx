@@ -5,9 +5,8 @@ import StudentFormButton from "../StudentFormButton";
 import { TableHead, TableHeader, TableRow } from "../ui/table";
 
 import ProgramFilter from "./ProgramFilter";
-import { StudentMap } from "./types";
+import { StudentMap, StudentTableRow } from "./types";
 
-import { Student } from "@/api/students";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 function TableActionsHeader({
@@ -16,7 +15,7 @@ function TableActionsHeader({
   setGlobalFilter,
   setAllStudents,
 }: {
-  headerGroup: HeaderGroup<Student>;
+  headerGroup: HeaderGroup<StudentTableRow>;
   globalFilter: string;
   setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
   setAllStudents: React.Dispatch<React.SetStateAction<StudentMap>>;
@@ -28,11 +27,11 @@ function TableActionsHeader({
       <TableHead className="h-6 w-full px-10 py-5" colSpan={6}>
         <div className="flex justify-between">
           <span className="flex gap-6">
-            {headerGroup.headers.map((header) =>
+            {/* {headerGroup.headers.map((header) =>
               header.column.getCanFilter() ? (
                 <ProgramFilter key={header.id} column={header.column} />
               ) : null,
-            )}
+            )} */}
             <div className="w-[200px]">
               <DebouncedInput
                 value={globalFilter ?? ""}
@@ -51,11 +50,11 @@ function TableActionsHeader({
   );
 }
 
-function TableDataHeader({ headerGroup }: { headerGroup: HeaderGroup<Student> }) {
+function TableDataHeader({ headerGroup }: { headerGroup: HeaderGroup<StudentTableRow> }) {
   return (
     <TableRow key={headerGroup.id + "2"} className="border-b">
       {headerGroup.headers.map((header) => (
-        <TableHead key={header.id} className="h-6 px-0 py-7 first:pl-10">
+        <TableHead key={header.id} className="h-6 px-0 py-7 first:pl-10 last:pr-10 last:text-right">
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}
@@ -74,7 +73,7 @@ export default function THead({
   globalFilter: string;
   setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
   setAllStudents: React.Dispatch<React.SetStateAction<StudentMap>>;
-  table: Table<Student>;
+  table: Table<StudentTableRow>;
 }) {
   return (
     <TableHeader className="text-left">

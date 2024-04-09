@@ -8,7 +8,7 @@ export type Contact = {
 export type ProgramLink = {
   programId: string;
   status: string;
-  dateUpdated?: Date;
+  dateUpdated: Date;
   hoursLeft: number;
 };
 
@@ -21,8 +21,7 @@ export type StudentData = {
   birthday: Date;
   intakeDate: Date;
   tourDate: Date;
-  regularPrograms: ProgramLink[];
-  varyingPrograms: ProgramLink[];
+  programs: ProgramLink[];
   dietary: string[];
   otherString?: string;
 };
@@ -47,6 +46,5 @@ export type StudentFormData = {
   other: string;
   intake_date: Date;
   tour_date: Date;
-  regular_programs: string[];
-  varying_programs: string[];
+  programs: string[];
 };

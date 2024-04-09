@@ -35,24 +35,12 @@ const studentSchema = new Schema({
   intakeDate: { type: Date, required: true },
   tourDate: { type: Date, required: true },
 
-  regularPrograms: {
+  programs: {
     type: [
       {
-        programId: { type: Schema.Types.ObjectId, ref: "ProgramForm", required: true },
+        programId: { type: Schema.Types.ObjectId, ref: "Program", required: true },
         status: { type: String, required: true },
         dateUpdated: { type: Date, required: true, default: Date.now },
-        hoursLeft: { type: Number, required: true },
-      },
-    ],
-    required: true,
-  },
-
-  varyingPrograms: {
-    type: [
-      {
-        programId: { type: Schema.Types.ObjectId, ref: "ProgramForm", required: true },
-        status: { type: String, required: true },
-        dateUpdated: { type: Date, default: Date.now },
         hoursLeft: { type: Number, required: true },
       },
     ],

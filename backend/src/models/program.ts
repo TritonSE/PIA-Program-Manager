@@ -13,6 +13,6 @@ const programSchema = new Schema({
   students: { type: [Schema.Types.ObjectId], ref: "Student", required: false },
 });
 
-type ProgramForm = InferSchemaType<typeof programSchema>;
+type Program = InferSchemaType<typeof programSchema>;
 
-export default model<ProgramForm>("ProgramForm", programSchema);
+export default model<Program>("Program", programSchema);

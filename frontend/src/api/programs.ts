@@ -7,8 +7,8 @@ export type CreateProgramRequest = {
   abbreviation: string;
   type: string;
   daysOfWeek: string[];
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   color: string;
   students?: string[];
 };

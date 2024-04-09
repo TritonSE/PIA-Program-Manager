@@ -16,7 +16,7 @@ import { Table } from "../ui/table";
 
 import TBody from "./TBody";
 import THead from "./THead";
-import { StudentMap } from "./types";
+import { ProgramMap, StudentMap, StudentTableRow } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
 
 import { Program, getAllPrograms } from "@/api/programs";
@@ -25,34 +25,14 @@ import { cn } from "@/lib/utils";
 
 export default function StudentsTable() {
   const [allStudents, setAllStudents] = useState<StudentMap>({});
-  const [allPrograms, setAllPrograms] = useState<Record<string, Program>>({}); // map from program id to program
+  const [allPrograms, setAllPrograms] = useState<ProgramMap>({}); // map from program id to program
   const [isLoading, setIsLoading] = useState(true);
+  const [studentTable, setStudentTable] = useState<StudentTableRow[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const { isTablet } = useWindowSize();
 
   useEffect(() => {
-    getAllStudents().then(
-      (result) => {
-        console.log(result);
-        if (result.success) {
-          // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
-          console.log(result.data);
-
-          setAllStudents(studentsObject);
-          setIsLoading(false);
-        } else {
-          console.log(result.error);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
     getAllPrograms().then((result) => {
       if (result.success) {
         const programsObject = result.data.reduce(
@@ -65,10 +45,43 @@ export default function StudentsTable() {
         setAllPrograms(programsObject);
       }
     });
+
+    getAllStudents().then(
+      (result) => {
+        console.log(result);
+        if (result.success) {
+          // Convert student array to object with keys as ids and values as corresponding student
+          const studentsObject = result.data.reduce((obj, student) => {
+            obj[student._id] = student;
+            return obj;
+          }, {} as StudentMap);
+          console.log(result.data);
+
+          setAllStudents(studentsObject);
+
+          const studentsInformation: StudentTableRow[] = result.data.map((studentObj) => {
+            return {
+              id: studentObj._id,
+              student: studentObj.student.firstName + " " + studentObj.student.lastName,
+              emergencyContact: studentObj.emergency,
+              programs: studentObj.programs,
+            } as StudentTableRow;
+          });
+          setStudentTable(studentsInformation);
+
+          setIsLoading(false);
+        } else {
+          console.log(result.error);
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
   }, []);
 
-  const columns = useColumnSchema({ setAllStudents });
-  const data = useMemo(() => Object.values(allStudents), [allStudents]);
+  const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents });
+  const data = useMemo(() => studentTable, [allStudents]);
   // const data = useMemo(() => [], [allStudents]);  // uncomment this line and comment the line above to see empty table state
 
   const table = useReactTable({
@@ -95,9 +108,6 @@ export default function StudentsTable() {
   });
 
   if (isLoading) return <p>Loading...</p>;
-
-  if (Object.keys(allStudents).length === 0)
-    return <p className="text-red-500">Please add a student first!</p>;
 
   return (
     <div className="w-full space-y-5 overflow-x-auto">

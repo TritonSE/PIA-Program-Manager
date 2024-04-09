@@ -115,23 +115,13 @@ const makeTourDateValidator = () =>
     .toDate()
     .withMessage("Tour Date string must be a valid date-time string");
 
-const makeRegularProgramsValidator = () =>
-  body("regularPrograms")
+const makePrograms = () =>
+  body("programs")
     .exists()
     .withMessage("Regular Programs field required")
     .bail()
-    .isArray({ min: 1 })
+    .isArray()
     .withMessage("Regular Programs must be a non-empty array")
-    .bail()
-    .custom(programValidatorUtil);
-
-const makeVaryingProgramsValidator = () =>
-  body("varyingPrograms")
-    .exists()
-    .withMessage("Varying Programs field required")
-    .bail()
-    .isArray({ min: 1 })
-    .withMessage("Varying Programs must be a non-empty array")
     .bail()
     .custom(programValidatorUtil);
 
@@ -163,8 +153,7 @@ export const createStudent = [
   makeBirthdayValidator(),
   makeIntakeDateValidator(),
   makeTourDateValidator(),
-  makeRegularProgramsValidator(),
-  makeVaryingProgramsValidator(),
+  makePrograms(),
   makeDietaryArrayValidator(),
   makeDietaryItemsValidator(),
   makeDietaryOtherValidator(),

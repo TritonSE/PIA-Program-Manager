@@ -73,11 +73,23 @@ export default function StudentFormButton({
       birthday: new Date(formData.birthdate),
       intakeDate: new Date(formData.intake_date),
       tourDate: new Date(formData.tour_date),
-      regularPrograms: formData.regular_programs,
-      varyingPrograms: formData.varying_programs,
+      regularPrograms: formData.regular_programs.map((programId) => ({
+        programId,
+        status: "Joined",
+        dateUpdated: new Date(),
+        hoursLeft: 0,
+      })),
+      varyingPrograms: formData.varying_programs.map((programId) => ({
+        programId,
+        status: "Joined",
+        dateUpdated: new Date(),
+        hoursLeft: 0,
+      })),
       dietary: formData.dietary,
       otherString: formData.other,
     };
+
+    console.log(transformedData);
 
     if (type === "add") {
       createStudent(transformedData).then(
