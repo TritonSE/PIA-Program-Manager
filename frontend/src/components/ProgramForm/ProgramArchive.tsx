@@ -23,8 +23,8 @@ export default function ProgramArchiveHeader({ label }: props) {
         />
       </svg>
 
-      <p className="pb-3 pt-4 text-2xl font-bold">Archive this program?</p>
-      <ul className="list-disc pb-3 pl-6">
+      <p className="pb-3 pt-4 text-lg font-bold sm:text-2xl">Archive this program?</p>
+      <ul className="list-disc pb-3 pl-6 text-sm sm:text-base">
         <li>It will be move to the ‘Archived’ programs tab</li>
         <li>All ‘Joined’ students become ‘Archived’</li>
         <li>You’ll be able to restore this program</li>
