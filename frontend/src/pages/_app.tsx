@@ -10,6 +10,7 @@ import Navigation from "../components/Navigation";
 
 // eslint-disable-next-line import/order
 import { NextPage } from "next";
+import { UserContextProvider } from "@/contexts/user";
 
 export type NextPageWithLayout<P = unknown, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -22,7 +23,7 @@ type AppPropsWithLayout = AppProps & {
 //Unless specified, the default layout will have the Navigation bar
 function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => <Navigation>{page}</Navigation>);
-  return getLayout(<Component {...pageProps} />);
+  return <UserContextProvider>{getLayout(<Component {...pageProps} />)}</UserContextProvider>;
 }
 
 export default App;

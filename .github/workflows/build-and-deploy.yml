@@ -25,7 +25,7 @@ jobs:
         run: |
           cd frontend
           touch .env
-          echo APP_FIREBASE_CONFIG=${{ secrets.APP_FIREBASE_CONFIG }} >> .env
+          echo NEXT_PUBLIC_FIREBASE_CONFIG=${{ secrets.NEXT_PUBLIC_FIREBASE_CONFIG }} >> .env
       - name: Create Backend .env
         run: |
           cd backend
