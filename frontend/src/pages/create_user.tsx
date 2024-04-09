@@ -5,6 +5,7 @@ import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import Landing from "@/components/Landing";
+import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 import { useWindowSize } from "@/hooks/useWindowSize";
@@ -186,6 +187,10 @@ export default function CreateUser() {
     </main>
   );
 }
+
+CreateUser.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};
 
 CreateUser.getLayout = function getLayout(page: ReactElement) {
   return <Landing>{page}</Landing>;

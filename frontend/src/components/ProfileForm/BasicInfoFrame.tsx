@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { cn } from "../../lib/utils";
@@ -10,6 +10,8 @@ import { Textfield } from "../Textfield";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
+
+import { editPhoto } from "@/api/users";
 
 type ProfileBasicData = {
   name: string;
@@ -37,15 +39,30 @@ export function BasicInfoFrame({
   const [openProfileForm, setOpenProfileForm] = useState(false);
   const [openNameForm, setOpenNameForm] = useState(false);
   const fileUploadRef = useRef<HTMLInputElement>(null);
-  const [imageFile, setImageFile] = useState<string>();
+  const [imageFile, setImageFile] = useState<File>();
+  const [previousImage, setPreviousImage] = useState(data.image);
   const [clickedAddProfile, setClickedAddProfile] = useState(false);
   const { register, handleSubmit } = useForm<ProfileBasicInfoFormData>();
 
-  const oldImage = data.image;
-
-  const onCancelClick = () => {
+  const onCancelImage = () => {
     setClickedAddProfile(false);
-    setImageFile(oldImage);
+    URL.revokeObjectURL(data.image); //Prevent memory leaks
+    setData((prev) => ({ ...prev, image: previousImage }));
+  };
+
+  const onSaveImage = () => {
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+
+      editPhoto(formData)
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
   };
 
   const onSubmit = (formData: ProfileBasicInfoFormData) => {
@@ -55,19 +72,16 @@ export function BasicInfoFrame({
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files?.[0]) {
-      setImageFile(URL.createObjectURL(e.target.files[0]));
+      console.log("wat", e.target.files[0]);
+      const newImage = URL.createObjectURL(e.target.files[0]);
+      setData((prev) => {
+        setPreviousImage(prev.image);
+        return { ...prev, image: newImage };
+      });
+      setImageFile(e.target.files[0]);
     }
     setClickedAddProfile(true);
   };
-
-  //Prevent memory leaks
-  useEffect(() => {
-    return () => {
-      if (imageFile) {
-        URL.revokeObjectURL(imageFile);
-      }
-    };
-  }, [imageFile]);
 
   return (
     <section className={cn(frameFormat, className)}>
@@ -92,13 +106,17 @@ export function BasicInfoFrame({
                       ? "Add a picture"
                       : "Add a profile picture to personalize your account"}
                   </div>
-                  <Image
-                    alt="Profile Picture"
-                    src={imageFile ? imageFile : "/sidebar/logo.png"}
-                    className="m-2 flex items-center rounded-full"
-                    width={isMobile ? 50 : 80}
-                    height={isMobile ? 50 : 80}
-                  />
+                  <div
+                    className="relative aspect-square"
+                    style={{ width: isMobile ? "50px" : "80px" }}
+                  >
+                    <Image
+                      alt="Profile Picture"
+                      src={data.image ? data.image : "/sidebar/logo.png"}
+                      className="flex items-center rounded-full object-cover"
+                      fill={true}
+                    />
+                  </div>
                 </div>
               </div>
             </DialogTrigger>
@@ -110,13 +128,17 @@ export function BasicInfoFrame({
                 <div className="relative h-80  ">
                   <Image
                     alt="Profile Picture"
-                    src={imageFile ? imageFile : "/sidebar/logo.png"}
+                    src={data.image ? data.image : "/sidebar/logo.png"}
                     className="object-contain"
                     fill={true}
                   />
                 </div>
                 {clickedAddProfile ? (
-                  <SaveCancelButtons setOpen={setOpenProfileForm} onCancelClick={onCancelClick} />
+                  <SaveCancelButtons
+                    setOpen={setOpenProfileForm}
+                    onCancelClick={onCancelImage}
+                    onSaveClick={onSaveImage}
+                  />
                 ) : (
                   <label htmlFor="image_upload" className="grid">
                     <Button

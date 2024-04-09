@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
+import { getPhoto } from "../api/users";
 import { BasicInfoFrame } from "../components/ProfileForm/BasicInfoFrame";
 import { ContactFrame } from "../components/ProfileForm/ContactInfoFrame";
 import { PasswordFrame } from "../components/ProfileForm/PasswordFrame";
@@ -22,6 +23,25 @@ export default function Profile() {
 
   const frameFormat =
     "border-pia_neutral_gray flex w-full flex-grow-0 flex-col place-content-stretch overflow-hidden rounded-lg border-[2px] bg-white";
+
+  // Example of fetching an image from the backend using hardcoded ID
+  useEffect(() => {
+    const exampleImageID = "66147af38932931bad1dde06";
+    getPhoto(exampleImageID).then(
+      (result) => {
+        if (result.success) {
+          const newImage = result.data;
+          console.log(newImage);
+          setBasicInfoData((prev) => ({ ...prev, image: newImage }));
+        } else {
+          console.error(result.error);
+        }
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+  }, []);
 
   return (
     <main>

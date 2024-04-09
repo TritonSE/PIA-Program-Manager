@@ -1,10 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import admin from "firebase-admin";
+import mongoose from "mongoose";
 
+import { InternalError } from "../errors";
+import { ServiceError } from "../errors/service";
 import { ValidationError } from "../errors/validation";
+import { Image } from "../models/image";
 import UserModel from "../models/user";
 import { firebaseAdminAuth } from "../util/firebase";
+import { saveImage } from "../util/image";
 import validationErrorParser from "../util/validationErrorParser";
 
 // Define the type for req.body
@@ -78,5 +83,46 @@ export const loginUser = async (
     return res.status(400).json({
       error: e,
     });
+  }
+};
+
+export const editPhoto = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const errors = validationResult(req);
+
+    validationErrorParser(errors);
+
+    const imageId = await saveImage(req);
+
+    res.status(200).json(imageId);
+  } catch (error) {
+    nxt(error);
+  }
+
+  return;
+};
+
+export const getPhoto = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const imageId = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(imageId)) {
+      return res
+        .status(ServiceError.INVALID_MONGO_ID.status)
+        .send(ServiceError.INVALID_MONGO_ID.message);
+    }
+    const image = await Image.findById(imageId);
+    if (!image) {
+      throw ServiceError.IMAGE_NOT_FOUND;
+    }
+    console.log("image", image);
+    return res.status(200).set("Content-type", image.mimetype).send(image.buffer);
+  } catch (e) {
+    console.log(e);
+    if (e instanceof ServiceError) {
+      nxt(e);
+    }
+    return res
+      .status(InternalError.ERROR_GETTING_IMAGE.status)
+      .send(InternalError.ERROR_GETTING_IMAGE.displayMessage(true));
   }
 };
