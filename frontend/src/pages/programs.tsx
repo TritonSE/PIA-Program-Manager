@@ -86,21 +86,13 @@ export default function Programs() {
         </button>
       </div>
       <div className={cardsGridClass}>
-        <div className={cardClass}>
-          <ProgramCard
-            type="Standard"
-            title="Sample Card"
-            dates="Jun 12, 2023 - Jun 12, 2024"
-            color={1}
-          />
-        </div>
         {programs.map((program) => (
           <div className={cardClass} key={program._id}>
             <ProgramCard
               type={program.type}
               title={program.name}
               dates={processDate(program.startDate)}
-              color={Number(program.color)}
+              color={program.color}
             />
           </div>
         ))}

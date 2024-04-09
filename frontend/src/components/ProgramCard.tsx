@@ -11,7 +11,7 @@ export type CardProps = {
   type: string;
   title: string;
   dates: string;
-  color: number;
+  color: string;
   className?: string;
 };
 
@@ -20,6 +20,7 @@ export function ProgramCard({ type, title, dates, color, className }: CardProps)
 
   let outerDivClass = "text-white grow overflow-hidden tracking-wide leading-6";
   let topDivClass = "";
+  console.log(topDivClass);
   let botDivClass = "text-black bg-white";
   let typeClass;
   let titleClass;
@@ -50,31 +51,15 @@ export function ProgramCard({ type, title, dates, color, className }: CardProps)
     // iconClass = "h-3 w-[18px] mt-[5px]";
   }
 
-  switch (color) {
-    case 1:
-      topDivClass += " bg-secondary_teal";
-      break;
-    case 2:
-      topDivClass += " bg-secondary_yellow";
-      break;
-    case 3:
-      topDivClass += " bg-secondary_red";
-      break;
-    case 4:
-      topDivClass += " bg-secondary_green";
-      break;
-    default:
-      topDivClass += " bg-secondary_teal";
-      break;
-  }
-
   if (className) {
     outerDivClass = cn(outerDivClass, className);
   }
 
+  console.log(topDivClass);
+
   return (
     <div className={outerDivClass}>
-      <div className={topDivClass}>
+      <div className={topDivClass} style={{ backgroundColor: color }}>
         <p className={typeClass}>{type} Program</p>
         <p className={titleClass}>{title}</p>
       </div>
