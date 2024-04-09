@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { FieldValues, Path, PathValue, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import {
+  FieldValues,
+  Path,
+  PathValue,
+  RegisterOptions,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 
 import { Calendar } from "../components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
@@ -14,6 +21,7 @@ type BaseProps<T extends FieldValues> = {
   handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   className?: string;
+  registerOptions?: RegisterOptions;
 };
 
 type WithCalendarProps<T extends FieldValues> = BaseProps<T> & {
@@ -36,11 +44,9 @@ export function Textfield<T extends FieldValues>({
   placeholder,
   calendar = false,
   className,
-  handleInputChange = () => {
-    /* do nothing */
-  },
   type = "text",
   defaultValue = "",
+  registerOptions = {},
 }: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
 
@@ -64,11 +70,10 @@ export function Textfield<T extends FieldValues>({
         )}
       >
         <input
-          {...register(name as Path<T>)}
+          {...register(name as Path<T>, registerOptions)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={label + placeholder}
           type={type}
-          onChange={handleInputChange}
           placeholder={placeholder}
           defaultValue={defaultValue}
         />

@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Program, getAllPrograms } from "../api/programs";
 import { ProgramCard } from "../components/ProgramCard";
 import { useWindowSize } from "../hooks/useWindowSize";
+import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 function processDate(startString: Date): string {
   const startDate = new Date(startString);
@@ -17,6 +18,9 @@ function processDate(startString: Date): string {
 }
 
 export default function Programs() {
+  useRedirectToLoginIfNotSignedIn();
+  useRedirectTo404IfNotAdmin();
+    
   const { windowSize } = useWindowSize();
   const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);
   const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);

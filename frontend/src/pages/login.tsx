@@ -1,19 +1,53 @@
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { AlertCircle } from "lucide-react";
 import Image from "next/image";
-import { ReactElement } from "react";
+import { useRouter } from "next/navigation";
+import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
+import { verifyUser } from "@/api/user";
 import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
 import { Button } from "@/components/ui/button";
+import { auth } from "@/firebase/firebase";
+import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function Login() {
-  const { register, setValue, handleSubmit } = useForm();
+  useRedirectToHomeIfSignedIn();
+
+  const {
+    register,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
   const _setValue = setValue;
+
+  const [firebaseError, setFirebaseError] = useState("");
+  const router = useRouter();
+
+  const login = async (email: string, password: string) => {
+    return await signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        return userCredential.user.getIdToken();
+      })
+      .then((token) => {
+        return token;
+      });
+  };
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
+    login(data.email as string, data.password as string)
+      .then((token: string) => {
+        void verifyUser(token);
+        router.push("/home");
+      })
+      .catch((_) => {
+        setFirebaseError("Invalid login. Please check your username and password.");
+      });
   };
   const { isMobile, isTablet } = useWindowSize();
 
@@ -76,16 +110,37 @@ export default function Login() {
                   label={""}
                   type="email"
                   placeholder="name@email.com"
+                  registerOptions={{ required: "Email cannot be empty" }}
                 />
+                {errors.email && (
+                  <h1 className="mt-1 flex items-center text-sm font-light text-orange-700">
+                    <AlertCircle className="mr-1 text-sm" />{" "}
+                    {typeof errors.email.message === "string" ? errors.email.message : null}
+                  </h1>
+                )}
               </div>
               <div>
                 <h1 className="text-lg font-light text-pia_accent max-lg:text-lg">Password</h1>
                 <Textfield
                   register={register}
-                  name={"date"}
+                  name={"password"}
                   label=""
                   placeholder="Enter Password"
+                  type="password"
+                  registerOptions={{
+                    required: "Password cannot be empty",
+                    minLength: {
+                      value: 6,
+                      message: "Password must be at least 6 characters.",
+                    },
+                  }}
                 />
+                {errors.password && (
+                  <h1 className="mt-1 flex items-center text-sm font-light text-orange-700">
+                    <AlertCircle className="mr-1 text-sm" />{" "}
+                    {typeof errors.password.message === "string" ? errors.password.message : null}
+                  </h1>
+                )}
                 <h1
                   className={cn(
                     "mt-1 text-lg font-light text-pia_accent",
@@ -99,6 +154,11 @@ export default function Login() {
               <Button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
                 Sign In
               </Button>
+              {firebaseError && (
+                <h1 className="mt-1 flex items-center text-sm font-light text-orange-700">
+                  <AlertCircle className="mr-1 text-sm" /> {firebaseError}
+                </h1>
+              )}
               {isMobile && (
                 <div className="flex items-center justify-center">
                   <h1 className={cn("text-sm text-black text-pia_accent max-lg:text-sm")}>
