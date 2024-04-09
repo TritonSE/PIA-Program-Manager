@@ -14,6 +14,13 @@
   padding-right: 1.5rem;
 }
 
+.wide {
+  height: 3rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  width: 100%;
+}
+
 .big {
   height: 10rem;
   padding-left: 1.5rem;
