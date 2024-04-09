@@ -1,9 +1,11 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 
 import { BasicInfoFrame } from "../components/ProfileForm/BasicInfoFrame";
 import { ContactFrame } from "../components/ProfileForm/ContactInfoFrame";
 import { PasswordFrame } from "../components/ProfileForm/PasswordFrame";
 import { useWindowSize } from "../hooks/useWindowSize";
+
+import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export type FrameProps = {
   className?: string;
@@ -12,8 +14,8 @@ export type FrameProps = {
 };
 
 export default function Profile() {
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
+  useRedirectToLoginIfNotSignedIn();
+  const { isMobile } = useWindowSize();
   const [basicInfoData, setBasicInfoData] = useState({ name: "John Smith", image: "" });
   const [contactInfoData, setContactInfoData] = useState({ email: "johnsmith@gmail.com" });
   const [passwordData, setPasswordData] = useState({ last_changed: new Date("01/08/2024") });

@@ -26,7 +26,7 @@ export const createUser: ValidationChain[] = [
 ];
 
 export const loginUser: ValidationChain[] = [
-  body("email")
+  body("uid")
     .notEmpty()
     .withMessage("Email cannot be empty.")
     .isEmail()

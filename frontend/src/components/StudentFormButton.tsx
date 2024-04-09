@@ -1,17 +1,17 @@
+import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
-import { StudentMap } from "../pages/home";
 
 import { Button } from "./Button";
-import SaveCancelButtons from "./SaveCancelButtons";
 import ContactInfo from "./StudentForm/ContactInfo";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
+import { StudentMap } from "./StudentsTable/types";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 type BaseProps = {
   classname?: string;
@@ -86,7 +86,7 @@ export default function StudentFormButton({
             const newStudent = result.data;
             reset(); // only clear form on success
             setOpenForm(false);
-            setAllStudents((prevStudents) => {
+            setAllStudents((prevStudents: StudentMap) => {
               return { ...prevStudents, [newStudent._id]: newStudent };
             });
           } else {
@@ -107,7 +107,7 @@ export default function StudentFormButton({
           if (result.success) {
             const editedStudent = result.data;
             setOpenForm(false);
-            setAllStudents((prevStudents) => {
+            setAllStudents((prevStudents: StudentMap) => {
               if (Object.keys(prevStudents).includes(editedStudent._id)) {
                 return { ...prevStudents, [editedStudent._id]: editedStudent };
               } else {
@@ -132,12 +132,22 @@ export default function StudentFormButton({
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         <DialogTrigger asChild>
-          <Button
-            label={type === "add" ? "Add Student" : "View Profile"}
-            onClick={() => {
-              setOpenForm(true);
-            }}
-          />
+          {type === "edit" ? (
+            <Image
+              src="/eye.svg"
+              alt="view student"
+              width={40}
+              height={40}
+              className="cursor-pointer"
+            />
+          ) : (
+            <Button
+              label={"＋ Add Student"}
+              onClick={() => {
+                setOpenForm(true);
+              }}
+            />
+          )}
         </DialogTrigger>
         <DialogContent className="max-h-[95%] max-w-[98%] rounded-[13px] sm:max-w-[80%]">
           <form
@@ -167,7 +177,33 @@ export default function StudentFormButton({
                 setCalendarValue={setCalendarValue}
               />
             </fieldset>
-            <SaveCancelButtons setOpen={setOpenForm} />
+            <div className="ml-auto mt-5 flex gap-5">
+              {/* Modal Confirmation Dialog */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button label="Cancel" kind="secondary" />
+                </DialogTrigger>
+                <Button label="Save Changes" type="submit" />
+                <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
+                  <div className="p-3 min-[450px]:p-10">
+                    <p className="my-10 text-center">Leave without saving changes?</p>
+                    <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
+                      <DialogClose asChild>
+                        <Button label="Back" kind="secondary" />
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          label="Continue"
+                          onClick={() => {
+                            setOpenForm(false);
+                          }}
+                        />
+                      </DialogClose>
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </form>
         </DialogContent>
       </Dialog>
