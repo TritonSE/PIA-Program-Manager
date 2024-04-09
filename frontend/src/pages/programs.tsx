@@ -2,7 +2,7 @@ import { ProgramData } from "../components/ProgramForm/types";
 import ProgramFormButton from "../components/ProgramFormButton";
 import sampleProgramData from "../sampleProgramData.json";
 
-import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
+//import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export default function Programs() {
   //useRedirectToLoginIfNotSignedIn();

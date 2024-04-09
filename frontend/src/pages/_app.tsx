@@ -1,7 +1,5 @@
 import { AppProps } from "next/app";
-
 //import Landing from "../components/Landing";
-
 import "../styles/global.css";
 import "../styles/globals.css";
 import { ReactElement, ReactNode } from "react";
