@@ -144,8 +144,9 @@ export function ProgramInfo({
               id={"regular"}
               type="radio"
               value={"regular"}
-              checked={data?.type === "regular"}
+              defaultChecked={data?.type === "regular"}
             />
+
             <div className="pointer-events-none absolute flex h-full w-full items-center justify-center text-neutral-800 peer-checked:bg-pia_dark_green peer-checked:text-white">
               <div className="text-center text-sm font-normal leading-normal sm:text-base ">
                 Regular
@@ -155,12 +156,13 @@ export function ProgramInfo({
           <div className="relative flex h-full w-full items-center items-center" key={"varying"}>
             <input
               {...register("type")}
-              className="peer flex h-full w-full appearance-none"
+              className="peer absolute flex h-full w-full appearance-none"
               id={"varying"}
               type="radio"
               value={"varying"}
-              checked={data?.type === "varying"}
+              defaultChecked={data?.type === "varying"}
             />
+
             <div className="pointer-events-none absolute flex h-full w-full items-center justify-center text-neutral-800 peer-checked:bg-pia_dark_green peer-checked:text-white">
               <div className="text-center text-sm font-normal leading-normal sm:text-base ">
                 Varying

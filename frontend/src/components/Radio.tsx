@@ -77,8 +77,9 @@ export function ColorRadio<T extends FieldValues>({
               id={option + index}
               type="radio"
               value={option}
-              checked={defaultValue === option}
+              defaultChecked={option === defaultValue}
             />
+
             <svg
               className="invisible absolute inset-2 peer-checked:visible sm:inset-3"
               width="25"
