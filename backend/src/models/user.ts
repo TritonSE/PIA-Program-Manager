@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   accountType: { type: String, enum: ["admin", "team"], required: true },
   approvalStatus: { type: Boolean, default: false }, // default false
+  email: { type: String, required: true },
 });
 
 type User = InferSchemaType<typeof userSchema>;
