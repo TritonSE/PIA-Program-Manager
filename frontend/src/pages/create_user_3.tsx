@@ -52,10 +52,10 @@ export default function CreateUser() {
                     </>
                   ) : (
                     <>
-                      <h1 className="font-[alternate-gothic] text-3xl max-lg:text-3xl">
+                      <h1 className="font-[alternate-gothic] text-5xl text-black max-lg:text-4xl">
                         Account could not be created at this time.
                       </h1>
-                      <h1 className="text-lg text-black max-lg:text-lg">
+                      <h1 className="mt-4 text-lg text-black max-lg:text-lg">
                         Please try again later. If the issue persists,{" "}
                         <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
                           Contact Us.
@@ -87,15 +87,17 @@ export default function CreateUser() {
                   </>
                 ) : (
                   <>
-                    <h1 className="font-[alternate-gothic] text-3xl max-lg:text-3xl">
+                    <h1 className="font-[alternate-gothic] text-5xl text-black max-lg:text-4xl">
                       Account could not be created at this time.
                     </h1>
-                    <h1 className="text-lg text-black max-lg:text-lg">
-                      Please try again later. If the issue persists,{" "}
-                      <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
-                        Contact Us.
-                      </a>
-                    </h1>
+                    <>
+                      <h1 className="mt-4 text-lg text-black max-lg:text-lg">
+                        Please try again later. If the issue persists,{" "}
+                        <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
+                          Contact Us.
+                        </a>
+                      </h1>
+                    </>
                   </>
                 )}
               </div>
@@ -109,12 +111,15 @@ export default function CreateUser() {
               </h1>
             </>
           )}
-          <h1 className="text-1xl max-lg:text-1xl mb-6 text-black text-pia_accent max-sm:text-sm">
-            Haven&lsquo;t received a response yet?{" "}
-            <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
-              Contact Us.
-            </a>
-          </h1>
+
+          {isSuccess && (
+            <h1 className="text-1xl max-lg:text-1xl mb-6 text-black text-pia_accent max-sm:text-sm">
+              Haven&lsquo;t received a response yet?{" "}
+              <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
+                Contact Us.
+              </a>
+            </h1>
+          )}
         </div>
       </div>
     </main>
@@ -199,8 +204,14 @@ export default function CreateUser() {
   //             </div>
   //           </div>
   //         )}
-  //         <h1 className="text-lg text-black max-lg:text-lg">You will be notified by email</h1>
-  //         <h1 className="mb-10 text-lg text-black max-lg:text-lg">if your account is approved.</h1>
+  //         {isSuccess && (
+  //           <>
+  //             <h1 className="text-lg text-black max-lg:text-lg">You will be notified by email</h1>
+  //             <h1 className="mb-10 text-lg text-black max-lg:text-lg">
+  //               if your account is approved.
+  //             </h1>
+  //           </>
+  //         )}
   //         <h1 className="text-1xl max-lg:text-1xl mb-6 text-black text-pia_accent max-sm:text-sm">
   //           Haven&lsquo;t received a response yet?{" "}
   //           <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">

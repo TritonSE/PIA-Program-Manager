@@ -5,6 +5,7 @@ import { MouseEvent, ReactElement, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { POST, handleAPIError } from "../api/requests";
+import { auth } from "../firebase/firebase";
 
 import { Button } from "@/components/Button";
 import Landing from "@/components/Landing";
@@ -19,10 +20,12 @@ export default function CreateUser() {
 
   const [isAdmin, setIsAdmin] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [createSuccess, setCreateSuccess] = useState(true);
+  // const [createSuccess, setCreateSuccess] = useState(true);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
+
+    let isSuccess = true;
 
     try {
       setLoading(true);
@@ -34,31 +37,54 @@ export default function CreateUser() {
       console.log("Email:", query.email);
       console.log("Password:", query.password);
 
-      const response = await POST(`/user/`, {
+      // Set NEXT_PUBLIC_API_BASE_URL to http://localhost:4000/api in env file,
+      // since otherwise was attempting to POST to http://localhost:3000/api/user/create
+      const response = await POST(`/user/create`, {
         name: query.name,
         accountType,
         email: query.email,
         password: query.password,
       });
 
+      // const response = await fetch('http://localhost:4000/api/user/create', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     name: query.name,
+      //     accountType,
+      //     email: query.email,
+      //     password: query.password,
+      //   }),
+      // });
+
       console.log("User created successfully:", response);
     } catch (error) {
-      setCreateSuccess(false);
+      // setCreateSuccess(false);
+      isSuccess = false;
       console.error("Error creating user:", error);
       handleAPIError(error);
     } finally {
       setLoading(false);
+
+      void router.push({
+        pathname: "/create_user_3",
+        query: {
+          createSuccess: isSuccess,
+        },
+      });
     }
 
-    console.log(createSuccess);
-    console.log(loading);
+    // console.log(createSuccess);
+    // console.log(loading);
 
-    void router.push({
-      pathname: "/create_user_3",
-      query: {
-        createSuccess,
-      },
-    });
+    // void router.push({
+    //   pathname: "/create_user_3",
+    //   query: {
+    //     createSuccess,
+    //   },
+    // });
   };
 
   const onBack: SubmitHandler<FieldValues> = (data) => {

@@ -57,8 +57,6 @@ export default function CreateUser() {
     try {
       setEmailError(false);
 
-      console.log("Entered");
-
       // const emailExists = await checkEmailExists(data.email);
       const emailExists = await checkEmailExists(String(data.email));
 
