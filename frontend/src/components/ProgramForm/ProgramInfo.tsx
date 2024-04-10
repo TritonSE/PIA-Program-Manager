@@ -5,7 +5,7 @@ import { ColorRadio } from "../Radio";
 import { Textfield } from "../Textfield";
 
 import { SessionList } from "./ProgramSession";
-import { ProgramData, programColor } from "./types";
+import { ProgramData } from "./types";
 
 type ProgramInfoProperties = {
   register: UseFormRegister<ProgramData>;
@@ -234,10 +234,10 @@ export function ProgramInfo({
         <div className="text-center text-base font-normal text-neutral-400">Color (Cover)</div>
 
         <ColorRadio
-          options={["red", "yellow", "green", "teal", "blue", "violet", "fuchsia"]}
+          options={["#FF7A5E", "#FFB800", "#B6BF0E", "#4FA197", "#5DADE2", "#7986CB", "#EE6CEE"]}
           name="color"
           register={register}
-          defaultValue={data?.color as programColor}
+          defaultValue={data?.color}
         />
       </div>
     </div>

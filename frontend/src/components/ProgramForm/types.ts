@@ -17,5 +17,3 @@ export type ProgramData = {
   hourly: string;
   sessions: string[][];
 };
-
-export type programColor = "teal" | "green" | "red" | "yellow" | "blue" | "violet" | "fuchsia";

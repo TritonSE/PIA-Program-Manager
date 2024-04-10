@@ -2,28 +2,12 @@ import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 
 import { cn } from "../lib/utils";
 
-import { programColor } from "./ProgramForm/types";
-
 type RadioProps<T extends FieldValues> = {
   options: string[];
   className?: string;
   name: Path<T>;
   register: UseFormRegister<T>;
-  defaultValue?: programColor | undefined;
-};
-
-type ColorRadioProps<T extends FieldValues> = RadioProps<T> & {
-  options: programColor[];
-};
-
-const programColors = {
-  teal: "bg-secondary_teal",
-  green: "bg-secondary_green",
-  red: "bg-secondary_red",
-  yellow: "bg-secondary_yellow",
-  blue: "bg-secondary_blue",
-  violet: "bg-secondary_violet",
-  fuchsia: "bg-secondary_fuchsia",
+  defaultValue?: string;
 };
 
 export function Radio<T extends FieldValues>({
@@ -62,7 +46,7 @@ export function ColorRadio<T extends FieldValues>({
   name,
   className,
   defaultValue,
-}: ColorRadioProps<T>) {
+}: RadioProps<T>) {
   return (
     <div className={cn("flex flex-row gap-2 sm:gap-3", className)}>
       {options.map((option, index) => {
@@ -70,10 +54,8 @@ export function ColorRadio<T extends FieldValues>({
           <div className="relative flex items-center" key={option + index}>
             <input
               {...register(name)}
-              className={cn(
-                "peer flex h-10 w-10 appearance-none rounded-full border-[1px] border-pia_border transition-colors hover:cursor-pointer focus-visible:bg-[#00686766] sm:h-12 sm:w-12 sm:border-[2px]",
-                programColors[option as programColor],
-              )}
+              className="peer flex h-10 w-10 appearance-none rounded-full border-[1px] border-pia_border transition-colors hover:cursor-pointer focus-visible:bg-[#00686766] sm:h-12 sm:w-12 sm:border-[2px]"
+              style={{ background: option }}
               id={option + index}
               type="radio"
               value={option}
