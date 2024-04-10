@@ -14,8 +14,8 @@ import { InternalError } from "./internal";
 /**
  * Generic Error Handler
  */
-export const errorHandler = (err: any, _req: Request, res: Response, _nxt: NextFunction) => {
-  // export const errorHandler = (err: Error, _req: Request, res: Response, _nxt: NextFunction) => {
+// export const errorHandler = (err: any, _req: Request, res: Response, _nxt: NextFunction) => {
+export const errorHandler = (err: Error, _req: Request, res: Response, _nxt: NextFunction) => {
   if (!err) return;
 
   // // Check if the error is a Firebase error
@@ -25,10 +25,10 @@ export const errorHandler = (err: any, _req: Request, res: Response, _nxt: NextF
   //   return;
   // }
 
-  if (err.code === "auth/email-already-exists") {
-    console.error("Firebase Auth Error:", err);
-    return res.status(400).json({ error: "Email already exists", code: err.code });
-  }
+  // if (err.code === "auth/email-already-exists") {
+  //   console.error("Firebase Auth Error:", err);
+  //   return res.status(400).json({ error: "Email already exists", code: err.code });
+  // }
 
   if (err instanceof CustomError && !(err instanceof InternalError)) {
     console.log(err.displayMessage(true));

@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
+// import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
 
 import { firebaseAdminAuth } from "../util/firebase";
 
@@ -10,6 +10,7 @@ export const checkEmailExists = async (req: Request, res: Response) => {
   console.log("In checkEmailExists function in controllers/email");
 
   try {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     const userRecord = await firebaseAdminAuth.getUserByEmail(email);
 
     console.log("(In controllers/email) Email already exists");

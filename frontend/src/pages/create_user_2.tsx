@@ -1,4 +1,4 @@
-import { FirebaseError } from "firebase/app";
+// import { FirebaseError } from "firebase/app";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -6,7 +6,7 @@ import { MouseEvent, ReactElement, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { POST, handleAPIError } from "../api/requests";
-import { auth } from "../firebase/firebase";
+// import { auth } from "../firebase/firebase";
 // import { FirebaseError } from "firebase-admin";
 
 import { Button } from "@/components/Button";
@@ -18,10 +18,10 @@ export const CREATE_SUCCESS = 0;
 export const CREATE_FAIL_EMAIL = 1;
 export const CREATE_FAIL_OTHER = 2;
 
-type EmailCheckResponse = {
-  exists: boolean;
-  message: string;
-};
+// type EmailCheckResponse = {
+//   exists: boolean;
+//   message: string;
+// };
 
 export default function CreateUser() {
   const router = useRouter();
@@ -30,15 +30,12 @@ export default function CreateUser() {
   console.log("Query:", query);
 
   const [isAdmin, setIsAdmin] = useState(true);
-  const [loading, setLoading] = useState(false);
   // const [createSuccess, setCreateSuccess] = useState(true);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
 
     try {
-      setLoading(true);
-
       const accountType = isAdmin ? "admin" : "team";
 
       console.log("Name:", query.name);
@@ -64,73 +61,87 @@ export default function CreateUser() {
 
       console.log("User created successfully:", response);
 
-      // } catch (error: unknown) {
-    } catch (error: any) {
+      // ========================================================================
+
+      //   // } catch (error: unknown) {
+      // } catch (error: any) {
+      //   console.error("Error creating user:", error);
+
+      //   // // if (error.code === "auth/email-already-exists") {
+      //   // if (errorCode === "auth/email-already-exists") {
+      //   //   console.log("Email already in use error");
+      //   //   void router.push({
+      //   //     pathname: "/create_user_3",
+      //   //     query: {
+      //   //       createResult: CREATE_FAIL_EMAIL,
+      //   //     },
+      //   //   });
+      //   // }
+
+      //   // // if (error instanceof FirebaseError && error.code === "auth/email-already-exists") {
+      //   // const firebaseError = error as FirebaseError;
+      //   // console.log("firebaseError:", firebaseError);
+      //   // console.log("firebaseError.code:" , firebaseError.code);
+      //   // // if (firebaseError.code === "auth/email-already-exists") {
+      //   // if (firebaseError.code === "email-already-exists") {
+      //   //   console.log("Email already in use error");
+      //   //   void router.push({
+      //   //     pathname: "/create_user_3",
+      //   //     query: {
+      //   //       createResult: CREATE_FAIL_EMAIL,
+      //   //     },
+      //   //   });
+      //   // }
+
+      //   // if (firebaseError.code === "auth/email-already-exists") {
+      //   console.log("error: ", error);
+      //   if (error.code === "auth/email-already-exists") {
+      //     console.log("Email already in use error");
+      //     void router.push({
+      //       pathname: "/create_user_3",
+      //       query: {
+      //         createResult: CREATE_FAIL_EMAIL,
+      //       },
+      //     });
+      //   }
+
+      //   // const response = await POST("/check-email", { email: data.email });
+      //   // const responseData = await response.json();
+      //   // console.log("responseData: ", responseData);
+
+      //   // // Email exists
+      //   // if (responseData.exists) {
+      //   //   void router.push({
+      //   //     pathname: "/create_user_3",
+      //   //     query: {
+      //   //       createResult: CREATE_FAIL_EMAIL,
+      //   //     },
+      //   //   });
+      //   // }
+      //   else {
+      //     void router.push({
+      //       pathname: "/create_user_3",
+      //       query: {
+      //         createResult: CREATE_FAIL_OTHER,
+      //       },
+      //     });
+
+      //     handleAPIError(error);
+      //   }
+      // }
+
+      // ========================================================================
+    } catch (error) {
       console.error("Error creating user:", error);
 
-      // // if (error.code === "auth/email-already-exists") {
-      // if (errorCode === "auth/email-already-exists") {
-      //   console.log("Email already in use error");
-      //   void router.push({
-      //     pathname: "/create_user_3",
-      //     query: {
-      //       createResult: CREATE_FAIL_EMAIL,
-      //     },
-      //   });
-      // }
+      void router.push({
+        pathname: "/create_user_3",
+        query: {
+          createResult: CREATE_FAIL_OTHER,
+        },
+      });
 
-      // // if (error instanceof FirebaseError && error.code === "auth/email-already-exists") {
-      // const firebaseError = error as FirebaseError;
-      // console.log("firebaseError:", firebaseError);
-      // console.log("firebaseError.code:" , firebaseError.code);
-      // // if (firebaseError.code === "auth/email-already-exists") {
-      // if (firebaseError.code === "email-already-exists") {
-      //   console.log("Email already in use error");
-      //   void router.push({
-      //     pathname: "/create_user_3",
-      //     query: {
-      //       createResult: CREATE_FAIL_EMAIL,
-      //     },
-      //   });
-      // }
-
-      // if (firebaseError.code === "auth/email-already-exists") {
-      console.log("error: ", error);
-      if (error.code === "auth/email-already-exists") {
-        console.log("Email already in use error");
-        void router.push({
-          pathname: "/create_user_3",
-          query: {
-            createResult: CREATE_FAIL_EMAIL,
-          },
-        });
-      }
-
-      // const response = await POST("/check-email", { email: data.email });
-      // const responseData = await response.json();
-      // console.log("responseData: ", responseData);
-
-      // // Email exists
-      // if (responseData.exists) {
-      //   void router.push({
-      //     pathname: "/create_user_3",
-      //     query: {
-      //       createResult: CREATE_FAIL_EMAIL,
-      //     },
-      //   });
-      // }
-      else {
-        void router.push({
-          pathname: "/create_user_3",
-          query: {
-            createResult: CREATE_FAIL_OTHER,
-          },
-        });
-
-        handleAPIError(error);
-      }
-    } finally {
-      setLoading(false);
+      handleAPIError(error);
     }
 
     // console.log(createSuccess);
