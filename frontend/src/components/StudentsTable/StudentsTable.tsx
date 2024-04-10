@@ -90,7 +90,7 @@ export default function StudentsTable() {
     setStudentTable(studentsInformation);
   }, [allStudents]);
 
-  const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents});
+  const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents });
   const data = useMemo(() => studentTable, [studentTable]);
   // const data = useMemo(() => [], [allStudents]);  // uncomment this line and comment the line above to see empty table state
 

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
 import { Contact, ProgramLink } from "../StudentForm/types";
@@ -94,10 +94,6 @@ export function useColumnSchema({
   setAllStudents: React.Dispatch<React.SetStateAction<StudentMap>>;
 }) {
   const { isTablet } = useWindowSize();
-
-  useEffect(() => {
-    Object.values(allStudents)[0]?.programs.map((prog) => console.log(allPrograms[prog.programId].abbreviation));
-  }, [allStudents]);
 
   const columns: Columns = [
     {

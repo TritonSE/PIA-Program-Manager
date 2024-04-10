@@ -107,9 +107,9 @@ export default function StudentFormButton({
             const newStudent = result.data;
             reset(); // only clear form on success
             setOpenForm(false);
-            console.log("Student created successfully")
+            console.log("Student created successfully");
             setAllStudents((prevStudents: StudentMap) => {
-              return { ...prevStudents, [newStudent._id]: {...newStudent} };
+              return { ...prevStudents, [newStudent._id]: { ...newStudent } };
             });
           } else {
             console.log(result.error);
@@ -131,7 +131,7 @@ export default function StudentFormButton({
             setOpenForm(false);
             setAllStudents((prevStudents: StudentMap) => {
               if (Object.keys(prevStudents).includes(editedStudent._id)) {
-                return { ...prevStudents, [editedStudent._id]: {...editedStudent} };
+                return { ...prevStudents, [editedStudent._id]: { ...editedStudent } };
               } else {
                 console.log("Student ID is invalid");
                 alert("Student ID is invalid");

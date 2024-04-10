@@ -1,12 +1,12 @@
 import { Column } from "@tanstack/react-table";
 import { useContext, useMemo } from "react";
 
-import { Student } from "../../api/students";
 import { Dropdown } from "../Dropdown";
 
 import { ProgramsContext } from "./StudentsTable";
+import { StudentTableRow } from "./types";
 
-export default function ProgramFilter({ column }: { column: Column<Student> }) {
+export default function ProgramFilter({ column }: { column: Column<StudentTableRow> }) {
   const programsMap = useContext(ProgramsContext);
   // Get unique programs to display in the program filter dropdown
   const sortedUniqueValues = useMemo(() => {
