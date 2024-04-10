@@ -1,5 +1,6 @@
+import { AlertCircle } from "lucide-react";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { cn } from "../../lib/utils";
@@ -11,7 +12,7 @@ import { Dialog, DialogTrigger } from "../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
-import { editPhoto } from "@/api/users";
+import { editName, editPhoto } from "@/api/users";
 
 type ProfileBasicData = {
   name: string;
@@ -19,9 +20,10 @@ type ProfileBasicData = {
 };
 
 type BasicInfoFrameProps = {
-  name: string;
   data: ProfileBasicData;
   setData: React.Dispatch<React.SetStateAction<ProfileBasicData>>;
+  previousImageId: string;
+  userId: string;
 } & FrameProps;
 
 type ProfileBasicInfoFormData = {
@@ -30,11 +32,12 @@ type ProfileBasicInfoFormData = {
 
 export function BasicInfoFrame({
   className,
-  name,
   isMobile,
   frameFormat,
   data,
   setData,
+  previousImageId,
+  userId,
 }: BasicInfoFrameProps) {
   const [openProfileForm, setOpenProfileForm] = useState(false);
   const [openNameForm, setOpenNameForm] = useState(false);
@@ -43,21 +46,40 @@ export function BasicInfoFrame({
   const [previousImage, setPreviousImage] = useState(data.image);
   const [clickedAddProfile, setClickedAddProfile] = useState(false);
   const { register, handleSubmit } = useForm<ProfileBasicInfoFormData>();
+  const [imageError, setImageError] = useState("");
+  const [nameError, setNameError] = useState("");
+
+  useEffect(() => {
+    if (!openNameForm) {
+      setNameError("");
+    }
+  }, [openNameForm]);
 
   const onCancelImage = () => {
     setClickedAddProfile(false);
     URL.revokeObjectURL(data.image); //Prevent memory leaks
     setData((prev) => ({ ...prev, image: previousImage }));
+    setImageError("");
   };
 
   const onSaveImage = () => {
+    if (!imageFile) {
+      setImageError("Please upload an image");
+      return;
+    }
     if (imageFile) {
       const formData = new FormData();
       formData.append("image", imageFile);
-
-      editPhoto(formData)
-        .then((response) => {
-          console.log(response);
+      editPhoto(formData, previousImageId, userId)
+        .then((result) => {
+          if (result.success) {
+            setOpenProfileForm(false);
+            setClickedAddProfile(false);
+            console.log("Successfully added photo");
+          } else {
+            console.log("Error has occured");
+            setImageError(result.error);
+          }
         })
         .catch((error) => {
           console.error(error);
@@ -66,13 +88,33 @@ export function BasicInfoFrame({
   };
 
   const onSubmit = (formData: ProfileBasicInfoFormData) => {
-    if (formData.name === data.name) return;
-    setData({ name: formData.name, image: "" });
+    if (formData.name === data.name) {
+      setNameError("Name is the same as before");
+      return;
+    }
+    if (formData.name.length === 0) {
+      setNameError("Name cannot be empty");
+      return;
+    }
+    editName(formData.name, userId).then(
+      (result) => {
+        if (result.success) {
+          setData((prev) => ({ ...prev, name: formData.name }));
+          setOpenNameForm(false);
+          setNameError("");
+        } else {
+          console.error(result.error);
+          setNameError(result.error);
+        }
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target?.files?.[0]) {
-      console.log("wat", e.target.files[0]);
       const newImage = URL.createObjectURL(e.target.files[0]);
       setData((prev) => {
         setPreviousImage(prev.image);
@@ -99,7 +141,7 @@ export function BasicInfoFrame({
                   setOpenProfileForm(true);
                 }}
               >
-                <div className="ml-3 flex h-full w-auto flex-row pr-5 sm:ml-14">
+                <div className="ml-3 flex h-full w-auto flex-row py-5 pr-5 sm:ml-14">
                   <div className="flex w-1/3 flex-none items-center sm:w-1/5">Profile Picture</div>
                   <div className="flex flex-grow items-center text-[#6C6C6C]">
                     {isMobile
@@ -110,12 +152,14 @@ export function BasicInfoFrame({
                     className="relative aspect-square"
                     style={{ width: isMobile ? "50px" : "80px" }}
                   >
-                    <Image
-                      alt="Profile Picture"
-                      src={data.image ? data.image : "/sidebar/logo.png"}
-                      className="flex items-center rounded-full object-cover"
-                      fill={true}
-                    />
+                    {data.image !== "" ? (
+                      <Image
+                        alt="Profile Picture"
+                        src={data.image !== "default" ? data.image : "../defaultProfilePic.svg"}
+                        className="flex items-center rounded-full object-cover"
+                        fill={true}
+                      />
+                    ) : null}
                   </div>
                 </div>
               </div>
@@ -128,17 +172,29 @@ export function BasicInfoFrame({
                 <div className="relative h-80  ">
                   <Image
                     alt="Profile Picture"
-                    src={data.image ? data.image : "/sidebar/logo.png"}
+                    src={data.image !== "default" ? data.image : "../defaultProfilePic.svg"}
                     className="object-contain"
                     fill={true}
                   />
                 </div>
                 {clickedAddProfile ? (
-                  <SaveCancelButtons
-                    setOpen={setOpenProfileForm}
-                    onCancelClick={onCancelImage}
-                    onSaveClick={onSaveImage}
-                  />
+                  <>
+                    {imageError ? (
+                      <p className="flex items-center  text-sm text-red-500">
+                        <span>
+                          <AlertCircle className="mr-1 w-[1.5em]" aria-hidden="true" />
+                        </span>
+                        {imageError}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                    <SaveCancelButtons
+                      setOpen={setOpenProfileForm}
+                      onCancelClick={onCancelImage}
+                      onSaveClick={onSaveImage}
+                    />
+                  </>
                 ) : (
                   <label htmlFor="image_upload" className="grid">
                     <Button
@@ -173,7 +229,7 @@ export function BasicInfoFrame({
                   <div className="flex w-1/3 flex-none items-center sm:w-1/5">Name</div>
                   <div className="flex flex-grow items-center">{data.name}</div>
                   <Image
-                    src="caretright.svg"
+                    src="../caretright.svg"
                     alt="caretright"
                     className="mx-7 flex items-center sm:mx-11"
                     height={12}
@@ -191,8 +247,18 @@ export function BasicInfoFrame({
                   name="name"
                   placeholder="Full name"
                   register={register}
-                  defaultValue={name}
+                  defaultValue={data.name}
                 />
+                {nameError ? (
+                  <p className="flex items-center pt-3 text-sm text-red-500">
+                    <span>
+                      <AlertCircle className="mr-1 w-[1.5em]" aria-hidden="true" />
+                    </span>
+                    {nameError}
+                  </p>
+                ) : (
+                  ""
+                )}
                 <SaveCancelButtons setOpen={setOpenNameForm} />
               </form>
             </ProfileDialogContent>

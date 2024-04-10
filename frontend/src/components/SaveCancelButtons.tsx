@@ -5,6 +5,7 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 type SaveCancelButtonsProps = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+
   onCancelClick?: () => void;
   onSaveClick?: () => void;
 };
@@ -39,9 +40,7 @@ export default function SaveCancelButtons({
           </div>
         </DialogContent>
       </Dialog>
-      <DialogClose asChild>
-        <Button label="Save Changes" type="submit" onClick={onSaveClick} />
-      </DialogClose>
+      <Button label="Save Changes" onClick={onSaveClick} />
     </div>
   );
 }

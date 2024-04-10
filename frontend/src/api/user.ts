@@ -4,6 +4,10 @@ export type User = {
   _id: string;
   uid: string;
   role: string;
+  profilePicture: string;
+  name: string;
+  email: string;
+  lastChangedPassword: Date;
 };
 
 export const createAuthHeader = (firebaseToken: string) => ({

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { getPhoto } from "../api/users";
 import { BasicInfoFrame } from "../components/ProfileForm/BasicInfoFrame";
@@ -6,6 +6,7 @@ import { ContactFrame } from "../components/ProfileForm/ContactInfoFrame";
 import { PasswordFrame } from "../components/ProfileForm/PasswordFrame";
 import { useWindowSize } from "../hooks/useWindowSize";
 
+import { UserContext } from "@/contexts/user";
 import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export type FrameProps = {
@@ -16,32 +17,49 @@ export type FrameProps = {
 
 export default function Profile() {
   useRedirectToLoginIfNotSignedIn();
+
+  const { piaUser } = useContext(UserContext);
   const { isMobile } = useWindowSize();
-  const [basicInfoData, setBasicInfoData] = useState({ name: "John Smith", image: "" });
-  const [contactInfoData, setContactInfoData] = useState({ email: "johnsmith@gmail.com" });
-  const [passwordData, setPasswordData] = useState({ last_changed: new Date("01/08/2024") });
+  const [basicInfoData, setBasicInfoData] = useState({ name: "", image: "" });
+  const [contactInfoData, setContactInfoData] = useState({ email: "" });
+  const [passwordData, setPasswordData] = useState({ last_changed: null as Date | null });
 
   const frameFormat =
     "border-pia_neutral_gray flex w-full flex-grow-0 flex-col place-content-stretch overflow-hidden rounded-lg border-[2px] bg-white";
 
-  // Example of fetching an image from the backend using hardcoded ID
   useEffect(() => {
-    const exampleImageID = "66147af38932931bad1dde06";
-    getPhoto(exampleImageID).then(
-      (result) => {
-        if (result.success) {
-          const newImage = result.data;
-          console.log(newImage);
-          setBasicInfoData((prev) => ({ ...prev, image: newImage }));
-        } else {
-          console.error(result.error);
-        }
-      },
-      (error) => {
-        console.error(error);
-      },
-    );
-  }, []);
+    if (!piaUser) return;
+    if (piaUser.profilePicture === "default") {
+      setBasicInfoData((prev) => ({ ...prev, image: "default" }));
+      return;
+    }
+    if (piaUser.profilePicture) {
+      getPhoto(piaUser.profilePicture).then(
+        (result) => {
+          if (result.success) {
+            const newImage = result.data;
+            setBasicInfoData((prev) => ({ ...prev, image: newImage }));
+          } else {
+            console.error(result.error);
+          }
+        },
+        (error) => {
+          console.error(error);
+        },
+      );
+    }
+    if (piaUser.name) {
+      setBasicInfoData((prev) => ({ ...prev, name: piaUser.name }));
+    }
+    if (piaUser.email) {
+      setContactInfoData((prev) => ({ ...prev, email: piaUser.email }));
+    }
+    if (piaUser.lastChangedPassword) {
+      setPasswordData((prev) => ({ ...prev, last_changed: piaUser.lastChangedPassword }));
+    }
+  }, [piaUser]);
+
+  if (!piaUser) return <h1>Loading...</h1>;
 
   return (
     <main>
@@ -56,27 +74,29 @@ export default function Profile() {
         <div className="flex flex-col gap-6 pt-4">
           <BasicInfoFrame
             className=""
-            name="John Smith"
             isMobile={isMobile}
             frameFormat={frameFormat}
             data={basicInfoData}
             setData={setBasicInfoData}
+            previousImageId={piaUser.profilePicture}
+            userId={piaUser.uid}
           />
           <ContactFrame
             className=""
-            email="JohnSmith@gmail.com"
             isMobile={isMobile}
             frameFormat={frameFormat}
             data={contactInfoData}
             setData={setContactInfoData}
+            userId={piaUser.uid}
           />
           <PasswordFrame
-            className=""
+            className="mb-32"
             passwordLength={10}
             isMobile={isMobile}
             frameFormat={frameFormat}
             data={passwordData}
             setData={setPasswordData}
+            userId={piaUser.uid}
           />
         </div>
       </div>

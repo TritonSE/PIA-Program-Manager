@@ -1,4 +1,7 @@
+import { signOut } from "firebase/auth";
+import { AlertCircle } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -10,25 +13,52 @@ import { Dialog, DialogTrigger } from "../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
+import { editEmail } from "@/api/users";
+import { initFirebase } from "@/firebase/firebase";
+
 type ContactFrameProps = {
-  email: string;
   data: ProfileContactInfoFormData;
   setData: React.Dispatch<React.SetStateAction<ProfileContactInfoFormData>>;
+  userId: string;
 } & FrameProps;
 
 type ProfileContactInfoFormData = {
   email: string;
 };
 
-export function ContactFrame({ className, frameFormat, data, setData }: ContactFrameProps) {
+export function ContactFrame({ className, frameFormat, data, setData, userId }: ContactFrameProps) {
   const [openEmailForm, setOpenEmailForm] = useState(false);
+  const [emailError, setEmailError] = useState("");
   const { register, reset: _reset, handleSubmit } = useForm<ProfileContactInfoFormData>();
+  const { auth } = initFirebase();
+  const router = useRouter();
 
   const onSubmit = (formData: ProfileContactInfoFormData) => {
-    if (formData.email === data.email) return;
-    console.log(formData);
-    console.log(formData.email);
-    setData({ email: formData.email });
+    if (formData.email === data.email) {
+      setEmailError("Email is the same as the current one");
+      return;
+    }
+    editEmail(formData.email, userId).then(
+      (result) => {
+        if (result.success) {
+          console.log("Successfully updated email to ", result.data);
+          setData({ email: formData.email });
+          // Sign out user after email changes successfully
+          signOut(auth)
+            .then(() => {
+              router.push("/login");
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+        } else {
+          setEmailError(result.error);
+        }
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
   };
 
   return (
@@ -45,7 +75,7 @@ export function ContactFrame({ className, frameFormat, data, setData }: ContactF
               <div className="flex w-1/3 flex-none items-center sm:w-1/5">Email</div>
               <div className="flex flex-grow items-center">{data.email}</div>
               <Image
-                src="caretright.svg"
+                src="../caretright.svg"
                 alt="caretright"
                 className="mx-7 flex items-center sm:mx-11"
                 height={12}
@@ -61,10 +91,20 @@ export function ContactFrame({ className, frameFormat, data, setData }: ContactF
           <form onSubmit={handleSubmit(onSubmit)}>
             <Textfield
               name="email"
-              placeholder="Full name"
+              placeholder="Email"
               register={register}
               defaultValue={data.email}
             />
+            {emailError ? (
+              <p className="flex items-center pt-3 text-sm text-red-500">
+                <span>
+                  <AlertCircle className="mr-1 w-[1.5em]" aria-hidden="true" />
+                </span>
+                {emailError}
+              </p>
+            ) : (
+              ""
+            )}
             <SaveCancelButtons setOpen={setOpenEmailForm} />
           </form>
         </ProfileDialogContent>

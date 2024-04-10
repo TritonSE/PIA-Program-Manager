@@ -24,6 +24,22 @@ type LoginUserRequestBody = {
   uid: string;
 };
 
+type UserId = {
+  userId: string;
+};
+
+type EditNameRequestBody = UserId & {
+  newName: string;
+};
+
+type EditEmailRequestBody = UserId & {
+  newEmail: string;
+};
+
+type EditLastChangedPasswordRequestBody = UserId & {
+  currentDate: string;
+};
+
 export const createUser = async (
   req: Request<Record<string, never>, Record<string, never>, CreateUserRequestBody>,
   res: Response,
@@ -50,6 +66,9 @@ export const createUser = async (
       _id: userRecord.uid, // Set document id to firebaseUID (Linkage between Firebase and MongoDB)
       name,
       accountType,
+      email,
+      // profilePicture default "default" in User constructor
+      // lastChangedPassword default Date.now() in User constructor
       // approvalStatus default false in User constructor
     });
 
@@ -73,9 +92,15 @@ export const loginUser = async (
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
-    res
-      .status(200)
-      .json({ uid: user._id, role: user.accountType, approvalStatus: user.approvalStatus });
+    res.status(200).json({
+      uid: user._id,
+      role: user.accountType,
+      approvalStatus: user.approvalStatus,
+      profilePicture: user.profilePicture,
+      name: user.name,
+      email: user.email,
+      lastChangedPassword: user.lastChangedPassword,
+    });
     return;
   } catch (e) {
     nxt();
@@ -94,12 +119,10 @@ export const editPhoto = async (req: Request, res: Response, nxt: NextFunction) 
 
     const imageId = await saveImage(req);
 
-    res.status(200).json(imageId);
-  } catch (error) {
-    nxt(error);
+    return res.status(200).json(imageId);
+  } catch (e) {
+    nxt(e);
   }
-
-  return;
 };
 
 export const getPhoto = async (req: Request, res: Response, nxt: NextFunction) => {
@@ -108,13 +131,14 @@ export const getPhoto = async (req: Request, res: Response, nxt: NextFunction) =
     if (!mongoose.Types.ObjectId.isValid(imageId)) {
       return res
         .status(ServiceError.INVALID_MONGO_ID.status)
-        .send(ServiceError.INVALID_MONGO_ID.message);
+        .send({ error: ServiceError.INVALID_MONGO_ID.message });
     }
+
     const image = await Image.findById(imageId);
     if (!image) {
       throw ServiceError.IMAGE_NOT_FOUND;
     }
-    console.log("image", image);
+
     return res.status(200).set("Content-type", image.mimetype).send(image.buffer);
   } catch (e) {
     console.log(e);
@@ -124,5 +148,79 @@ export const getPhoto = async (req: Request, res: Response, nxt: NextFunction) =
     return res
       .status(InternalError.ERROR_GETTING_IMAGE.status)
       .send(InternalError.ERROR_GETTING_IMAGE.displayMessage(true));
+  }
+};
+
+export const editName = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const errors = validationResult(req);
+
+    validationErrorParser(errors);
+
+    const { newName, userId } = req.body as EditNameRequestBody;
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    await UserModel.findByIdAndUpdate(userId, { name: newName });
+
+    res.status(200).json(newName);
+  } catch (error) {
+    nxt(error);
+    return res.status(400).json({
+      error,
+    });
+  }
+};
+
+export const editEmail = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const errors = validationResult(req);
+
+    validationErrorParser(errors);
+
+    const { newEmail, userId } = req.body as EditEmailRequestBody;
+
+    await firebaseAdminAuth.updateUser(userId, { email: newEmail });
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    await UserModel.findByIdAndUpdate(userId, { email: newEmail });
+
+    return res.status(200).json(newEmail);
+  } catch (error) {
+    nxt(error);
+  }
+};
+
+export const editLastChangedPassword = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const errors = validationResult(req);
+
+    validationErrorParser(errors);
+
+    const { currentDate, userId } = req.body as EditLastChangedPasswordRequestBody;
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    await UserModel.findByIdAndUpdate(userId, { lastChangedPassword: currentDate });
+
+    res.status(200).json(currentDate);
+  } catch (error) {
+    nxt(error);
+    return res.status(400).json({
+      error,
+    });
   }
 };

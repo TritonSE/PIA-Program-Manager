@@ -18,6 +18,13 @@ router.post(
   UserValidator.editPhoto,
   UserController.editPhoto,
 );
-router.get("/getPhoto/:id", UserController.getPhoto);
+router.get("/getPhoto/:id", UserValidator.getPhoto, UserController.getPhoto);
+router.patch("/editName", UserValidator.editName, UserController.editName);
+router.patch("/editEmail", UserValidator.editEmail, UserController.editEmail);
+router.patch(
+  "/editLastChangedPassword",
+  UserValidator.editLastChangedPassword,
+  UserController.editLastChangedPassword,
+);
 
 export default router;

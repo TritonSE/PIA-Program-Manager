@@ -1,3 +1,10 @@
+import {
+  EmailAuthProvider,
+  getAuth,
+  reauthenticateWithCredential,
+  updatePassword,
+} from "firebase/auth";
+import { AlertCircle } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -10,14 +17,17 @@ import { Dialog, DialogTrigger } from "../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
+import { editLastChangedPassword } from "@/api/users";
+
 type PasswordFrameProps = {
   passwordLength: number;
   data: PasswordLastChangedData;
   setData: React.Dispatch<React.SetStateAction<PasswordLastChangedData>>;
+  userId: string;
 } & FrameProps;
 
 type PasswordLastChangedData = {
-  last_changed: Date;
+  last_changed: Date | null;
 };
 
 type OldPasswordFormData = {
@@ -36,10 +46,12 @@ export function PasswordFrame({
   frameFormat,
   data,
   setData,
+  userId,
 }: PasswordFrameProps) {
   const [openPasswordForm, setOpenPasswordForm] = useState(false);
   const [clickedContinue, setClickedContinue] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
   const {
     register: oldPasswordRegister,
     reset: resetOldForm,
@@ -50,47 +62,73 @@ export function PasswordFrame({
     reset: resetNewForm,
     handleSubmit: handleNewSubmit,
   } = useForm<NewPasswordFormData>();
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   const onOldPasswordSubmit = (formData: OldPasswordFormData) => {
-    //Ensure that old password is correct
-    console.log(formData);
-  };
+    setLoading(true);
 
-  const onNewPasswordSubmit = (formData: NewPasswordFormData) => {
-    setData({
-      last_changed: new Date(),
-    });
-    if (formData.new_password !== formData.confirm_password) {
-      console.log("Passwords don't match!");
-    } else {
-      //Add password and last_changed to database
+    if (user?.email) {
+      const credential = EmailAuthProvider.credential(user.email, formData.old_password);
+      reauthenticateWithCredential(user, credential)
+        .then(() => {
+          // User re-authenticated.
+          setLoading(false);
+          setClickedContinue(true);
+          resetOldForm();
+        })
+        .catch((error) => {
+          // An error occurred, handle it appropriately. For example, you can show an error message to the user.
+          console.log(error);
+          setPasswordError("Incorrect password");
+          setLoading(false);
+        });
     }
   };
 
-  //TODO: minimum 6 characters check
-
-  const handleClickedContinue = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setClickedContinue(true);
-      resetOldForm();
-    }, 1000);
+  const onNewPasswordSubmit = (formData: NewPasswordFormData) => {
+    if (formData.new_password !== formData.confirm_password) {
+      setPasswordError("Passwords don't match!");
+      return;
+    }
+    if (formData.new_password.length < 6) {
+      setPasswordError("Password must have a minimum length of 6 characters.");
+      return;
+    }
+    if (user) {
+      //Add password and last_changed to database
+      updatePassword(user, formData.new_password)
+        .then(() => {
+          // Update successful.
+          setOpenPasswordForm(false);
+          setClickedContinue(false);
+          resetNewForm();
+          editLastChangedPassword(userId)
+            .then((res) => {
+              if (res.success) {
+                setData({ last_changed: new Date(res.data) });
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
-  const handlePasswordChange = () => {
-    setOpenPasswordForm(false);
-    setClickedContinue(false);
-    resetNewForm();
-  };
-
-  const lastChanged = new Date(data.last_changed);
-  const formattedDate = `${lastChanged.toLocaleString("default", { month: "short" })} ${lastChanged.getDate()}, ${lastChanged.getFullYear()}`;
+  let formattedDate = null;
+  if (data.last_changed) {
+    const lastChanged = new Date(data.last_changed);
+    formattedDate = `${lastChanged.toLocaleString("default", { month: "short" })} ${lastChanged.getDate()}, ${lastChanged.getFullYear()}`;
+  }
 
   return (
     <section className={cn(frameFormat, className)}>
       {/*Info header*/}
-      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl">Password</div>
+      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl ">Password</div>
       {/*Info Fields */}
       <Dialog open={openPasswordForm} onOpenChange={setOpenPasswordForm}>
         <DialogTrigger asChild>
@@ -99,9 +137,11 @@ export function PasswordFrame({
               <div className="flex w-1/3 flex-none items-center sm:w-1/5 ">
                 {"\u2022".repeat(passwordLength)}
               </div>
-              <div className="flex flex-grow items-center">Last changed {formattedDate}</div>
+              <div className="flex flex-grow items-center">
+                Last changed {formattedDate ? formattedDate : ""}
+              </div>
               <Image
-                src="caretright.svg"
+                src="../caretright.svg"
                 alt="caretright"
                 className="mx-7 flex items-center sm:mx-11"
                 height={12}
@@ -115,6 +155,7 @@ export function PasswordFrame({
           backIcon={clickedContinue}
           onBackClick={() => {
             setClickedContinue(false);
+            setPasswordError("");
           }}
         >
           {clickedContinue ? (
@@ -139,14 +180,20 @@ export function PasswordFrame({
                   register={newPasswordRegister}
                 />
               </fieldset>
-              <Button
-                label="Change Password"
-                className="ml-auto mt-8 block"
-                type="button"
-                onClick={handlePasswordChange}
-              />
+              {passwordError ? (
+                <p className="flex items-center  text-sm text-red-500">
+                  <span>
+                    <AlertCircle className="mr-1 w-[1.5em]" aria-hidden="true" />
+                  </span>
+                  {passwordError}
+                </p>
+              ) : (
+                ""
+              )}
+              <Button label="Change Password" className="ml-auto mt-8 block" />
             </form>
           ) : (
+            // Verify old password
             <form onSubmit={handleOldSubmit(onOldPasswordSubmit)}>
               <p>Old Password</p>
               <Textfield
@@ -156,6 +203,16 @@ export function PasswordFrame({
                 placeholder="Enter Password"
                 register={oldPasswordRegister}
               />
+              {passwordError ? (
+                <p className="flex items-center pt-3 text-sm text-red-500">
+                  <span>
+                    <AlertCircle className="mr-1 w-[1.5em]" aria-hidden="true" />
+                  </span>
+                  {passwordError}
+                </p>
+              ) : (
+                ""
+              )}
 
               {loading ? (
                 <div role="status" className="grid place-items-center">
@@ -179,12 +236,7 @@ export function PasswordFrame({
               ) : (
                 ""
               )}
-              <Button
-                label="Continue"
-                className="ml-auto mt-8 block"
-                type="button"
-                onClick={handleClickedContinue}
-              />
+              <Button label="Continue" className="ml-auto mt-8 block" />
             </form>
           )}
         </ProfileDialogContent>

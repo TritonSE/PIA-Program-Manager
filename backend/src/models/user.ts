@@ -12,6 +12,8 @@ const userSchema = new mongoose.Schema({
   accountType: { type: String, enum: ["admin", "team"], required: true },
   approvalStatus: { type: Boolean, default: false }, // default false
   email: { type: String, required: true },
+  profilePicture: { type: String, required: false, default: "default" },
+  lastChangedPassword: { type: Date, required: false, default: Date.now() },
 });
 
 type User = InferSchemaType<typeof userSchema>;

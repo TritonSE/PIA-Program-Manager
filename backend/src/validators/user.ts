@@ -1,4 +1,7 @@
 import { ValidationChain, body } from "express-validator";
+import mongoose from "mongoose";
+
+import { ValidationError } from "../errors";
 
 export const createUser: ValidationChain[] = [
   body("name")
@@ -48,20 +51,65 @@ export const editPhoto = [
   body("image").custom((value, { req }) => {
     const file = req.file as MulterFile;
     if (!file) {
-      throw new Error("Image file is required");
+      throw ValidationError.IMAGE_NOT_UPLOADED;
     }
 
     const acceptableTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!acceptableTypes.includes(file.mimetype)) {
-      throw new Error("Invalid file type. Only JPG, PNG, and WEBP are allowed.");
+      throw ValidationError.IMAGE_UNSUPPORTED_TYPE;
     }
 
     // Check file size (2MB limit)
     const maxSize = 3 * 1024 * 1024;
     if (file.size > maxSize) {
-      throw new Error("File size too large. The limit is 3MB.");
+      throw ValidationError.IMAGE_EXCEED_SIZE;
     }
 
     return true;
   }),
+  body("userId").isString().notEmpty().withMessage("User ID is required."),
+  body("previousImageId")
+    .custom((value: string) => value === "default" || mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Mongo ID format is invalid"),
+];
+
+export const getPhoto: ValidationChain[] = [
+  body("imageId")
+    .exists()
+    .withMessage("ID is required")
+    .bail()
+    .custom((value: string) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Mongo ID format is invalid"),
+];
+
+export const editName: ValidationChain[] = [
+  body("newName")
+    .exists()
+    .withMessage("New name is required")
+    .notEmpty()
+    .withMessage("Image id cannot be empty")
+    .isString(),
+  body("userId").exists().withMessage("User ID is required").bail().notEmpty(),
+];
+
+export const editEmail: ValidationChain[] = [
+  body("newEmail")
+    .exists()
+    .withMessage("New email is required")
+    .notEmpty()
+    .withMessage("Email cannot be empty")
+    .isEmail()
+    .withMessage("Invalid email format"),
+  body("userId").exists().withMessage("User ID is required").bail().notEmpty(),
+];
+
+export const editLastChangedPassword: ValidationChain[] = [
+  body("currentDate")
+    .exists()
+    .withMessage("Current date is required")
+    .notEmpty()
+    .withMessage("Date cannot be empty")
+    .isISO8601()
+    .withMessage("Invalid Date format"),
+  body("userId").exists().withMessage("User ID is required").bail().notEmpty(),
 ];
