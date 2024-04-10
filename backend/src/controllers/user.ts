@@ -121,6 +121,7 @@ export const editPhoto = async (req: Request, res: Response, nxt: NextFunction) 
 
     return res.status(200).json(imageId);
   } catch (e) {
+    console.log(e);
     nxt(e);
   }
 };
@@ -156,6 +157,8 @@ export const editName = async (req: Request, res: Response, nxt: NextFunction) =
     const errors = validationResult(req);
 
     validationErrorParser(errors);
+
+    console.log("test firebase log");
 
     const { newName, userId } = req.body as EditNameRequestBody;
 
