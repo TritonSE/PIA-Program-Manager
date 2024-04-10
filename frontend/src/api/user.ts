@@ -18,6 +18,7 @@ export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>
   try {
     const response = await GET("/user", createAuthHeader(firebaseToken));
     const json = (await response.json()) as User;
+    console.log("user", json);
     return { success: true, data: json };
   } catch (error) {
     return handleAPIError(error);

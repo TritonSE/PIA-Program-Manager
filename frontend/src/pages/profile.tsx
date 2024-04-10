@@ -29,6 +29,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (!piaUser) return;
+    console.log({ piaUser });
     if (piaUser.profilePicture === "default") {
       setBasicInfoData((prev) => ({ ...prev, image: "default" }));
     } else if (piaUser.profilePicture) {
