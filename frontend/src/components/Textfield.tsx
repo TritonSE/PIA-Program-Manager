@@ -44,6 +44,7 @@ export function Textfield<T extends FieldValues>({
   name, //Must be a key in form data type specified in useForm hook
   placeholder,
   calendar = false,
+  handleInputChange = () => {},
   className,
   handleInputChange = () => {
     /* do nothing */
