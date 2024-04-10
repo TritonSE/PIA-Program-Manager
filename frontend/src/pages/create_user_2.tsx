@@ -6,11 +6,19 @@ import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { POST, handleAPIError } from "../api/requests";
 import { auth } from "../firebase/firebase";
+// import { FirebaseError } from "firebase-admin";
 
 import { Button } from "@/components/Button";
 import Landing from "@/components/Landing";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
+import { FirebaseError } from "firebase/app";
+
+
+export const CREATE_SUCCESS = 0;
+export const CREATE_FAIL_EMAIL = 1;
+export const CREATE_FAIL_OTHER = 2;
+
 
 export default function CreateUser() {
   const router = useRouter();
@@ -24,8 +32,6 @@ export default function CreateUser() {
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     console.log(data);
-
-    let isSuccess = true;
 
     try {
       setLoading(true);
@@ -46,34 +52,73 @@ export default function CreateUser() {
         password: query.password,
       });
 
-      // const response = await fetch('http://localhost:4000/api/user/create', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     name: query.name,
-      //     accountType,
-      //     email: query.email,
-      //     password: query.password,
-      //   }),
-      // });
-
-      console.log("User created successfully:", response);
-    } catch (error) {
-      // setCreateSuccess(false);
-      isSuccess = false;
-      console.error("Error creating user:", error);
-      handleAPIError(error);
-    } finally {
-      setLoading(false);
 
       void router.push({
         pathname: "/create_user_3",
         query: {
-          createSuccess: isSuccess,
+          createResult: CREATE_SUCCESS,
         },
       });
+
+      console.log("User created successfully:", response);
+
+    } catch (error: unknown) {
+      // setCreateSuccess(false);
+
+
+      // // if (error.code === "auth/email-already-exists") {
+      // if (errorCode === "auth/email-already-exists") {
+      //   console.log("Email already in use error");
+      //   void router.push({
+      //     pathname: "/create_user_3",
+      //     query: {
+      //       createResult: CREATE_FAIL_EMAIL,
+      //     },
+      //   });
+      // } 
+      
+      console.error("Error creating user:", error);
+
+
+      // if (typeof error === "FirebaseAuthError" && error.errorInfo.code === "auth/email-already-exists") {
+      //   console.log("Email already in use error");
+      //   void router.push({
+      //     pathname: "/create_user_3",
+      //     query: {
+      //       createResult: CREATE_FAIL_EMAIL,
+      //     },
+      //   });
+      // } 
+
+      // if (error instanceof FirebaseError && error.code === "auth/email-already-exists") {
+      const firebaseError = error as FirebaseError;
+      console.log(firebaseError);
+      // if (firebaseError.code === "auth/email-already-exists") {
+      if (firebaseError.code === "email-already-exists") {
+        console.log("Email already in use error");
+        void router.push({
+          pathname: "/create_user_3",
+          query: {
+            createResult: CREATE_FAIL_EMAIL,
+          },
+        });
+      } 
+
+      else {
+        console.log("External error (not a repeated email)");
+        void router.push({
+          pathname: "/create_user_3",
+          query: {
+            createResult: CREATE_FAIL_OTHER,
+          },
+        });
+
+        handleAPIError(error);
+      }
+
+
+    } finally {
+      setLoading(false);
     }
 
     // console.log(createSuccess);
@@ -86,6 +131,8 @@ export default function CreateUser() {
     //   },
     // });
   };
+
+
 
   const onBack: SubmitHandler<FieldValues> = (data) => {
     console.log(data);

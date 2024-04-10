@@ -11,6 +11,8 @@ import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
+
+
 export default function CreateUser() {
   console.log("In create_user.tsx");
 
@@ -61,6 +63,7 @@ export default function CreateUser() {
       const emailExists = await checkEmailExists(String(data.email));
 
       console.log("Checked Email");
+      console.log("Email already exists:", emailExists ? "Yes" : "No");
 
       if (emailExists) {
         setEmailError(true);

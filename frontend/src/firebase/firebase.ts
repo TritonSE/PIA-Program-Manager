@@ -19,6 +19,9 @@ export const initFirebase = () => {
 
 const { app, auth } = initFirebase();
 
+/* 
+ * Function does not work properly, should be in the server side
+ */
 const checkEmailExists = async (email: string) => {
   try {
     const methods = await fetchSignInMethodsForEmail(auth, email);
@@ -28,5 +31,25 @@ const checkEmailExists = async (email: string) => {
     return false;
   }
 };
+
+// const checkEmailExists = async (email: string) => {
+//   console.log("Entered checkEmailExists function");
+//   try {
+//     console.log("Entering try block in checkEmailExists function");
+//     const methods = await fetchSignInMethodsForEmail(auth, email);
+//     return methods && methods.length > 0;
+//   } catch (error: any) {
+//     console.log("Entering catch block in checkEmailExists function");
+//   // } catch (error) {
+//     if (error.code === 'auth/email-already-exists') {
+//       console.log(`Email ${email} already exists.`);
+//       return true;
+//     } else {
+//       console.error("Error checking if email exists: ", error);
+//       return false;
+//     }
+//   }
+// };
+
 
 export { app, auth, checkEmailExists };
