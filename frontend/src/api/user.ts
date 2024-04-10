@@ -34,10 +34,10 @@ export async function editPhoto(
   try {
     form.append("previousImageId", previousImageId);
     form.append("userId", userId);
-
+    const method = "POST";
     // Don't use the POST function from requests.ts because we need to send a FormData object
     const response = await fetch(`${API_BASE_URL}/user/editPhoto`, {
-      method: "POST",
+      method,
       body: form,
     });
 
