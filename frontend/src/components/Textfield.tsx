@@ -46,9 +46,7 @@ export function Textfield<T extends FieldValues>({
   calendar = false,
   handleInputChange = () => {},
   className,
-  handleInputChange = () => {
-    /* do nothing */
-  },
+
   type = "text",
   defaultValue = "",
   mode = "outlined",

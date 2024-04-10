@@ -6,7 +6,6 @@ const NO_SERVICE_ACCOUNT_KEY = "Could not find service account key env variable"
 const NO_FIREBASE_CONFIG = "Could not firebase config env variable";
 const ERROR_GETTING_IMAGE = "There was some error getting the image";
 
-
 export class InternalError extends CustomError {
   static NO_APP_PORT = new InternalError(0, 500, NO_APP_PORT);
 
@@ -17,5 +16,4 @@ export class InternalError extends CustomError {
   static NO_FIREBASE_CONFIG = new InternalError(5, 500, NO_FIREBASE_CONFIG);
 
   static ERROR_GETTING_IMAGE = new InternalError(6, 500, ERROR_GETTING_IMAGE);
-
 }

@@ -219,4 +219,3 @@ export const editLastChangedPassword = async (req: Request, res: Response, nxt: 
     });
   }
 };
-

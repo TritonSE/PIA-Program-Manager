@@ -8,7 +8,6 @@ export type User = {
   name: string;
   email: string;
   lastChangedPassword: Date;
-
 };
 
 export const createAuthHeader = (firebaseToken: string) => ({
