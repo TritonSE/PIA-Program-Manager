@@ -92,10 +92,15 @@ export const loginUser = async (
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
-
-    res
-      .status(200)
-      .json({ uid: user._id, role: user.accountType, approvalStatus: user.approvalStatus });
+    res.status(200).json({
+      uid: user._id,
+      role: user.accountType,
+      approvalStatus: user.approvalStatus,
+      profilePicture: user.profilePicture,
+      name: user.name,
+      email: user.email,
+      lastChangedPassword: user.lastChangedPassword,
+    });
     return;
   } catch (e) {
     nxt();

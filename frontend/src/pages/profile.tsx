@@ -31,9 +31,7 @@ export default function Profile() {
     if (!piaUser) return;
     if (piaUser.profilePicture === "default") {
       setBasicInfoData((prev) => ({ ...prev, image: "default" }));
-      return;
-    }
-    if (piaUser.profilePicture) {
+    } else if (piaUser.profilePicture) {
       getPhoto(piaUser.profilePicture).then(
         (result) => {
           if (result.success) {
