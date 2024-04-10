@@ -17,7 +17,7 @@ import { Dialog, DialogTrigger } from "../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
-import { editLastChangedPassword } from "@/api/users";
+import { editLastChangedPassword } from "@/api/user";
 
 type PasswordFrameProps = {
   passwordLength: number;

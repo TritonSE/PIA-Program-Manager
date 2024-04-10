@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { getPhoto } from "../api/users";
+import { getPhoto } from "../api/user";
 import { BasicInfoFrame } from "../components/ProfileForm/BasicInfoFrame";
 import { ContactFrame } from "../components/ProfileForm/ContactInfoFrame";
 import { PasswordFrame } from "../components/ProfileForm/PasswordFrame";

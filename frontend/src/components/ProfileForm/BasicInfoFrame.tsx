@@ -12,7 +12,7 @@ import { Dialog, DialogTrigger } from "../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
-import { editName, editPhoto } from "@/api/users";
+import { editName, editPhoto } from "@/api/user";
 
 type ProfileBasicData = {
   name: string;

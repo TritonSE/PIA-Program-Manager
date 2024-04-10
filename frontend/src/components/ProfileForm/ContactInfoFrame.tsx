@@ -13,7 +13,7 @@ import { Dialog, DialogTrigger } from "../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
-import { editEmail } from "@/api/users";
+import { editEmail } from "@/api/user";
 import { initFirebase } from "@/firebase/firebase";
 
 type ContactFrameProps = {
