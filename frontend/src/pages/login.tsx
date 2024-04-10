@@ -75,7 +75,7 @@ export default function Login() {
                 <div className="mb-5 mt-5 flex flex-col items-center">
                   <h1 className="font-[alternate-gothic] text-3xl max-lg:text-3xl">Welcome to</h1>
                   <h1 className="font-[alternate-gothic] text-3xl max-lg:text-3xl">
-                    Plant it Again!
+                    Plant It Again!
                   </h1>
                 </div>
               </div>
