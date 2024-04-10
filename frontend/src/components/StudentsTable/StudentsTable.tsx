@@ -52,7 +52,9 @@ export default function StudentsTable() {
         console.log(error);
       },
     );
+  }, []);
 
+  useEffect(() => {
     getAllStudents().then(
       (result) => {
         console.log(result);
@@ -65,17 +67,6 @@ export default function StudentsTable() {
           console.log(result.data);
 
           setAllStudents(studentsObject);
-
-          const studentsInformation: StudentTableRow[] = result.data.map((studentObj) => {
-            return {
-              id: studentObj._id,
-              student: studentObj.student.firstName + " " + studentObj.student.lastName,
-              emergencyContact: studentObj.emergency,
-              programs: studentObj.programs,
-            } as StudentTableRow;
-          });
-          setStudentTable(studentsInformation);
-
           setIsLoading(false);
         } else {
           console.log(result.error);
@@ -87,8 +78,20 @@ export default function StudentsTable() {
     );
   }, []);
 
-  const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents });
-  const data = useMemo(() => studentTable, [allStudents]);
+  useEffect(() => {
+    const studentsInformation: StudentTableRow[] = Object.values(allStudents).map((studentObj) => {
+      return {
+        id: studentObj._id,
+        student: studentObj.student.firstName + " " + studentObj.student.lastName,
+        emergencyContact: studentObj.emergency,
+        programs: studentObj.programs,
+      } as StudentTableRow;
+    });
+    setStudentTable(studentsInformation);
+  }, [allStudents]);
+
+  const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents});
+  const data = useMemo(() => studentTable, [studentTable]);
   // const data = useMemo(() => [], [allStudents]);  // uncomment this line and comment the line above to see empty table state
 
   const table = useReactTable({

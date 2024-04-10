@@ -13,32 +13,22 @@ export const programValidatorUtil = async (programs: programLink[]) => {
   await Promise.all(
     programs.map(async (program) => {
       programIds.add(program.programId);
-      if (!mongoose.Types.ObjectId.isValid(program.programId)) {
+      if (!mongoose.Types.ObjectId.isValid(program.programId))
         throw new Error("Program ID format is invalid");
-      }
-      if (!allowedStatuses.includes(program.status)) {
+
+      if (!allowedStatuses.includes(program.status))
         throw new Error("Status must be one of: " + allowedStatuses.join(", "));
-      }
+
       const programType = (await ProgramModel.findById(program.programId))?.type;
       if (program.status === "Joined") {
         active++;
         if (programType === "varying") varying++;
       }
-      if ((await ProgramModel.findById(program.programId))?.type === "varying") {
-        varying++;
-      }
     }),
   );
-  if (programIds.size !== programs.length) {
-    throw new Error("Programs must be unique");
-  }
-  if (active > 2) {
-    throw new Error("Student can only be active in 2 programs");
-  }
-  if (varying > 1) {
-    console.log("varying", varying);
-    throw new Error("Student can only be in 1 varying program");
-  }
+  if (programIds.size !== programs.length) throw new Error("Programs must be unique");
+  if (active > 2) throw new Error("Student can only be active in 2 programs");
+  if (varying > 1) throw new Error("Student can only be in 1 varying program");
 
   return true;
 };

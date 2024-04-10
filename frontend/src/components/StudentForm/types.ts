@@ -17,13 +17,13 @@ export type StudentData = {
   emergency: Contact;
   serviceCoordinator: Contact;
   location: string;
-  medication?: string;
+  medication: string;
   birthday: Date;
   intakeDate: Date;
   tourDate: Date;
   programs: ProgramLink[];
   dietary: string[];
-  otherString?: string;
+  otherString: string;
 };
 
 export type StudentFormData = {

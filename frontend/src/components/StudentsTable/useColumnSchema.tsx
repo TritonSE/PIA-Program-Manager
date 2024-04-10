@@ -96,8 +96,8 @@ export function useColumnSchema({
   const { isTablet } = useWindowSize();
 
   useEffect(() => {
-    console.log(isTablet);
-  }, [isTablet]);
+    Object.values(allStudents)[0]?.programs.map((prog) => console.log(allPrograms[prog.programId].abbreviation));
+  }, [allStudents]);
 
   const columns: Columns = [
     {
@@ -126,6 +126,7 @@ export function useColumnSchema({
       header: isTablet ? "Curr. P2" : "Curr. Program 2",
       cell: (info) => {
         const programs = info.getValue() as unknown as ProgramLink[];
+        // programs.map((prog) => console.log(allPrograms[prog.programId].abbreviation));
         const link = programs.filter((prog) => prog.status === "Joined")[1];
         if (!link) return null;
         const program = allPrograms[link.programId];

@@ -107,8 +107,9 @@ export default function StudentFormButton({
             const newStudent = result.data;
             reset(); // only clear form on success
             setOpenForm(false);
+            console.log("Student created successfully")
             setAllStudents((prevStudents: StudentMap) => {
-              return { ...prevStudents, [newStudent._id]: newStudent };
+              return { ...prevStudents, [newStudent._id]: {...newStudent} };
             });
           } else {
             console.log(result.error);
@@ -130,7 +131,7 @@ export default function StudentFormButton({
             setOpenForm(false);
             setAllStudents((prevStudents: StudentMap) => {
               if (Object.keys(prevStudents).includes(editedStudent._id)) {
-                return { ...prevStudents, [editedStudent._id]: editedStudent };
+                return { ...prevStudents, [editedStudent._id]: {...editedStudent} };
               } else {
                 console.log("Student ID is invalid");
                 alert("Student ID is invalid");
@@ -150,84 +151,82 @@ export default function StudentFormButton({
   };
 
   return (
-    <>
-      <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogTrigger asChild>
-          {type === "edit" ? (
-            <Image
-              src="/eye.svg"
-              alt="view student"
-              width={40}
-              height={40}
-              className="cursor-pointer"
-            />
-          ) : (
-            <Button
-              label={"＋ Add Student"}
-              onClick={() => {
-                setOpenForm(true);
-              }}
-            />
+    <Dialog open={openForm} onOpenChange={setOpenForm}>
+      <DialogTrigger asChild>
+        {type === "edit" ? (
+          <Image
+            src="/eye.svg"
+            alt="view student"
+            width={40}
+            height={40}
+            className="cursor-pointer"
+          />
+        ) : (
+          <Button
+            label={"＋ Add Student"}
+            onClick={() => {
+              setOpenForm(true);
+            }}
+          />
+        )}
+      </DialogTrigger>
+      <DialogContent className="max-h-[95%] max-w-[98%] rounded-[13px] sm:max-w-[80%]">
+        <form
+          onSubmit={handleSubmit(onFormSubmit)}
+          className={cn(
+            "flex flex-col justify-between gap-5 rounded-md bg-white px-[calc(3vw+2px)] py-10 sm:p-10",
+            classname,
           )}
-        </DialogTrigger>
-        <DialogContent className="max-h-[95%] max-w-[98%] rounded-[13px] sm:max-w-[80%]">
-          <form
-            onSubmit={handleSubmit(onFormSubmit)}
-            className={cn(
-              "flex flex-col justify-between gap-5 rounded-md bg-white px-[calc(3vw+2px)] py-10 sm:p-10",
-              classname,
-            )}
-          >
-            <fieldset>
-              <legend className="mb-5 w-full text-left font-bold">Contact Information</legend>
-              <ContactInfo register={register} data={data ?? null} type={type} />
-            </fieldset>
-            <fieldset>
-              <legend className="mb-5 w-full text-left font-bold">Student Background</legend>
-              <StudentBackground
-                register={register}
-                data={data ?? null}
-                setCalendarValue={setCalendarValue}
-              />
-            </fieldset>
-            <fieldset>
-              <legend className="mb-5 w-full text-left font-bold">Student Information</legend>
-              <StudentInfo
-                register={register}
-                data={data ?? null}
-                setCalendarValue={setCalendarValue}
-              />
-            </fieldset>
-            <div className="ml-auto mt-5 flex gap-5">
-              {/* Modal Confirmation Dialog */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button label="Cancel" kind="secondary" />
-                </DialogTrigger>
-                <Button label="Save Changes" type="submit" />
-                <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
-                  <div className="p-3 min-[450px]:p-10">
-                    <p className="my-10 text-center">Leave without saving changes?</p>
-                    <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
-                      <DialogClose asChild>
-                        <Button label="Back" kind="secondary" />
-                      </DialogClose>
-                      <DialogClose asChild>
-                        <Button
-                          label="Continue"
-                          onClick={() => {
-                            setOpenForm(false);
-                          }}
-                        />
-                      </DialogClose>
-                    </div>
+        >
+          <fieldset>
+            <legend className="mb-5 w-full text-left font-bold">Contact Information</legend>
+            <ContactInfo register={register} data={data ?? null} type={type} />
+          </fieldset>
+          <fieldset>
+            <legend className="mb-5 w-full text-left font-bold">Student Background</legend>
+            <StudentBackground
+              register={register}
+              data={data ?? null}
+              setCalendarValue={setCalendarValue}
+            />
+          </fieldset>
+          <fieldset>
+            <legend className="mb-5 w-full text-left font-bold">Student Information</legend>
+            <StudentInfo
+              register={register}
+              data={data ?? null}
+              setCalendarValue={setCalendarValue}
+            />
+          </fieldset>
+          <div className="ml-auto mt-5 flex gap-5">
+            {/* Modal Confirmation Dialog */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button label="Cancel" kind="secondary" />
+              </DialogTrigger>
+              <Button label="Save Changes" type="submit" />
+              <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
+                <div className="p-3 min-[450px]:p-10">
+                  <p className="my-10 text-center">Leave without saving changes?</p>
+                  <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
+                    <DialogClose asChild>
+                      <Button label="Back" kind="secondary" />
+                    </DialogClose>
+                    <DialogClose asChild>
+                      <Button
+                        label="Continue"
+                        onClick={() => {
+                          setOpenForm(false);
+                        }}
+                      />
+                    </DialogClose>
                   </div>
-                </DialogContent>
-              </Dialog>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-    </>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

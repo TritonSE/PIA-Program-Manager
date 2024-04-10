@@ -10,6 +10,7 @@ import StudentModel from "../models/student";
 import { programLink } from "../types/programLink";
 import { addStudentToPrograms, removeStudentFromPrograms } from "../util/student";
 import validationErrorParser from "../util/validationErrorParser";
+import mongoose from "mongoose";
 
 export type contact = {
   lastName: string;
