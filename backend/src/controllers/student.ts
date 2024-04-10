@@ -7,6 +7,8 @@ import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 
 import StudentModel from "../models/student";
+import { programLink } from "../types/programLink";
+import { addStudentToPrograms, removeStudentFromPrograms } from "../util/student";
 import validationErrorParser from "../util/validationErrorParser";
 
 export type contact = {
@@ -25,8 +27,7 @@ export type typedModel = {
   birthday: string;
   intakeDate: string;
   tourDate: string;
-  regularPrograms: string[];
-  varyingPrograms: string[];
+  programs: programLink[];
   dietary: string[];
   otherString: string;
 };
@@ -48,8 +49,7 @@ type Student = {
   birthday: Date;
   intakeDate: Date;
   tourDate: Date;
-  regularPrograms: string[];
-  varyingPrograms: string[];
+  programs: programLink[];
   dietary: string[];
   otherString?: string;
 };
@@ -61,6 +61,8 @@ export const createStudent: RequestHandler = async (req, res, next) => {
     validationErrorParser(errors);
 
     const newStudent = await StudentModel.create(req.body as typedModel);
+    const programIds = newStudent.programs.map((programObj: programLink) => programObj.programId);
+    await addStudentToPrograms(newStudent._id, programIds);
 
     res.status(201).json(newStudent);
   } catch (error) {
@@ -81,13 +83,26 @@ export const editStudent: RequestHandler = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid student ID" });
     }
 
+    const prevStudent = await StudentModel.findById(studentId);
     const editedStudent = await StudentModel.findOneAndUpdate({ _id: studentId }, studentData, {
       new: true,
     });
 
-    if (!editedStudent) {
+    if (!prevStudent || !editedStudent) {
       return res.status(404).json({ message: "No object in database with provided ID" });
     }
+
+    // remove student from possibly stale programs
+    const prevProgramIds = prevStudent.programs.map(
+      (programObj: programLink) => programObj.programId,
+    );
+    await removeStudentFromPrograms(prevStudent._id, prevProgramIds);
+
+    // add student to new programs
+    const newProgramIds = editedStudent.programs.map(
+      (programObj: programLink) => programObj.programId,
+    );
+    await addStudentToPrograms(editedStudent._id, newProgramIds);
 
     res.status(200).json(editedStudent);
   } catch (error) {
@@ -100,6 +115,25 @@ export const getAllStudents: RequestHandler = async (_, res, next) => {
     const students = await StudentModel.find();
 
     res.status(200).json(students);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteAllStudents: RequestHandler = async (_, res, next) => {
+  try {
+    // remove students from all programs
+    const students = await StudentModel.find();
+    await Promise.all(
+      students.map(async (student) => {
+        const programIds = student.programs.map((programObj: programLink) => programObj.programId);
+        await removeStudentFromPrograms(student._id, programIds);
+      }),
+    );
+
+    await StudentModel.deleteMany();
+
+    res.status(204).end();
   } catch (error) {
     next(error);
   }

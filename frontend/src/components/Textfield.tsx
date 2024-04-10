@@ -21,6 +21,7 @@ type BaseProps<T extends FieldValues> = {
   handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   className?: string;
+  mode?: "filled" | "outlined";
   registerOptions?: RegisterOptions;
 };
 
@@ -49,6 +50,7 @@ export function Textfield<T extends FieldValues>({
   },
   type = "text",
   defaultValue = "",
+  mode = "outlined",
   registerOptions = {},
 }: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
@@ -64,7 +66,7 @@ export function Textfield<T extends FieldValues>({
     }
   }, [date]);
 
-  return (
+  return mode === "outlined" ? (
     <Popover>
       <div
         className={cn(
@@ -122,5 +124,22 @@ export function Textfield<T extends FieldValues>({
         )}
       </div>
     </Popover>
+  ) : (
+    <div
+      className={cn(
+        "relative flex flex-grow flex-col border-b-2 border-pia_accent py-1 focus-within:border-pia_dark_green",
+        className,
+      )}
+    >
+      <input
+        {...register(name as Path<T>)}
+        className="focus-visible:out w-full appearance-none bg-inherit placeholder-pia_accent outline-none placeholder:italic"
+        id={label + placeholder}
+        type={type}
+        onChange={handleInputChange}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+      />
+    </div>
   );
 }

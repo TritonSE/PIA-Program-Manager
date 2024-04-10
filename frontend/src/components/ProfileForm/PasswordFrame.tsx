@@ -6,7 +6,7 @@ import {
 } from "firebase/auth";
 import { AlertCircle } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { cn } from "../../lib/utils";
@@ -64,6 +64,12 @@ export function PasswordFrame({
   } = useForm<NewPasswordFormData>();
   const auth = getAuth();
   const user = auth.currentUser;
+
+  useEffect(() => {
+    if (clickedContinue) {
+      setPasswordError("");
+    }
+  }, [clickedContinue]);
 
   const onOldPasswordSubmit = (formData: OldPasswordFormData) => {
     setLoading(true);

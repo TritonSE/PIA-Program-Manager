@@ -16,18 +16,43 @@ import { Table } from "../ui/table";
 
 import TBody from "./TBody";
 import THead from "./THead";
-import { StudentMap } from "./types";
+import { ProgramMap, StudentMap, StudentTableRow } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
 
+import { Program, getAllPrograms } from "@/api/programs";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
+export const ProgramsContext = React.createContext({} as ProgramMap);
+
 export default function StudentsTable() {
   const [allStudents, setAllStudents] = useState<StudentMap>({});
+  const [allPrograms, setAllPrograms] = useState<ProgramMap>({}); // map from program id to program
   const [isLoading, setIsLoading] = useState(true);
+  const [studentTable, setStudentTable] = useState<StudentTableRow[]>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const { isTablet } = useWindowSize();
+
+  useEffect(() => {
+    getAllPrograms().then(
+      (result) => {
+        if (result.success) {
+          const programsObject = result.data.reduce(
+            (obj, program) => {
+              obj[program._id] = program;
+              return obj;
+            },
+            {} as Record<string, Program>,
+          );
+          setAllPrograms(programsObject);
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+  }, []);
 
   useEffect(() => {
     getAllStudents().then(
@@ -53,8 +78,20 @@ export default function StudentsTable() {
     );
   }, []);
 
-  const columns = useColumnSchema({ setAllStudents });
-  const data = useMemo(() => Object.values(allStudents), [allStudents]);
+  useEffect(() => {
+    const studentsInformation: StudentTableRow[] = Object.values(allStudents).map((studentObj) => {
+      return {
+        id: studentObj._id,
+        student: studentObj.student.firstName + " " + studentObj.student.lastName,
+        emergencyContact: studentObj.emergency,
+        programs: studentObj.programs,
+      } as StudentTableRow;
+    });
+    setStudentTable(studentsInformation);
+  }, [allStudents]);
+
+  const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents });
+  const data = useMemo(() => studentTable, [studentTable]);
   // const data = useMemo(() => [], [allStudents]);  // uncomment this line and comment the line above to see empty table state
 
   const table = useReactTable({
@@ -82,36 +119,35 @@ export default function StudentsTable() {
 
   if (isLoading) return <p>Loading...</p>;
 
-  if (Object.keys(allStudents).length === 0)
-    return <p className="text-red-500">Please add a student first!</p>;
-
   return (
-    <div className="w-full space-y-5 overflow-x-auto">
-      <div className="flex w-full items-center justify-between">
-        <h1
+    <ProgramsContext.Provider value={allPrograms}>
+      <div className="w-full space-y-5 overflow-x-auto">
+        <div className="flex w-full items-center justify-between">
+          <h1
+            className={cn(
+              "font-['Alternate Gothic No3 D'] text-[40px] font-medium text-neutral-800",
+              isTablet && "text-2xl",
+            )}
+          >
+            Students
+          </h1>
+          {isTablet && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
+        </div>
+        <Table
           className={cn(
-            "font-['Alternate Gothic No3 D'] text-[40px] font-medium text-neutral-800",
-            isTablet && "text-2xl",
+            "h-fit w-[100%] min-w-[640px] max-w-[1120px] border-collapse rounded-lg bg-pia_primary_white",
+            isTablet && "text-[12px]",
           )}
         >
-          Students
-        </h1>
-        {isTablet && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
+          <THead
+            table={table}
+            globalFilter={globalFilter}
+            setGlobalFilter={setGlobalFilter}
+            setAllStudents={setAllStudents}
+          />
+          <TBody table={table} />
+        </Table>
       </div>
-      <Table
-        className={cn(
-          "h-fit w-[100%] min-w-[640px] max-w-[1120px] border-collapse rounded-lg bg-pia_primary_white",
-          isTablet && "text-[12px]",
-        )}
-      >
-        <THead
-          table={table}
-          globalFilter={globalFilter}
-          setGlobalFilter={setGlobalFilter}
-          setAllStudents={setAllStudents}
-        />
-        <TBody table={table} />
-      </Table>
-    </div>
+    </ProgramsContext.Provider>
   );
 }

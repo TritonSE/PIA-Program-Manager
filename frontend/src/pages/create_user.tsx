@@ -190,7 +190,3 @@ export default function CreateUser() {
 CreateUser.getLayout = function getLayout(page: ReactElement) {
   return <Landing>{page}</Landing>;
 };
-
-CreateUser.getLayout = function getLayout(page: ReactElement) {
-  return <Landing>{page}</Landing>;
-};
