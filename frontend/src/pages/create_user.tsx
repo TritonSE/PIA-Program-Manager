@@ -11,8 +11,6 @@ import { Textfield } from "@/components/Textfield";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
-
-
 export default function CreateUser() {
   console.log("In create_user.tsx");
 

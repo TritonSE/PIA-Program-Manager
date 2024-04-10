@@ -2,7 +2,8 @@ import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/router";
 import { ReactElement } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
-import { CREATE_SUCCESS, CREATE_FAIL_EMAIL, CREATE_FAIL_OTHER } from "./create_user_2"; 
+
+import { CREATE_FAIL_EMAIL, CREATE_FAIL_OTHER, CREATE_SUCCESS } from "./create_user_2";
 
 import Landing from "@/components/Landing";
 import { useWindowSize } from "@/hooks/useWindowSize";
@@ -21,7 +22,6 @@ export default function CreateUser() {
   };
 
   const { isMobile } = useWindowSize();
-
 
   return (
     <main className="flex h-screen w-full justify-center">
@@ -257,7 +257,6 @@ export default function CreateUser() {
   //     </div>
   //   </main>
   // );
-
 }
 
 CreateUser.getLayout = function getLayout(page: ReactElement) {

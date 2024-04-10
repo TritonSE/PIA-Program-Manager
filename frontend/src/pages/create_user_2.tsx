@@ -1,3 +1,4 @@
+import { FirebaseError } from "firebase/app";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -12,13 +13,15 @@ import { Button } from "@/components/Button";
 import Landing from "@/components/Landing";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
-import { FirebaseError } from "firebase/app";
-
 
 export const CREATE_SUCCESS = 0;
 export const CREATE_FAIL_EMAIL = 1;
 export const CREATE_FAIL_OTHER = 2;
 
+type EmailCheckResponse = {
+  exists: boolean;
+  message: string;
+};
 
 export default function CreateUser() {
   const router = useRouter();
@@ -52,7 +55,6 @@ export default function CreateUser() {
         password: query.password,
       });
 
-
       void router.push({
         pathname: "/create_user_3",
         query: {
@@ -62,9 +64,9 @@ export default function CreateUser() {
 
       console.log("User created successfully:", response);
 
-    } catch (error: unknown) {
-      // setCreateSuccess(false);
-
+      // } catch (error: unknown) {
+    } catch (error: any) {
+      console.error("Error creating user:", error);
 
       // // if (error.code === "auth/email-already-exists") {
       // if (errorCode === "auth/email-already-exists") {
@@ -75,12 +77,14 @@ export default function CreateUser() {
       //       createResult: CREATE_FAIL_EMAIL,
       //     },
       //   });
-      // } 
-      
-      console.error("Error creating user:", error);
+      // }
 
-
-      // if (typeof error === "FirebaseAuthError" && error.errorInfo.code === "auth/email-already-exists") {
+      // // if (error instanceof FirebaseError && error.code === "auth/email-already-exists") {
+      // const firebaseError = error as FirebaseError;
+      // console.log("firebaseError:", firebaseError);
+      // console.log("firebaseError.code:" , firebaseError.code);
+      // // if (firebaseError.code === "auth/email-already-exists") {
+      // if (firebaseError.code === "email-already-exists") {
       //   console.log("Email already in use error");
       //   void router.push({
       //     pathname: "/create_user_3",
@@ -88,13 +92,11 @@ export default function CreateUser() {
       //       createResult: CREATE_FAIL_EMAIL,
       //     },
       //   });
-      // } 
+      // }
 
-      // if (error instanceof FirebaseError && error.code === "auth/email-already-exists") {
-      const firebaseError = error as FirebaseError;
-      console.log(firebaseError);
       // if (firebaseError.code === "auth/email-already-exists") {
-      if (firebaseError.code === "email-already-exists") {
+      console.log("error: ", error);
+      if (error.code === "auth/email-already-exists") {
         console.log("Email already in use error");
         void router.push({
           pathname: "/create_user_3",
@@ -102,10 +104,22 @@ export default function CreateUser() {
             createResult: CREATE_FAIL_EMAIL,
           },
         });
-      } 
+      }
 
+      // const response = await POST("/check-email", { email: data.email });
+      // const responseData = await response.json();
+      // console.log("responseData: ", responseData);
+
+      // // Email exists
+      // if (responseData.exists) {
+      //   void router.push({
+      //     pathname: "/create_user_3",
+      //     query: {
+      //       createResult: CREATE_FAIL_EMAIL,
+      //     },
+      //   });
+      // }
       else {
-        console.log("External error (not a repeated email)");
         void router.push({
           pathname: "/create_user_3",
           query: {
@@ -115,8 +129,6 @@ export default function CreateUser() {
 
         handleAPIError(error);
       }
-
-
     } finally {
       setLoading(false);
     }
@@ -131,8 +143,6 @@ export default function CreateUser() {
     //   },
     // });
   };
-
-
 
   const onBack: SubmitHandler<FieldValues> = (data) => {
     console.log(data);

@@ -29,16 +29,14 @@ export default function CreateUser2b() {
           <div className="mt-10 flex flex-col">
             <button onClick={onBack} className="mb-5 flex rounded-md">
               <ArrowLeft className="text-1xl max-lg:text-1xl mr-2 text-pia_accent text-pia_dark_green" />{" "}
-              <h1 className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
-                Back
-              </h1>
+              <h1 className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">Back</h1>
             </button>
             <div className="flex h-full">
               <div className="mb-5 mt-5 flex flex-col">
                 <h1 className="font-[alternate-gothic] text-5xl text-black max-lg:text-4xl">
                   This email is already in use.
                 </h1>
-                <h1 className="text-lg text-black max-lg:text-lg mt-4">
+                <h1 className="mt-4 text-lg text-black max-lg:text-lg">
                   Forgot your password? If you are having trouble logging in,{" "}
                   <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
                     click here to reset your password
