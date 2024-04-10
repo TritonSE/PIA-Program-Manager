@@ -77,6 +77,7 @@ export function BasicInfoFrame({
             setClickedAddProfile(false);
             console.log("Successfully added photo");
           } else {
+            console.log(result);
             console.log("Error has occured");
             setImageError(result.error);
           }

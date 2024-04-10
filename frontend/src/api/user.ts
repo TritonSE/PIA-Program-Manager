@@ -46,9 +46,11 @@ export async function editPhoto(
       return { success: true, data: json };
     } else {
       const json = (await response.json()) as { error: string };
+      console.log(json.error);
       throw new Error(json.error);
     }
   } catch (error) {
+    console.log(error);
     return handleAPIError(error);
   }
 }
