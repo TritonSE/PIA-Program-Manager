@@ -13,8 +13,18 @@ export default function CreateUser() {
   const router = useRouter();
 
   // const { createResult } = router.query;
-  const createResult: number = parseInt(router.query.createResult as string) || CREATE_FAIL_OTHER;
-  console.log("createResult:", createResult);
+  // const createResult: number = parseInt(router.query.createResult as string) || CREATE_FAIL_OTHER;
+
+  const { res } = router.query;
+  let createResult: number;
+  console.log("res: ", res);
+  if (res && typeof res === "string") {
+    createResult = parseInt(res);
+    console.log("createResult: ", createResult);
+  } else {
+    createResult = CREATE_FAIL_OTHER;
+    console.log("default createResult: ", createResult);
+  }
 
   const onBack: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
