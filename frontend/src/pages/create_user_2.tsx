@@ -5,7 +5,7 @@ import { MouseEvent, ReactElement, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import { POST, handleAPIError } from "../api/requests";
-import { auth } from "../firebase/firebase";
+// import { auth } from "../firebase/firebase";
 
 import { Button } from "@/components/Button";
 import Landing from "@/components/Landing";
@@ -19,7 +19,7 @@ export default function CreateUser() {
   console.log("Query:", query);
 
   const [isAdmin, setIsAdmin] = useState(true);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   // const [createSuccess, setCreateSuccess] = useState(true);
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -28,7 +28,7 @@ export default function CreateUser() {
     let isSuccess = true;
 
     try {
-      setLoading(true);
+      // setLoading(true);
 
       const accountType = isAdmin ? "admin" : "team";
 
@@ -66,7 +66,7 @@ export default function CreateUser() {
       console.error("Error creating user:", error);
       handleAPIError(error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
 
       void router.push({
         pathname: "/create_user_3",
