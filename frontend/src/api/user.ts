@@ -25,7 +25,7 @@ export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>
 };
 
 type ObjectId = string; // This is a placeholder for the actual ObjectId type
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 export async function editPhoto(
   form: FormData,
   previousImageId: string,
@@ -36,7 +36,7 @@ export async function editPhoto(
     form.append("userId", userId);
 
     // Don't use the POST function from requests.ts because we need to send a FormData object
-    const response = await fetch("/user/editPhoto", {
+    const response = await fetch(`${API_BASE_URL}/user/editPhoto`, {
       method: "POST",
       body: form,
     });
