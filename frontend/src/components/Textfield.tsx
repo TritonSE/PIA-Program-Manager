@@ -46,6 +46,7 @@ export function Textfield<T extends FieldValues>({
   calendar = false,
   handleInputChange = () => {},
   className,
+
   type = "text",
   defaultValue = "",
   mode = "outlined",
@@ -75,8 +76,9 @@ export function Textfield<T extends FieldValues>({
         <input
           {...register(name as Path<T>, registerOptions)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
-          id={label + placeholder}
+          id={name + label + placeholder}
           type={type}
+          onChange={handleInputChange}
           placeholder={placeholder}
           defaultValue={defaultValue}
         />
