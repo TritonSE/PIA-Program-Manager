@@ -19,14 +19,20 @@ import { initFirebase } from "@/firebase/firebase";
 type ContactFrameProps = {
   data: ProfileContactInfoFormData;
   setData: React.Dispatch<React.SetStateAction<ProfileContactInfoFormData>>;
-  userId: string;
+  firebaseToken: string;
 } & FrameProps;
 
 type ProfileContactInfoFormData = {
   email: string;
 };
 
-export function ContactFrame({ className, frameFormat, data, setData, userId }: ContactFrameProps) {
+export function ContactFrame({
+  className,
+  frameFormat,
+  data,
+  setData,
+  firebaseToken,
+}: ContactFrameProps) {
   const [openEmailForm, setOpenEmailForm] = useState(false);
   const [emailError, setEmailError] = useState("");
   const { register, reset: _reset, handleSubmit } = useForm<ProfileContactInfoFormData>();
@@ -38,7 +44,7 @@ export function ContactFrame({ className, frameFormat, data, setData, userId }: 
       setEmailError("Email is the same as the current one");
       return;
     }
-    editEmail(formData.email, userId).then(
+    editEmail(formData.email, firebaseToken).then(
       (result) => {
         if (result.success) {
           console.log("Successfully updated email to ", result.data);
@@ -77,9 +83,9 @@ export function ContactFrame({ className, frameFormat, data, setData, userId }: 
               <Image
                 src="../caretright.svg"
                 alt="caretright"
-                className="mx-7 flex items-center sm:mx-11"
-                height={12}
-                width={7}
+                className="mx-7 flex w-[7px] items-center sm:mx-11"
+                height={0}
+                width={0}
               />
             </div>
           </div>

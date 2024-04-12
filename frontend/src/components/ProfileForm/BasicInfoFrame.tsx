@@ -24,7 +24,6 @@ type BasicInfoFrameProps = {
   setData: React.Dispatch<React.SetStateAction<ProfileBasicData>>;
   previousImageId: string;
   setCurrentImageId: React.Dispatch<React.SetStateAction<string>>;
-  userId: string;
   firebaseToken: string;
 } & FrameProps;
 
@@ -40,7 +39,6 @@ export function BasicInfoFrame({
   setData,
   previousImageId,
   setCurrentImageId,
-  userId,
   firebaseToken,
 }: BasicInfoFrameProps) {
   const [openProfileForm, setOpenProfileForm] = useState(false);
@@ -104,7 +102,7 @@ export function BasicInfoFrame({
       setNameError("Name cannot be empty");
       return;
     }
-    editName(formData.name, userId).then(
+    editName(formData.name, firebaseToken).then(
       (result) => {
         if (result.success) {
           setData((prev) => ({ ...prev, name: formData.name }));
@@ -239,9 +237,9 @@ export function BasicInfoFrame({
                   <Image
                     src="../caretright.svg"
                     alt="caretright"
-                    className="mx-7 flex items-center sm:mx-11"
-                    height={12}
-                    width={7}
+                    className="mx-7 flex w-[7px] items-center sm:mx-11"
+                    height={0}
+                    width={0}
                   />
                 </div>
               </div>

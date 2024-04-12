@@ -46,15 +46,6 @@ export const editPhoto = [
     .withMessage("Mongo ID format is invalid"),
 ];
 
-export const getPhoto: ValidationChain[] = [
-  body("imageId")
-    .exists()
-    .withMessage("ID is required")
-    .bail()
-    .custom((value: string) => mongoose.Types.ObjectId.isValid(value))
-    .withMessage("Mongo ID format is invalid"),
-];
-
 export const editName: ValidationChain[] = [
   body("newName")
     .exists()
@@ -62,7 +53,6 @@ export const editName: ValidationChain[] = [
     .notEmpty()
     .withMessage("Image id cannot be empty")
     .isString(),
-  body("userId").exists().withMessage("User ID is required").bail().notEmpty(),
 ];
 
 export const editEmail: ValidationChain[] = [
@@ -73,7 +63,6 @@ export const editEmail: ValidationChain[] = [
     .withMessage("Email cannot be empty")
     .isEmail()
     .withMessage("Invalid email format"),
-  body("userId").exists().withMessage("User ID is required").bail().notEmpty(),
 ];
 
 export const editLastChangedPassword: ValidationChain[] = [
@@ -84,5 +73,4 @@ export const editLastChangedPassword: ValidationChain[] = [
     .withMessage("Date cannot be empty")
     .isISO8601()
     .withMessage("Invalid Date format"),
-  body("userId").exists().withMessage("User ID is required").bail().notEmpty(),
 ];
