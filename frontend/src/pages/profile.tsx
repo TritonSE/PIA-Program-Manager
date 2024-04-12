@@ -89,7 +89,6 @@ export default function Profile() {
           setData={setBasicInfoData}
           previousImageId={currentImageId}
           setCurrentImageId={setCurrentImageId}
-          userId={piaUser.uid}
           firebaseToken={firebaseToken}
         />
         <ContactFrame
