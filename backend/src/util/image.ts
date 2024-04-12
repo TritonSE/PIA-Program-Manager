@@ -1,6 +1,8 @@
+import busboy from "busboy";
+import { NextFunction, Response } from "express";
 import mongoose from "mongoose";
 
-import { SaveImageRequest } from "../controllers/user";
+import { CustomRequest, SaveImageRequest } from "../controllers/user";
 import { ValidationError } from "../errors";
 import { ServiceError } from "../errors/service";
 import { Image } from "../models/image";
@@ -12,7 +14,7 @@ type SaveImageRequestBody = {
   userId: string;
 };
 
-export async function saveImage(req: SaveImageRequest) {
+async function saveImage(req: SaveImageRequest) {
   const { previousImageId, userId } = req.body as SaveImageRequestBody;
 
   try {
@@ -63,6 +65,75 @@ export async function saveImage(req: SaveImageRequest) {
   } catch (e) {
     console.log(e);
     throw ServiceError.IMAGE_NOT_SAVED;
+  }
+}
+
+export function handleImageParsing(req: CustomRequest, res: Response, nxt: NextFunction) {
+  let previousImageId = "";
+  //req.userId is assigned in verifyAuthToken middleware
+  const userId: string = req.userId;
+
+  const bb = busboy({ headers: req.headers });
+
+  let fileBuffer = Buffer.alloc(0);
+  bb.on("field", (fieldname, val) => {
+    if (fieldname === "previousImageId") {
+      previousImageId = val;
+    }
+  });
+  bb.on("file", (name, file, info) => {
+    const { filename, mimeType } = info;
+
+    file
+      .on("data", (data) => {
+        fileBuffer = Buffer.concat([fileBuffer, data]);
+      })
+      .on("close", () => {
+        const saveImageRequest: SaveImageRequest = {
+          body: {
+            previousImageId,
+            userId,
+          },
+          file: {
+            buffer: fileBuffer,
+            originalname: filename,
+            mimetype: mimeType,
+            size: fileBuffer.length,
+          },
+        };
+
+        // Validate file in form data
+        try {
+          const acceptableTypes = ["image/jpeg", "image/png", "image/webp"];
+          if (!acceptableTypes.includes(mimeType)) {
+            throw ValidationError.IMAGE_UNSUPPORTED_TYPE;
+          }
+
+          // Check file size (2MB limit)
+          const maxSize = 2 * 1024 * 1024;
+          if (fileBuffer.length > maxSize) {
+            throw ValidationError.IMAGE_EXCEED_SIZE;
+          }
+
+          saveImage(saveImageRequest)
+            .then((savedImageId) => {
+              res.status(200).json(savedImageId);
+            })
+            .catch((error) => {
+              console.error("Error saving image:", error);
+              nxt(error); // Properly forward the error
+            });
+        } catch (error) {
+          console.error("Error parsing form with Busboy:", error);
+          nxt(error); // Properly forward the error
+        }
+      });
+  });
+
+  if (req.rawBody) {
+    bb.end(req.rawBody);
+  } else {
+    req.pipe(bb);
   }
 }
 
