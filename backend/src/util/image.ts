@@ -1,6 +1,6 @@
-import { Request } from "express";
 import mongoose from "mongoose";
 
+import { SaveImageRequest } from "../controllers/user";
 import { ValidationError } from "../errors";
 import { ServiceError } from "../errors/service";
 import { Image } from "../models/image";
@@ -12,7 +12,7 @@ type SaveImageRequestBody = {
   userId: string;
 };
 
-export async function saveImage(req: Request) {
+export async function saveImage(req: SaveImageRequest) {
   const { previousImageId, userId } = req.body as SaveImageRequestBody;
 
   try {
@@ -21,6 +21,11 @@ export async function saveImage(req: Request) {
       const image = await Image.findById(previousImageId);
       if (!image) {
         throw ServiceError.IMAGE_NOT_FOUND;
+      }
+
+      //Verify that the image belongs to the user
+      if (image.userId !== userId) {
+        throw ServiceError.IMAGE_USER_MISMATCH;
       }
 
       console.log("Updating an image in the database");
@@ -40,6 +45,7 @@ export async function saveImage(req: Request) {
         originalname: req.file?.originalname,
         mimetype: req.file?.mimetype,
         size: req.file?.size,
+        userId,
       });
 
       const savedImage = await newImage.save();

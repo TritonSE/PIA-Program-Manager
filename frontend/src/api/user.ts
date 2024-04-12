@@ -30,16 +30,18 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 export async function editPhoto(
   form: FormData,
   previousImageId: string,
-  userId: string,
+  firebaseToken: string,
 ): Promise<APIResult<ObjectId>> {
   try {
     form.append("previousImageId", previousImageId);
-    form.append("userId", userId);
     const method = "POST";
+    const headers = createAuthHeader(firebaseToken);
+
     // Don't use the POST function from requests.ts because we need to send a FormData object
     const response = await fetch(`${API_BASE_URL}/user/editPhoto`, {
       method,
       body: form,
+      headers,
     });
 
     if (response.ok) {

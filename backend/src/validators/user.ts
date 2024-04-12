@@ -1,8 +1,6 @@
 import { ValidationChain, body } from "express-validator";
 import mongoose from "mongoose";
 
-import { ValidationError } from "../errors";
-
 export const createUser: ValidationChain[] = [
   body("name")
     .notEmpty()
@@ -41,32 +39,7 @@ export const loginUser: ValidationChain[] = [
     .withMessage("Invalid password format."),
 ];
 
-type MulterFile = {
-  mimetype: string;
-  size: number;
-};
-
 export const editPhoto = [
-  // Validate that the "image" field is being used in the form data
-  body("image").custom((value, { req }) => {
-    const file = req.file as MulterFile;
-    if (!file) {
-      throw ValidationError.IMAGE_NOT_UPLOADED;
-    }
-
-    const acceptableTypes = ["image/jpeg", "image/png", "image/webp"];
-    if (!acceptableTypes.includes(file.mimetype)) {
-      throw ValidationError.IMAGE_UNSUPPORTED_TYPE;
-    }
-
-    // Check file size (2MB limit)
-    const maxSize = 3 * 1024 * 1024;
-    if (file.size > maxSize) {
-      throw ValidationError.IMAGE_EXCEED_SIZE;
-    }
-
-    return true;
-  }),
   body("userId").isString().notEmpty().withMessage("User ID is required."),
   body("previousImageId")
     .custom((value: string) => value === "default" || mongoose.Types.ObjectId.isValid(value))

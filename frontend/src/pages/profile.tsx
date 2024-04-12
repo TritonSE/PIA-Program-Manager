@@ -18,21 +18,34 @@ export type FrameProps = {
 export default function Profile() {
   useRedirectToLoginIfNotSignedIn();
 
-  const { piaUser } = useContext(UserContext);
+  const { piaUser, firebaseUser } = useContext(UserContext);
   const { isMobile } = useWindowSize();
   const [basicInfoData, setBasicInfoData] = useState({ name: "", image: "" });
   const [contactInfoData, setContactInfoData] = useState({ email: "" });
   const [passwordData, setPasswordData] = useState({ last_changed: null as Date | null });
+  const [firebaseToken, setFirebaseToken] = useState("");
+  const [currentImageId, setCurrentImageId] = useState("default");
 
   const frameFormat =
     "border-pia_neutral_gray flex w-full flex-grow-0 flex-col place-content-stretch overflow-hidden rounded-lg border-[2px] bg-white";
 
   useEffect(() => {
     if (!piaUser) return;
-    console.log({ piaUser });
+
+    if (firebaseUser) {
+      firebaseUser
+        ?.getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
     if (piaUser.profilePicture === "default") {
       setBasicInfoData((prev) => ({ ...prev, image: "default" }));
     } else if (piaUser.profilePicture) {
+      setCurrentImageId(piaUser.profilePicture);
       getPhoto(piaUser.profilePicture).then(
         (result) => {
           if (result.success) {
@@ -56,9 +69,9 @@ export default function Profile() {
     if (piaUser.lastChangedPassword) {
       setPasswordData((prev) => ({ ...prev, last_changed: piaUser.lastChangedPassword }));
     }
-  }, [piaUser]);
+  }, [piaUser, firebaseUser]);
 
-  if (!piaUser) return <h1>Loading...</h1>;
+  if (!piaUser || !firebaseUser) return <h1>Loading...</h1>;
 
   return (
     <main>
@@ -77,8 +90,10 @@ export default function Profile() {
             frameFormat={frameFormat}
             data={basicInfoData}
             setData={setBasicInfoData}
-            previousImageId={piaUser.profilePicture}
+            previousImageId={currentImageId}
+            setCurrentImageId={setCurrentImageId}
             userId={piaUser.uid}
+            firebaseToken={firebaseToken}
           />
           <ContactFrame
             className=""

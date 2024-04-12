@@ -23,7 +23,9 @@ type BasicInfoFrameProps = {
   data: ProfileBasicData;
   setData: React.Dispatch<React.SetStateAction<ProfileBasicData>>;
   previousImageId: string;
+  setCurrentImageId: React.Dispatch<React.SetStateAction<string>>;
   userId: string;
+  firebaseToken: string;
 } & FrameProps;
 
 type ProfileBasicInfoFormData = {
@@ -37,7 +39,9 @@ export function BasicInfoFrame({
   data,
   setData,
   previousImageId,
+  setCurrentImageId,
   userId,
+  firebaseToken,
 }: BasicInfoFrameProps) {
   const [openProfileForm, setOpenProfileForm] = useState(false);
   const [openNameForm, setOpenNameForm] = useState(false);
@@ -70,14 +74,17 @@ export function BasicInfoFrame({
     if (imageFile) {
       const formData = new FormData();
       formData.append("image", imageFile);
-      editPhoto(formData, previousImageId, userId)
+      editPhoto(formData, previousImageId, firebaseToken)
         .then((result) => {
           if (result.success) {
+            setCurrentImageId(result.data);
             setOpenProfileForm(false);
-            setClickedAddProfile(false);
+            // Wait for the dialog to close before resetting the state
+            setTimeout(() => {
+              setClickedAddProfile(false);
+            }, 150);
             console.log("Successfully added photo");
           } else {
-            console.log(result);
             console.log("Error has occured");
             setImageError(result.error);
           }

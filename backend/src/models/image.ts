@@ -11,6 +11,7 @@ type ImageInterface = {
   originalname: string;
   mimetype: string;
   size: number;
+  userId: string;
 };
 
 type ImageDoc = mongoose.Document & {
@@ -18,6 +19,7 @@ type ImageDoc = mongoose.Document & {
   originalname: string;
   mimetype: string;
   size: number;
+  userId: string;
 };
 
 type ImageModelInterface = mongoose.Model<ImageDoc> & {
@@ -39,6 +41,10 @@ const imageSchema = new mongoose.Schema({
   },
   size: {
     type: Number,
+    required: true,
+  },
+  userId: {
+    type: String,
     required: true,
   },
 });
