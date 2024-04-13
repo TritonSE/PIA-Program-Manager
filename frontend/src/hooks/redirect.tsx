@@ -63,11 +63,12 @@ export const useRedirectToHomeIfSignedIn = () => {
  */
 export const useRedirectToLoginIfNotSignedIn = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => {
-      console.log(firebaseUser);
-      return firebaseUser === null || piaUser === null;
-    },
+    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null,
     redirectURL: LOGIN_URL,
+  });
+  useRedirection({
+    checkShouldRedirect: ({ piaUser }) => piaUser === null || !piaUser.approvalStatus,
+    redirectURL: NOT_APPROVED_URL,
   });
 };
 
@@ -79,16 +80,5 @@ export const useRedirectTo404IfNotAdmin = () => {
     checkShouldRedirect: ({ firebaseUser, piaUser }) =>
       firebaseUser === null || piaUser === null || piaUser.role !== "admin",
     redirectURL: NOT_FOUND_URL,
-  });
-};
-
-/**
- * A hook that redirects the user to the Not Approved page if they are not approved yet
- */
-export const useRedirectToNotApproved = () => {
-  useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) =>
-      firebaseUser === null || piaUser === null || !piaUser.approvalStatus,
-    redirectURL: NOT_APPROVED_URL,
   });
 };

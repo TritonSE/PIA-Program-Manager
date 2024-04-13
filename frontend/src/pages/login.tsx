@@ -1,6 +1,7 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { AlertCircle } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -88,9 +89,12 @@ export default function Login() {
               </h1>
               <h1 className="text-1xl max-lg:text-1xl mb-6 text-black text-pia_accent">
                 Don&lsquo;t have an account?{" "}
-                <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
+                <Link
+                  href="/create_user"
+                  className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green"
+                >
                   Sign up
-                </a>
+                </Link>
               </h1>
             </div>
           )}
@@ -141,15 +145,17 @@ export default function Login() {
                     {typeof errors.password.message === "string" ? errors.password.message : null}
                   </h1>
                 )}
-                <h1
-                  className={cn(
-                    "mt-1 text-lg font-light text-pia_accent",
-                    isTablet ? "underline" : "text-right text-pia_dark_green",
-                    isMobile ? "text-sm underline max-lg:text-sm" : "text-lg max-lg:text-lg",
-                  )}
-                >
-                  Forgot Password?
-                </h1>
+                <Link href="/forgot_password">
+                  <h1
+                    className={cn(
+                      "mt-1 text-lg font-light text-pia_accent",
+                      isTablet ? "underline" : "text-right text-pia_dark_green",
+                      isMobile ? "text-sm underline max-lg:text-sm" : "text-lg max-lg:text-lg",
+                    )}
+                  >
+                    Forgot Password?
+                  </h1>
+                </Link>
               </div>
               <Button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
                 Sign In

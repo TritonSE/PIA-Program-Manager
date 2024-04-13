@@ -1,5 +1,6 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
@@ -87,9 +88,12 @@ export default function CreateUser() {
               </h1>
               <h1 className="text-1xl max-lg:text-1xl mb-6 text-black text-pia_accent">
                 Already have an account?{" "}
-                <a className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
+                <Link
+                  href="/login"
+                  className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green"
+                >
                   Sign in
-                </a>
+                </Link>
               </h1>
             </div>
           )}
@@ -124,7 +128,7 @@ export default function CreateUser() {
                 {emailError && (
                   <h1 className="mt-1 flex items-center text-sm font-light text-orange-700 text-pia_accent">
                     <AlertCircle className="mr-1 text-sm" /> Account already exists for this email.
-                    Sign in?
+                    <Link href="/login">Sign in?</Link>
                   </h1>
                 )}
               </div>
@@ -175,7 +179,12 @@ export default function CreateUser() {
                 <div className="flex items-center justify-center">
                   <h1 className={cn("text-sm text-black text-pia_accent max-lg:text-sm")}>
                     Already have an account?{" "}
-                    <a className="text-sm text-black text-pia_accent max-lg:text-sm">Sign in</a>
+                    <Link
+                      href="/login"
+                      className="text-sm text-black text-pia_accent max-lg:text-sm"
+                    >
+                      Sign in
+                    </Link>
                   </h1>
                 </div>
               )}
