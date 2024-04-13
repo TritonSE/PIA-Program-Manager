@@ -1,17 +1,7 @@
 import { GET, POST, handleAPIError } from "../api/requests";
+import { CreateProgramRequest } from "../components/ProgramForm/types";
 
 import type { APIResult } from "../api/requests";
-
-export type CreateProgramRequest = {
-  name: string;
-  abbreviation: string;
-  type: string;
-  daysOfWeek: string[];
-  startDate: Date;
-  endDate: Date;
-  color: string;
-  students?: string[];
-};
 
 export type Program = CreateProgramRequest & { _id: string; students: string[] };
 

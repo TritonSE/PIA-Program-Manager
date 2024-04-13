@@ -13,6 +13,7 @@ export type Program = {
   startDate: string;
   endDate: string;
   color: string; //colorValueHex;
+  sessions: string[][];
 };
 
 export const createForm: RequestHandler = async (req, res, next) => {

@@ -11,6 +11,7 @@ const programSchema = new Schema({
   endDate: { type: Date, required: true },
   color: { type: String, required: true }, // options: 1 (teal, #4FA197), 2 (yellow, #FFB800), 3 (pink, #FF7A5E), 4 (olive, #B6BF0E)
   students: { type: [Schema.Types.ObjectId], ref: "Student", required: false },
+  sessions: { type: [[String]], required: true },
 });
 
 type Program = InferSchemaType<typeof programSchema>;

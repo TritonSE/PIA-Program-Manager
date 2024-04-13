@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import { createProgram } from "../api/programs";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -8,7 +9,7 @@ import { Button } from "./Button";
 import ProgramArchiveHeader from "./ProgramForm/ProgramArchive";
 import ProgramCancel from "./ProgramForm/ProgramCancel";
 import { ProgramInfo } from "./ProgramForm/ProgramInfo";
-import { ProgramData } from "./ProgramForm/types";
+import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
 import { Textfield } from "./Textfield";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
 
@@ -47,9 +48,35 @@ export default function ProgramFormButton({
   const isMobile = useMemo(() => width <= 640, [width]);
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
-    setOpenForm(false);
-    reset();
-    console.log(`${type} program`, formData);
+    const programRequest: CreateProgramRequest = {
+      name: formData.name,
+      abbreviation: formData.abbreviation,
+      type: formData.type,
+      daysOfWeek: formData.days.map((day) => day.toUpperCase()),
+      startDate: new Date(formData.startDate),
+      endDate: new Date(formData.endDate),
+      color: formData.color,
+      renewalDate: new Date(formData.renewalDate),
+      hourly: formData.hourly,
+      sessions: formData.sessions,
+    };
+
+    if (type === "add") {
+      createProgram(programRequest)
+        .then((result) => {
+          if (result.success) {
+            setOpenForm(false);
+            console.log(`${type} program`, programRequest);
+            reset();
+          } else {
+            console.log(result.error);
+            alert("Unable to create program: " + result.error);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return !isMobile ? (
