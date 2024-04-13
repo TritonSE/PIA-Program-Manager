@@ -30,7 +30,7 @@ export default function Profile() {
     "border-pia_neutral_gray flex w-full flex-grow-0 flex-col place-content-stretch overflow-hidden rounded-lg border-[2px] bg-white";
 
   useEffect(() => {
-    if (!piaUser) return;
+    if (!piaUser || !firebaseUser) return;
 
     if (firebaseUser) {
       firebaseUser
@@ -44,9 +44,9 @@ export default function Profile() {
     }
     if (piaUser.profilePicture === "default") {
       setBasicInfoData((prev) => ({ ...prev, image: "default" }));
-    } else if (piaUser.profilePicture) {
+    } else if (piaUser.profilePicture && firebaseToken) {
       setCurrentImageId(piaUser.profilePicture);
-      getPhoto(piaUser.profilePicture).then(
+      getPhoto(piaUser.profilePicture, firebaseToken).then(
         (result) => {
           if (result.success) {
             const newImage = result.data;
@@ -69,50 +69,45 @@ export default function Profile() {
     if (piaUser.lastChangedPassword) {
       setPasswordData((prev) => ({ ...prev, last_changed: piaUser.lastChangedPassword }));
     }
-  }, [piaUser, firebaseUser]);
+  }, [piaUser, firebaseUser, firebaseToken]);
 
   if (!piaUser || !firebaseUser) return <h1>Loading...</h1>;
 
   return (
-    <main>
-      <div className={"mx-1 pt-2 sm:ml-6 sm:mr-16 sm:pt-10"}>
-        {/* Title */}
-        <h1 className={"font-[alternate-gothic] text-4xl uppercase"}>Personal Info</h1>
+    <main className={"mx-1 pt-2 sm:ml-6 sm:mr-16 sm:pt-10"}>
+      <h1 className={"font-[alternate-gothic] text-4xl uppercase"}>Personal Info</h1>
+      <div className={isMobile ? "pt-4 text-xs" : "text-m pt-10"}>
+        Personal info and options to manage it. You can change or update your info at anytime.
+      </div>
 
-        <div className={isMobile ? "pt-4 text-xs" : "text-m pt-10"}>
-          Personal info and options to manage it. You can change or update your info at anytime.
-        </div>
-
-        <div className="flex flex-col gap-6 pt-4">
-          <BasicInfoFrame
-            className=""
-            isMobile={isMobile}
-            frameFormat={frameFormat}
-            data={basicInfoData}
-            setData={setBasicInfoData}
-            previousImageId={currentImageId}
-            setCurrentImageId={setCurrentImageId}
-            userId={piaUser.uid}
-            firebaseToken={firebaseToken}
-          />
-          <ContactFrame
-            className=""
-            isMobile={isMobile}
-            frameFormat={frameFormat}
-            data={contactInfoData}
-            setData={setContactInfoData}
-            userId={piaUser.uid}
-          />
-          <PasswordFrame
-            className="mb-32"
-            passwordLength={10}
-            isMobile={isMobile}
-            frameFormat={frameFormat}
-            data={passwordData}
-            setData={setPasswordData}
-            userId={piaUser.uid}
-          />
-        </div>
+      <div className="flex flex-col gap-6 pt-4">
+        <BasicInfoFrame
+          className=""
+          isMobile={isMobile}
+          frameFormat={frameFormat}
+          data={basicInfoData}
+          setData={setBasicInfoData}
+          previousImageId={currentImageId}
+          setCurrentImageId={setCurrentImageId}
+          firebaseToken={firebaseToken}
+        />
+        <ContactFrame
+          className=""
+          isMobile={isMobile}
+          frameFormat={frameFormat}
+          data={contactInfoData}
+          setData={setContactInfoData}
+          firebaseToken={firebaseToken}
+        />
+        <PasswordFrame
+          className="mb-32"
+          passwordLength={10}
+          isMobile={isMobile}
+          frameFormat={frameFormat}
+          data={passwordData}
+          setData={setPasswordData}
+          firebaseToken={firebaseToken}
+        />
       </div>
     </main>
   );

@@ -11,11 +11,12 @@ router.use(express.json());
 router.post("/create", UserValidator.createUser, UserController.createUser);
 router.get("/", [verifyAuthToken], UserController.loginUser);
 router.post("/editPhoto", [verifyAuthToken], UserValidator.editPhoto, UserController.editPhoto);
-router.get("/getPhoto/:id", UserValidator.getPhoto, UserController.getPhoto);
-router.patch("/editName", UserValidator.editName, UserController.editName);
-router.patch("/editEmail", UserValidator.editEmail, UserController.editEmail);
+router.get("/getPhoto/:id", [verifyAuthToken], UserController.getPhoto);
+router.patch("/editName", [verifyAuthToken], UserValidator.editName, UserController.editName);
+router.patch("/editEmail", [verifyAuthToken], UserValidator.editEmail, UserController.editEmail);
 router.patch(
   "/editLastChangedPassword",
+  [verifyAuthToken],
   UserValidator.editLastChangedPassword,
   UserController.editLastChangedPassword,
 );

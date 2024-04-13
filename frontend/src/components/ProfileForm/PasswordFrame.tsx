@@ -23,7 +23,7 @@ type PasswordFrameProps = {
   passwordLength: number;
   data: PasswordLastChangedData;
   setData: React.Dispatch<React.SetStateAction<PasswordLastChangedData>>;
-  userId: string;
+  firebaseToken: string;
 } & FrameProps;
 
 type PasswordLastChangedData = {
@@ -46,7 +46,7 @@ export function PasswordFrame({
   frameFormat,
   data,
   setData,
-  userId,
+  firebaseToken,
 }: PasswordFrameProps) {
   const [openPasswordForm, setOpenPasswordForm] = useState(false);
   const [clickedContinue, setClickedContinue] = useState(false);
@@ -73,6 +73,12 @@ export function PasswordFrame({
 
   const onOldPasswordSubmit = (formData: OldPasswordFormData) => {
     setLoading(true);
+    console.log("formData", formData);
+    if (formData.old_password.length === 0) {
+      setPasswordError("Please enter your password");
+      setLoading(false);
+      return;
+    }
 
     if (user?.email) {
       const credential = EmailAuthProvider.credential(user.email, formData.old_password);
@@ -84,7 +90,6 @@ export function PasswordFrame({
           resetOldForm();
         })
         .catch((error) => {
-          // An error occurred, handle it appropriately. For example, you can show an error message to the user.
           console.log(error);
           setPasswordError("Incorrect password");
           setLoading(false);
@@ -109,7 +114,7 @@ export function PasswordFrame({
           setOpenPasswordForm(false);
           setClickedContinue(false);
           resetNewForm();
-          editLastChangedPassword(userId)
+          editLastChangedPassword(firebaseToken)
             .then((res) => {
               if (res.success) {
                 setData({ last_changed: new Date(res.data) });
@@ -149,9 +154,9 @@ export function PasswordFrame({
               <Image
                 src="../caretright.svg"
                 alt="caretright"
-                className="mx-7 flex items-center sm:mx-11"
-                height={12}
-                width={7}
+                className="mx-7 flex w-[7px] items-center sm:mx-11"
+                height={0}
+                width={0}
               />
             </div>
           </div>
