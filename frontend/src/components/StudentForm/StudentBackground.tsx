@@ -56,7 +56,7 @@ export default function StudentBackground({
           />
         </div>
         <div>
-          <h3>Mediciation</h3>
+          <h3>Medication</h3>
           <Textfield
             register={register}
             name="medication"

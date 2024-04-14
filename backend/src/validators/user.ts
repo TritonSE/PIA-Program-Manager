@@ -1,4 +1,5 @@
 import { ValidationChain, body } from "express-validator";
+import mongoose from "mongoose";
 
 export const createUser: ValidationChain[] = [
   body("name")
@@ -36,4 +37,40 @@ export const loginUser: ValidationChain[] = [
     .withMessage("Email cannot be empty.")
     .isString()
     .withMessage("Invalid password format."),
+];
+
+export const editPhoto = [
+  body("userId").isString().notEmpty().withMessage("User ID is required."),
+  body("previousImageId")
+    .custom((value: string) => value === "default" || mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Mongo ID format is invalid"),
+];
+
+export const editName: ValidationChain[] = [
+  body("newName")
+    .exists()
+    .withMessage("New name is required")
+    .notEmpty()
+    .withMessage("Image id cannot be empty")
+    .isString(),
+];
+
+export const editEmail: ValidationChain[] = [
+  body("newEmail")
+    .exists()
+    .withMessage("New email is required")
+    .notEmpty()
+    .withMessage("Email cannot be empty")
+    .isEmail()
+    .withMessage("Invalid email format"),
+];
+
+export const editLastChangedPassword: ValidationChain[] = [
+  body("currentDate")
+    .exists()
+    .withMessage("Current date is required")
+    .notEmpty()
+    .withMessage("Date cannot be empty")
+    .isISO8601()
+    .withMessage("Invalid Date format"),
 ];

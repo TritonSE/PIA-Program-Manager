@@ -9,10 +9,13 @@ import { POST, handleAPIError } from "../api/requests";
 
 import { Button } from "@/components/Button";
 import Landing from "@/components/Landing";
+import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function CreateUser() {
+  useRedirectToHomeIfSignedIn();
+
   const router = useRouter();
 
   const { query } = router;

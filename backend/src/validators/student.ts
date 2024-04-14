@@ -5,6 +5,8 @@
 import { body } from "express-validator";
 import mongoose from "mongoose";
 
+import { programValidatorUtil } from "../util/student";
+
 //designed these to use the globstar operator from express-validator to more cleanly
 
 const makeIdValidator = () =>
@@ -113,24 +115,15 @@ const makeTourDateValidator = () =>
     .toDate()
     .withMessage("Tour Date string must be a valid date-time string");
 
-//prog1 --placeholder, will later validate for a program objectid
-const makeRegularProgramsValidator = () =>
-  body("regularPrograms")
+const makePrograms = () =>
+  body("programs")
     .exists()
-    .withMessage("Regular Programs field required")
+    .withMessage("Programs field required")
     .bail()
-    .isArray({ min: 1 })
-    .withMessage("Regular Programs must be a non-empty array")
-    .bail();
-
-//prog2
-const makeVaryingProgramsValidator = () =>
-  body("varyingPrograms")
-    .exists()
-    .withMessage("Varying Programs field required")
+    .isArray()
+    .withMessage("Programs must be a non-empty array")
     .bail()
-    .isArray({ min: 1 })
-    .withMessage("Varying Programs must be a non-empty array");
+    .custom(programValidatorUtil);
 
 //dietary
 //validates entire array
@@ -160,8 +153,7 @@ export const createStudent = [
   makeBirthdayValidator(),
   makeIntakeDateValidator(),
   makeTourDateValidator(),
-  makeRegularProgramsValidator(),
-  makeVaryingProgramsValidator(),
+  makePrograms(),
   makeDietaryArrayValidator(),
   makeDietaryItemsValidator(),
   makeDietaryOtherValidator(),
