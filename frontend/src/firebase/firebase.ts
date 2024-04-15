@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { FirebaseOptions, initializeApp } from "firebase/app";
-import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
+// import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
+import { getAuth } from "firebase/auth";
 
 dotenv.config();
 
@@ -19,14 +20,15 @@ export const initFirebase = () => {
 
 const { app, auth } = initFirebase();
 
-const checkEmailExists = async (email: string) => {
-  try {
-    const methods = await fetchSignInMethodsForEmail(auth, email);
-    return methods && methods.length > 0;
-  } catch (error) {
-    console.error("Error checking if email exists: ", error);
-    return false;
-  }
-};
+// const checkEmailExists = async (email: string) => {
+//   try {
+//     const methods = await fetchSignInMethodsForEmail(auth, email);
+//     return methods && methods.length > 0;
+//   } catch (error) {
+//     console.error("Error checking if email exists: ", error);
+//     return false;
+//   }
+// };
 
-export { app, auth, checkEmailExists };
+// export { app, auth, checkEmailExists };
+export { app, auth };

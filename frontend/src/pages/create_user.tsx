@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { ReactElement, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
-import { checkEmailExists } from "../firebase/firebase";
+// import { checkEmailExists } from "../firebase/firebase";
 
 import Landing from "@/components/Landing";
 import { Textfield } from "@/components/Textfield";
@@ -21,7 +21,7 @@ export default function CreateUser() {
 
   const [passwordError, setPasswordError] = useState(true);
   const [matchError, setMatchError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
+  // const [emailError, setEmailError] = useState(false);
 
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -55,22 +55,23 @@ export default function CreateUser() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    try {
-      setEmailError(false);
+    // try {
+    //   setEmailError(false);
 
-      // const emailExists = await checkEmailExists(data.email);
-      const emailExists = await checkEmailExists(String(data.email));
+    //   // const emailExists = await checkEmailExists(data.email);
+    //   const emailExists = await checkEmailExists(String(data.email));
 
-      console.log("Checked Email");
+    //   console.log("Checked Email");
 
-      if (emailExists) {
-        setEmailError(true);
-        return;
-      }
-    } catch (error) {
-      console.error("Error checking if email already in use: ", error);
-    }
+    //   if (emailExists) {
+    //     setEmailError(true);
+    //     return;
+    //   }
+    // } catch (error) {
+    //   console.error("Error checking if email already in use: ", error);
+    // }
 
     // void router.push("/create_user_2");
     void router.push({
@@ -159,12 +160,12 @@ export default function CreateUser() {
                   label={""}
                   placeholder="name@email.com"
                 />
-                {emailError && (
+                {/* {emailError && (
                   <h1 className="mt-1 flex items-center text-sm font-light text-orange-700 text-pia_accent">
                     <AlertCircle className="mr-1 text-sm" /> Account already exists for this email.
                     Sign in?
                   </h1>
-                )}
+                )} */}
               </div>
               <div>
                 <h1 className="text-lg font-light text-black text-pia_accent max-lg:text-lg">
