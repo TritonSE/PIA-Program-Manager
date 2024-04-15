@@ -1,9 +1,9 @@
 import { APIResult, GET, PATCH, handleAPIError } from "@/api/requests";
 
 export type User = {
-  _id: string;
   uid: string;
-  role: string;
+  role: "admin" | "team";
+  approvalStatus: boolean;
   profilePicture: string;
   name: string;
   email: string;

@@ -1,21 +1,10 @@
-import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/router";
 import { ReactElement } from "react";
-import { FieldValues, SubmitHandler } from "react-hook-form";
 
 import Landing from "@/components/Landing";
-import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function CreateUser() {
-  useRedirectToHomeIfSignedIn();
-  const router = useRouter();
-
-  const onBack: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
-    void router.push("/create_user_2");
-  };
   const { isMobile } = useWindowSize();
 
   return (
@@ -29,12 +18,6 @@ export default function CreateUser() {
         >
           {isMobile && (
             <div className="mt-10 flex flex-col">
-              <button onClick={onBack} className="mb-5 flex rounded-md">
-                <ArrowLeft className="text-1xl max-lg:text-1xl mr-2 text-pia_accent text-pia_dark_green" />{" "}
-                <h1 className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
-                  Back
-                </h1>
-              </button>
               <div className="flex h-full">
                 <div className="mb-5 mt-5 flex flex-col">
                   <h1 className="font-[alternate-gothic] text-3xl max-lg:text-3xl">
@@ -49,12 +32,6 @@ export default function CreateUser() {
           )}
           {!isMobile && (
             <div>
-              <button onClick={onBack} className="mb-5 flex rounded-md">
-                <ArrowLeft className="text-1xl max-lg:text-1xl mr-2 text-pia_accent text-pia_dark_green" />{" "}
-                <h1 className="text-1xl max-lg:text-1xl text-pia_accent text-pia_dark_green">
-                  Back
-                </h1>
-              </button>
               <div className="mb-10">
                 <h1 className="font-[alternate-gothic] text-5xl text-black max-lg:text-4xl">
                   We have received
