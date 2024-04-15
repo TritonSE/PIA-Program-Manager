@@ -9,7 +9,11 @@ const programSchema = new Schema({
   daysOfWeek: { type: [String], required: true }, // M, T, W, TH, F
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
-  color: { type: String, required: true }, // options: 1 (teal, #4FA197), 2 (yellow, #FFB800), 3 (pink, #FF7A5E), 4 (olive, #B6BF0E)
+  color: { type: String, required: true },
+  studentUIDs: { type: [String], required: true },
+  renewalDate: { type: Date, required: true },
+  hourlyPay: { type: Number, required: true },
+  sessions: { type: [[String]], required: true },
 });
 
 type ProgramForm = InferSchemaType<typeof programSchema>;

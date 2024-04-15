@@ -38,7 +38,7 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
 
     const programId = req.params.id;
     const programData = req.body as Program;
-    
+
     const editedProgram = await ProgramFormModel.findOneAndUpdate({ _id: programId }, programData, {
       new: true,
     });
