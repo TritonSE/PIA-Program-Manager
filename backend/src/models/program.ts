@@ -1,5 +1,3 @@
-//modified from onboarding repo for program form backend
-
 import { InferSchemaType, Schema, model } from "mongoose";
 
 const programSchema = new Schema({
@@ -9,10 +7,13 @@ const programSchema = new Schema({
   daysOfWeek: { type: [String], required: true }, // M, T, W, TH, F
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
-  color: { type: String, required: true }, // options: 1 (teal, #4FA197), 2 (yellow, #FFB800), 3 (pink, #FF7A5E), 4 (olive, #B6BF0E)
-  students: { type: [Schema.Types.ObjectId], ref: "Student", required: false },
+  color: { type: String, required: true },
+  studentUIDs: { type: [String], required: true },
+  renewalDate: { type: Date, required: true },
+  hourlyPay: { type: Number, required: true },
+  sessions: { type: [[String]], required: true },
 });
 
-type Program = InferSchemaType<typeof programSchema>;
+type ProgramForm = InferSchemaType<typeof programSchema>;
 
-export default model<Program>("Program", programSchema);
+export default model<ProgramForm>("ProgramForm", programSchema);
