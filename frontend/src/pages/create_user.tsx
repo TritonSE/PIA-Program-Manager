@@ -1,7 +1,7 @@
 import { AlertCircle, CheckCircle2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { ReactElement, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 // import { checkEmailExists } from "../firebase/firebase";
@@ -13,11 +13,13 @@ import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function CreateUser() {
-  console.log("In create_user.tsx");
+  // console.log("In create_user.tsx");
   useRedirectToHomeIfSignedIn();
 
   const { register, setValue, handleSubmit } = useForm();
   const _setValue = setValue;
+
+  const [formValid, setFormValid] = useState(false);
 
   const [passwordError, setPasswordError] = useState(true);
   const [matchError, setMatchError] = useState(false);
@@ -31,29 +33,64 @@ export default function CreateUser() {
   const router = useRouter();
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.name);
-    switch (event.target.name) {
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    const { name, value } = event.target;
+
+    switch (name) {
       case "name":
-        setName(event.target.value); // Save user name
-        console.log(name); // Use for linter
+        setName(value);
         break;
       case "email":
-        setEmail(event.target.value); // Save user email
-        console.log(email); // Use for linter
+        setEmail(value);
         break;
       case "password":
-        console.log(event.target.value.length, passwordError);
-        setPassword(event.target.value);
-        setPasswordError(event.target.value.length < 6);
-        setMatchError(event.target.value !== confirm);
+        setPassword(value);
+        setPasswordError(value.length < 6);
+        setMatchError(value !== confirm);
         break;
       case "confirm":
-        console.log(password, confirm, matchError);
-        setConfirm(event.target.value);
-        setMatchError(password !== event.target.value);
+        setConfirm(value);
+        setMatchError(password !== value);
         break;
     }
+
+    // Check if all fields are filled and passwords match
+    setFormValid(
+      name !== "" &&
+        email !== "" &&
+        password !== "" &&
+        confirm !== "" &&
+        !passwordError &&
+        !matchError,
+    );
   };
+
+  // Add useEffect hook to handle clicks outside of text fields
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('input[type="text"]')) {
+        // If the click is outside of any text input fields
+        setFormValid(
+          name !== "" &&
+            email !== "" &&
+            password !== "" &&
+            confirm !== "" &&
+            password === confirm &&
+            !passwordError &&
+            !matchError,
+        );
+      }
+    };
+
+    // Add event listener to handle clicks outside of text fields
+    document.body.addEventListener("click", handleClickOutside);
+
+    return () => {
+      // Cleanup: Remove event listener when component unmounts
+      document.body.removeEventListener("click", handleClickOutside);
+    };
+  }, [name, email, password, confirm, passwordError, matchError]);
 
   // eslint-disable-next-line @typescript-eslint/require-await
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
@@ -207,9 +244,19 @@ export default function CreateUser() {
                   </h1>
                 )}
               </div>
-              <button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
+              {/* <button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
+                Continue
+              </button> */}
+              <button
+                type="submit"
+                className={`rounded-md bg-pia_dark_green px-5 py-3 text-white ${!formValid && "cursor-not-allowed opacity-50"}`}
+                disabled={!formValid}
+              >
                 Continue
               </button>
+              {/* <button type="submit" className={`rounded-md bg-pia_dark_green px-5 py-3 text-white ${!formValid && 'opacity-50 cursor-not-allowed'}`} disabled={!formValid}>
+                Continue
+              </button> */}
               {isMobile && (
                 <div className="flex items-center justify-center">
                   <h1 className={cn("text-sm text-black text-pia_accent max-lg:text-sm")}>
