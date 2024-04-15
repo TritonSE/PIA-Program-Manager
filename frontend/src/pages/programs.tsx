@@ -48,14 +48,12 @@ export default function Programs() {
   let mainClass = "h-full overflow-y-scroll no-scrollbar";
   let titleClass = "font-[alternate-gothic]";
   let headerClass = "flex flex-row";
-  let addTaskClass = "m-0 rounded-3xl bg-pia_dark_green text-white";
   let cardsGridClass = "grid";
   let cardClass = "";
 
   if (isTablet) {
     titleClass += " text-2xl leading-none h-6";
     mainClass += " p-0";
-    addTaskClass += " text-[10px] h-6 px-[10px]";
 
     if (isMobile) {
       headerClass += " pt-2 pb-3";
@@ -69,7 +67,6 @@ export default function Programs() {
   } else {
     titleClass += " text-[40px] leading-none h-10";
     headerClass += " p-5 pt-10 pb-5";
-    addTaskClass += " text-base h-12 px-6";
     cardClass += " p-5";
 
     if (extraLarge) {
