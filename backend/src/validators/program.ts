@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import mongoose from "mongoose";
+//import mongoose from "mongoose";
 
 import { Program } from "../controllers/program";
 
@@ -115,12 +115,12 @@ const makeColorValidator = () =>
       }
       return true;
     });
-// check for first chara being # and others being 1-F
-
-// verify student ids passed in, if any, are valid
-const makeStudentsValidator = () =>
-  body("students")
-    .optional()
+/*const makeStudentUIDsValidator = () =>
+  // mongoID
+  body("studentUIDs")
+    .exists()
+    .withMessage("student UIDs list needed")
+    .bail()
     .isArray()
     .bail()
     .withMessage("students must be an array")
@@ -132,7 +132,21 @@ const makeStudentsValidator = () =>
       return true;
     })
     .bail()
-    .withMessage("students must be valid student ids");
+    .withMessage("students must be valid student ids");*/
+const makeRenewalDateValidator = () =>
+  body("renewalDate")
+    .exists()
+    .withMessage("renewal date needed")
+    .bail()
+    .isISO8601()
+    .withMessage("renewal date must be a valid date-time string");
+const makeHourlyPayValidator = () =>
+  body("hourlyPay")
+    .exists()
+    .withMessage("hourly pay needed")
+    .bail()
+    .isNumeric()
+    .withMessage("hourly pay must be a valid number");
 
 const makeSessionsValidator = () =>
   body("sessions")
@@ -156,7 +170,7 @@ const makeSessionsValidator = () =>
       return true;
     });
 
-export const createForm = [
+export const createProgram = [
   makeNameValidator(),
   makeAbbreviationValidator(),
   makeTypeValidator(),
@@ -164,6 +178,21 @@ export const createForm = [
   makeStartDateValidator(),
   makeEndDateValidator(),
   makeColorValidator(),
-  makeStudentsValidator(),
+  makeRenewalDateValidator(),
+  makeHourlyPayValidator(),
   makeSessionsValidator(),
+];
+
+export const updateProgram = [
+  makeNameValidator(),
+  makeAbbreviationValidator(),
+  makeTypeValidator(),
+  makeDaysOfWeekValidator(),
+  makeStartDateValidator(),
+  makeEndDateValidator(),
+  makeColorValidator(),
+  makeRenewalDateValidator(),
+  makeHourlyPayValidator(),
+  makeSessionsValidator(),
+  //makeStudentUIDsValidator(),
 ];

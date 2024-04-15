@@ -44,8 +44,9 @@ export function Textfield<T extends FieldValues>({
   name, //Must be a key in form data type specified in useForm hook
   placeholder,
   calendar = false,
-  handleInputChange = () => {},
+  handleInputChange,
   className,
+
   type = "text",
   defaultValue = "",
   mode = "outlined",
@@ -75,8 +76,9 @@ export function Textfield<T extends FieldValues>({
         <input
           {...register(name as Path<T>, registerOptions)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
-          id={label + placeholder}
+          id={name + label + placeholder}
           type={type}
+          onChange={handleInputChange ?? register(name as Path<T>, registerOptions).onChange}
           placeholder={placeholder}
           defaultValue={defaultValue}
         />
@@ -129,11 +131,11 @@ export function Textfield<T extends FieldValues>({
       )}
     >
       <input
-        {...register(name as Path<T>)}
+        {...register(name as Path<T>, registerOptions)}
         className="focus-visible:out w-full appearance-none bg-inherit placeholder-pia_accent outline-none placeholder:italic"
         id={label + placeholder}
         type={type}
-        onChange={handleInputChange}
+        onChange={handleInputChange ?? register(name as Path<T>, registerOptions).onChange}
         placeholder={placeholder}
         defaultValue={defaultValue}
       />

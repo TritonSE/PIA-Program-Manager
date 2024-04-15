@@ -21,7 +21,7 @@ const validationErrorParser = (errors: Result<ValidationError>) => {
     }
 
     // trim removes the trailing space created in the for loop
-    throw new InputError(0, 400, errorString);
+    throw new InputError(0, 400, errorString.trim());
   }
 };
 

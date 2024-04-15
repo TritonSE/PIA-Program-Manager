@@ -1,59 +1,114 @@
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import React, { useContext, useEffect, useState } from "react";
 
-import { Checkbox } from "../components/Checkbox";
-import { Radio } from "../components/Radio";
-import { Textfield } from "../components/Textfield";
+import { getPhoto } from "../api/user";
+import { BasicInfoFrame } from "../components/ProfileForm/BasicInfoFrame";
+import { ContactFrame } from "../components/ProfileForm/ContactInfoFrame";
+import { PasswordFrame } from "../components/ProfileForm/PasswordFrame";
+import { useWindowSize } from "../hooks/useWindowSize";
 
+import { UserContext } from "@/contexts/user";
 import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
+
+export type FrameProps = {
+  className?: string;
+  isMobile?: boolean;
+  frameFormat?: string;
+};
 
 export default function Profile() {
   useRedirectToLoginIfNotSignedIn();
-  const dietaryList = ["Nuts", "Eggs", "Seafood", "Pollen", "Dairy", "Other"];
 
-  const { register, setValue, handleSubmit } = useForm();
+  const { piaUser, firebaseUser } = useContext(UserContext);
+  const { isMobile } = useWindowSize();
+  const [basicInfoData, setBasicInfoData] = useState({ name: "", image: "" });
+  const [contactInfoData, setContactInfoData] = useState({ email: "" });
+  const [passwordData, setPasswordData] = useState({ last_changed: null as Date | null });
+  const [firebaseToken, setFirebaseToken] = useState("");
+  const [currentImageId, setCurrentImageId] = useState("default");
 
-  const onSubmit: SubmitHandler<FieldValues> = (data) => {
-    console.log(data);
-  };
+  const frameFormat =
+    "border-pia_neutral_gray flex w-full flex-grow-0 flex-col place-content-stretch overflow-hidden rounded-lg border-[2px] bg-white";
+
+  useEffect(() => {
+    if (!piaUser || !firebaseUser) return;
+
+    if (firebaseUser) {
+      firebaseUser
+        ?.getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+    if (piaUser.profilePicture === "default") {
+      setBasicInfoData((prev) => ({ ...prev, image: "default" }));
+    } else if (piaUser.profilePicture && firebaseToken) {
+      setCurrentImageId(piaUser.profilePicture);
+      getPhoto(piaUser.profilePicture, firebaseToken).then(
+        (result) => {
+          if (result.success) {
+            const newImage = result.data;
+            setBasicInfoData((prev) => ({ ...prev, image: newImage }));
+          } else {
+            console.error(result.error);
+          }
+        },
+        (error) => {
+          console.error(error);
+        },
+      );
+    }
+    if (piaUser.name) {
+      setBasicInfoData((prev) => ({ ...prev, name: piaUser.name }));
+    }
+    if (piaUser.email) {
+      setContactInfoData((prev) => ({ ...prev, email: piaUser.email }));
+    }
+    if (piaUser.lastChangedPassword) {
+      setPasswordData((prev) => ({ ...prev, last_changed: piaUser.lastChangedPassword }));
+    }
+  }, [piaUser, firebaseUser, firebaseToken]);
+
+  if (!piaUser || !firebaseUser) return <h1>Loading...</h1>;
+
   return (
-    <main>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="flex flex-col items-center justify-between gap-10 p-12"
-      >
-        <div className="grid gap-5">
-          <Textfield register={register} name={"firstname"} label="First" placeholder="John" />
-          <Textfield
-            register={register}
-            name={"email"}
-            label={"Email"}
-            type="email"
-            placeholder="johnsmith@gmail.com"
-          />
-          <Textfield
-            register={register}
-            setCalendarValue={setValue}
-            name={"date"}
-            label="Date"
-            placeholder="00/00/0000"
-            calendar={true}
-          />
-        </div>
+    <main className={"mx-1 pt-2 sm:ml-6 sm:mr-16 sm:pt-10"}>
+      <h1 className={"font-[alternate-gothic] text-4xl uppercase"}>Personal Info</h1>
+      <div className={isMobile ? "pt-4 text-xs" : "text-m pt-10"}>
+        Personal info and options to manage it. You can change or update your info at anytime.
+      </div>
 
-        <div className="grid w-full sm:w-1/2 ">
-          <h2 className="mb-2 text-pia_accent">Dietary Restrictions</h2>
-          <Checkbox register={register} name="dietary" options={dietaryList} />
-        </div>
-
-        <div className="">
-          <h2 className="mb-5 text-2xl font-bold">Gender</h2>
-          <Radio register={register} name="gender" options={["Male", "Female", "Rather not say"]} />
-        </div>
-
-        <button type="submit" className="rounded-md bg-pia_dark_green px-5 py-3 text-white">
-          Submit
-        </button>
-      </form>
+      <div className="flex flex-col gap-6 pt-4">
+        <BasicInfoFrame
+          className=""
+          isMobile={isMobile}
+          frameFormat={frameFormat}
+          data={basicInfoData}
+          setData={setBasicInfoData}
+          previousImageId={currentImageId}
+          setCurrentImageId={setCurrentImageId}
+          firebaseToken={firebaseToken}
+        />
+        <ContactFrame
+          className=""
+          isMobile={isMobile}
+          frameFormat={frameFormat}
+          data={contactInfoData}
+          setData={setContactInfoData}
+          firebaseToken={firebaseToken}
+        />
+        <PasswordFrame
+          className="mb-32"
+          passwordLength={10}
+          isMobile={isMobile}
+          frameFormat={frameFormat}
+          data={passwordData}
+          setData={setPasswordData}
+          firebaseToken={firebaseToken}
+        />
+      </div>
     </main>
   );
 }
