@@ -2,7 +2,7 @@
  * Hook that allows components to keep track of current page width and height
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export function useWindowSize() {
   const [windowSize, setWindowSize] = useState({
@@ -24,5 +24,9 @@ export function useWindowSize() {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-  return windowSize;
+
+  const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);
+  const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);
+
+  return { windowSize, isMobile, isTablet };
 }

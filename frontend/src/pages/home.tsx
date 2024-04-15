@@ -1,7 +1,8 @@
+import StudentsTable from "../components/StudentsTable/StudentsTable";
+
+import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
+
 export default function Home() {
-  return (
-    <main>
-      <h1>PIA Home Page!</h1>
-    </main>
-  );
+  useRedirectToLoginIfNotSignedIn();
+  return <StudentsTable />;
 }

@@ -8,7 +8,7 @@ import { Poppins } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 
 import { navigation } from "../constants/navigation";
 import { useWindowSize } from "../hooks/useWindowSize";
@@ -80,8 +80,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [offset, setOffset] = React.useState(0);
   const [shelf, setShelf] = React.useState(false); // on mobile whether the navbar is open
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
+  const { isMobile } = useWindowSize();
 
   useEffect(() => {
     const ordering = navigation.map((item) => item.href);

@@ -1,20 +1,22 @@
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/router";
-import { useMemo } from "react";
+import { ReactElement } from "react";
 import { FieldValues, SubmitHandler } from "react-hook-form";
 
+import Landing from "@/components/Landing";
+import { useRedirectToHomeIfSignedIn } from "@/hooks/redirect";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function CreateUser() {
+  useRedirectToHomeIfSignedIn();
   const router = useRouter();
 
   const onBack: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
     void router.push("/create_user_2");
   };
-  const { width } = useWindowSize();
-  const isMobile = useMemo(() => width <= 640, [width]);
+  const { isMobile } = useWindowSize();
 
   return (
     <main className="flex h-screen w-full justify-center">
@@ -76,3 +78,7 @@ export default function CreateUser() {
     </main>
   );
 }
+
+CreateUser.getLayout = function getLayout(page: ReactElement) {
+  return <Landing>{page}</Landing>;
+};

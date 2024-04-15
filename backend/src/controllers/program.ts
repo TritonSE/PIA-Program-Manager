@@ -3,7 +3,7 @@ import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 //import { error } from "firebase-functions/logger";
 
-import ProgramFormModel from "../models/program-form";
+import ProgramModel from "../models/program";
 import validationErrorParser from "../util/validationErrorParser";
 
 export type Program = {
@@ -23,7 +23,7 @@ export const createProgram: RequestHandler = async (req, res, next) => {
   try {
     validationErrorParser(errors);
 
-    const programForm = await ProgramFormModel.create(req.body as Program);
+    const programForm = await ProgramModel.create(req.body as Program);
 
     res.status(201).json(programForm);
   } catch (error) {
@@ -48,6 +48,12 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
     }
 
     res.status(200).json(editedProgram);
+
+export const getAllPrograms: RequestHandler = async (req, res, next) => {
+  try {
+    const programs = await ProgramModel.find();
+
+    res.status(200).json(programs);
   } catch (error) {
     next(error);
   }

@@ -12,7 +12,12 @@ const makeNameValidator = () =>
     .withMessage("name must be a string")
     .bail()
     .notEmpty()
-    .withMessage("name must not be empty");
+    .withMessage("name must not be empty")
+    .custom((value: string) => {
+      // needed for students table dropdown filtering
+      if (value.includes(";")) throw new Error("name cannot contain semicolons");
+      return true;
+    });
 const makeAbbreviationValidator = () =>
   body("abbreviation")
     .exists()

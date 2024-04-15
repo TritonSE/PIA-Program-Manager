@@ -3,8 +3,20 @@
  */
 
 import { body } from "express-validator";
+import mongoose from "mongoose";
+
+import { programValidatorUtil } from "../util/student";
 
 //designed these to use the globstar operator from express-validator to more cleanly
+
+const makeIdValidator = () =>
+  body("**._id")
+    .exists()
+    .withMessage("ID is required")
+    .bail()
+    .custom((value: string) => mongoose.Types.ObjectId.isValid(value))
+    .withMessage("Mongo ID format is invalid");
+
 //validate contacts
 const makeLastNamesValidator = () =>
   body("**.lastName")
@@ -43,16 +55,11 @@ const makeEmailsValidator = () =>
 const makePhoneNumbersValidator = () =>
   body("**.phoneNumber")
     .trim()
-    .exists()
+    .exists({ checkFalsy: true })
     .withMessage("Phone number required")
     .bail()
-    .isNumeric()
-    .withMessage("Field must have a valid number")
-    .isLength({ min: 10, max: 11 })
-    .withMessage("Phone number has an incorrect length")
-    .bail()
-    .notEmpty()
-    .withMessage("Phone number required");
+    .matches(/^(?:\d{10}|\d{3}-\d{3}-\d{4})$/)
+    .withMessage("Phone number must be in the format 1234567890 or 123-123-1234");
 
 //validate location
 const makeLocationValidator = () =>
@@ -85,6 +92,7 @@ const makeBirthdayValidator = () =>
     .withMessage("Birthday field required")
     .bail()
     .isISO8601()
+    .toDate()
     .withMessage("Birthday string must be a valid date-time string");
 
 //intake date
@@ -94,6 +102,7 @@ const makeIntakeDateValidator = () =>
     .withMessage("Intake Date field required")
     .bail()
     .isISO8601()
+    .toDate()
     .withMessage("Intake Date string must be a valid date-time string");
 
 //tour date
@@ -103,20 +112,18 @@ const makeTourDateValidator = () =>
     .withMessage("Tour Date field required")
     .bail()
     .isISO8601()
+    .toDate()
     .withMessage("Tour Date string must be a valid date-time string");
 
-//prog1 --placeholder, will later validate for a program objectid
-const makeProg1Validator = () =>
-  body("prog1")
+const makePrograms = () =>
+  body("programs")
     .exists()
-    .withMessage("Program 1 field required")
+    .withMessage("Programs field required")
     .bail()
-    .isString()
-    .withMessage("Program 1 must be a string");
-
-//prog2
-const makeProg2Validator = () =>
-  body("prog2").optional().isString().withMessage("Program 2 must be a string");
+    .isArray()
+    .withMessage("Programs must be a non-empty array")
+    .bail()
+    .custom(programValidatorUtil);
 
 //dietary
 //validates entire array
@@ -146,9 +153,10 @@ export const createStudent = [
   makeBirthdayValidator(),
   makeIntakeDateValidator(),
   makeTourDateValidator(),
-  makeProg1Validator(),
-  makeProg2Validator(),
+  makePrograms(),
   makeDietaryArrayValidator(),
   makeDietaryItemsValidator(),
   makeDietaryOtherValidator(),
 ];
+
+export const editStudent = [...createStudent, makeIdValidator()];

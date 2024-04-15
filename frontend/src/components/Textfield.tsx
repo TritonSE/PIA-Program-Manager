@@ -1,7 +1,12 @@
-"use client";
-
 import { useEffect, useState } from "react";
-import { FieldValues, Path, PathValue, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import {
+  FieldValues,
+  Path,
+  PathValue,
+  RegisterOptions,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 
 import { Calendar } from "../components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/ui/popover";
@@ -16,6 +21,8 @@ type BaseProps<T extends FieldValues> = {
   handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   className?: string;
+  mode?: "filled" | "outlined";
+  registerOptions?: RegisterOptions;
 };
 
 type WithCalendarProps<T extends FieldValues> = BaseProps<T> & {
@@ -37,12 +44,13 @@ export function Textfield<T extends FieldValues>({
   name, //Must be a key in form data type specified in useForm hook
   placeholder,
   calendar = false,
+  handleInputChange,
   className,
-  handleInputChange = () => {
-    /* do nothing */
-  },
+
   type = "text",
   defaultValue = "",
+  mode = "outlined",
+  registerOptions = {},
 }: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
 
@@ -57,7 +65,7 @@ export function Textfield<T extends FieldValues>({
     }
   }, [date]);
 
-  return (
+  return mode === "outlined" ? (
     <Popover>
       <div
         className={cn(
@@ -66,21 +74,13 @@ export function Textfield<T extends FieldValues>({
         )}
       >
         <input
-          {...register(name as Path<T>)}
+          {...register(name as Path<T>, registerOptions)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
-          id={label + placeholder}
+          id={name + label + placeholder}
           type={type}
-          onChange={handleInputChange}
+          onChange={handleInputChange ?? register(name as Path<T>, registerOptions).onChange}
           placeholder={placeholder}
-          defaultValue={
-            calendar && defaultValue
-              ? new Date(defaultValue).toLocaleDateString(undefined, {
-                  year: "numeric",
-                  month: "2-digit",
-                  day: "2-digit",
-                })
-              : defaultValue
-          }
+          defaultValue={defaultValue}
         />
 
         {label ? (
@@ -123,5 +123,22 @@ export function Textfield<T extends FieldValues>({
         )}
       </div>
     </Popover>
+  ) : (
+    <div
+      className={cn(
+        "relative flex flex-grow flex-col border-b-2 border-pia_accent py-1 focus-within:border-pia_dark_green",
+        className,
+      )}
+    >
+      <input
+        {...register(name as Path<T>, registerOptions)}
+        className="focus-visible:out w-full appearance-none bg-inherit placeholder-pia_accent outline-none placeholder:italic"
+        id={label + placeholder}
+        type={type}
+        onChange={handleInputChange ?? register(name as Path<T>, registerOptions).onChange}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+      />
+    </div>
   );
 }

@@ -14,6 +14,7 @@ type ButtonStyles = {
   default: string;
   selected: string;
   big: string;
+  wide: string;
 };
 
 const poppins = Poppins({ weight: "400", style: "normal", subsets: [] });
@@ -22,7 +23,7 @@ export type ButtonProps = {
   label: React.ReactNode | string;
 
   kind?: "primary" | "secondary" | "destructive" | "destructive-secondary";
-  size?: "default" | "small" | "big";
+  size?: "default" | "small" | "big" | "wide";
   disabled?: boolean;
   selected?: boolean;
 } & React.ComponentProps<"button">;
@@ -72,6 +73,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
       break;
     case "big":
       buttonClass += ` ${buttonStyles.big}`;
+      break;
+    case "wide":
+      buttonClass += ` ${buttonStyles.wide}`;
       break;
     default:
       buttonClass += ` ${buttonStyles.default}`;
