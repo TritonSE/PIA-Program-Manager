@@ -104,16 +104,16 @@ export default function ForgotPassword() {
                 Submit
               </Button>
               {resetSent && (
-                <h1 className="mt-1 flex items-center text-sm font-light text-green-700">
-                  <CheckCircle2 className="mr-1 text-sm" /> A reset password has been sent to your
-                  email.
+                <span className="mt-1 flex items-center text-sm font-light text-green-700">
+                  <CheckCircle2 className="mr-1 text-sm" /> A reset password has been sent if your
+                  email exists in our database.
                   <Link
                     href="/login"
-                    className="text-1xl max-lg:text-1xl ml-1 text-pia_accent text-pia_dark_green underline"
+                    className="text-1xl max-lg:text-1xl ml-1 flex text-pia_accent text-pia_dark_green underline"
                   >
                     Login?
                   </Link>
-                </h1>
+                </span>
               )}
               {!resetSent && firebaseError && (
                 <h1 className="mt-1 flex items-center text-sm font-light text-orange-700">
