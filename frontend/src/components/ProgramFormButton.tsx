@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -55,14 +56,27 @@ export default function ProgramFormButton({
   return !isMobile ? (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogTrigger asChild>
-          <Button
-            label={type === "add" ? "Add Program" : "Edit Program"}
-            onClick={() => {
-              setOpenForm(true);
-            }}
-          />
-        </DialogTrigger>
+        {type === "add" && (
+          <DialogTrigger asChild>
+            <Button
+              label="Add Program"
+              onClick={() => {
+                setOpenForm(true);
+              }}
+            />
+          </DialogTrigger>
+        )}
+        {type === "edit" && (
+          <DialogTrigger asChild>
+            <Image
+              alt="options"
+              src="/programs/Options.png"
+              height={18}
+              width={16}
+              className={"relative float-right hover:cursor-pointer"}
+            />
+          </DialogTrigger>
+        )}
         <DialogContentSlide className="w-full bg-white object-right p-6 sm:w-[50%]">
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             {type === "edit" && (
@@ -155,14 +169,27 @@ export default function ProgramFormButton({
   ) : (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogTrigger asChild>
-          <Button
-            label={type === "add" ? "Add Program" : "Edit Program"}
-            onClick={() => {
-              setOpenForm(true);
-            }}
-          />
-        </DialogTrigger>
+        {type === "add" && (
+          <DialogTrigger asChild>
+            <Button
+              label="Add Program"
+              onClick={() => {
+                setOpenForm(true);
+              }}
+            />
+          </DialogTrigger>
+        )}
+        {type === "edit" && (
+          <DialogTrigger asChild>
+            <Image
+              alt="options"
+              src="/programs/Options.png"
+              height={9}
+              width={8}
+              className={"relative float-right hover:cursor-pointer"}
+            />
+          </DialogTrigger>
+        )}
         <DialogContent className="bg-white p-3">
           <ProgramCancel
             onSubmit={() => {

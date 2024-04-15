@@ -5,7 +5,7 @@ import { ProgramCard } from "../components/ProgramCard";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 
-import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
+// import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 function processDate(startString: Date): string {
   const startDate = new Date(startString);
@@ -20,8 +20,8 @@ function processDate(startString: Date): string {
 }
 
 export default function Programs() {
-  useRedirectToLoginIfNotSignedIn();
-  useRedirectTo404IfNotAdmin();
+  // useRedirectToLoginIfNotSignedIn();
+  // useRedirectTo404IfNotAdmin();
 
   const { windowSize } = useWindowSize();
   const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);
@@ -90,6 +90,7 @@ export default function Programs() {
         {programs.map((program) => (
           <div className={cardClass} key={program._id}>
             <ProgramCard
+              program={program}
               type={program.type}
               title={program.name}
               dates={processDate(program.startDate)}

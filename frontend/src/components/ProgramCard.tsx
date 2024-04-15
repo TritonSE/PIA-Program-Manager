@@ -1,13 +1,17 @@
 import { Poppins } from "next/font/google";
-import Image from "next/image";
 import React from "react";
 
+import { Program } from "../api/programs";
+import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
+
+import { ProgramData } from "./ProgramForm/types";
 
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
 
 export type CardProps = {
+  program: Program;
   type: string;
   title: string;
   dates: string;
@@ -15,7 +19,7 @@ export type CardProps = {
   className?: string;
 };
 
-export function ProgramCard({ type, title, dates, color, className }: CardProps) {
+export function ProgramCard({ program, type, title, dates, color, className }: CardProps) {
   const { isTablet } = useWindowSize();
 
   let outerDivClass = "text-white grow overflow-hidden tracking-wide leading-6";
@@ -31,8 +35,34 @@ export function ProgramCard({ type, title, dates, color, className }: CardProps)
   // let numTextClass;
   // let iconClass = "relative";
 
-  let optionsHeight = 18;
-  let optionsWidth = 16;
+  let tempDate = new Date(program.startDate);
+  const startDate =
+    ("0" + (tempDate.getMonth() + 1)).slice(-2) +
+    "/" +
+    ("0" + tempDate.getDate()).slice(-2) +
+    "/" +
+    tempDate.getFullYear();
+
+  tempDate = new Date(program.endDate);
+  const endDate =
+    ("0" + (tempDate.getMonth() + 1)).slice(-2) +
+    "/" +
+    ("0" + tempDate.getDate()).slice(-2) +
+    "/" +
+    tempDate.getFullYear();
+
+  const programData: ProgramData = {
+    name: program.name,
+    abbreviation: program.abbreviation,
+    type: program.type,
+    days: program.daysOfWeek,
+    start: startDate,
+    end: endDate,
+    color: program.color,
+    renewal: "",
+    hourly: "",
+    sessions: [[]],
+  };
 
   if (isTablet) {
     outerDivClass += " rounded-lg h-36";
@@ -41,8 +71,6 @@ export function ProgramCard({ type, title, dates, color, className }: CardProps)
     typeClass = cn("uppercase relative text-[10px] top-2 left-3", poppins.className);
     titleClass = cn("capitalize relative text-sm top-2 left-3 font-bold", poppins.className);
     optionsDiv += " pr-[8px] pt-[12px]";
-    optionsHeight /= 2;
-    optionsWidth /= 2;
     dateClass = cn("relative text-[10px] top-2 left-3", poppins.className);
     // numClass = "h-5 gap-x-1.5 flex flex-row relative top-2 left-3";
     // numTextClass = cn("text-[10px]", poppins.className);
@@ -74,13 +102,9 @@ export function ProgramCard({ type, title, dates, color, className }: CardProps)
           <p className={titleClass}>{title}</p>
         </div>
         <div className={optionsDiv}>
-          <Image
-            alt="options"
-            src="/programs/Options.png"
-            height={optionsHeight}
-            width={optionsWidth}
-            className={optionsClass}
-          />
+          <div className={optionsClass}>
+            <ProgramFormButton type="edit" data={programData} />{" "}
+          </div>
         </div>
       </div>
       <div className={botDivClass}>
