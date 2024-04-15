@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
 import { Program } from "../controllers/program";
 
@@ -107,26 +107,85 @@ const makeColorValidator = () =>
       }
       return true;
     });
-// check for first chara being # and others being 1-F
-
-// verify student ids passed in, if any, are valid
-const makeStudentsValidator = () =>
-  body("students")
-    .optional()
+// const makeStudentUIDsValidator = () =>
+//   // mongoID
+//   body("studentUIDs")
+//     .exists()
+//     .withMessage("student UIDs list needed")
+//     .bail()
+//     .isArray()
+//     .bail()
+//     .withMessage("students must be an array")
+//     .custom((students: string[]) => {
+//       students.forEach((studentId) => {
+//         if (!mongoose.Types.ObjectId.isValid(studentId))
+//           throw new Error("students must be valid student ids");
+//       });
+//       return true;
+//     })
+//     .bail()
+//     .withMessage("students must be valid student ids");
+const makeRenewalDateValidator = () =>
+  body("renewalDate")
+    .exists()
+    .withMessage("renewal date needed")
+    .bail()
+    .isISO8601()
+    .withMessage("renewal date must be a valid date-time string");
+const makeHourlyPayValidator = () =>
+  body("hourlyPay")
+    .exists()
+    .withMessage("hourly pay needed")
+    .bail()
+    .isNumeric()
+    .withMessage("hourly pay must be a valid number");
+const makeSessionsValidator = () =>
+  body("sessions")
+    .exists()
+    .withMessage("sessions list needed")
+    .bail()
     .isArray()
-    .bail()
-    .withMessage("students must be an array")
-    .custom((students: string[]) => {
-      students.forEach((studentId) => {
-        if (!mongoose.Types.ObjectId.isValid(studentId))
-          throw new Error("students must be valid student ids");
-      });
+    .withMessage("sessions list must be an array")
+    .custom((value: [string[]]) => {
+      for (const arr of value) {
+        // each time interval must be array
+        if (!Array.isArray(arr)) throw new Error("each session must be formatted as an array");
+        // array: [10:00, 13:00]
+        for (let j = 0; j <= 1; j++) {
+          if (arr[j].length !== 5) throw new Error("times should be 5 characters, in XX:XX format");
+          if (arr[j][2] !== ":") throw new Error("middle character should be :");
+          // first character is 0 or 1
+          if (arr[j].charCodeAt(0) === 48 || arr[j].charCodeAt(0) === 49) {
+            if (!(arr[j].charCodeAt(1) > 47 && arr[j].charCodeAt(1) < 58))
+              throw new Error("second number should be 0-9");
+          }
+          // first character is 2
+          else if (arr[j].charCodeAt(0) === 50) {
+            if (!(arr[j].charCodeAt(1) > 47 && arr[j].charCodeAt(1) < 52))
+              throw new Error("second number should be 0-3");
+          } else {
+            throw new Error("first number should be 0, 1, or 2");
+          }
+          // third character is 0 - 5
+          if (!(arr[j].charCodeAt(3) > 47 && arr[j].charCodeAt(3) < 54))
+            throw new Error("third number should be 0-5");
+          // fourth character is 0 - 9
+          if (!(arr[j].charCodeAt(4) > 47 && arr[j].charCodeAt(4) < 58))
+            throw new Error("fourth number should be 0-9");
+          for (let i = 0; i <= 4; i++) {
+            if (i === 2) continue;
+            const code = arr[j].charCodeAt(i);
+            if (!(code > 47 && code < 58)) {
+              // numeric (0-9)
+              throw new Error("color hex must be a hex string, with characters 0-9 or A-F");
+            }
+          }
+        }
+      }
       return true;
-    })
-    .bail()
-    .withMessage("students must be valid student ids");
+    });
 
-export const createForm = [
+export const createProgram = [
   makeNameValidator(),
   makeAbbreviationValidator(),
   makeTypeValidator(),
@@ -134,5 +193,20 @@ export const createForm = [
   makeStartDateValidator(),
   makeEndDateValidator(),
   makeColorValidator(),
-  makeStudentsValidator(),
+  makeRenewalDateValidator(),
+  makeHourlyPayValidator(),
+  makeSessionsValidator(),
+];
+
+export const updateProgram = [
+  makeNameValidator(),
+  makeAbbreviationValidator(),
+  makeTypeValidator(),
+  makeDaysOfWeekValidator(),
+  makeStartDateValidator(),
+  makeEndDateValidator(),
+  makeColorValidator(),
+  makeRenewalDateValidator(),
+  makeHourlyPayValidator(),
+  makeSessionsValidator(),
 ];

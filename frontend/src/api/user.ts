@@ -18,7 +18,6 @@ export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>
   try {
     const response = await GET("/user", createAuthHeader(firebaseToken));
     const json = (await response.json()) as User;
-    console.log("user", json);
     return { success: true, data: json };
   } catch (error) {
     return handleAPIError(error);
@@ -58,9 +57,13 @@ export async function editPhoto(
   }
 }
 
-export async function getPhoto(imageId: string): Promise<APIResult<ObjectId>> {
+export async function getPhoto(
+  imageId: string,
+  firebaseToken: string,
+): Promise<APIResult<ObjectId>> {
   try {
-    const response = await GET(`/user/getPhoto/${imageId}`);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET(`/user/getPhoto/${imageId}`, headers);
     if (response.ok) {
       const blob = await response.blob();
 
@@ -75,10 +78,14 @@ export async function getPhoto(imageId: string): Promise<APIResult<ObjectId>> {
   }
 }
 
-export async function editName(newName: string, userId: string): Promise<APIResult<ObjectId>> {
+export async function editName(
+  newName: string,
+  firebaseToken: string,
+): Promise<APIResult<ObjectId>> {
   try {
-    const nameData = { newName, userId };
-    const response = await PATCH(`/user/editName`, nameData);
+    const nameData = { newName };
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/user/editName`, nameData, headers);
 
     const json = (await response.json()) as string;
     return { success: true, data: json };
@@ -87,10 +94,14 @@ export async function editName(newName: string, userId: string): Promise<APIResu
   }
 }
 
-export async function editEmail(newEmail: string, userId: string): Promise<APIResult<ObjectId>> {
+export async function editEmail(
+  newEmail: string,
+  firebaseToken: string,
+): Promise<APIResult<ObjectId>> {
   try {
-    const nameData = { newEmail, userId };
-    const response = await PATCH(`/user/editEmail`, nameData);
+    const nameData = { newEmail };
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/user/editEmail`, nameData, headers);
 
     if (response.ok) {
       const json = (await response.json()) as string;
@@ -104,10 +115,11 @@ export async function editEmail(newEmail: string, userId: string): Promise<APIRe
   }
 }
 
-export async function editLastChangedPassword(userId: string): Promise<APIResult<ObjectId>> {
+export async function editLastChangedPassword(firebaseToken: string): Promise<APIResult<ObjectId>> {
   try {
-    const dateData = { currentDate: new Date(Date.now()), userId };
-    const response = await PATCH(`/user/editLastChangedPassword`, dateData);
+    const dateData = { currentDate: new Date(Date.now()) };
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/user/editLastChangedPassword`, dateData, headers);
 
     const json = (await response.json()) as string;
     return { success: true, data: json };
