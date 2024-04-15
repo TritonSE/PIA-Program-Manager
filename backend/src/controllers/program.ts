@@ -15,6 +15,10 @@ export type Program = {
   startDate: string;
   endDate: string;
   color: string; //colorValueHex;
+  studentUIDs: string[];
+  renewalDate: string;
+  hourlyPay: string;
+  sessions: [string[]];
 };
 
 export const createProgram: RequestHandler = async (req, res, next) => {
@@ -39,7 +43,7 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
     const programId = req.params.id;
     const programData = req.body as Program;
 
-    const editedProgram = await ProgramFormModel.findOneAndUpdate({ _id: programId }, programData, {
+    const editedProgram = await ProgramModel.findOneAndUpdate({ _id: programId }, programData, {
       new: true,
     });
 
@@ -48,6 +52,10 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
     }
 
     res.status(200).json(editedProgram);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getAllPrograms: RequestHandler = async (req, res, next) => {
   try {
