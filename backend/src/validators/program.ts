@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 
 import { Program } from "../controllers/program";
 
@@ -107,24 +107,24 @@ const makeColorValidator = () =>
       }
       return true;
     });
-const makeStudentUIDsValidator = () =>
-  // mongoID
-  body("studentUIDs")
-    .exists()
-    .withMessage("student UIDs list needed")
-    .bail()
-    .isArray()
-    .bail()
-    .withMessage("students must be an array")
-    .custom((students: string[]) => {
-      students.forEach((studentId) => {
-        if (!mongoose.Types.ObjectId.isValid(studentId))
-          throw new Error("students must be valid student ids");
-      });
-      return true;
-    })
-    .bail()
-    .withMessage("students must be valid student ids");
+// const makeStudentUIDsValidator = () =>
+//   // mongoID
+//   body("studentUIDs")
+//     .exists()
+//     .withMessage("student UIDs list needed")
+//     .bail()
+//     .isArray()
+//     .bail()
+//     .withMessage("students must be an array")
+//     .custom((students: string[]) => {
+//       students.forEach((studentId) => {
+//         if (!mongoose.Types.ObjectId.isValid(studentId))
+//           throw new Error("students must be valid student ids");
+//       });
+//       return true;
+//     })
+//     .bail()
+//     .withMessage("students must be valid student ids");
 const makeRenewalDateValidator = () =>
   body("renewalDate")
     .exists()
@@ -193,7 +193,6 @@ export const createProgram = [
   makeStartDateValidator(),
   makeEndDateValidator(),
   makeColorValidator(),
-  makeStudentUIDsValidator(),
   makeRenewalDateValidator(),
   makeHourlyPayValidator(),
   makeSessionsValidator(),
@@ -207,7 +206,6 @@ export const updateProgram = [
   makeStartDateValidator(),
   makeEndDateValidator(),
   makeColorValidator(),
-  makeStudentUIDsValidator(),
   makeRenewalDateValidator(),
   makeHourlyPayValidator(),
   makeSessionsValidator(),

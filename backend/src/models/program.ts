@@ -8,12 +8,12 @@ const programSchema = new Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   color: { type: String, required: true },
-  studentUIDs: { type: [String], required: true },
+  students: { type: [Schema.Types.ObjectId], ref: "Students", required: false },
   renewalDate: { type: Date, required: true },
   hourlyPay: { type: Number, required: true },
   sessions: { type: [[String]], required: true },
 });
 
-type ProgramForm = InferSchemaType<typeof programSchema>;
+type Program = InferSchemaType<typeof programSchema>;
 
-export default model<ProgramForm>("ProgramForm", programSchema);
+export default model<Program>("Program", programSchema);
