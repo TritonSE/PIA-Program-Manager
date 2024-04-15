@@ -9,7 +9,7 @@ import * as ProgramValidator from "../validators/program";
 
 const router = express.Router();
 
-router.post("/", ProgramValidator.createProgram, ProgramController.createProgram);
+router.post("/create", ProgramValidator.createForm, ProgramController.createProgram);
 router.get("/all", ProgramController.getAllPrograms);
 
 export default router;

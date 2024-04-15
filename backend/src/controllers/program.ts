@@ -29,7 +29,7 @@ export const createProgram: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getAllPrograms: RequestHandler = async (_, res, next) => {
+export const getAllPrograms: RequestHandler = async (req, res, next) => {
   try {
     const programs = await ProgramModel.find();
 

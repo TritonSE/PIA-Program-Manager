@@ -3,9 +3,9 @@ import Image from "next/image";
 
 import { TableBody, TableCell, TableRow } from "../ui/table";
 
-import { Student } from "@/api/students";
+import { StudentTableRow } from "./types";
 
-export default function TBody({ table }: { table: Table<Student> }) {
+export default function TBody({ table }: { table: Table<StudentTableRow> }) {
   // If there are no students, display a placeholder
   if (table.getRowModel().rows.length === 0) {
     return (

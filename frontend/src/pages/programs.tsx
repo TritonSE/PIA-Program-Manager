@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 
 import { Program, getAllPrograms } from "../api/programs";
 import { ProgramCard } from "../components/ProgramCard";
+import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
@@ -86,9 +87,7 @@ export default function Programs() {
         <h1 className={titleClass}>Programs</h1>
         <div className="grow"></div>
         {/* Should be replaced with Add Button when created */}
-        <button type="submit" className={addTaskClass}>
-          + Create Program
-        </button>
+        <ProgramFormButton type="add" />{" "}
       </div>
       <div className={cardsGridClass}>
         {programs.map((program) => (

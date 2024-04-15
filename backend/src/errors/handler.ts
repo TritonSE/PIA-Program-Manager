@@ -10,7 +10,7 @@ export const errorHandler = (err: Error, _req: Request, res: Response, _nxt: Nex
   if (!err) return;
   if (err instanceof CustomError && !(err instanceof InternalError)) {
     console.log(err.displayMessage(true));
-    res.status(err.status).send(err.displayMessage(true));
+    res.status(err.status).send({ error: err.message });
     return;
   }
 
