@@ -1,3 +1,4 @@
+import NotificationTable from "@/components/NotificationCard/NotificationTable";
 import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export default function Notifications() {
@@ -5,7 +6,13 @@ export default function Notifications() {
   useRedirectTo404IfNotAdmin();
   return (
     <main>
-      <h1>PIA Notifications Page!</h1>
+      <div className="my-[30px] ml-[20px] mr-[80px] space-y-[20px]">
+        <div className="font-[alternate-gothic] text-4xl uppercase">Notifications</div>
+        <div className="font-[Poppins] text-[16px]">
+          Review information of new account creations below to approve or deny them.{" "}
+        </div>
+        <NotificationTable />
+      </div>
     </main>
   );
 }

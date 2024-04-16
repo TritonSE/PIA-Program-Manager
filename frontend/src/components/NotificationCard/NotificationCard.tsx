@@ -1,3 +1,33 @@
-export default function NotificationCard() {
-  return <h1>Hiii</h1>;
+type UserInfo = {
+  name: string;
+  email: string;
+  account_type: string;
+};
+
+export default function NotificationCard({ name, email, account_type }: UserInfo) {
+  return (
+    <>
+      <div
+        className={
+          "flex items-center justify-between px-[40px] py-[60px] font-['Poppins'] text-[18px] "
+        }
+      >
+        <div id="person_info" className="">
+          <div className="font-['Poppins-Bold']">Name: {name}</div>
+          Email: {email}
+          <br></br>
+          Account Type: {account_type}
+        </div>
+
+        <div id="buttons" className="flex items-center space-x-[30px]">
+          <button className="h-[48px] w-[116px] rounded-full border border-pia_dark_green bg-pia_primary_white text-pia_dark_green">
+            Deny
+          </button>
+          <button className="h-[48px] w-[116px] rounded-full border bg-pia_dark_green text-pia_primary_white">
+            Approve
+          </button>
+        </div>
+      </div>
+    </>
+  );
 }

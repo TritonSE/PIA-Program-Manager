@@ -10,6 +10,19 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "poppins";
+  src: url("./Poppins-Regular.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "poppins-bold";
+  src: url("./Poppins-Bold.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
