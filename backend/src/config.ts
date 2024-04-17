@@ -17,6 +17,7 @@ const serviceAccountKey = throwIfUndefined(
   process.env.SERVICE_ACCOUNT_KEY,
   InternalError.NO_SERVICE_ACCOUNT_KEY,
 );
+// console.log(`SERVICE_ACCOUNT_KEY: ${serviceAccountKey}`);
 
 const firebaseConfig = throwIfUndefined(
   process.env.APP_FIREBASE_CONFIG,
