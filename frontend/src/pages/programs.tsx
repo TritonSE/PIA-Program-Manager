@@ -6,18 +6,7 @@ import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
-
-function processDate(startString: Date): string {
-  const startDate = new Date(startString);
-
-  const options = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  } as const;
-
-  return "Started " + startDate.toLocaleDateString("en-US", options);
-}
+import { ProgramMap } from "@/components/StudentsTable/types";
 
 export default function Programs() {
   //useRedirectToLoginIfNotSignedIn();
@@ -28,22 +17,27 @@ export default function Programs() {
   const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);
   const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
 
-  const [programs, setPrograms] = useState<Program[]>([]);
+  const [programs, setPrograms] = useState<ProgramMap>({});
 
   useEffect(() => {
     getAllPrograms().then(
       (result) => {
         if (result.success) {
-          setPrograms(result.data);
-        } else {
-          alert(result.error);
+          const programsObject = result.data.reduce(
+            (obj, program) => {
+              obj[program._id] = program;
+              return obj;
+            },
+            {} as Record<string, Program>,
+          );
+          setPrograms(programsObject);
         }
       },
       (error) => {
         console.log(error);
       },
     );
-  }, []);
+  });
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar";
   let titleClass = "font-[alternate-gothic]";
@@ -84,18 +78,12 @@ export default function Programs() {
         <h1 className={titleClass}>Programs</h1>
         <div className="grow"></div>
         {/* Should be replaced with Add Button when created */}
-        <ProgramFormButton type="add" />{" "}
+        <ProgramFormButton type="add" setPrograms={setPrograms} />{" "}
       </div>
       <div className={cardsGridClass}>
-        {programs.map((program) => (
+        {Object.values(programs).map((program) => (
           <div className={cardClass} key={program._id}>
-            <ProgramCard
-              program={program}
-              type={program.type}
-              title={program.name}
-              dates={processDate(program.startDate)}
-              color={program.color}
-            />
+            <ProgramCard program={program} setPrograms={setPrograms} />
           </div>
         ))}
       </div>

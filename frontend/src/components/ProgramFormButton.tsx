@@ -14,8 +14,12 @@ import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
 import { Textfield } from "./Textfield";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
 
+import {ProgramMap} from "./StudentsTable/types"
+
+
 type BaseProperties = {
   classname?: string;
+  setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
 type EditProperties = BaseProperties & {
@@ -33,6 +37,7 @@ type ProgramFormProperties = EditProperties | AddProperties;
 export default function ProgramFormButton({
   type = "edit",
   data = null,
+  setPrograms,
   classname,
 }: ProgramFormProperties) {
   const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<ProgramData>();
@@ -49,9 +54,9 @@ export default function ProgramFormButton({
   const isMobile = useMemo(() => width <= 640, [width]);
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
-    const sanitizedSessions = formData.sessions.filter(
+    const sanitizedSessions = formData.sessions ? formData.sessions.filter(
       (session: string[]) => session[0] || session[1],
-    );
+    ) : [["",""]];
 
     const programRequest: CreateProgramRequest = {
       name: formData.name,
@@ -71,7 +76,10 @@ export default function ProgramFormButton({
         .then((result) => {
           if (result.success) {
             setOpenForm(false);
-            console.log(`${type} program`, programRequest);
+            console.log(`${type} program`, result.data);
+            setPrograms((prevPrograms: ProgramMap) => {
+              return {...prevPrograms, [result.data._id]: {...result.data}};
+            });
             reset();
           } else {
             console.log(result.error);
@@ -89,7 +97,15 @@ export default function ProgramFormButton({
         .then((result) => {
         if (result.success) {
           setOpenForm(false);
-          console.log(`${type} program`, programRequest);
+          console.log(`${type} program`, result.data);
+          setPrograms((prevPrograms: ProgramMap) => {
+            if (Object.keys(prevPrograms).includes(result.data._id))
+              return {...prevPrograms, [result.data._id]: {...result.data}};
+            else
+              console.log("Program ID does not exist");
+              alert("Program ID does not exist");
+              return prevPrograms;
+          });
           reset();
         } else {
           console.log(result.error);
