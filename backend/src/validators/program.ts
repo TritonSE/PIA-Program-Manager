@@ -141,7 +141,7 @@ const makeRenewalDateValidator = () =>
     .isISO8601()
     .withMessage("renewal date must be a valid date-time string");
 const makeHourlyPayValidator = () =>
-  body("hourlyPay")
+  body("hourly")
     .exists()
     .withMessage("hourly pay needed")
     .bail()

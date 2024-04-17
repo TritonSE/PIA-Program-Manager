@@ -49,6 +49,10 @@ export default function ProgramFormButton({
   const isMobile = useMemo(() => width <= 640, [width]);
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
+    const sanitizedSessions = formData.sessions.filter(
+      (session: string[]) => session[0] && session[1],
+    );
+
     const programRequest: CreateProgramRequest = {
       name: formData.name,
       abbreviation: formData.abbreviation,
@@ -59,16 +63,16 @@ export default function ProgramFormButton({
       color: formData.color,
       renewalDate: new Date(formData.renewalDate),
       hourly: formData.hourly,
-      sessions: formData.sessions,
+      sessions: sanitizedSessions,
     };
-
+    console.log(`${type} program`, programRequest);
     if (type === "add") {
       createProgram(programRequest)
         .then((result) => {
           if (result.success) {
             setOpenForm(false);
             console.log(`${type} program`, programRequest);
-            reset();
+            //reset();
           } else {
             console.log(result.error);
             alert("Unable to create program: " + result.error);
@@ -183,11 +187,7 @@ export default function ProgramFormButton({
 
             <div className="flex flex-row-reverse gap-3">
               <Button label={type === "add" ? "Create" : "Save Changes"} type="submit" />
-              <ProgramCancel
-                onSubmit={() => {
-                  setOpenForm(false);
-                }}
-              />
+              <ProgramCancel setOpen={setOpenForm} />
             </div>
           </form>
         </DialogContentSlide>
@@ -218,12 +218,7 @@ export default function ProgramFormButton({
           </DialogTrigger>
         )}
         <DialogContent className="bg-white p-3">
-          <ProgramCancel
-            onSubmit={() => {
-              setOpenForm(false);
-            }}
-            isMobile={isMobile}
-          />
+          <ProgramCancel setOpen={setOpenForm} isMobile={isMobile} />
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             {type === "edit" && (
               <Dialog open={openArchive}>
