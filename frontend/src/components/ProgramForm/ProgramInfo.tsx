@@ -1,17 +1,19 @@
 import { Path, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
+import { Program } from "../../api/programs";
 import { cn } from "../../lib/utils";
 import { ColorRadio } from "../Radio";
+import { convertDateToString } from "../StudentForm/StudentBackground";
 import { Textfield } from "../Textfield";
 
 import { SessionList } from "./ProgramSession";
-import { ProgramData, programColor } from "./types";
+import { ProgramData } from "./types";
 
 type ProgramInfoProperties = {
   register: UseFormRegister<ProgramData>;
   classname?: string;
   setCalendarValue: UseFormSetValue<ProgramData>;
-  data: ProgramData | null;
+  data: Program | null;
 };
 
 type CheckcircleProps = {
@@ -52,12 +54,9 @@ export function MoneyTextfield({
         {...register(name)}
         className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         id={label}
-        type="number"
         onChange={undefined}
         placeholder={"0.00"}
         defaultValue={defaultValue}
-        max={99999.99}
-        min={0.0}
       />
       <div className="w-24 overflow-hidden text-center text-lg font-bold text-black">
         <div>USD</div>
@@ -177,22 +176,22 @@ export function ProgramInfo({
           <div className="font-normal text-neutral-400">Start Date</div>
           <Textfield
             register={register}
-            name="start"
+            name="startDate"
             placeholder="00/00/0000"
             calendar={true}
             setCalendarValue={setCalendarValue}
-            defaultValue={data?.start}
+            defaultValue={data ? convertDateToString(data.endDate) : ""}
           />
         </div>
         <div className="flex w-1/2 w-full flex-col gap-1 sm:gap-3">
           <div className="font-normal text-neutral-400">End Date</div>
           <Textfield
             register={register}
-            name="end"
+            name="endDate"
             placeholder="00/00/0000"
             calendar={true}
             setCalendarValue={setCalendarValue}
-            defaultValue={data?.end}
+            defaultValue={data ? convertDateToString(data.endDate) : ""}
           />
         </div>
       </div>
@@ -201,18 +200,18 @@ export function ProgramInfo({
         <div className="font-normal text-neutral-400">Renewal Date</div>
         <Textfield
           register={register}
-          name="renewal"
+          name="renewalDate"
           placeholder="00/00/0000"
           calendar={true}
           setCalendarValue={setCalendarValue}
-          defaultValue={data?.start}
+          defaultValue={data ? convertDateToString(data.endDate) : ""}
         />
       </div>
 
       <div className="flex w-1/2 flex-col gap-1 pr-3 sm:gap-3">
         <div className="font-normal text-neutral-400">Hourly Rate</div>
         <div>
-          <MoneyTextfield register={register} name="hourly" defaultValue={data?.start} />
+          <MoneyTextfield register={register} name="hourly" defaultValue={data?.hourly} />
         </div>
       </div>
 
@@ -223,8 +222,8 @@ export function ProgramInfo({
         <Checkcircle
           register={register}
           name="days"
-          options={["Su", "M", "Tu", "W", "Th", "F", "Sa"]}
-          data={data?.days}
+          options={["Su", "M", "T", "W", "Th", "F", "Sa"]}
+          data={data?.daysOfWeek}
         />
       </div>
 
@@ -234,10 +233,10 @@ export function ProgramInfo({
         <div className="text-center text-base font-normal text-neutral-400">Color (Cover)</div>
 
         <ColorRadio
-          options={["red", "yellow", "green", "teal", "blue", "violet", "fuchsia"]}
+          options={["#FF7A5E", "#FFB800", "#B6BF0E", "#4FA197", "#5DADE2", "#7986CB", "#EE6CEE"]}
           name="color"
           register={register}
-          defaultValue={data?.color as programColor}
+          defaultValue={data?.color}
         />
       </div>
     </div>

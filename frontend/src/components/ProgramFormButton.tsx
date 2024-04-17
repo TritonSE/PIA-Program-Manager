@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import { Program, createProgram, editProgram } from "../api/programs";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -9,22 +10,24 @@ import { Button } from "./Button";
 import ProgramArchiveHeader from "./ProgramForm/ProgramArchive";
 import ProgramCancel from "./ProgramForm/ProgramCancel";
 import { ProgramInfo } from "./ProgramForm/ProgramInfo";
-import { ProgramData } from "./ProgramForm/types";
+import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
+import { ProgramMap } from "./StudentsTable/types";
 import { Textfield } from "./Textfield";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
 
 type BaseProperties = {
   classname?: string;
+  setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
 type EditProperties = BaseProperties & {
   type: "edit";
-  data: ProgramData | null;
+  data: Program | null;
 };
 
 type AddProperties = BaseProperties & {
   type: "add";
-  data?: ProgramData | null;
+  data?: Program | null;
 };
 
 type ProgramFormProperties = EditProperties | AddProperties;
@@ -32,6 +35,7 @@ type ProgramFormProperties = EditProperties | AddProperties;
 export default function ProgramFormButton({
   type = "edit",
   data = null,
+  setPrograms,
   classname,
 }: ProgramFormProperties) {
   const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<ProgramData>();
@@ -48,9 +52,66 @@ export default function ProgramFormButton({
   const isMobile = useMemo(() => width <= 640, [width]);
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
-    setOpenForm(false);
-    reset();
-    console.log(`${type} program`, formData);
+    const sanitizedSessions = formData.sessions
+      ? formData.sessions.filter((session: string[]) => session[0] || session[1])
+      : [["", ""]];
+
+    const programRequest: CreateProgramRequest = {
+      name: formData.name,
+      abbreviation: formData.abbreviation,
+      type: formData.type,
+      daysOfWeek: formData.days ? formData.days : [],
+      startDate: new Date(formData.startDate),
+      endDate: new Date(formData.endDate),
+      color: formData.color,
+      renewalDate: new Date(formData.renewalDate),
+      hourly: formData.hourly,
+      sessions: sanitizedSessions,
+    };
+    console.log(`${type} program`, programRequest);
+    if (type === "add") {
+      createProgram(programRequest)
+        .then((result) => {
+          if (result.success) {
+            setOpenForm(false);
+            console.log(`${type} program`, result.data);
+            setPrograms((prevPrograms: ProgramMap) => {
+              return { ...prevPrograms, [result.data._id]: { ...result.data } };
+            });
+            reset();
+          } else {
+            console.log(result.error);
+            alert("Unable to create program: " + result.error);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+    if (type === "edit" && data) {
+      const updatedProgram: Program = { ...programRequest, _id: data._id, students: data.students };
+      console.log(`${type} program`, updatedProgram);
+      editProgram(updatedProgram)
+        .then((result) => {
+          if (result.success) {
+            setOpenForm(false);
+            console.log(`${type} program`, result.data);
+            setPrograms((prevPrograms: ProgramMap) => {
+              if (Object.keys(prevPrograms).includes(result.data._id))
+                return { ...prevPrograms, [result.data._id]: { ...result.data } };
+              else console.log("Program ID does not exist");
+              alert("Program ID does not exist");
+              return prevPrograms;
+            });
+          } else {
+            console.log(result.error);
+            alert("Unable to create program: " + result.error);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return !isMobile ? (
@@ -83,13 +144,13 @@ export default function ProgramFormButton({
               <Dialog open={openArchive}>
                 <div className="absolute inset-3 flex h-auto justify-end">
                   <DialogTrigger asChild>
-                    <Button
+                    {/*<Button
                       label="Archive"
                       kind="destructive-secondary"
                       onClick={() => {
                         setOpenArchive(true);
                       }}
-                    />
+                    />*/}
                   </DialogTrigger>
                 </div>
                 <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">
@@ -157,8 +218,9 @@ export default function ProgramFormButton({
             <div className="flex flex-row-reverse gap-3">
               <Button label={type === "add" ? "Create" : "Save Changes"} type="submit" />
               <ProgramCancel
-                onSubmit={() => {
+                onCancel={() => {
                   setOpenForm(false);
+                  reset();
                 }}
               />
             </div>
@@ -192,23 +254,25 @@ export default function ProgramFormButton({
         )}
         <DialogContent className="bg-white p-3">
           <ProgramCancel
-            onSubmit={() => {
-              setOpenForm(false);
-            }}
             isMobile={isMobile}
+            onCancel={() => {
+              setOpenForm(false);
+              reset();
+            }}
           />
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             {type === "edit" && (
               <Dialog open={openArchive}>
                 <div className="absolute right-0 top-0 flex max-h-[5%] max-w-[50%] justify-end pr-3 pt-1 pt-4 text-sm text-destructive">
                   <DialogTrigger asChild>
+                    {/*
                     <div
                       onClick={() => {
                         setOpenArchive(true);
                       }}
                     >
                       Archive
-                    </div>
+                    </div>*/}
                   </DialogTrigger>
                 </div>
                 <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">

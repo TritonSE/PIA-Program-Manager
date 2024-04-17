@@ -6,25 +6,33 @@ import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
-import { ProgramData } from "./ProgramForm/types";
+import { ProgramMap } from "./StudentsTable/types";
 
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
 
 export type CardProps = {
   program: Program;
-  type: string;
-  title: string;
-  dates: string;
-  color: string;
   className?: string;
+  setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
-export function ProgramCard({ program, type, title, dates, color, className }: CardProps) {
+function processDate(startString: Date): string {
+  const startDate = new Date(startString);
+
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  } as const;
+
+  return "Started " + startDate.toLocaleDateString("en-US", options);
+}
+
+export function ProgramCard({ program, className, setPrograms }: CardProps) {
   const { isTablet } = useWindowSize();
 
   let outerDivClass = "text-white grow overflow-hidden tracking-wide leading-6";
   let topDivClass = "flex flex-row";
-  console.log(topDivClass);
   let botDivClass = "text-black bg-white";
   let typeClass;
   let titleClass;
@@ -35,33 +43,19 @@ export function ProgramCard({ program, type, title, dates, color, className }: C
   // let numTextClass;
   // let iconClass = "relative";
 
-  let tempDate = new Date(program.startDate);
-  const startDate =
-    ("0" + (tempDate.getMonth() + 1)).slice(-2) +
-    "/" +
-    ("0" + tempDate.getDate()).slice(-2) +
-    "/" +
-    tempDate.getFullYear();
-
-  tempDate = new Date(program.endDate);
-  const endDate =
-    ("0" + (tempDate.getMonth() + 1)).slice(-2) +
-    "/" +
-    ("0" + tempDate.getDate()).slice(-2) +
-    "/" +
-    tempDate.getFullYear();
-
-  const programData: ProgramData = {
+  const programFields: Program = {
+    _id: program._id,
     name: program.name,
     abbreviation: program.abbreviation,
     type: program.type,
-    days: program.daysOfWeek,
-    start: startDate,
-    end: endDate,
+    daysOfWeek: program.daysOfWeek,
+    startDate: program.startDate,
+    endDate: program.endDate,
     color: program.color,
-    renewal: "",
-    hourly: "",
-    sessions: [[]],
+    renewalDate: program.renewalDate,
+    hourly: program.hourly,
+    sessions: program.sessions,
+    students: program.students,
   };
 
   if (isTablet) {
@@ -92,23 +86,21 @@ export function ProgramCard({ program, type, title, dates, color, className }: C
     outerDivClass = cn(outerDivClass, className);
   }
 
-  console.log(topDivClass);
-
   return (
     <div className={outerDivClass}>
-      <div className={topDivClass} style={{ backgroundColor: color }}>
+      <div className={topDivClass} style={{ backgroundColor: program.color }}>
         <div>
-          <p className={typeClass}>{type} Program</p>
-          <p className={titleClass}>{title}</p>
+          <p className={typeClass}>{program.type} Program</p>
+          <p className={titleClass}>{program.name}</p>
         </div>
         <div className={optionsDiv}>
           <div className={optionsClass}>
-            <ProgramFormButton type="edit" data={programData} />{" "}
+            <ProgramFormButton type="edit" data={programFields} setPrograms={setPrograms} />{" "}
           </div>
         </div>
       </div>
       <div className={botDivClass}>
-        <p className={dateClass}>{dates}</p>
+        <p className={dateClass}>{processDate(program.startDate)}</p>
         {/*
         <div className={numClass}>
           <Image

@@ -10,7 +10,7 @@ const programSchema = new Schema({
   color: { type: String, required: true },
   students: { type: [Schema.Types.ObjectId], ref: "Students", required: false },
   renewalDate: { type: Date, required: true },
-  hourlyPay: { type: Number, required: true },
+  hourly: { type: Number, required: true },
   sessions: { type: [[String]], required: true },
 });
 

@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-// import mongoose from "mongoose";
+//import mongoose from "mongoose";
 
 import { Program } from "../controllers/program";
 
@@ -53,8 +53,16 @@ const makeDaysOfWeekValidator = () =>
     .custom((value: string[]) => {
       if (value.length === 0) throw new Error("days of week selection needed");
       for (const valuei of value) {
-        if (valuei !== "M" && valuei !== "T" && valuei !== "W" && valuei !== "TH" && valuei !== "F")
-          throw new Error("days of week selection must be M, T, W, TH, or F");
+        if (
+          valuei !== "M" &&
+          valuei !== "T" &&
+          valuei !== "W" &&
+          valuei !== "Th" &&
+          valuei !== "F" &&
+          valuei !== "Sa" &&
+          valuei !== "Su"
+        )
+          throw new Error("days of week selection must be M, T, W, Th, F, Sa, or Su");
       }
       return true;
     });
@@ -107,24 +115,24 @@ const makeColorValidator = () =>
       }
       return true;
     });
-// const makeStudentUIDsValidator = () =>
-//   // mongoID
-//   body("studentUIDs")
-//     .exists()
-//     .withMessage("student UIDs list needed")
-//     .bail()
-//     .isArray()
-//     .bail()
-//     .withMessage("students must be an array")
-//     .custom((students: string[]) => {
-//       students.forEach((studentId) => {
-//         if (!mongoose.Types.ObjectId.isValid(studentId))
-//           throw new Error("students must be valid student ids");
-//       });
-//       return true;
-//     })
-//     .bail()
-//     .withMessage("students must be valid student ids");
+/*const makeStudentUIDsValidator = () =>
+  // mongoID
+  body("studentUIDs")
+    .exists()
+    .withMessage("student UIDs list needed")
+    .bail()
+    .isArray()
+    .bail()
+    .withMessage("students must be an array")
+    .custom((students: string[]) => {
+      students.forEach((studentId) => {
+        if (!mongoose.Types.ObjectId.isValid(studentId))
+          throw new Error("students must be valid student ids");
+      });
+      return true;
+    })
+    .bail()
+    .withMessage("students must be valid student ids");*/
 const makeRenewalDateValidator = () =>
   body("renewalDate")
     .exists()
@@ -133,55 +141,35 @@ const makeRenewalDateValidator = () =>
     .isISO8601()
     .withMessage("renewal date must be a valid date-time string");
 const makeHourlyPayValidator = () =>
-  body("hourlyPay")
+  body("hourly")
     .exists()
     .withMessage("hourly pay needed")
     .bail()
     .isNumeric()
-    .withMessage("hourly pay must be a valid number");
+    .withMessage("hourly pay must be a valid number")
+    .bail();
+
 const makeSessionsValidator = () =>
   body("sessions")
     .exists()
-    .withMessage("sessions list needed")
+    .withMessage("Must specify a session time")
     .bail()
     .isArray()
-    .withMessage("sessions list must be an array")
-    .custom((value: [string[]]) => {
-      for (const arr of value) {
-        // each time interval must be array
-        if (!Array.isArray(arr)) throw new Error("each session must be formatted as an array");
-        // array: [10:00, 13:00]
-        for (let j = 0; j <= 1; j++) {
-          if (arr[j].length !== 5) throw new Error("times should be 5 characters, in XX:XX format");
-          if (arr[j][2] !== ":") throw new Error("middle character should be :");
-          // first character is 0 or 1
-          if (arr[j].charCodeAt(0) === 48 || arr[j].charCodeAt(0) === 49) {
-            if (!(arr[j].charCodeAt(1) > 47 && arr[j].charCodeAt(1) < 58))
-              throw new Error("second number should be 0-9");
-          }
-          // first character is 2
-          else if (arr[j].charCodeAt(0) === 50) {
-            if (!(arr[j].charCodeAt(1) > 47 && arr[j].charCodeAt(1) < 52))
-              throw new Error("second number should be 0-3");
-          } else {
-            throw new Error("first number should be 0, 1, or 2");
-          }
-          // third character is 0 - 5
-          if (!(arr[j].charCodeAt(3) > 47 && arr[j].charCodeAt(3) < 54))
-            throw new Error("third number should be 0-5");
-          // fourth character is 0 - 9
-          if (!(arr[j].charCodeAt(4) > 47 && arr[j].charCodeAt(4) < 58))
-            throw new Error("fourth number should be 0-9");
-          for (let i = 0; i <= 4; i++) {
-            if (i === 2) continue;
-            const code = arr[j].charCodeAt(i);
-            if (!(code > 47 && code < 58)) {
-              // numeric (0-9)
-              throw new Error("color hex must be a hex string, with characters 0-9 or A-F");
-            }
-          }
-        }
-      }
+    .withMessage("Sessions must be a 2D String Array")
+    .bail()
+    .custom((sessions: string[][]) => {
+      if (sessions.length === 0) throw new Error("Must specify a session time");
+      sessions.forEach((session) => {
+        if (!Array.isArray(session)) throw new Error("Session must be an array");
+        if (session.length !== 2)
+          throw new Error("Session must only have a start time and an end time");
+        if (typeof session[0] !== "string") throw new Error("Session times must be strings");
+        if (!(session[0] && session[1])) throw new Error("Must specify a session time");
+        session.forEach((time: string) => {
+          if (!new RegExp("^([01][0-9]|[0-9]|2[0-3]):[0-5][0-9]$").test(time))
+            throw new Error("Time must mach HH:MM format");
+        });
+      });
       return true;
     });
 
@@ -209,4 +197,5 @@ export const updateProgram = [
   makeRenewalDateValidator(),
   makeHourlyPayValidator(),
   makeSessionsValidator(),
+  //makeStudentUIDsValidator(),
 ];
