@@ -2,11 +2,11 @@ import { Button } from "../Button";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../ui/dialog";
 
 type cancelProps = {
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isMobile?: boolean;
+  onCancel: () => void;
 };
 
-export default function ProgramCancel({setOpen, isMobile = false }: cancelProps) {
+export default function ProgramCancel({isMobile = false, onCancel }: cancelProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -50,7 +50,7 @@ export default function ProgramCancel({setOpen, isMobile = false }: cancelProps)
               <Button label="Back" kind="destructive-secondary" />
             </DialogClose>
             <DialogClose asChild>
-              <Button label="Leave" kind="destructive" onClick={() => {setOpen(false)}} />
+              <Button label="Leave" kind="destructive" onClick={onCancel} />
             </DialogClose>
           </div>
         </div>

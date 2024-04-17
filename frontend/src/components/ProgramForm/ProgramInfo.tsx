@@ -55,12 +55,9 @@ export function MoneyTextfield({
         {...register(name)}
         className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
         id={label}
-        type="number"
         onChange={undefined}
         placeholder={"0.00"}
         defaultValue={defaultValue}
-        max={99999.99}
-        min={0.0}
       />
       <div className="w-24 overflow-hidden text-center text-lg font-bold text-black">
         <div>USD</div>

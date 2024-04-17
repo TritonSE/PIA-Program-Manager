@@ -14,8 +14,7 @@ import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
 import { Textfield } from "./Textfield";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
 
-import {ProgramMap} from "./StudentsTable/types"
-
+import { ProgramMap } from "./StudentsTable/types";
 
 type BaseProperties = {
   classname?: string;
@@ -54,9 +53,9 @@ export default function ProgramFormButton({
   const isMobile = useMemo(() => width <= 640, [width]);
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
-    const sanitizedSessions = formData.sessions ? formData.sessions.filter(
-      (session: string[]) => session[0] || session[1],
-    ) : [["",""]];
+    const sanitizedSessions = formData.sessions
+      ? formData.sessions.filter((session: string[]) => session[0] || session[1])
+      : [["", ""]];
 
     const programRequest: CreateProgramRequest = {
       name: formData.name,
@@ -78,7 +77,7 @@ export default function ProgramFormButton({
             setOpenForm(false);
             console.log(`${type} program`, result.data);
             setPrograms((prevPrograms: ProgramMap) => {
-              return {...prevPrograms, [result.data._id]: {...result.data}};
+              return { ...prevPrograms, [result.data._id]: { ...result.data } };
             });
             reset();
           } else {
@@ -91,30 +90,28 @@ export default function ProgramFormButton({
         });
     }
     if (type === "edit" && data) {
-      const updatedProgram: Program = {...programRequest, _id: data._id, students: data.students};
+      const updatedProgram: Program = { ...programRequest, _id: data._id, students: data.students };
       console.log(`${type} program`, updatedProgram);
       editProgram(updatedProgram)
         .then((result) => {
-        if (result.success) {
-          setOpenForm(false);
-          console.log(`${type} program`, result.data);
-          setPrograms((prevPrograms: ProgramMap) => {
-            if (Object.keys(prevPrograms).includes(result.data._id))
-              return {...prevPrograms, [result.data._id]: {...result.data}};
-            else
-              console.log("Program ID does not exist");
+          if (result.success) {
+            setOpenForm(false);
+            console.log(`${type} program`, result.data);
+            setPrograms((prevPrograms: ProgramMap) => {
+              if (Object.keys(prevPrograms).includes(result.data._id))
+                return { ...prevPrograms, [result.data._id]: { ...result.data } };
+              else console.log("Program ID does not exist");
               alert("Program ID does not exist");
               return prevPrograms;
-          });
-          reset();
-        } else {
-          console.log(result.error);
-          alert("Unable to create program: " + result.error);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+            });
+          } else {
+            console.log(result.error);
+            alert("Unable to create program: " + result.error);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
@@ -148,13 +145,13 @@ export default function ProgramFormButton({
               <Dialog open={openArchive}>
                 <div className="absolute inset-3 flex h-auto justify-end">
                   <DialogTrigger asChild>
-                    <Button
+                    {/*<Button
                       label="Archive"
                       kind="destructive-secondary"
                       onClick={() => {
                         setOpenArchive(true);
                       }}
-                    />
+                    />*/}
                   </DialogTrigger>
                 </div>
                 <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">
@@ -221,7 +218,12 @@ export default function ProgramFormButton({
 
             <div className="flex flex-row-reverse gap-3">
               <Button label={type === "add" ? "Create" : "Save Changes"} type="submit" />
-              <ProgramCancel setOpen={setOpenForm} />
+              <ProgramCancel
+                onCancel={() => {
+                  setOpenForm(false);
+                  reset();
+                }}
+              />
             </div>
           </form>
         </DialogContentSlide>
@@ -252,19 +254,26 @@ export default function ProgramFormButton({
           </DialogTrigger>
         )}
         <DialogContent className="bg-white p-3">
-          <ProgramCancel setOpen={setOpenForm} isMobile={isMobile} />
+          <ProgramCancel
+            isMobile={isMobile}
+            onCancel={() => {
+              setOpenForm(false);
+              reset();
+            }}
+          />
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             {type === "edit" && (
               <Dialog open={openArchive}>
                 <div className="absolute right-0 top-0 flex max-h-[5%] max-w-[50%] justify-end pr-3 pt-1 pt-4 text-sm text-destructive">
                   <DialogTrigger asChild>
+                    {/*
                     <div
                       onClick={() => {
                         setOpenArchive(true);
                       }}
                     >
                       Archive
-                    </div>
+                    </div>*/}
                   </DialogTrigger>
                 </div>
                 <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">

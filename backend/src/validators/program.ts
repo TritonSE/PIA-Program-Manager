@@ -146,7 +146,8 @@ const makeHourlyPayValidator = () =>
     .withMessage("hourly pay needed")
     .bail()
     .isNumeric()
-    .withMessage("hourly pay must be a valid number");
+    .withMessage("hourly pay must be a valid number")
+    .bail();
 
 const makeSessionsValidator = () =>
   body("sessions")
