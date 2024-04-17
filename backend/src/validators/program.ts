@@ -157,11 +157,13 @@ const makeSessionsValidator = () =>
     .withMessage("Sessions must be a 2D String Array")
     .bail()
     .custom((sessions: string[][]) => {
+      if (sessions.length === 0) throw new Error("Must specify a session time");
       sessions.forEach((session) => {
         if (!Array.isArray(session)) throw new Error("Session must be an array");
         if (session.length !== 2)
           throw new Error("Session must only have a start time and an end time");
         if (typeof session[0] !== "string") throw new Error("Session times must be strings");
+        if (!(session[0] && session[1])) throw new Error("Must specify a session time");
         session.forEach((time: string) => {
           if (!new RegExp("^([01][0-9]|[0-9]|2[0-3]):[0-5][0-9]$").test(time))
             throw new Error("Time must mach HH:MM format");

@@ -32,7 +32,6 @@ export function ProgramCard({ program, className, setPrograms }: CardProps) {
 
   let outerDivClass = "text-white grow overflow-hidden tracking-wide leading-6";
   let topDivClass = "flex flex-row";
-  console.log(topDivClass);
   let botDivClass = "text-black bg-white";
   let typeClass;
   let titleClass;
@@ -57,7 +56,7 @@ export function ProgramCard({ program, className, setPrograms }: CardProps) {
     sessions: program.sessions,
     students: program.students,
   };
-  
+
   if (isTablet) {
     outerDivClass += " rounded-lg h-36";
     topDivClass += " h-20";
@@ -85,8 +84,6 @@ export function ProgramCard({ program, className, setPrograms }: CardProps) {
   if (className) {
     outerDivClass = cn(outerDivClass, className);
   }
-
-  console.log(topDivClass);
 
   return (
     <div className={outerDivClass}>
