@@ -35,33 +35,19 @@ export function ProgramCard({ program, type, title, dates, color, className }: C
   // let numTextClass;
   // let iconClass = "relative";
 
-  let tempDate = new Date(program.startDate);
-  const startDate =
-    ("0" + (tempDate.getMonth() + 1)).slice(-2) +
-    "/" +
-    ("0" + tempDate.getDate()).slice(-2) +
-    "/" +
-    tempDate.getFullYear();
-
-  tempDate = new Date(program.endDate);
-  const endDate =
-    ("0" + (tempDate.getMonth() + 1)).slice(-2) +
-    "/" +
-    ("0" + tempDate.getDate()).slice(-2) +
-    "/" +
-    tempDate.getFullYear();
-
-  const programData: ProgramData = {
+  const programFields: Program = {
+    _id: program._id,
     name: program.name,
     abbreviation: program.abbreviation,
     type: program.type,
-    days: program.daysOfWeek,
-    startDate,
-    endDate,
+    daysOfWeek: program.daysOfWeek,
+    startDate: program.startDate,
+    endDate: program.endDate,
     color: program.color,
-    renewalDate: "",
-    hourly: "",
-    sessions: [[]],
+    renewalDate: program.renewalDate,
+    hourly: program.hourly,
+    sessions: program.sessions,
+    students: program.students,
   };
 
   if (isTablet) {
@@ -103,7 +89,7 @@ export function ProgramCard({ program, type, title, dates, color, className }: C
         </div>
         <div className={optionsDiv}>
           <div className={optionsClass}>
-            <ProgramFormButton type="edit" data={programData} />{" "}
+            <ProgramFormButton type="edit" data={programFields} />{" "}
           </div>
         </div>
       </div>

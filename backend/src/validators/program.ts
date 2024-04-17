@@ -57,12 +57,12 @@ const makeDaysOfWeekValidator = () =>
           valuei !== "M" &&
           valuei !== "T" &&
           valuei !== "W" &&
-          valuei !== "TH" &&
+          valuei !== "Th" &&
           valuei !== "F" &&
-          valuei !== "SA" &&
-          valuei !== "SU"
+          valuei !== "Sa" &&
+          valuei !== "Su"
         )
-          throw new Error("days of week selection must be M, T, W, TH, F, SA, or SU");
+          throw new Error("days of week selection must be M, T, W, Th, F, Sa, or Su");
       }
       return true;
     });

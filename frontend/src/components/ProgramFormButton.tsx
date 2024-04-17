@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { createProgram } from "../api/programs";
+import { createProgram, editProgram, Program } from "../api/programs";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -20,12 +20,12 @@ type BaseProperties = {
 
 type EditProperties = BaseProperties & {
   type: "edit";
-  data: ProgramData | null;
+  data: Program | null;
 };
 
 type AddProperties = BaseProperties & {
   type: "add";
-  data?: ProgramData | null;
+  data?: Program | null;
 };
 
 type ProgramFormProperties = EditProperties | AddProperties;
@@ -50,14 +50,14 @@ export default function ProgramFormButton({
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
     const sanitizedSessions = formData.sessions.filter(
-      (session: string[]) => session[0] && session[1],
+      (session: string[]) => session[0] || session[1],
     );
 
     const programRequest: CreateProgramRequest = {
       name: formData.name,
       abbreviation: formData.abbreviation,
       type: formData.type,
-      daysOfWeek: formData.days ? formData.days.map((day) => day.toUpperCase()) : [],
+      daysOfWeek: formData.days ? formData.days : [],
       startDate: new Date(formData.startDate),
       endDate: new Date(formData.endDate),
       color: formData.color,
@@ -72,7 +72,7 @@ export default function ProgramFormButton({
           if (result.success) {
             setOpenForm(false);
             console.log(`${type} program`, programRequest);
-            //reset();
+            reset();
           } else {
             console.log(result.error);
             alert("Unable to create program: " + result.error);
@@ -81,6 +81,24 @@ export default function ProgramFormButton({
         .catch((error) => {
           console.log(error);
         });
+    }
+    if (type === "edit" && data) {
+      const updatedProgram: Program = {...programRequest, _id: data._id, students: data.students};
+      console.log(`${type} program`, updatedProgram);
+      editProgram(updatedProgram)
+        .then((result) => {
+        if (result.success) {
+          setOpenForm(false);
+          console.log(`${type} program`, programRequest);
+          reset();
+        } else {
+          console.log(result.error);
+          alert("Unable to create program: " + result.error);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
     }
   };
 

@@ -8,11 +8,13 @@ import { Textfield } from "../Textfield";
 import { SessionList } from "./ProgramSession";
 import { ProgramData } from "./types";
 
+import { Program } from "../../api/programs";
+
 type ProgramInfoProperties = {
   register: UseFormRegister<ProgramData>;
   classname?: string;
   setCalendarValue: UseFormSetValue<ProgramData>;
-  data: ProgramData | null;
+  data: Program | null;
 };
 
 type CheckcircleProps = {
@@ -225,7 +227,7 @@ export function ProgramInfo({
           register={register}
           name="days"
           options={["Su", "M", "T", "W", "Th", "F", "Sa"]}
-          data={data?.days}
+          data={data?.daysOfWeek}
         />
       </div>
 
