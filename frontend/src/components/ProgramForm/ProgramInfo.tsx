@@ -1,5 +1,6 @@
 import { Path, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
+import { Program } from "../../api/programs";
 import { cn } from "../../lib/utils";
 import { ColorRadio } from "../Radio";
 import { convertDateToString } from "../StudentForm/StudentBackground";
@@ -7,8 +8,6 @@ import { Textfield } from "../Textfield";
 
 import { SessionList } from "./ProgramSession";
 import { ProgramData } from "./types";
-
-import { Program } from "../../api/programs";
 
 type ProgramInfoProperties = {
   register: UseFormRegister<ProgramData>;

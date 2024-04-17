@@ -6,7 +6,7 @@ type cancelProps = {
   onCancel: () => void;
 };
 
-export default function ProgramCancel({isMobile = false, onCancel }: cancelProps) {
+export default function ProgramCancel({ isMobile = false, onCancel }: cancelProps) {
   return (
     <Dialog>
       <DialogTrigger asChild>

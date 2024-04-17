@@ -5,12 +5,12 @@ import { ProgramCard } from "../components/ProgramCard";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 
-import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 import { ProgramMap } from "@/components/StudentsTable/types";
+import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export default function Programs() {
-  //useRedirectToLoginIfNotSignedIn();
-  //useRedirectTo404IfNotAdmin();
+  useRedirectToLoginIfNotSignedIn();
+  useRedirectTo404IfNotAdmin();
 
   const { windowSize } = useWindowSize();
   const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);

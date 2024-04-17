@@ -2,7 +2,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { createProgram, editProgram, Program } from "../api/programs";
+import { Program, createProgram, editProgram } from "../api/programs";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -11,10 +11,9 @@ import ProgramArchiveHeader from "./ProgramForm/ProgramArchive";
 import ProgramCancel from "./ProgramForm/ProgramCancel";
 import { ProgramInfo } from "./ProgramForm/ProgramInfo";
 import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
+import { ProgramMap } from "./StudentsTable/types";
 import { Textfield } from "./Textfield";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
-
-import { ProgramMap } from "./StudentsTable/types";
 
 type BaseProperties = {
   classname?: string;

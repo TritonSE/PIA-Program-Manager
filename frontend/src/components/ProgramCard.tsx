@@ -5,6 +5,7 @@ import { Program } from "../api/programs";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
+
 import { ProgramMap } from "./StudentsTable/types";
 
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
@@ -94,7 +95,7 @@ export function ProgramCard({ program, className, setPrograms }: CardProps) {
         </div>
         <div className={optionsDiv}>
           <div className={optionsClass}>
-            <ProgramFormButton type="edit" data={programFields} setPrograms={setPrograms}/>{" "}
+            <ProgramFormButton type="edit" data={programFields} setPrograms={setPrograms} />{" "}
           </div>
         </div>
       </div>
