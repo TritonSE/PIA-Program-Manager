@@ -7,6 +7,7 @@
  * Custom type definition for the HTTP methods handled by this module.
  */
 type Method = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+// Set NEXT_PUBLIC_API_BASE_URL to http://localhost:4000/api in env file
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
 /**

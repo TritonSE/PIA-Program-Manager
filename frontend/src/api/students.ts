@@ -1,24 +1,12 @@
 import { GET, POST, PUT, handleAPIError } from "../api/requests";
-import { Contact, StudentData } from "../components/StudentForm/types";
+import { StudentData as CreateStudentRequest } from "../components/StudentForm/types";
 
 import type { APIResult } from "../api/requests";
 
-export type CreateStudentRequest = StudentData;
-
-export type Student = {
+export type Student = CreateStudentRequest & {
   _id: string;
-  student: Contact;
-  emergency: Contact;
-  serviceCoordinator: Contact;
-  location: string;
-  medication?: string;
-  birthday: Date;
-  intakeDate: Date;
-  tourDate: Date;
-  regularPrograms: string[];
-  varyingPrograms: string[];
-  dietary: string[];
-  otherString?: string;
+  medication: string;
+  otherString: string;
 };
 
 export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {

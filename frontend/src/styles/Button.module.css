@@ -5,6 +5,7 @@
   letter-spacing: 2%;
   line-height: 150%;
   font-size: 16px;
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* styling for default size */
@@ -12,6 +13,13 @@
   height: 3rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.wide {
+  height: 3rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  width: 100%;
 }
 
 .big {
