@@ -1,4 +1,5 @@
 import { body } from "express-validator";
+//import mongoose from "mongoose";
 
 import { Program } from "../controllers/program";
 
@@ -52,8 +53,16 @@ const makeDaysOfWeekValidator = () =>
     .custom((value: string[]) => {
       if (value.length === 0) throw new Error("days of week selection needed");
       for (const valuei of value) {
-        if (valuei !== "M" && valuei !== "T" && valuei !== "W" && valuei !== "TH" && valuei !== "F")
-          throw new Error("days of week selection must be M, T, W, TH, or F");
+        if (
+          valuei !== "M" &&
+          valuei !== "T" &&
+          valuei !== "W" &&
+          valuei !== "Th" &&
+          valuei !== "F" &&
+          valuei !== "Sa" &&
+          valuei !== "Su"
+        )
+          throw new Error("days of week selection must be M, T, W, Th, F, Sa, or Su");
       }
       return true;
     });
@@ -106,9 +115,65 @@ const makeColorValidator = () =>
       }
       return true;
     });
-// check for first chara being # and others being 1-F
+/*const makeStudentUIDsValidator = () =>
+  // mongoID
+  body("studentUIDs")
+    .exists()
+    .withMessage("student UIDs list needed")
+    .bail()
+    .isArray()
+    .bail()
+    .withMessage("students must be an array")
+    .custom((students: string[]) => {
+      students.forEach((studentId) => {
+        if (!mongoose.Types.ObjectId.isValid(studentId))
+          throw new Error("students must be valid student ids");
+      });
+      return true;
+    })
+    .bail()
+    .withMessage("students must be valid student ids");*/
+const makeRenewalDateValidator = () =>
+  body("renewalDate")
+    .exists()
+    .withMessage("renewal date needed")
+    .bail()
+    .isISO8601()
+    .withMessage("renewal date must be a valid date-time string");
+const makeHourlyPayValidator = () =>
+  body("hourly")
+    .exists()
+    .withMessage("hourly pay needed")
+    .bail()
+    .isNumeric()
+    .withMessage("hourly pay must be a valid number")
+    .bail();
 
-export const createForm = [
+const makeSessionsValidator = () =>
+  body("sessions")
+    .exists()
+    .withMessage("Must specify a session time")
+    .bail()
+    .isArray()
+    .withMessage("Sessions must be a 2D String Array")
+    .bail()
+    .custom((sessions: string[][]) => {
+      if (sessions.length === 0) throw new Error("Must specify a session time");
+      sessions.forEach((session) => {
+        if (!Array.isArray(session)) throw new Error("Session must be an array");
+        if (session.length !== 2)
+          throw new Error("Session must only have a start time and an end time");
+        if (typeof session[0] !== "string") throw new Error("Session times must be strings");
+        if (!(session[0] && session[1])) throw new Error("Must specify a session time");
+        session.forEach((time: string) => {
+          if (!new RegExp("^([01][0-9]|[0-9]|2[0-3]):[0-5][0-9]$").test(time))
+            throw new Error("Time must mach HH:MM format");
+        });
+      });
+      return true;
+    });
+
+export const createProgram = [
   makeNameValidator(),
   makeAbbreviationValidator(),
   makeTypeValidator(),
@@ -116,4 +181,21 @@ export const createForm = [
   makeStartDateValidator(),
   makeEndDateValidator(),
   makeColorValidator(),
+  makeRenewalDateValidator(),
+  makeHourlyPayValidator(),
+  makeSessionsValidator(),
+];
+
+export const updateProgram = [
+  makeNameValidator(),
+  makeAbbreviationValidator(),
+  makeTypeValidator(),
+  makeDaysOfWeekValidator(),
+  makeStartDateValidator(),
+  makeEndDateValidator(),
+  makeColorValidator(),
+  makeRenewalDateValidator(),
+  makeHourlyPayValidator(),
+  makeSessionsValidator(),
+  //makeStudentUIDsValidator(),
 ];
