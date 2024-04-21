@@ -5,6 +5,7 @@ import { Schema } from "mongoose";
 //import { error } from "firebase-functions/logger";
 
 import ProgramModel from "../models/program";
+import SessionModel from "../models/session";
 import validationErrorParser from "../util/validationErrorParser";
 
 export type Program = {
@@ -22,13 +23,50 @@ export type Program = {
   sessions: [string[]];
 };
 
+function getDatesBetween(start: Date, end: Date, daysOfWeek: string[]): Date[] {
+  const datesBetween: Date[] = [];
+  let currentDate = new Date(start);
+
+  while (currentDate <= end) {
+    const dayOfWeek = currentDate.getDay();
+    const abbreviatedDay = ["SU", "M", "T", "W", "TH", "F", "S"][dayOfWeek];
+    if (daysOfWeek.includes(abbreviatedDay)) {
+      datesBetween.push(new Date(currentDate));
+    }
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
+
+  return datesBetween;
+}
+
 export const createProgram: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
 
   try {
     validationErrorParser(errors);
 
-    const programForm = await ProgramModel.create(req.body as Program);
+    const programInfo = req.body as Program;
+
+    const programForm = await ProgramModel.create(programInfo);
+
+    const defaultStudentBody = programInfo.studentUIDs.map((studentId) => ({
+      studentId: studentId.toString(),
+      attended: false,
+      hoursAttended: 0,
+    }));
+
+    let createdSessions = []
+
+    for (const date of getDatesBetween(
+      programInfo.startDate,
+      programInfo.endDate,
+      programInfo.daysOfWeek,
+    )) {
+      const newSession = {programId: programForm.id, date: date, students: defaultStudentBody};
+      createdSessions.push(SessionModel.create(newSession);
+    }
+
+    await Promise.all(createdSessions);
 
     res.status(201).json(programForm);
   } catch (error) {
