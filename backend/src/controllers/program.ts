@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
+import createHttpError from "http-errors";
 import { Schema } from "mongoose";
-//import { error } from "firebase-functions/logger";
+// import { error } from "firebase-functions/logger";
 
 import ProgramModel from "../models/program";
 import validationErrorParser from "../util/validationErrorParser";
@@ -53,6 +54,22 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
     }
 
     res.status(200).json(editedProgram);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProgram: RequestHandler = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const program = await ProgramModel.findById(id);
+
+    if (program === null) {
+      throw createHttpError(404, "Program not found");
+    }
+
+    res.status(200).json(program);
   } catch (error) {
     next(error);
   }

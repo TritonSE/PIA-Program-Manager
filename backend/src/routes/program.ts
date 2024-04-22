@@ -12,5 +12,6 @@ const router = express.Router();
 router.patch("/:id", ProgramValidator.updateProgram, ProgramController.updateProgram);
 router.post("/create", ProgramValidator.createProgram, ProgramController.createProgram);
 router.get("/all", ProgramController.getAllPrograms);
+router.get("/:id", ProgramController.getProgram);
 
 export default router;
