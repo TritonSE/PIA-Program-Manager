@@ -7,7 +7,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { getAllStudents } from "../../api/students";
 import { fuzzyFilter } from "../../lib/fuzzyFilter";
@@ -20,6 +20,7 @@ import { ProgramMap, StudentMap, StudentTableRow } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
 
 import { Program, getAllPrograms } from "@/api/programs";
+import { UserContext } from "@/contexts/user";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
@@ -33,6 +34,8 @@ export default function StudentsTable() {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const { isTablet } = useWindowSize();
+
+  const { isAdmin } = useContext(UserContext);
 
   useEffect(() => {
     getAllPrograms().then(
@@ -131,7 +134,7 @@ export default function StudentsTable() {
           >
             Students
           </h1>
-          {isTablet && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
+          {isTablet && isAdmin && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
         </div>
         <Table
           className={cn(

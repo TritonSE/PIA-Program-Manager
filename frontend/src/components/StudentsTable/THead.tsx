@@ -1,4 +1,5 @@
 import { HeaderGroup, Table, flexRender } from "@tanstack/react-table";
+import { useContext } from "react";
 
 import DebouncedInput from "../DebouncedInput";
 import StudentFormButton from "../StudentFormButton";
@@ -7,6 +8,7 @@ import { TableHead, TableHeader, TableRow } from "../ui/table";
 import ProgramFilter from "./ProgramFilter";
 import { StudentMap, StudentTableRow } from "./types";
 
+import { UserContext } from "@/contexts/user";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 function TableActionsHeader({
@@ -21,6 +23,8 @@ function TableActionsHeader({
   setAllStudents: React.Dispatch<React.SetStateAction<StudentMap>>;
 }) {
   const { isTablet } = useWindowSize();
+
+  const { isAdmin } = useContext(UserContext);
 
   return (
     <TableRow key={headerGroup.id + "1"} className="border-b">
@@ -43,7 +47,7 @@ function TableActionsHeader({
               />
             </div>
           </span>
-          {!isTablet && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
+          {!isTablet && isAdmin && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
         </div>
       </TableHead>
     </TableRow>
