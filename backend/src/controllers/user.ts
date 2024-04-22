@@ -8,6 +8,7 @@ import { ServiceError } from "../errors/service";
 import { ValidationError } from "../errors/validation";
 import { Image } from "../models/image";
 import UserModel from "../models/user";
+import { sendApprovalEmail, sendDenialEmail } from "../util/email";
 import { firebaseAdminAuth } from "../util/firebase";
 import { handleImageParsing } from "../util/image";
 import validationErrorParser from "../util/validationErrorParser";
@@ -61,6 +62,38 @@ export const createUser = async (
   }
 
   return;
+};
+
+export const approveUser = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const { userId, email } = req.body; // firebaseuid and email
+
+    await UserModel.findByIdAndUpdate(userId, { approvalStatus: true });
+
+    // await sendApprovalEmail(email);
+    await sendApprovalEmail(email as string);
+
+    res.status(200).send("User approved successfully");
+  } catch (error) {
+    console.error(error);
+    nxt(error);
+  }
+};
+
+export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const { userId, email } = req.body; // firebaseuid and email
+
+    await UserModel.findByIdAndUpdate(userId, { approvalStatus: false });
+
+    // await sendDenialEmail(email);
+    await sendDenialEmail(email as string);
+
+    res.status(200).send("User denied successfully");
+  } catch (error) {
+    console.error(error);
+    nxt(error);
+  }
 };
 
 export const loginUser = async (
