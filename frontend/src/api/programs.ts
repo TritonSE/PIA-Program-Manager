@@ -18,7 +18,7 @@ export async function createProgram(program: CreateProgramRequest): Promise<APIR
 
 export async function getProgram(id: string): Promise<APIResult<Program>> {
   try {
-    const response = await GET(`/api/program/${id}`);
+    const response = await GET(`/program/${id}`);
     const json = (await response.json()) as Program;
     return { success: true, data: json };
   } catch (error) {
