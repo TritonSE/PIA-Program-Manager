@@ -16,7 +16,7 @@ function TableActionsHeader({
   setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
-    <TableRow key={headerGroup.id + "1"} className="border-b">
+    <TableRow key={headerGroup.id + "1"} className="border-b ">
       <TableHead className="h-6 w-full px-10 py-5" colSpan={6}>
         <div className="flex justify-between">
           <span className="flex gap-6">
