@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 
-import { navigation } from "../constants/navigation";
+import { useNavigation } from "../constants/navigation";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -51,6 +51,7 @@ const Logo = ({ setShelf, isMobile, black }: LinkProps & { black?: boolean }) =>
 // the mapping of elements within navigation
 const Links = ({ setShelf, isMobile }: LinkProps) => {
   const router = useRouter();
+  const navigation = useNavigation();
 
   return navigation.map((item, i) => {
     return (
@@ -81,6 +82,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
   const [offset, setOffset] = React.useState(0);
   const [shelf, setShelf] = React.useState(false); // on mobile whether the navbar is open
   const { isMobile } = useWindowSize();
+  const navigation = useNavigation();
 
   useEffect(() => {
     const ordering = navigation.map((item) => item.href);

@@ -13,7 +13,6 @@ import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export default function Programs() {
   useRedirectToLoginIfNotSignedIn();
-  // useRedirectTo404IfNotAdmin();
 
   const { windowSize } = useWindowSize();
   const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);
