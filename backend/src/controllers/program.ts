@@ -64,7 +64,7 @@ export const archiveProgram: RequestHandler = async (req, res, next) => {
   try {
     validationErrorParser(errors);
 
-    const programID = req.body as Schema.Types.ObjectId;
+    const programID = req.params.id;
     const program = await ProgramModel.findById(programID);
     if (!program)
       return res.status(404).json({ message: "Program with this id not found in database" });
@@ -81,10 +81,12 @@ export const archiveProgram: RequestHandler = async (req, res, next) => {
               "programs.$[element].dateUpdated": Date.now(),
             },
           },
-          { arrayFilters: [{ "element.id": programID }] },
+          { arrayFilters: [{ "element.programId": programID }], new: true },
         );
       }),
     );
+
+    return res.status(200).end();
   } catch (error) {
     next(error);
   }

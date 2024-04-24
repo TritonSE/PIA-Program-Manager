@@ -39,7 +39,7 @@ type Contact = {
   phoneNumber: string;
 };
 
-type Student = {
+export type Student = {
   _id: string;
   student: Contact;
   emergency: Contact;
