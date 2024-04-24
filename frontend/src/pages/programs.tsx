@@ -7,11 +7,12 @@ import { useWindowSize } from "../hooks/useWindowSize";
 
 import { ProgramMap } from "@/components/StudentsTable/types";
 import { UserContext } from "@/contexts/user";
+import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 // import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export default function Programs() {
-  // useRedirectToLoginIfNotSignedIn();
+  useRedirectToLoginIfNotSignedIn();
   // useRedirectTo404IfNotAdmin();
 
   const { windowSize } = useWindowSize();
