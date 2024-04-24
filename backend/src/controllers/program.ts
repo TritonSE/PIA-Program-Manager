@@ -5,6 +5,7 @@ import { Schema } from "mongoose";
 //import { error } from "firebase-functions/logger";
 
 import ProgramModel from "../models/program";
+import StudentModel from "../models/student";
 import validationErrorParser from "../util/validationErrorParser";
 
 export type Program = {
@@ -53,6 +54,37 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
     }
 
     res.status(200).json(editedProgram);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const archiveProgram: RequestHandler = async (req, res, next) => {
+  const errors = validationResult(req);
+  try {
+    validationErrorParser(errors);
+
+    const programID = req.body as Schema.Types.ObjectId;
+    const program = await ProgramModel.findById(programID);
+    if (!program)
+      return res.status(404).json({ message: "Program with this id not found in database" });
+    //in case this program doesnt have students field
+    const studentList = program.students ?? [];
+
+    await Promise.all(
+      studentList.map(async (studentID) => {
+        await StudentModel.findByIdAndUpdate(
+          studentID,
+          {
+            $set: {
+              "programs.$[element].status": "Archived",
+              "programs.$[element].dateUpdated": Date.now(),
+            },
+          },
+          { arrayFilters: [{ "element.id": programID }] },
+        );
+      }),
+    );
   } catch (error) {
     next(error);
   }
