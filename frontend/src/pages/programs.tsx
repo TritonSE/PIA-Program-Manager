@@ -9,8 +9,6 @@ import { ProgramMap } from "@/components/StudentsTable/types";
 import { UserContext } from "@/contexts/user";
 import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
-// import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
-
 export default function Programs() {
   useRedirectToLoginIfNotSignedIn();
 
@@ -21,9 +19,8 @@ export default function Programs() {
 
   const [programs, setPrograms] = useState<ProgramMap>({});
 
-  const { firebaseUser, piaUser, loadingUser } = useContext(UserContext);
+  const { isAdmin, loadingUser } = useContext(UserContext);
   const _loadingUser = loadingUser;
-  const isAdmin = firebaseUser !== null && piaUser !== null && piaUser.role === "admin";
 
   useEffect(() => {
     getAllPrograms().then(
