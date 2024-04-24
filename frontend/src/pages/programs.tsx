@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { Program, getAllPrograms } from "../api/programs";
 import { ProgramCard } from "../components/ProgramCard";
@@ -6,6 +6,7 @@ import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 
 import { ProgramMap } from "@/components/StudentsTable/types";
+import { UserContext } from "@/contexts/user";
 import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export default function Programs() {
@@ -17,6 +18,9 @@ export default function Programs() {
   const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
 
   const [programs, setPrograms] = useState<ProgramMap>({});
+
+  const { isAdmin, loadingUser } = useContext(UserContext);
+  const _loadingUser = loadingUser;
 
   useEffect(() => {
     getAllPrograms().then(
@@ -76,13 +80,13 @@ export default function Programs() {
       <div className={headerClass}>
         <h1 className={titleClass}>Programs</h1>
         <div className="grow"></div>
+        {isAdmin && <ProgramFormButton type="add" setPrograms={setPrograms} />}
         {/* Should be replaced with Add Button when created */}
-        <ProgramFormButton type="add" setPrograms={setPrograms} />{" "}
       </div>
       <div className={cardsGridClass}>
         {Object.values(programs).map((program) => (
           <div className={cardClass} key={program._id}>
-            <ProgramCard program={program} setPrograms={setPrograms} />
+            <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
           </div>
         ))}
       </div>
