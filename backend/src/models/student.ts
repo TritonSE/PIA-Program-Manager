@@ -47,6 +47,13 @@ const studentSchema = new Schema({
     required: true,
   },
 
+  progressNotes: {
+    type: [Schema.Types.ObjectId],
+    ref: "ProgressNote",
+    default: [],
+    required: false,
+  },
+
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },
 

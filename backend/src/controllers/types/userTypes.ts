@@ -1,5 +1,7 @@
 import { Request } from "express";
 
+import { UserId, UserIdRequest } from "./types";
+
 export type CreateUserRequestBody = {
   name: string;
   accountType: "admin" | "team";
@@ -11,17 +13,11 @@ export type LoginUserRequestBody = {
   uid: string;
 };
 
-type UserId = {
-  userId: string;
-};
-
-export type UserIdRequest = Request & UserId;
-
 export type EditNameRequestBody = {
   newName: string;
 };
 
-export type EditEmailRequestBody = UserId & {
+export type EditEmailRequestBody = UserIdRequest & {
   newEmail: string;
 };
 

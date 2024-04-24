@@ -12,6 +12,7 @@ import { firebaseAdminAuth } from "../util/firebase";
 import { handleImageParsing } from "../util/image";
 import validationErrorParser from "../util/validationErrorParser";
 
+import { UserIdRequest } from "./types/types";
 import {
   CreateUserRequestBody,
   EditEmailRequestBody,
@@ -19,8 +20,7 @@ import {
   EditNameRequestBody,
   EditPhotoRequest,
   LoginUserRequestBody,
-  UserIdRequest,
-} from "./types";
+} from "./types/userTypes";
 
 export const createUser = async (
   req: Request<Record<string, never>, Record<string, never>, CreateUserRequestBody>,

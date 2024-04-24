@@ -2,7 +2,7 @@ import busboy from "busboy";
 import { NextFunction, Response } from "express";
 import mongoose from "mongoose";
 
-import { EditPhotoRequest, SaveImageRequest } from "../controllers/types";
+import { EditPhotoRequest, SaveImageRequest } from "../controllers/types/types";
 import { ValidationError } from "../errors";
 import { ServiceError } from "../errors/service";
 import { Image } from "../models/image";
