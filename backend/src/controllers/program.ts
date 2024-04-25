@@ -21,6 +21,7 @@ export type Program = {
   renewalDate: Date;
   hourlyPay: string;
   sessions: [string[]];
+  archived?: boolean;
 };
 
 export const createProgram: RequestHandler = async (req, res, next) => {
@@ -65,9 +66,10 @@ export const archiveProgram: RequestHandler = async (req, res, next) => {
     validationErrorParser(errors);
 
     const programID = req.params.id;
-    const program = await ProgramModel.findById(programID);
+    const program = await ProgramModel.findByIdAndUpdate(programID, { $set: { archived: true } });
     if (!program)
       return res.status(404).json({ message: "Program with this id not found in database" });
+
     //in case this program doesnt have students field
     const studentList = program.students ?? [];
 

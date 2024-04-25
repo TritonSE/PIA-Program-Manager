@@ -12,6 +12,7 @@ const programSchema = new Schema({
   renewalDate: { type: Date, required: true },
   hourly: { type: Number, required: true },
   sessions: { type: [[String]], required: true },
+  archived: { type: Boolean, required: false },
 });
 
 type Program = InferSchemaType<typeof programSchema>;
