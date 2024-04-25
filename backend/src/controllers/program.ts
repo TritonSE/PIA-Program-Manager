@@ -46,9 +46,13 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
     const programId = req.params.id;
     const programData = req.body as Program;
 
-    const editedProgram = await ProgramModel.findOneAndUpdate({ _id: programId }, programData, {
-      new: true,
-    });
+    const editedProgram = await ProgramModel.findOneAndUpdate(
+      { _id: programId },
+      { ...programData, archived: false }, //stand-in method of un-archiving programs
+      {
+        new: true,
+      },
+    );
 
     if (!editedProgram) {
       return res.status(404).json({ message: "No object in database with provided ID" });
@@ -88,7 +92,7 @@ export const archiveProgram: RequestHandler = async (req, res, next) => {
       }),
     );
 
-    return res.status(200).end();
+    return res.status(200).json(program);
   } catch (error) {
     next(error);
   }

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+import { Student, typedModel } from "../controllers/student";
 import ProgramModel from "../models/program";
 import { programLink } from "../types/programLink";
 
@@ -55,4 +56,22 @@ export const removeStudentFromPrograms = async (studentId: ObjectId, programIds:
       );
     }),
   );
+};
+
+export const checkProgramStatus = async (
+  newStudentData: typedModel | Student,
+  programIds: ObjectId[],
+) => {
+  const programs = await ProgramModel.find({ _id: { $in: programIds }, archived: true });
+
+  const updatedStudentData = {
+    ...newStudentData,
+    programs: newStudentData.programs.map((program: programLink) => {
+      if (programs.find((archivedProgram) => archivedProgram._id.equals(program.programId)))
+        return { ...program, status: "Archived" } as programLink;
+      return program;
+    }),
+  };
+
+  return updatedStudentData;
 };

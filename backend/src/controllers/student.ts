@@ -8,7 +8,11 @@ import { validationResult } from "express-validator";
 
 import StudentModel from "../models/student";
 import { programLink } from "../types/programLink";
-import { addStudentToPrograms, removeStudentFromPrograms } from "../util/student";
+import {
+  addStudentToPrograms,
+  checkProgramStatus,
+  removeStudentFromPrograms,
+} from "../util/student";
 import validationErrorParser from "../util/validationErrorParser";
 
 export type contact = {
@@ -59,9 +63,12 @@ export const createStudent: RequestHandler = async (req, res, next) => {
     const errors = validationResult(req);
 
     validationErrorParser(errors);
+    const studentData = req.body as typedModel;
+    const programIds = studentData.programs.map((programObj: programLink) => programObj.programId);
+    //check for archived programs before creating student
+    const newStudentData = await checkProgramStatus(studentData, programIds);
 
-    const newStudent = await StudentModel.create(req.body as typedModel);
-    const programIds = newStudent.programs.map((programObj: programLink) => programObj.programId);
+    const newStudent = await StudentModel.create(newStudentData);
     await addStudentToPrograms(newStudent._id, programIds);
 
     res.status(201).json(newStudent);
@@ -83,8 +90,14 @@ export const editStudent: RequestHandler = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid student ID" });
     }
 
+    //check for archived programs before creating student
+    const programIds = studentData.programs.map((programObj: programLink) => programObj.programId);
+    const newStudentData = await checkProgramStatus(studentData, programIds);
+
+    //console.log(newStudentData);
+
     const prevStudent = await StudentModel.findById(studentId);
-    const editedStudent = await StudentModel.findOneAndUpdate({ _id: studentId }, studentData, {
+    const editedStudent = await StudentModel.findOneAndUpdate({ _id: studentId }, newStudentData, {
       new: true,
     });
 
@@ -99,10 +112,7 @@ export const editStudent: RequestHandler = async (req, res, next) => {
     await removeStudentFromPrograms(prevStudent._id, prevProgramIds);
 
     // add student to new programs
-    const newProgramIds = editedStudent.programs.map(
-      (programObj: programLink) => programObj.programId,
-    );
-    await addStudentToPrograms(editedStudent._id, newProgramIds);
+    await addStudentToPrograms(editedStudent._id, programIds);
 
     res.status(200).json(editedStudent);
   } catch (error) {

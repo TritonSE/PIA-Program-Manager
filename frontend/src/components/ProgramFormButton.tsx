@@ -69,7 +69,7 @@ export default function ProgramFormButton({
       archiveProgram(data)
         .then((result) => {
           if (result.success) {
-            console.log("Archive success");
+            console.log(result.data);
             archiveReset();
             setOpenArchive(false);
             setOpenForm(false);
