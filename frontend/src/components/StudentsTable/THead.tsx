@@ -1,4 +1,5 @@
 import { HeaderGroup, Table, flexRender } from "@tanstack/react-table";
+import React from "react";
 
 import DebouncedInput from "../DebouncedInput";
 import StudentFormButton from "../StudentFormButton";
@@ -78,7 +79,7 @@ export default function THead({
   return (
     <TableHeader className="text-left">
       {table.getHeaderGroups().map((headerGroup) => (
-        <>
+        <React.Fragment key={headerGroup.id}>
           <TableActionsHeader
             headerGroup={headerGroup}
             globalFilter={globalFilter}
@@ -86,7 +87,7 @@ export default function THead({
             setAllStudents={setAllStudents}
           />
           <TableDataHeader headerGroup={headerGroup} />
-        </>
+        </React.Fragment>
       ))}
     </TableHeader>
   );
