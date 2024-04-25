@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { MouseEventHandler, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
-import { Program, createProgram, editProgram } from "../api/programs";
+import { Program, archiveProgram, createProgram, editProgram } from "../api/programs";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -50,6 +50,39 @@ export default function ProgramFormButton({
   const [openArchive, setOpenArchive] = useState(false);
   const { width } = useWindowSize().windowSize;
   const isMobile = useMemo(() => width <= 640, [width]);
+
+  const archive: MouseEventHandler = () => {
+    // This function should only call in edit mode, which requires data to exist.
+    // the following conditional is required to make lint happy
+    if (!data) {
+      alert("Illegal archiving of non-existent program");
+      return;
+    }
+
+    const date = new Date(getArchiveValue("date"));
+    const today = new Date();
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
+      archiveProgram(data)
+        .then((result) => {
+          if (result.success) {
+            console.log("Archive success");
+            archiveReset();
+            setOpenArchive(false);
+            setOpenForm(false);
+          } else {
+            console.log(result.error);
+            alert("Unable to archive program: " + result.error);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
     const sanitizedSessions = formData.sessions
@@ -144,13 +177,15 @@ export default function ProgramFormButton({
               <Dialog open={openArchive}>
                 <div className="absolute inset-3 flex h-auto justify-end">
                   <DialogTrigger asChild>
-                    {/*<Button
-                      label="Archive"
-                      kind="destructive-secondary"
-                      onClick={() => {
-                        setOpenArchive(true);
-                      }}
-                    />*/}
+                    {
+                      <Button
+                        label="Archive"
+                        kind="destructive-secondary"
+                        onClick={() => {
+                          setOpenArchive(true);
+                        }}
+                      />
+                    }
                   </DialogTrigger>
                 </div>
                 <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">
@@ -178,24 +213,7 @@ export default function ProgramFormButton({
                             />
                           </DialogClose>
                           <DialogClose asChild>
-                            <Button
-                              label="Archive"
-                              onClick={() => {
-                                const date = new Date(getArchiveValue("date"));
-                                const today = new Date();
-                                if (
-                                  date.getUTCDate() === today.getUTCDate() &&
-                                  date.getUTCMonth() === today.getUTCMonth() &&
-                                  date.getUTCFullYear() === today.getUTCFullYear()
-                                ) {
-                                  //set archive to true
-                                  archiveReset();
-                                  setOpenArchive(false);
-                                  setOpenForm(false);
-                                }
-                              }}
-                              kind="destructive"
-                            />
+                            <Button label="Archive" onClick={archive} kind="destructive" />
                           </DialogClose>
                         </div>{" "}
                       </form>
@@ -265,14 +283,13 @@ export default function ProgramFormButton({
               <Dialog open={openArchive}>
                 <div className="absolute right-0 top-0 flex max-h-[5%] max-w-[50%] justify-end pr-3 pt-1 pt-4 text-sm text-destructive">
                   <DialogTrigger asChild>
-                    {/*
                     <div
                       onClick={() => {
                         setOpenArchive(true);
                       }}
                     >
                       Archive
-                    </div>*/}
+                    </div>
                   </DialogTrigger>
                 </div>
                 <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">
@@ -304,20 +321,7 @@ export default function ProgramFormButton({
                             <Button
                               label="Archive"
                               size={isMobile ? "wide" : "default"}
-                              onClick={() => {
-                                const date = new Date(getArchiveValue("date"));
-                                const today = new Date();
-                                if (
-                                  date.getUTCDate() === today.getUTCDate() &&
-                                  date.getUTCMonth() === today.getUTCMonth() &&
-                                  date.getUTCFullYear() === today.getUTCFullYear()
-                                ) {
-                                  //set archive to true
-                                  archiveReset();
-                                  setOpenArchive(false);
-                                  setOpenForm(false);
-                                }
-                              }}
+                              onClick={archive}
                               kind="destructive"
                             />
                           </DialogClose>

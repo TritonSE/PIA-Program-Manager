@@ -46,3 +46,12 @@ export async function getAllPrograms(): Promise<APIResult<[Program]>> {
     return handleAPIError(error);
   }
 }
+
+export async function archiveProgram(program: Program): Promise<APIResult<boolean>> {
+  try {
+    await POST(`/program/archive/${program._id}`, undefined);
+    return { success: true, data: true };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
