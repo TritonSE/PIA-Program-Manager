@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -17,6 +16,7 @@ import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger }
 
 type BaseProperties = {
   classname?: string;
+  component: React.JSX.Element;
   setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
@@ -34,6 +34,7 @@ type ProgramFormProperties = EditProperties | AddProperties;
 
 export default function ProgramFormButton({
   type = "edit",
+  component = <p>Please add a component</p>,
   data = null,
   setPrograms,
   classname,
@@ -50,28 +51,6 @@ export default function ProgramFormButton({
   const [openArchive, setOpenArchive] = useState(false);
   const { width } = useWindowSize().windowSize;
   const isMobile = useMemo(() => width <= 640, [width]);
-  const isTablet = useMemo(() => width <= 1024, [width]);
-
-  let buttonClass = "relative flex h-full w-full flex-row rounded bg-white";
-  let iconHeight = 16;
-  let iconWidth = 16;
-  let imageClass = "absolute";
-  let editClass = "absolute text-pia_dark_green";
-  let addButtonClass = "m-0 rounded-3xl bg-pia_dark_green text-white";
-
-  if (isTablet) {
-    iconHeight = 10;
-    iconWidth = 10;
-    buttonClass += " py-[3px]";
-    imageClass += " left-[7px] top-[5px]";
-    editClass += " right-[7px]";
-    addButtonClass += " text-[10px] h-6 px-[10px]";
-  } else {
-    buttonClass += " py-1";
-    imageClass += " left-2.5 top-2";
-    editClass += " left-0 w-full";
-    addButtonClass += " text-base h-12 px-6";
-  }
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
     const sanitizedSessions = formData.sessions
@@ -139,34 +118,7 @@ export default function ProgramFormButton({
   return !isMobile ? (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        {type === "add" && (
-          <DialogTrigger asChild>
-            <button
-              type="submit"
-              className={addButtonClass}
-              onClick={function () {
-                setOpenForm(true);
-              }}
-            >
-              + Create Program
-            </button>
-          </DialogTrigger>
-        )}
-        {type === "edit" && (
-          <DialogTrigger asChild>
-            <button className={buttonClass} value="Edit">
-              <Image
-                className={imageClass}
-                id="editIcon"
-                alt="edit"
-                src="/programs/EditIcon.png"
-                height={iconHeight}
-                width={iconWidth}
-              />
-              <p className={editClass}>Edit</p>
-            </button>
-          </DialogTrigger>
-        )}
+        <DialogTrigger asChild>{component}</DialogTrigger>
         <DialogContentSlide className="w-full bg-white object-right p-6 sm:w-[50%]">
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             {type === "edit" && (
@@ -260,35 +212,7 @@ export default function ProgramFormButton({
   ) : (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        {type === "add" && (
-          <DialogTrigger asChild>
-            <button
-              type="submit"
-              className={addButtonClass}
-              onClick={function () {
-                setOpenForm(true);
-              }}
-            >
-              + Create Program
-            </button>
-          </DialogTrigger>
-        )}
-
-        {type === "edit" && (
-          <DialogTrigger asChild>
-            <button className={buttonClass} value="Edit">
-              <Image
-                className={imageClass}
-                id="editIcon"
-                alt="edit"
-                src="/programs/EditIcon.png"
-                height={iconHeight}
-                width={iconWidth}
-              />
-              <p className={editClass}>Edit</p>
-            </button>
-          </DialogTrigger>
-        )}
+        <DialogTrigger asChild>{component}</DialogTrigger>
         <DialogContent className="bg-white p-3">
           <ProgramCancel
             isMobile={isMobile}

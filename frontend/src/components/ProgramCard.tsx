@@ -141,10 +141,47 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     outerDivClass = cn(outerDivClass, className);
   }
 
+  let buttonClass = "relative flex h-full w-full flex-row rounded bg-white";
+  let iconHeight = 16;
+  let iconWidth = 16;
+  let imageClass = "absolute";
+  let editTextClass = "absolute text-pia_dark_green";
+
+  if (isTablet) {
+    iconHeight = 10;
+    iconWidth = 10;
+    buttonClass += " py-[3px]";
+    imageClass += " left-[7px] top-[5px]";
+    editTextClass += " right-[7px]";
+  } else {
+    buttonClass += " py-1";
+    imageClass += " left-2.5 top-2";
+    editTextClass += " left-0 w-full";
+  }
+
+  const editButton: React.JSX.Element = (
+    <button className={buttonClass} value="Edit">
+      <Image
+        className={imageClass}
+        id="editIcon"
+        alt="edit"
+        src="/programs/EditIcon.png"
+        height={iconHeight}
+        width={iconWidth}
+      />
+      <p className={editTextClass}>Edit</p>
+    </button>
+  );
+
   return (
     <div className="relative">
       <div id={editId} className={editClass}>
-        <ProgramFormButton type="edit" data={programFields} setPrograms={setPrograms} />
+        <ProgramFormButton
+          type="edit"
+          component={editButton}
+          data={programFields}
+          setPrograms={setPrograms}
+        />
       </div>
       <div className={outerDivClass}>
         <div className={topDivClass} style={{ backgroundColor: program.color }}>

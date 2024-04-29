@@ -85,12 +85,27 @@ export default function Programs() {
     }
   }
 
+  let addButtonClass = "m-0 rounded-3xl bg-pia_dark_green text-white";
+  if (isTablet) {
+    addButtonClass += " text-[10px] h-6 px-[10px]";
+  } else {
+    addButtonClass += " text-base h-12 px-6";
+  }
+
+  const addButton: React.JSX.Element = (
+    <button type="submit" className={addButtonClass}>
+      + Create Program
+    </button>
+  );
+
   return (
     <main className={mainClass}>
       <div className={headerClass}>
         <h1 className={titleClass}>Programs</h1>
         <div className="grow"></div>
-        {isAdmin && <ProgramFormButton type="add" setPrograms={setPrograms} />}
+        {isAdmin && (
+          <ProgramFormButton type="add" component={addButton} setPrograms={setPrograms} />
+        )}
         {/* Should be replaced with Add Button when created */}
       </div>
       {Object.keys(programs).length === 0 && (
