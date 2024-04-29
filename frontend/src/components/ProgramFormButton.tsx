@@ -50,6 +50,27 @@ export default function ProgramFormButton({
   const [openArchive, setOpenArchive] = useState(false);
   const { width } = useWindowSize().windowSize;
   const isMobile = useMemo(() => width <= 640, [width]);
+  const isTablet = useMemo(() => width <= 1024, [width]);
+
+  let buttonClass = "relative flex h-full w-full flex-row rounded bg-white";
+  let iconHeight = 16;
+  let iconWidth = 16;
+  let imageClass = "absolute";
+  let editClass = "absolute text-pia_dark_green";
+  let addButtonSize = "default";
+
+  if (isTablet) {
+    iconHeight = 10;
+    iconWidth = 10;
+    buttonClass += " py-[3px]";
+    imageClass += " left-[7px] top-[5px]";
+    editClass += " right-[7px]";
+    addButtonSize = "small";
+  } else {
+    buttonClass += " py-1";
+    imageClass += " left-2.5 top-2";
+    editClass += " left-0 w-full";
+  }
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
     const sanitizedSessions = formData.sessions
@@ -120,6 +141,7 @@ export default function ProgramFormButton({
         {type === "add" && (
           <DialogTrigger asChild>
             <Button
+              size={addButtonSize}
               label="Add Program"
               onClick={() => {
                 setOpenForm(true);
@@ -129,13 +151,17 @@ export default function ProgramFormButton({
         )}
         {type === "edit" && (
           <DialogTrigger asChild>
-            <Image
-              alt="options"
-              src="/programs/Options.png"
-              height={18}
-              width={16}
-              className={"relative float-right hover:cursor-pointer"}
-            />
+            <button className={buttonClass} value="Edit">
+              <Image
+                className={imageClass}
+                id="editIcon"
+                alt="edit"
+                src="/programs/EditIcon.png"
+                height={iconHeight}
+                width={iconWidth}
+              />
+              <p className={editClass}>Edit</p>
+            </button>
           </DialogTrigger>
         )}
         <DialogContentSlide className="w-full bg-white object-right p-6 sm:w-[50%]">
@@ -234,6 +260,7 @@ export default function ProgramFormButton({
         {type === "add" && (
           <DialogTrigger asChild>
             <Button
+              size="small"
               label="Add Program"
               onClick={() => {
                 setOpenForm(true);
@@ -241,15 +268,20 @@ export default function ProgramFormButton({
             />
           </DialogTrigger>
         )}
+
         {type === "edit" && (
           <DialogTrigger asChild>
-            <Image
-              alt="options"
-              src="/programs/Options.png"
-              height={9}
-              width={8}
-              className={"relative float-right hover:cursor-pointer"}
-            />
+            <button className={buttonClass} value="Edit">
+              <Image
+                className={imageClass}
+                id="editIcon"
+                alt="edit"
+                src="/programs/EditIcon.png"
+                height={iconHeight}
+                width={iconWidth}
+              />
+              <p className={editClass}>Edit</p>
+            </button>
           </DialogTrigger>
         )}
         <DialogContent className="bg-white p-3">
