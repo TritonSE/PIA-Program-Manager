@@ -57,7 +57,7 @@ export default function ProgramFormButton({
   let iconWidth = 16;
   let imageClass = "absolute";
   let editClass = "absolute text-pia_dark_green";
-  let addButtonSize = "default";
+  let addButtonClass = "m-0 rounded-3xl bg-pia_dark_green text-white";
 
   if (isTablet) {
     iconHeight = 10;
@@ -65,11 +65,12 @@ export default function ProgramFormButton({
     buttonClass += " py-[3px]";
     imageClass += " left-[7px] top-[5px]";
     editClass += " right-[7px]";
-    addButtonSize = "small";
+    addButtonClass += " text-[10px] h-6 px-[10px]";
   } else {
     buttonClass += " py-1";
     imageClass += " left-2.5 top-2";
     editClass += " left-0 w-full";
+    addButtonClass += " text-base h-12 px-6";
   }
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
@@ -140,13 +141,15 @@ export default function ProgramFormButton({
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         {type === "add" && (
           <DialogTrigger asChild>
-            <Button
-              size={addButtonSize}
-              label="Add Program"
-              onClick={() => {
+            <button
+              type="submit"
+              className={addButtonClass}
+              onClick={function () {
                 setOpenForm(true);
               }}
-            />
+            >
+              + Create Program
+            </button>
           </DialogTrigger>
         )}
         {type === "edit" && (
@@ -259,13 +262,15 @@ export default function ProgramFormButton({
       <Dialog open={openForm} onOpenChange={setOpenForm}>
         {type === "add" && (
           <DialogTrigger asChild>
-            <Button
-              size="small"
-              label="Add Program"
-              onClick={() => {
+            <button
+              type="submit"
+              className={addButtonClass}
+              onClick={function () {
                 setOpenForm(true);
               }}
-            />
+            >
+              + Create Program
+            </button>
           </DialogTrigger>
         )}
 
