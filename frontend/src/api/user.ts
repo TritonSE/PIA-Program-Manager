@@ -24,6 +24,17 @@ export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>
   }
 };
 
+
+export async function getNotApprovedUsers(): Promise<APIResult<User[]>> {
+  try {
+    const response = await GET("/user/not-approved");
+    const json = (await response.json()) as User[];
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
 type ObjectId = string; // This is a placeholder for the actual ObjectId type
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 export async function editPhoto(

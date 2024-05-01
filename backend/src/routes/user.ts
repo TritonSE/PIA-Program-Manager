@@ -11,6 +11,7 @@ router.use(express.json());
 router.post("/create", UserValidator.createUser, UserController.createUser);
 router.post("/approve", [verifyAuthToken], UserController.approveUser);
 router.post("/deny", [verifyAuthToken], UserController.denyUser);
+router.get('/not-approved', UserController.getNotApprovedUsers);
 router.get("/", [verifyAuthToken], UserController.loginUser);
 router.post("/editPhoto", [verifyAuthToken], UserValidator.editPhoto, UserController.editPhoto);
 router.get("/getPhoto/:id", [verifyAuthToken], UserController.getPhoto);

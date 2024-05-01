@@ -64,6 +64,29 @@ export const createUser = async (
   return;
 };
 
+
+// export const getNotApprovedUsers = async (req: Request, res: Response, nxt: NextFunction) => {
+//   try {
+//     const notApprovedUsers: User[] = await UserModel.find({ approvalStatus: false }).exec();
+
+//     res.status(200).json(notApprovedUsers);
+//   } catch (error) {
+//     console.error("Error fetching not-approved users:", error);
+//     nxt(error);
+//   }
+// };
+
+export const getNotApprovedUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const notApprovedUsers = await UserModel.find({ approvalStatus: false }).exec();
+
+    res.status(200).json(notApprovedUsers);
+  } catch (error) {
+    console.error('Error fetching not-approved users:', error);
+    next(error);
+  }
+};
+
 export const approveUser = async (req: Request, res: Response, nxt: NextFunction) => {
   try {
     const { userId, email } = req.body; // firebaseuid and email
