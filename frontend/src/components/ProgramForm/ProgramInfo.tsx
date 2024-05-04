@@ -3,11 +3,11 @@ import { Path, UseFormRegister, UseFormSetValue } from "react-hook-form";
 import { Program } from "../../api/programs";
 import { cn } from "../../lib/utils";
 import { ColorRadio } from "../Radio";
-import { convertDateToString } from "../StudentForm/StudentBackground";
 import { Textfield } from "../Textfield";
 
 import { SessionList } from "./ProgramSession";
 import { ProgramData } from "./types";
+import { useState } from "react";
 
 type ProgramInfoProperties = {
   register: UseFormRegister<ProgramData>;
@@ -92,12 +92,10 @@ export function Checkcircle({ options, className, name, register, data }: Checkc
   );
 }
 
-export function ProgramInfo({
-  register,
-  classname,
-  setCalendarValue,
-  data,
-}: ProgramInfoProperties) {
+export function ProgramInfo({ register, classname, data }: ProgramInfoProperties) {
+  // ie, program form will either be "regular" or "not regular"
+  const [regularType, setRegularType] = useState(data ? data.type === "regular" : true);
+
   return (
     <div
       className={cn(
@@ -143,7 +141,10 @@ export function ProgramInfo({
               id={"regular"}
               type="radio"
               value={"regular"}
-              defaultChecked={data?.type === "regular"}
+              defaultChecked={data ? data.type === "regular" : true}
+              onInput={() => {
+                setRegularType(true);
+              }}
             />
 
             <div className="pointer-events-none absolute flex h-full w-full items-center justify-center text-neutral-800 peer-checked:bg-pia_dark_green peer-checked:text-white">
@@ -159,7 +160,10 @@ export function ProgramInfo({
               id={"varying"}
               type="radio"
               value={"varying"}
-              defaultChecked={data?.type === "varying"}
+              defaultChecked={data ? data?.type === "varying" : false}
+              onInput={() => {
+                setRegularType(false);
+              }}
             />
 
             <div className="pointer-events-none absolute flex h-full w-full items-center justify-center text-neutral-800 peer-checked:bg-pia_dark_green peer-checked:text-white">
@@ -171,42 +175,19 @@ export function ProgramInfo({
         </div>
       </div>
 
-      <div className="relative flex w-full flex-wrap flex-nowrap gap-3 gap-6 text-sm sm:flex-row sm:gap-6 sm:text-base">
-        <div className="flex w-1/2 w-full flex-col gap-1 sm:gap-3">
-          <div className="font-normal text-neutral-400">Start Date</div>
-          <Textfield
+      {regularType && (
+        <div className="relative flex h-auto w-full flex-col gap-3">
+          <div className="text-left text-sm font-normal text-neutral-400 sm:text-base">
+            Days of the week
+          </div>
+          <Checkcircle
             register={register}
-            name="startDate"
-            placeholder="00/00/0000"
-            calendar={true}
-            setCalendarValue={setCalendarValue}
-            defaultValue={data ? convertDateToString(data.endDate) : ""}
+            name="days"
+            options={["Su", "M", "T", "W", "Th", "F", "Sa"]}
+            data={data?.daysOfWeek}
           />
         </div>
-        <div className="flex w-1/2 w-full flex-col gap-1 sm:gap-3">
-          <div className="font-normal text-neutral-400">End Date</div>
-          <Textfield
-            register={register}
-            name="endDate"
-            placeholder="00/00/0000"
-            calendar={true}
-            setCalendarValue={setCalendarValue}
-            defaultValue={data ? convertDateToString(data.endDate) : ""}
-          />
-        </div>
-      </div>
-
-      <div className="flex w-1/2 flex-col gap-1 pr-3 sm:gap-3">
-        <div className="font-normal text-neutral-400">Renewal Date</div>
-        <Textfield
-          register={register}
-          name="renewalDate"
-          placeholder="00/00/0000"
-          calendar={true}
-          setCalendarValue={setCalendarValue}
-          defaultValue={data ? convertDateToString(data.endDate) : ""}
-        />
-      </div>
+      )}
 
       <div className="flex w-1/2 flex-col gap-1 pr-3 sm:gap-3">
         <div className="font-normal text-neutral-400">Hourly Rate</div>
@@ -215,19 +196,9 @@ export function ProgramInfo({
         </div>
       </div>
 
-      <div className="relative flex h-auto w-full flex-col gap-3">
-        <div className="text-left text-sm font-normal text-neutral-400 sm:text-base">
-          Days of the week
-        </div>
-        <Checkcircle
-          register={register}
-          name="days"
-          options={["Su", "M", "T", "W", "Th", "F", "Sa"]}
-          data={data?.daysOfWeek}
-        />
-      </div>
-
-      <SessionList register={register} name="sessions" defaultValue={data?.sessions} />
+      {regularType && (
+        <SessionList register={register} name="sessions" defaultValue={data?.sessions} />
+      )}
 
       <div className="stretch flex w-full flex-col items-start gap-2">
         <div className="text-center text-base font-normal text-neutral-400">Color (Cover)</div>
