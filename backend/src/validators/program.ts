@@ -1,7 +1,8 @@
 import { body } from "express-validator";
 //import mongoose from "mongoose";
 
-import { Program } from "../controllers/program";
+//import { Program } from "../controllers/program";
+import ProgramModel from "../models/program";
 
 const makeNameValidator = () =>
   body("name")
@@ -27,7 +28,12 @@ const makeAbbreviationValidator = () =>
     .withMessage("abbreviation must be a string")
     .bail()
     .notEmpty()
-    .withMessage("abbreviation must not be empty");
+    .withMessage("abbreviation must not be empty")
+    .custom(async (value: string) => {
+      const program = await ProgramModel.find({ abbreviation: value });
+      if (program) throw new Error("Program Abbreviation must be unique");
+      return true;
+    });
 const makeTypeValidator = () =>
   body("type")
     .exists()
@@ -66,7 +72,7 @@ const makeDaysOfWeekValidator = () =>
       }
       return true;
     });
-const makeStartDateValidator = () =>
+/*const makeStartDateValidator = () =>
   body("startDate")
     .exists()
     .withMessage("start date needed")
@@ -86,7 +92,8 @@ const makeEndDateValidator = () =>
       if (new Date(value) < new Date(reqBody.startDate))
         throw new Error("end date must be after start date");
       return true;
-    });
+    });*/
+
 const makeColorValidator = () =>
   body("color")
     .exists()
@@ -133,13 +140,14 @@ const makeColorValidator = () =>
     })
     .bail()
     .withMessage("students must be valid student ids");*/
-const makeRenewalDateValidator = () =>
+/*const makeRenewalDateValidator = () =>
   body("renewalDate")
     .exists()
     .withMessage("renewal date needed")
     .bail()
     .isISO8601()
-    .withMessage("renewal date must be a valid date-time string");
+    .withMessage("renewal date must be a valid date-time string");*/
+
 const makeHourlyPayValidator = () =>
   body("hourly")
     .exists()
@@ -178,10 +186,10 @@ export const createProgram = [
   makeAbbreviationValidator(),
   makeTypeValidator(),
   makeDaysOfWeekValidator(),
-  makeStartDateValidator(),
-  makeEndDateValidator(),
+  //makeStartDateValidator(),
+  //makeEndDateValidator(),
   makeColorValidator(),
-  makeRenewalDateValidator(),
+  //makeRenewalDateValidator(),
   makeHourlyPayValidator(),
   makeSessionsValidator(),
 ];
@@ -191,10 +199,10 @@ export const updateProgram = [
   makeAbbreviationValidator(),
   makeTypeValidator(),
   makeDaysOfWeekValidator(),
-  makeStartDateValidator(),
-  makeEndDateValidator(),
+  //makeStartDateValidator(),
+  //makeEndDateValidator(),
   makeColorValidator(),
-  makeRenewalDateValidator(),
+  //makeRenewalDateValidator(),
   makeHourlyPayValidator(),
   makeSessionsValidator(),
   //makeStudentUIDsValidator(),
