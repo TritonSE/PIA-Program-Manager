@@ -1,7 +1,7 @@
 import { body } from "express-validator";
 //import mongoose from "mongoose";
 
-//import { Program } from "../controllers/program";
+import { Program } from "../controllers/program";
 import ProgramModel from "../models/program";
 
 const makeNameValidator = () =>
@@ -29,8 +29,11 @@ const makeAbbreviationValidator = () =>
     .bail()
     .notEmpty()
     .withMessage("abbreviation must not be empty")
-    .custom(async (value: string) => {
-      const program = await ProgramModel.find({ abbreviation: value });
+    .custom(async (value: string, { req }) => {
+      const program = await ProgramModel.findOne({
+        _id: { $ne: (req.body as Program)._id },
+        abbreviation: value,
+      });
       if (program) throw new Error("Program Abbreviation must be unique");
       return true;
     });
@@ -56,7 +59,12 @@ const makeDaysOfWeekValidator = () =>
     .bail()
     .isArray()
     .withMessage("days of week selection must be an array")
-    .custom((value: string[]) => {
+    .custom((value: string[], { req }) => {
+      if ((req.body as Program).type === "varying") {
+        if (value.length !== 0) throw new Error("Varying sessions cannot assigned Days of Week");
+        return true;
+      }
+
       if (value.length === 0) throw new Error("days of week selection needed");
       for (const valuei of value) {
         if (
@@ -149,7 +157,7 @@ const makeColorValidator = () =>
     .withMessage("renewal date must be a valid date-time string");*/
 
 const makeHourlyPayValidator = () =>
-  body("hourly")
+  body("hourlyPay")
     .exists()
     .withMessage("hourly pay needed")
     .bail()
@@ -165,7 +173,12 @@ const makeSessionsValidator = () =>
     .isArray()
     .withMessage("Sessions must be a 2D String Array")
     .bail()
-    .custom((sessions: string[][]) => {
+    .custom((sessions: string[][], { req }) => {
+      if ((req.body as Program).type === "varying") {
+        if (sessions.length !== 0) throw new Error("Varying sessions cannot have session times");
+        return true;
+      }
+      // Assumes program type is regular
       if (sessions.length === 0) throw new Error("Must specify a session time");
       sessions.forEach((session) => {
         if (!Array.isArray(session)) throw new Error("Session must be an array");

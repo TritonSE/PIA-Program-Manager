@@ -6,7 +6,7 @@ const programSchema = new Schema({
   type: { type: String, required: true }, // regular vs. varying
   daysOfWeek: { type: [String], required: true }, // M, T, W, TH, F
   color: { type: String, required: true },
-  hourly: { type: Number, required: true },
+  hourlyPay: { type: Number, required: true },
   sessions: { type: [[String]], required: true },
 });
 

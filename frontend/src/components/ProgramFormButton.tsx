@@ -40,6 +40,7 @@ export default function ProgramFormButton({
   const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<ProgramData>();
 
   const [openForm, setOpenForm] = useState(false);
+  const [openCancel, setOpenCancel] = useState(false);
   const { width } = useWindowSize().windowSize;
   const isMobile = useMemo(() => width <= 640, [width]);
 
@@ -48,18 +49,20 @@ export default function ProgramFormButton({
       ? formData.sessions.filter((session: string[]) => session[0] || session[1])
       : [["", ""]];
 
+    const programRequestType = data ? data.type : formData.type; //type selector is disabled when editing
+
+    //If the program type is not regular, then daysOfWeek and sessions will be empty lists.
     const programRequest: CreateProgramRequest = {
       name: formData.name,
       abbreviation: formData.abbreviation,
-      type: formData.type,
-      daysOfWeek: formData.days ? formData.days : [],
-      startDate: new Date(formData.startDate),
-      endDate: new Date(formData.endDate),
+      type: programRequestType,
+      daysOfWeek:
+        formData.daysOfWeek && programRequestType === "regular" ? formData.daysOfWeek : [],
       color: formData.color,
-      renewalDate: new Date(formData.renewalDate),
-      hourly: formData.hourly,
-      sessions: sanitizedSessions,
+      hourlyPay: formData.hourlyPay,
+      sessions: programRequestType === "regular" ? sanitizedSessions : [],
     };
+
     console.log(`${type} program`, programRequest);
     if (type === "add") {
       createProgram(programRequest)
@@ -81,7 +84,7 @@ export default function ProgramFormButton({
         });
     }
     if (type === "edit" && data) {
-      const updatedProgram: Program = { ...programRequest, _id: data._id, students: data.students };
+      const updatedProgram: Program = { ...programRequest, _id: data._id };
       console.log(`${type} program`, updatedProgram);
       editProgram(updatedProgram)
         .then((result) => {
@@ -130,7 +133,13 @@ export default function ProgramFormButton({
             />
           </DialogTrigger>
         )}
-        <DialogContentSlide className="w-full bg-white object-right p-6 sm:w-[50%]">
+        <DialogContentSlide
+          className="w-full bg-white object-right p-6 sm:w-[50%]"
+          onPointerDownOutside={(event) => {
+            event.preventDefault();
+            setOpenCancel(true);
+          }}
+        >
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             {type === "edit" && data && <ProgramArchive setOpenParent={setOpenForm} data={data} />}
 
@@ -148,7 +157,11 @@ export default function ProgramFormButton({
             <div className="flex flex-row-reverse gap-3">
               <Button label={type === "add" ? "Create" : "Save Changes"} type="submit" />
               <ProgramCancel
+                isMobile={isMobile}
+                open={openCancel}
+                setOpen={setOpenCancel}
                 onCancel={() => {
+                  setOpenCancel(false);
                   setOpenForm(false);
                   reset();
                 }}
@@ -185,6 +198,8 @@ export default function ProgramFormButton({
         <DialogContent className="bg-white p-3">
           <ProgramCancel
             isMobile={isMobile}
+            open={openCancel}
+            setOpen={setOpenCancel}
             onCancel={() => {
               setOpenForm(false);
               reset();

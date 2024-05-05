@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { Program } from "../../api/programs";
 import { Button } from "../Button";
 import { Textfield } from "../Textfield";
 import { Dialog, DialogClose, DialogContentSlide, DialogTrigger } from "../ui/dialog";
 
-import { Program } from "@/api/programs";
 type props = {
   label: string;
 };

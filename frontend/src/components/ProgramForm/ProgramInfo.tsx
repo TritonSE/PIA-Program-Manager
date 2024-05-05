@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Path, UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { Program } from "../../api/programs";
@@ -7,7 +8,6 @@ import { Textfield } from "../Textfield";
 
 import { SessionList } from "./ProgramSession";
 import { ProgramData } from "./types";
-import { useState } from "react";
 
 type ProgramInfoProperties = {
   register: UseFormRegister<ProgramData>;
@@ -185,7 +185,7 @@ export function ProgramInfo({ register, classname, data, mode }: ProgramInfoProp
           </div>
           <Checkcircle
             register={register}
-            name="days"
+            name="daysOfWeek"
             options={["Su", "M", "T", "W", "Th", "F", "Sa"]}
             data={data?.daysOfWeek}
           />
@@ -195,7 +195,7 @@ export function ProgramInfo({ register, classname, data, mode }: ProgramInfoProp
       <div className="flex w-1/2 flex-col gap-1 pr-3 sm:gap-3">
         <div className="font-normal text-neutral-400">Hourly Rate</div>
         <div>
-          <MoneyTextfield register={register} name="hourly" defaultValue={data?.hourly} />
+          <MoneyTextfield register={register} name="hourlyPay" defaultValue={data?.hourlyPay} />
         </div>
       </div>
 
