@@ -142,6 +142,7 @@ export default function ProgramFormButton({
               register={register}
               data={data ?? null}
               setCalendarValue={setCalendarValue}
+              mode={type}
             />
 
             <div className="flex flex-row-reverse gap-3">
@@ -207,6 +208,7 @@ export default function ProgramFormButton({
               register={register}
               data={data ?? null}
               setCalendarValue={setCalendarValue}
+              mode={type}
             />
             <DialogClose asChild>
               <div className="pt-6">

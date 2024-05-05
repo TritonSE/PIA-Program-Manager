@@ -14,6 +14,7 @@ type ProgramInfoProperties = {
   classname?: string;
   setCalendarValue: UseFormSetValue<ProgramData>;
   data: Program | null;
+  mode: string;
 };
 
 type CheckcircleProps = {
@@ -92,7 +93,7 @@ export function Checkcircle({ options, className, name, register, data }: Checkc
   );
 }
 
-export function ProgramInfo({ register, classname, data }: ProgramInfoProperties) {
+export function ProgramInfo({ register, classname, data, mode }: ProgramInfoProperties) {
   // ie, program form will either be "regular" or "not regular"
   const [regularType, setRegularType] = useState(data ? data.type === "regular" : true);
 
@@ -145,6 +146,7 @@ export function ProgramInfo({ register, classname, data }: ProgramInfoProperties
               onInput={() => {
                 setRegularType(true);
               }}
+              disabled={mode === "edit"}
             />
 
             <div className="pointer-events-none absolute flex h-full w-full items-center justify-center text-neutral-800 peer-checked:bg-pia_dark_green peer-checked:text-white">
@@ -164,6 +166,7 @@ export function ProgramInfo({ register, classname, data }: ProgramInfoProperties
               onInput={() => {
                 setRegularType(false);
               }}
+              disabled={mode === "edit"}
             />
 
             <div className="pointer-events-none absolute flex h-full w-full items-center justify-center text-neutral-800 peer-checked:bg-pia_dark_green peer-checked:text-white">

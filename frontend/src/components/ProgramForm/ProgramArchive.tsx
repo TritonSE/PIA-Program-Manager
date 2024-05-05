@@ -59,7 +59,7 @@ export default function ProgramArchive({ setOpenParent, data, isMobile = false }
 
   return (
     <Dialog open={openArchive}>
-      <div className="absolute inset-3 flex h-auto justify-end">
+      <div className="absolute inset-3 flex h-[10%] justify-end">
         <DialogTrigger asChild>
           {!isMobile ? (
             <Button
