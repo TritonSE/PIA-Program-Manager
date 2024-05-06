@@ -26,8 +26,14 @@ export default function Component() {
   });
 
   if (typeof program !== "undefined") {
-    return <p>{program.name}</p>;
+    return (
+      <div>
+        <p>{program.name}</p>
+        <p>test</p>
+      </div>
+    );
   } else {
+    // Replace with Loading Gif once it is created
     return <p>loading</p>;
   }
 }

@@ -30,21 +30,6 @@ function processDate(startString: Date): string {
   return "Started " + startDate.toLocaleDateString("en-US", options);
 }
 
-// function checkOffscreen(id: string) {
-//   const elem = document.getElementById("edit" + id);
-//   if (elem === null) {
-//     return;
-//   }
-
-//   const bounding = elem.getBoundingClientRect();
-
-//   console.log(bounding.right);
-//   console.log(window.innerWidth);
-//   console.log(document.documentElement.clientWidth);
-
-//   return bounding.right + 26 - (window.innerWidth || document.documentElement.clientWidth);
-// }
-
 function toggleEdit(id: string) {
   const editId = "edit" + id;
   console.log(editId);
@@ -73,19 +58,20 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
 
   const optionsButton = document.getElementById(optionsId);
   if (optionsButton !== null) {
-    optionsButton.onclick = function () {
+    optionsButton.onclick = function (event) {
+      event.preventDefault();
       toggleEdit(program._id);
     };
   }
 
-  let editClass = "absolute right-2 hidden";
+  let editClass = "absolute right-2 hidden z-10";
   let outerDivClass = "text-white grow overflow-hidden tracking-wide leading-6";
   let topDivClass = "flex flex-row";
   let botDivClass = "text-black bg-white";
   let typeClass;
   let titleClass;
   let optionsDiv = "grow";
-  const optionsClass = "relative float-right hover:cursor-pointer";
+  const optionsClass = "relative float-right hover:cursor-pointer z-10";
   let dateClass;
   let numClass;
   let numTextClass;
@@ -174,7 +160,7 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
   );
 
   return (
-    <div className="relative">
+    <div className="relative z-0">
       <div id={editId} className={editClass}>
         <ProgramFormButton
           type="edit"

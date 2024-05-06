@@ -115,10 +115,20 @@ export default function ProgramFormButton({
     }
   };
 
+  const inputComponent = document.getElementById("componentId");
+  if (inputComponent !== null) {
+    inputComponent.onclick = function (event: MouseEvent) {
+      event.preventDefault();
+      setOpenForm(true);
+    };
+  }
+
   return !isMobile ? (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogTrigger asChild>{component}</DialogTrigger>
+        <DialogTrigger id="componentId" asChild>
+          {component}
+        </DialogTrigger>
         <DialogContentSlide className="w-full bg-white object-right p-6 sm:w-[50%]">
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             {type === "edit" && (
@@ -212,7 +222,9 @@ export default function ProgramFormButton({
   ) : (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogTrigger asChild>{component}</DialogTrigger>
+        <DialogTrigger id="componentId" asChild>
+          {component}
+        </DialogTrigger>
         <DialogContent className="bg-white p-3">
           <ProgramCancel
             isMobile={isMobile}

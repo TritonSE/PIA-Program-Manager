@@ -125,7 +125,9 @@ export default function Programs() {
         <div className={cardsGridClass}>
           {Object.values(programs).map((program) => (
             <div className={cardClass} key={program._id}>
-              <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+              <a href={"/program/" + program._id} key={program._id}>
+                <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+              </a>
             </div>
           ))}
         </div>
