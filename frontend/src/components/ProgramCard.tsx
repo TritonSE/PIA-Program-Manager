@@ -18,18 +18,6 @@ export type CardProps = {
   setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
-function processDate(startString: Date): string {
-  const startDate = new Date(startString);
-
-  const options = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  } as const;
-
-  return "Started " + startDate.toLocaleDateString("en-US", options);
-}
-
 function toggleEdit(id: string) {
   const editId = "edit" + id;
   console.log(editId);
@@ -105,7 +93,6 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     optionsDiv += " pr-[8px] pt-[12px]";
     optionsHeight /= 2;
     optionsWidth /= 2;
-    dateClass = cn("relative text-[10px] top-2 left-3", poppins.className);
     numClass = "h-5 gap-x-1.5 flex flex-row relative top-2 left-3";
     numTextClass = cn("text-[10px]", poppins.className);
     iconClass = "h-2 w-3 mt-[7px]";
@@ -117,8 +104,7 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     typeClass = cn("uppercase relative text-sm top-5 left-7", poppins.className);
     titleClass = cn("capitalize relative text-3xl top-8 left-7 font-bold", poppins.className);
     optionsDiv += " pr-[16px] pt-[24px]";
-    dateClass = cn("relative text-base top-5 left-7", poppins.className);
-    numClass = "h-8 gap-x-1.5 flex flex-row relative top-14 left-7";
+    numClass = "h-8 gap-x-1.5 flex flex-row relative top-5 left-7";
     numTextClass = cn("text-base", poppins.className);
     iconClass = "h-3 w-[18px] mt-[5px]";
   }
@@ -189,7 +175,6 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
           )}
         </div>
         <div className={botDivClass}>
-          <p className={dateClass}>{processDate(program.startDate)}</p>
           <div className={numClass}>
             <Image
               alt="students"
