@@ -76,7 +76,7 @@ function NotePreview({ selectedStudent, firebaseToken, allProgressNotes }: NoteP
               .filter((note) => note.studentId === selectedStudent._id)
               .map((note) => (
                 <li
-                  className="hover:bg-[#188B8A14] transition-colors border-b-[1px] border-b-[#B4B4B4] first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md last:border-b-0"
+                  className="border-b-[1px] border-b-[#B4B4B4] transition-colors first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md last:border-b-0 hover:bg-[#188B8A14]"
                   key={note._id}
                   onClick={() => {
                     handleSelectNote(note);

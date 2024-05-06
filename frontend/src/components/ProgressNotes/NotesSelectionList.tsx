@@ -86,7 +86,7 @@ function NotesSelectionList({
 
   return (
     <>
-      <ul className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] scrollbar w-full overflow-auto sm:w-3/5">
+      <ul className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] scrollbar w-full overflow-auto sm:w-2/5">
         {allStudents.map((studentData) => {
           let latestNote = { note: "No notes available", date: "" };
           if (studentData.progressNotes.length !== 0) {
@@ -103,7 +103,7 @@ function NotesSelectionList({
               }}
               key={studentData._id}
               aria-current={selectedStudent._id === studentData._id ? "true" : "false"}
-              className="transition-colors aria-current:border-l-[8px] aria-current:border-l-pia_dark_green aria-current:bg-[#188B8A14] overflow-hidden border-b-[1px]  border-l-[8px] border-b-[#B4B4B4] border-l-white bg-white first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md last:border-b-0"
+              className="overflow-hidden border-b-[1px] border-l-[8px] border-b-[#B4B4B4] border-l-white bg-white  transition-colors first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md last:border-b-0 aria-current:border-l-[8px] aria-current:border-l-pia_dark_green aria-current:bg-[#188B8A14]"
             >
               <button
                 className={`

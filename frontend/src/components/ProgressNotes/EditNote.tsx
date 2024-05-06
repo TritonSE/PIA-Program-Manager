@@ -1,15 +1,15 @@
 import { useRef } from "react";
 
+import Back from "../../../public/icons/back.svg";
+import Delete from "../../../public/icons/delete.svg";
+import Edit from "../../../public/icons/edit.svg";
 import { Button } from "../Button";
 
+import { ViewMode } from "./NotePreview";
 import { ProgressNote } from "./types";
 
 import { createProgressNote } from "@/api/progressNotes";
 import { StudentWithNotes } from "@/pages/notes";
-import Back from "../../../public/icons/back.svg";
-import Edit from "../../../public/icons/edit.svg";
-import Delete from "../../../public/icons/delete.svg";
-import { ViewMode } from "./NotePreview";
 
 type EditNoteProps = {
   selectedStudent: StudentWithNotes;

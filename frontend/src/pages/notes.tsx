@@ -52,9 +52,9 @@ function Notes() {
   if (!firebaseUser) return <h1>Loading...</h1>;
 
   return (
-    <main className="h-full flex flex-col">
+    <main className="flex h-full flex-col">
       <h1 className={"font-[alternate-gothic] text-4xl"}>Progress Notes</h1>
-      <div className="flex-1 flex gap-5 overflow-hidden">
+      <div className="flex flex-1 gap-5 overflow-hidden">
         <NotesSelectionList
           selectedStudent={selectedStudent}
           setSelectedStudent={setSelectedStudent}

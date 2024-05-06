@@ -100,7 +100,7 @@ module.exports = {
     },
     extend: {
       aria: {
-        current: 'current="true"'
+        current: 'current="true"',
       },
       colors: {
         border: "hsl(var(--border))",
