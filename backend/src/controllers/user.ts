@@ -179,6 +179,7 @@ export const approveUser = async (req: Request, res: Response, nxt: NextFunction
 // };
 
 export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
+  console.log("Inside denyUser controller");
   try {
     const { email } = req.body;
 
@@ -191,6 +192,8 @@ export const denyUser = async (req: Request, res: Response, nxt: NextFunction) =
 
     await UserModel.findByIdAndUpdate(userId, { approvalStatus: false });
 
+    console.log("About to send denial email");
+    console.log(email as string);
     // await sendDenialEmail(email);
     await sendDenialEmail(email as string);
 

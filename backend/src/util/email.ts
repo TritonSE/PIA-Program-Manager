@@ -34,6 +34,7 @@ export const sendApprovalEmail = async (email: string) => {
 };
 
 export const sendDenialEmail = async (email: string) => {
+  console.log("Sending Denial Email");
   try {
     await transporter.sendMail({
       from: "PIA-email@gmail.com",
