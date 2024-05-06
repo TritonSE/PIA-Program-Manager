@@ -1,5 +1,5 @@
 import { Poppins } from "next/font/google";
-//import Image from "next/image";
+import Image from "next/image";
 import React from "react";
 
 import { Program } from "../api/programs";
@@ -18,7 +18,7 @@ export type CardProps = {
   setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
-/*function processDate(startString: Date): string {
+function processDate(startString: Date): string {
   const startDate = new Date(startString);
 
   const options = {
@@ -28,7 +28,7 @@ export type CardProps = {
   } as const;
 
   return "Started " + startDate.toLocaleDateString("en-US", options);
-}*/
+}
 
 export function ProgramCard({ program, isAdmin, className, setPrograms }: CardProps) {
   const { isTablet } = useWindowSize();
@@ -40,10 +40,10 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
   let titleClass;
   let optionsDiv = "grow";
   const optionsClass = "relative float-right hover:cursor-pointer";
-  //let dateClass;
-  //let numClass;
-  //let numTextClass;
-  //let iconClass = "relative";
+  let dateClass;
+  let numClass;
+  let numTextClass;
+  let iconClass = "relative";
 
   const programFields: Program = {
     _id: program._id,
@@ -67,10 +67,10 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     typeClass = cn("uppercase relative text-[10px] top-2 left-3", poppins.className);
     titleClass = cn("capitalize relative text-sm top-2 left-3 font-bold", poppins.className);
     optionsDiv += " pr-[8px] pt-[12px]";
-    //dateClass = cn("relative text-[10px] top-2 left-3", poppins.className);
-    //numClass = "h-5 gap-x-1.5 flex flex-row relative top-2 left-3";
-    //numTextClass = cn("text-[10px]", poppins.className);
-    //iconClass = "h-2 w-3 mt-[7px]";
+    dateClass = cn("relative text-[10px] top-2 left-3", poppins.className);
+    numClass = "h-5 gap-x-1.5 flex flex-row relative top-2 left-3";
+    numTextClass = cn("text-[10px]", poppins.className);
+    iconClass = "h-2 w-3 mt-[7px]";
   } else {
     outerDivClass += " rounded-2xl h-68";
     topDivClass += " h-36";
@@ -78,10 +78,10 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     typeClass = cn("uppercase relative text-sm top-5 left-7", poppins.className);
     titleClass = cn("capitalize relative text-3xl top-8 left-7 font-bold", poppins.className);
     optionsDiv += " pr-[16px] pt-[24px]";
-    //dateClass = cn("relative text-base top-5 left-7", poppins.className);
-    //numClass = "h-8 gap-x-1.5 flex flex-row relative top-14 left-7";
-    //numTextClass = cn("text-base", poppins.className);
-    //iconClass = "h-3 w-[18px] mt-[5px]";
+    dateClass = cn("relative text-base top-5 left-7", poppins.className);
+    numClass = "h-8 gap-x-1.5 flex flex-row relative top-14 left-7";
+    numTextClass = cn("text-base", poppins.className);
+    iconClass = "h-3 w-[18px] mt-[5px]";
   }
 
   if (className) {
@@ -104,7 +104,7 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
         )}
       </div>
       <div className={botDivClass}>
-        {/*<p className={dateClass}>{processDate(program.startDate)}</p>}
+        <p className={dateClass}>{processDate(/*program.startDate*/ new Date())}</p>
         <div className={numClass}>
           <Image
             alt="students"
@@ -113,12 +113,14 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
             width={18}
             className={iconClass}
           />
-          {program.students.length === 0 && <p className={numTextClass}>No Students</p>}
-          {program.students.length === 1 && <p className={numTextClass}>1 Student</p>}
-          {program.students.length > 1 && (
-            <p className={numTextClass}>{program.students.length} Students</p>
-          )}
-        </div>*/}
+          {/*program.students.length === 0 && <p className={numTextClass}>No Students</p>*/}
+          {/*program.students.length === 1 && <p className={numTextClass}>1 Student</p>*/}
+          {
+            //program.students.length > 1 && (
+            <p className={numTextClass}>{/*program.students.length*/}0 Students</p>
+            //)
+          }
+        </div>
       </div>
     </div>
   );

@@ -42,8 +42,8 @@ const ProgramPopover = ({ link, program }: { link: ProgramLink; program: Program
   const rowInfo = [
     ["Type", program.type],
     ["Schedule", program.daysOfWeek.join(", ")],
-    ["Start Date", new Date(program.startDate).toLocaleDateString("en-US")],
-    ["Renewal Date", new Date(program.endDate).toLocaleDateString("en-US")],
+    ["Start Date", new Date(/*program.startDate*/).toLocaleDateString("en-US")],
+    ["Renewal Date", new Date(/*program.endDate*/).toLocaleDateString("en-US")],
     ["Hours Left", link.hoursLeft.toString()],
   ];
 
