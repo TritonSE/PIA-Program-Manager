@@ -60,7 +60,6 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
   let titleClass;
   let optionsDiv = "grow";
   const optionsClass = "relative float-right hover:cursor-pointer z-10";
-  let dateClass;
   let numClass;
   let numTextClass;
   let iconClass = "relative";

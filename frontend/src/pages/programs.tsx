@@ -43,8 +43,8 @@ export default function Programs() {
   });
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar flex flex-col";
-  let titleClass = "font-[alternate-gothic]";
   let headerClass = "flex flex-row";
+  let titleClass = "font-[alternate-gothic]";
   let cardsGridClass = "grid";
   let cardClass = "";
 
@@ -106,7 +106,6 @@ export default function Programs() {
         {isAdmin && (
           <ProgramFormButton type="add" component={addButton} setPrograms={setPrograms} />
         )}
-        {/* Should be replaced with Add Button when created */}
       </div>
       {Object.keys(programs).length === 0 && (
         <div className={emptyClass}>
