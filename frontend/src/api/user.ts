@@ -24,7 +24,6 @@ export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>
   }
 };
 
-
 export async function getNotApprovedUsers(): Promise<APIResult<User[]>> {
   try {
     const response = await GET("/user/not-approved");

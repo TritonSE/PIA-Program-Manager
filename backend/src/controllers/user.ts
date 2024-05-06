@@ -11,6 +11,7 @@ import UserModel from "../models/user";
 import { sendApprovalEmail, sendDenialEmail } from "../util/email";
 import { firebaseAdminAuth } from "../util/firebase";
 import { handleImageParsing } from "../util/image";
+import { deleteUserFromFirebase, deleteUserFromMongoDB } from "../util/user";
 import validationErrorParser from "../util/validationErrorParser";
 
 import {
@@ -64,6 +65,20 @@ export const createUser = async (
   return;
 };
 
+export const deleteUser = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const { userId } = req.params;
+
+    // delete user from Firebase and MongoDB
+    await deleteUserFromFirebase(userId);
+    await deleteUserFromMongoDB(userId);
+
+    res.status(200).send("User deleted successfully");
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    nxt(error);
+  }
+};
 
 // export const getNotApprovedUsers = async (req: Request, res: Response, nxt: NextFunction) => {
 //   try {
@@ -82,7 +97,7 @@ export const getNotApprovedUsers = async (req: Request, res: Response, next: Nex
 
     res.status(200).json(notApprovedUsers);
   } catch (error) {
-    console.error('Error fetching not-approved users:', error);
+    console.error("Error fetching not-approved users:", error);
     next(error);
   }
 };
