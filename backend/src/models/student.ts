@@ -34,18 +34,11 @@ const studentSchema = new Schema({
   birthday: { type: Date, required: true },
   intakeDate: { type: Date, required: true },
   tourDate: { type: Date, required: true },
-
-  programs: {
-    type: [
-      {
-        programId: { type: Schema.Types.ObjectId, ref: "Program", required: true },
-        status: { type: String, required: true },
-        dateUpdated: { type: Date, required: true, default: Date.now() },
-        hoursLeft: { type: Number, required: true },
-      },
-    ],
-    required: true,
-  },
+  
+  conservation: { type: Boolean, required: true },
+  UCINumber : { type: String, required: true },
+  incidentForm: { type: String, required: true },
+  documents: {type: [String], required: true},
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },
