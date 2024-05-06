@@ -13,6 +13,6 @@ router.post(
   ProgressNoteController.createProgressNote,
 );
 // router.put("/edit/:id", ProgressNoteValidator.editStudent, ProgressNoteController.editStudent);
-// router.get("/all", ProgressNoteController.getAllStudents);
+router.get("/all", [verifyAuthToken], ProgressNoteController.getAllProgressNotes);
 
 export default router;

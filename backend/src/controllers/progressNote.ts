@@ -31,7 +31,7 @@ export const createProgressNote: RequestHandler = async (req, res, next) => {
     const errors = validationResult(req);
     validationErrorParser(errors);
 
-    const newProgressNote = { ...req.body, userId } as ProgressNoteType;
+    const newProgressNote = { ...req.body, lastEditedBy: user.name, userId } as ProgressNoteType;
 
     const createdProgressNote = await ProgressNote.create(newProgressNote);
 
@@ -69,12 +69,19 @@ export const createProgressNote: RequestHandler = async (req, res, next) => {
 //   }
 // };
 
-// export const getAllPrograms: RequestHandler = async (req, res, next) => {
-//   try {
-//     const programs = await ProgramModel.find();
+export const getAllProgressNotes: RequestHandler = async (req, res, next) => {
+  try {
+    const customReq = req as UserIdRequest;
+    const userId = customReq.userId;
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
 
-//     res.status(200).json(programs);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
+    const allNotes = await ProgressNote.find();
+
+    res.status(200).json(allNotes);
+  } catch (error) {
+    next(error);
+  }
+};

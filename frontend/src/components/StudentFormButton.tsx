@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Dispatch, SetStateAction, useContext, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import Plus from '../../public/icons/plus.svg'
 import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
 
@@ -163,7 +164,8 @@ export default function StudentFormButton({
           />
         ) : (
           <Button
-            label={"＋ Add Student"}
+            label="Add Student"
+            icon={<Plus/>}
             onClick={() => {
               setOpenForm(true);
             }}

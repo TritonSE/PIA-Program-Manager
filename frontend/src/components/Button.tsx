@@ -21,7 +21,7 @@ const poppins = Poppins({ weight: "400", style: "normal", subsets: [] });
 
 export type ButtonProps = {
   label: React.ReactNode | string;
-
+  icon?: React.ReactNode | null;
   kind?: "primary" | "secondary" | "destructive" | "destructive-secondary";
   size?: "default" | "small" | "big" | "wide";
   disabled?: boolean;
@@ -31,6 +31,7 @@ export type ButtonProps = {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     label,
+    icon = null,
     kind = "primary",
     size = "default",
     disabled = false,
@@ -95,6 +96,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   buttonClass += ` ${poppins.className}`;
   return (
     <button ref={ref} className={buttonClass} {...props}>
+      {icon && <span aria-hidden="true">{icon}</span>}
       {label}
     </button>
   );
