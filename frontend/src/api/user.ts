@@ -1,4 +1,4 @@
-import { APIResult, GET, PATCH, handleAPIError } from "@/api/requests";
+import { APIResult, DELETE, GET, PATCH, POST, handleAPIError } from "@/api/requests";
 
 export type User = {
   uid: string;
@@ -29,6 +29,52 @@ export async function getNotApprovedUsers(): Promise<APIResult<User[]>> {
     const response = await GET("/user/not-approved");
     const json = (await response.json()) as User[];
     return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function approveUser(email: string): Promise<APIResult<void>> {
+  try {
+    const response = await POST(`/user/approve`, { email });
+    if (response.ok) {
+      // return { success: true };
+      return { success: true, data: undefined }; // return APIResult<void> with empty data
+    } else {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to approve user");
+    }
+  } catch (error) {
+    return { success: false, error: "Failed to approve user" };
+  }
+}
+
+export async function denyUser(email: string): Promise<APIResult<void>> {
+  try {
+    const response = await POST(`/user/deny`, { email });
+    if (response.ok) {
+      // return { success: true };
+      return { success: true, data: undefined }; // return APIResult<void> with empty data
+    } else {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to deny user");
+    }
+  } catch (error) {
+    return { success: false, error: "Error denying user" };
+  }
+}
+
+// delete user by email
+export async function deleteUserByEmail(email: string): Promise<APIResult<void>> {
+  try {
+    const response = await DELETE(`/user/delete/${encodeURIComponent(email)}`, undefined);
+    if (response.ok) {
+      // return { success: true };
+      return { success: true, data: undefined };
+    } else {
+      const error = await response.json();
+      throw new Error(error.message || "Failed to delete user");
+    }
   } catch (error) {
     return handleAPIError(error);
   }

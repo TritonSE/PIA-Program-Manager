@@ -69,13 +69,13 @@ export const createUser = async (
 //   try {
 //     const { userId } = req.params;
 
-//     if (!userId || typeof userId !== 'string' || userId.length > 128) {
-//       console.log('Received userId:', userId);
-//       console.log('Type of userId:', typeof userId);
-//       console.log('Length of userId:', userId.length);
-
-//       throw new Error('Invalid userId provided');
+//     if (!userId || typeof userId !== "string" || userId.trim().length === 0) {
+//       throw new Error("Invalid userId provided");
 //     }
+
+//     // console.log('Received userId:', userId);
+//     // console.log('Type of userId:', typeof userId);
+//     // console.log('Length of userId:', userId.length);
 
 //     // delete user from Firebase and MongoDB
 //     await deleteUserFromFirebase(userId);
@@ -90,15 +90,15 @@ export const createUser = async (
 
 export const deleteUser = async (req: Request, res: Response, nxt: NextFunction) => {
   try {
-    const { userId } = req.params;
+    const { email } = req.params;
 
-    if (!userId || typeof userId !== "string" || userId.trim().length === 0) {
-      throw new Error("Invalid userId provided");
+    // Find the user by email
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    // console.log('Received userId:', userId);
-    // console.log('Type of userId:', typeof userId);
-    // console.log('Length of userId:', userId.length);
+    const userId = user._id; // _id is the uid in schema
 
     // delete user from Firebase and MongoDB
     await deleteUserFromFirebase(userId);
@@ -123,9 +123,32 @@ export const getNotApprovedUsers = async (req: Request, res: Response, next: Nex
   }
 };
 
+// export const approveUser = async (req: Request, res: Response, nxt: NextFunction) => {
+//   try {
+//     const { userId, email } = req.body; // firebaseuid and email
+
+//     await UserModel.findByIdAndUpdate(userId, { approvalStatus: true });
+
+//     // await sendApprovalEmail(email);
+//     await sendApprovalEmail(email as string);
+
+//     res.status(200).send("User approved successfully");
+//   } catch (error) {
+//     console.error(error);
+//     nxt(error);
+//   }
+// };
+
 export const approveUser = async (req: Request, res: Response, nxt: NextFunction) => {
   try {
-    const { userId, email } = req.body; // firebaseuid and email
+    const { email } = req.body;
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const userId = user._id;
 
     await UserModel.findByIdAndUpdate(userId, { approvalStatus: true });
 
@@ -139,9 +162,32 @@ export const approveUser = async (req: Request, res: Response, nxt: NextFunction
   }
 };
 
+// export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
+//   try {
+//     const { userId, email } = req.body; // firebaseuid and email
+
+//     await UserModel.findByIdAndUpdate(userId, { approvalStatus: false });
+
+//     // await sendDenialEmail(email);
+//     await sendDenialEmail(email as string);
+
+//     res.status(200).send("User denied successfully");
+//   } catch (error) {
+//     console.error(error);
+//     nxt(error);
+//   }
+// };
+
 export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
   try {
-    const { userId, email } = req.body; // firebaseuid and email
+    const { email } = req.body;
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const userId = user._id;
 
     await UserModel.findByIdAndUpdate(userId, { approvalStatus: false });
 
