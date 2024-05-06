@@ -5,54 +5,16 @@
 
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
+import { HydratedDocument } from "mongoose";
 
+import EnrollmentModel from "../models/enrollment";
 import StudentModel from "../models/student";
-import { programLink } from "../types/programLink";
-import { addStudentToPrograms, removeStudentFromPrograms } from "../util/student";
+import { Enrollment } from "../types/enrollment";
+import { createEnrollment, editEnrollment } from "../util/enrollment";
 import validationErrorParser from "../util/validationErrorParser";
 
-export type contact = {
-  lastName: string;
-  firstName: string;
-  email: string;
-  phoneNumber: string;
-};
-
-export type typedModel = {
-  student: contact;
-  emergency: contact;
-  serviceCoordinator: contact;
-  location: string;
-  medication: string;
-  birthday: string;
-  intakeDate: string;
-  tourDate: string;
-  programs: programLink[];
-  dietary: string[];
-  otherString: string;
-};
-
-type Contact = {
-  lastName: string;
-  firstName: string;
-  email: string;
-  phoneNumber: string;
-};
-
-type Student = {
-  _id: string;
-  student: Contact;
-  emergency: Contact;
-  serviceCoordinator: Contact;
-  location: string;
-  medication?: string;
-  birthday: Date;
-  intakeDate: Date;
-  tourDate: Date;
-  programs: programLink[];
-  dietary: string[];
-  otherString?: string;
-};
+type Student = HydratedDocument<typeof StudentModel>;
+type StudentRequest = Student & { enrollments: Enrollment[] };
 
 export const createStudent: RequestHandler = async (req, res, next) => {
   try {
@@ -60,9 +22,14 @@ export const createStudent: RequestHandler = async (req, res, next) => {
 
     validationErrorParser(errors);
 
-    const newStudent = await StudentModel.create(req.body as typedModel);
-    const programIds = newStudent.programs.map((programObj: programLink) => programObj.programId);
-    await addStudentToPrograms(newStudent._id, programIds);
+    const { enrollments, ...studentData } = req.body as StudentRequest;
+    const newStudent = await StudentModel.create(studentData);
+    // create enrollments for the student
+    await Promise.all(
+      enrollments.map(async (program: Enrollment) => {
+        await createEnrollment(program);
+      }),
+    );
 
     res.status(201).json(newStudent);
   } catch (error) {
@@ -77,34 +44,28 @@ export const editStudent: RequestHandler = async (req, res, next) => {
     validationErrorParser(errors);
 
     const studentId = req.params.id;
-    const studentData = req.body as Student;
+    const { enrollments, ...studentData } = req.body as StudentRequest;
 
-    if (studentId !== studentData._id) {
+    if (studentId !== studentData._id.toString()) {
       return res.status(400).json({ message: "Invalid student ID" });
     }
 
-    const prevStudent = await StudentModel.findById(studentId);
-    const editedStudent = await StudentModel.findOneAndUpdate({ _id: studentId }, studentData, {
+    const updatedStudent = await StudentModel.findByIdAndUpdate(studentId, studentData, {
       new: true,
     });
-
-    if (!prevStudent || !editedStudent) {
-      return res.status(404).json({ message: "No object in database with provided ID" });
+    if (!updatedStudent) {
+      return res.status(404).json({ message: "Student not found" });
     }
 
-    // remove student from possibly stale programs
-    const prevProgramIds = prevStudent.programs.map(
-      (programObj: programLink) => programObj.programId,
+    // update enrollments for the student
+    await Promise.all(
+      enrollments.map(async (enrollment: Enrollment) => {
+        if (!EnrollmentModel.findById(enrollment._id)) await createEnrollment(enrollment);
+        else await editEnrollment(enrollment);
+      }),
     );
-    await removeStudentFromPrograms(prevStudent._id, prevProgramIds);
 
-    // add student to new programs
-    const newProgramIds = editedStudent.programs.map(
-      (programObj: programLink) => programObj.programId,
-    );
-    await addStudentToPrograms(editedStudent._id, newProgramIds);
-
-    res.status(200).json(editedStudent);
+    res.status(200).json({ ...updatedStudent, enrollments });
   } catch (error) {
     next(error);
   }
@@ -114,26 +75,15 @@ export const getAllStudents: RequestHandler = async (_, res, next) => {
   try {
     const students = await StudentModel.find();
 
-    res.status(200).json(students);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const deleteAllStudents: RequestHandler = async (_, res, next) => {
-  try {
-    // remove students from all programs
-    const students = await StudentModel.find();
-    await Promise.all(
+    // gather all enrollments for each student and put them in student.programs
+    const hydratedStudents = await Promise.all(
       students.map(async (student) => {
-        const programIds = student.programs.map((programObj: programLink) => programObj.programId);
-        await removeStudentFromPrograms(student._id, programIds);
+        const enrollments = await EnrollmentModel.find({ studentId: student._id });
+        return { ...student.toObject(), programs: enrollments };
       }),
     );
 
-    await StudentModel.deleteMany();
-
-    res.status(204).end();
+    res.status(200).json(hydratedStudents);
   } catch (error) {
     next(error);
   }

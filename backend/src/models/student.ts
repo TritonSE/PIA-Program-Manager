@@ -34,16 +34,14 @@ const studentSchema = new Schema({
   birthday: { type: Date, required: true },
   intakeDate: { type: Date, required: true },
   tourDate: { type: Date, required: true },
-  
+
   conservation: { type: Boolean, required: true },
-  UCINumber : { type: String, required: true },
+  UCINumber: { type: String, required: true },
   incidentForm: { type: String, required: true },
-  documents: {type: [String], required: true},
+  documents: { type: [String], required: true },
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },
-
-  otherString: { type: String, default: "" },
 });
 
 type Student = InferSchemaType<typeof studentSchema>;
