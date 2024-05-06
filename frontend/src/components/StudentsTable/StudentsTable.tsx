@@ -1,5 +1,4 @@
 import {
-  ColumnFiltersState,
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
@@ -7,19 +6,20 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { getAllStudents } from "../../api/students";
-import { fuzzyFilter } from "../../lib/fuzzyFilter";
 import StudentFormButton from "../StudentFormButton";
 import { Table } from "../ui/table";
 
+import { fuzzyFilter, programFilterFn, statusFilterFn } from "./FilterFns";
 import TBody from "./TBody";
 import THead from "./THead";
 import { ProgramMap, StudentMap, StudentTableRow } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
 
 import { Program, getAllPrograms } from "@/api/programs";
+import { UserContext } from "@/contexts/user";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
@@ -30,9 +30,10 @@ export default function StudentsTable() {
   const [allPrograms, setAllPrograms] = useState<ProgramMap>({}); // map from program id to program
   const [isLoading, setIsLoading] = useState(true);
   const [studentTable, setStudentTable] = useState<StudentTableRow[]>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const { isTablet } = useWindowSize();
+
+  const { isAdmin } = useContext(UserContext);
 
   useEffect(() => {
     getAllPrograms().then(
@@ -92,6 +93,7 @@ export default function StudentsTable() {
 
   const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents });
   const data = useMemo(() => studentTable, [studentTable]);
+  console.log(data);
   // const data = useMemo(() => [], [allStudents]);  // uncomment this line and comment the line above to see empty table state
 
   const table = useReactTable({
@@ -100,12 +102,12 @@ export default function StudentsTable() {
     getCoreRowModel: getCoreRowModel(),
     filterFns: {
       fuzzy: fuzzyFilter,
+      programFilter: programFilterFn,
+      statusFilter: statusFilterFn,
     },
     state: {
-      columnFilters,
       globalFilter,
     },
-    onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: fuzzyFilter,
     getFilteredRowModel: getFilteredRowModel(),
@@ -131,20 +133,15 @@ export default function StudentsTable() {
           >
             Students
           </h1>
-          {isTablet && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
+          {isAdmin && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
         </div>
         <Table
           className={cn(
-            "h-fit w-[100%] min-w-[640px] max-w-[1120px] border-collapse rounded-lg bg-pia_primary_white",
+            "h-fit w-[100%] min-w-[640px] max-w-[1480px] border-collapse rounded-lg bg-pia_primary_white font-['Poppins']",
             isTablet && "text-[12px]",
           )}
         >
-          <THead
-            table={table}
-            globalFilter={globalFilter}
-            setGlobalFilter={setGlobalFilter}
-            setAllStudents={setAllStudents}
-          />
+          <THead table={table} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
           <TBody table={table} />
         </Table>
       </div>
