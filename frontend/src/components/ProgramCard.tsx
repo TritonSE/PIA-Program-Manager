@@ -33,9 +33,13 @@ function toggleEdit(id: string) {
     editButton.style.display = "none";
   }
 
-  //   if (checkOffscreen(id) > 0) {
-  //     editButton.style.right = "0px";
-  //   }
+  function temp() {
+    if (editButton !== null && editButton.style.display === "block") {
+      editButton.style.display = "none";
+    }
+  }
+
+  document.body.addEventListener("click", temp, true);
 }
 
 export function ProgramCard({ program, isAdmin, className, setPrograms }: CardProps) {
