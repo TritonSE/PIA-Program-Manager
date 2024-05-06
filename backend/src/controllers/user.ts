@@ -65,9 +65,40 @@ export const createUser = async (
   return;
 };
 
+// export const deleteUser = async (req: Request, res: Response, nxt: NextFunction) => {
+//   try {
+//     const { userId } = req.params;
+
+//     if (!userId || typeof userId !== 'string' || userId.length > 128) {
+//       console.log('Received userId:', userId);
+//       console.log('Type of userId:', typeof userId);
+//       console.log('Length of userId:', userId.length);
+
+//       throw new Error('Invalid userId provided');
+//     }
+
+//     // delete user from Firebase and MongoDB
+//     await deleteUserFromFirebase(userId);
+//     await deleteUserFromMongoDB(userId);
+
+//     res.status(200).send("User deleted successfully");
+//   } catch (error) {
+//     console.error("Error deleting user:", error);
+//     nxt(error);
+//   }
+// };
+
 export const deleteUser = async (req: Request, res: Response, nxt: NextFunction) => {
   try {
     const { userId } = req.params;
+
+    if (!userId || typeof userId !== "string" || userId.trim().length === 0) {
+      throw new Error("Invalid userId provided");
+    }
+
+    // console.log('Received userId:', userId);
+    // console.log('Type of userId:', typeof userId);
+    // console.log('Length of userId:', userId.length);
 
     // delete user from Firebase and MongoDB
     await deleteUserFromFirebase(userId);
@@ -80,19 +111,9 @@ export const deleteUser = async (req: Request, res: Response, nxt: NextFunction)
   }
 };
 
-// export const getNotApprovedUsers = async (req: Request, res: Response, nxt: NextFunction) => {
-//   try {
-//     const notApprovedUsers: User[] = await UserModel.find({ approvalStatus: false }).exec();
-
-//     res.status(200).json(notApprovedUsers);
-//   } catch (error) {
-//     console.error("Error fetching not-approved users:", error);
-//     nxt(error);
-//   }
-// };
-
 export const getNotApprovedUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    // const notApprovedUsers: User[] = await UserModel.find({ approvalStatus: false }).exec();
     const notApprovedUsers = await UserModel.find({ approvalStatus: false }).exec();
 
     res.status(200).json(notApprovedUsers);
