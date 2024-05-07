@@ -39,6 +39,7 @@ const studentSchema = new Schema({
   UCINumber: { type: String, required: true },
   incidentForm: { type: String, required: true },
   documents: { type: [String], required: true },
+  profilePicture: { type: Schema.Types.ObjectId, ref: "Image", required: false },
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },

@@ -12,6 +12,7 @@ export const createEnrollment = async (req: Enrollment) => {
 
 export const editEnrollment = async (req: Enrollment) => {
   try {
+    console.log(req);
     await EnrollmentModel.findByIdAndUpdate(req._id, req);
   } catch (e) {
     console.log(e);

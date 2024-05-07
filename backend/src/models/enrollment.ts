@@ -1,9 +1,18 @@
 import mongoose, { InferSchemaType } from "mongoose";
 
 const enrollmentSchema = new mongoose.Schema({
-  _id: { type: String, required: true },
-  studentId: { type: mongoose.Schema.Types.ObjectId, ref: "Student", required: true },
-  programId: { type: mongoose.Schema.Types.ObjectId, ref: "Program", required: true },
+  studentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Student",
+    required: true,
+    unique: false,
+  },
+  programId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Program",
+    required: true,
+    unique: false,
+  },
   status: { type: String, required: true },
   dateUpdated: { type: Date, required: true, default: Date.now() },
   hoursLeft: { type: Number, required: true },

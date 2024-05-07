@@ -5,7 +5,7 @@
 
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { HydratedDocument } from "mongoose";
+import mongoose, { HydratedDocument } from "mongoose";
 
 import EnrollmentModel from "../models/enrollment";
 import StudentModel from "../models/student";
@@ -27,7 +27,7 @@ export const createStudent: RequestHandler = async (req, res, next) => {
     // create enrollments for the student
     await Promise.all(
       enrollments.map(async (program: Enrollment) => {
-        await createEnrollment(program);
+        await createEnrollment({ ...program, studentId: newStudent._id });
       }),
     );
 
@@ -49,7 +49,6 @@ export const editStudent: RequestHandler = async (req, res, next) => {
     if (studentId !== studentData._id.toString()) {
       return res.status(400).json({ message: "Invalid student ID" });
     }
-
     const updatedStudent = await StudentModel.findByIdAndUpdate(studentId, studentData, {
       new: true,
     });
@@ -60,8 +59,10 @@ export const editStudent: RequestHandler = async (req, res, next) => {
     // update enrollments for the student
     await Promise.all(
       enrollments.map(async (enrollment: Enrollment) => {
-        if (!EnrollmentModel.findById(enrollment._id)) await createEnrollment(enrollment);
-        else await editEnrollment(enrollment);
+        const enrollmentExists = await EnrollmentModel.findById(enrollment._id);
+        const enrollmentBody = { ...enrollment, studentId: new mongoose.Types.ObjectId(studentId) };
+        if (!enrollmentExists) await createEnrollment(enrollmentBody);
+        else await editEnrollment(enrollmentBody);
       }),
     );
 
