@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-import { RequestHandler } from "express";
+import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 
 import { ValidationError } from "../errors";
@@ -8,20 +7,27 @@ import StudentModel from "../models/student";
 import UserModel from "../models/user";
 import validationErrorParser from "../util/validationErrorParser";
 
-import { CreateProgressNoteRequestBody, ProgressNoteType } from "./types/progressNoteTypes";
-import { UserIdRequest } from "./types/types";
+import {
+  CreateProgressNoteRequestBody,
+  DeleteProgressNoteRequestBody,
+  EditProgressNoteRequestBody,
+  ExistingProgressNoteType,
+  ProgressNoteType,
+} from "./types/progressNoteTypes";
+import { LoginUserRequestBody } from "./types/userTypes";
 
-export const createProgressNote: RequestHandler = async (req, res, next) => {
+export const createProgressNote = async (
+  req: Request<Record<string, never>, Record<string, never>, CreateProgressNoteRequestBody>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const customReq = req as UserIdRequest;
-    const userId = customReq.userId;
+    const { uid, studentId } = req.body;
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(uid);
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
-
-    const { studentId } = customReq.body as CreateProgressNoteRequestBody;
 
     const student = await StudentModel.findById(studentId);
     if (!student) {
@@ -31,7 +37,11 @@ export const createProgressNote: RequestHandler = async (req, res, next) => {
     const errors = validationResult(req);
     validationErrorParser(errors);
 
-    const newProgressNote = { ...req.body, lastEditedBy: user.name, userId } as ProgressNoteType;
+    const newProgressNote = {
+      ...req.body,
+      lastEditedBy: user.name,
+      userId: uid,
+    } as ProgressNoteType;
 
     const createdProgressNote = await ProgressNote.create(newProgressNote);
 
@@ -47,33 +57,84 @@ export const createProgressNote: RequestHandler = async (req, res, next) => {
   }
 };
 
-// export const updateProgram: RequestHandler = async (req, res, next) => {
-//   const errors = validationResult(req);
-//   try {
-//     validationErrorParser(errors);
-
-//     const programId = req.params.id;
-//     const programData = req.body as Program;
-
-//     const editedProgram = await ProgramModel.findOneAndUpdate({ _id: programId }, programData, {
-//       new: true,
-//     });
-
-//     if (!editedProgram) {
-//       return res.status(404).json({ message: "No object in database with provided ID" });
-//     }
-
-//     res.status(200).json(editedProgram);
-//   } catch (error) {
-//     next(error);
-//   }
-// };
-
-export const getAllProgressNotes: RequestHandler = async (req, res, next) => {
+export const editProgressNote = async (
+  req: Request<Record<string, never>, Record<string, never>, EditProgressNoteRequestBody>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const customReq = req as UserIdRequest;
-    const userId = customReq.userId;
-    const user = await UserModel.findById(userId);
+    const { uid } = req.body;
+
+    const user = await UserModel.findById(uid);
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    const errors = validationResult(req);
+    validationErrorParser(errors);
+
+    const newProgressNote = {
+      ...req.body,
+      lastEditedBy: user.name,
+      userId: uid,
+    } as ExistingProgressNoteType;
+
+    const editedProgressNote = await ProgressNote.findOneAndUpdate(
+      { _id: newProgressNote._id },
+      newProgressNote,
+      { new: true }, //returns updated document
+    );
+
+    if (!editedProgressNote) {
+      throw ValidationError.PROGRESS_NOTE_NOT_FOUND;
+    }
+
+    res.status(200).json(editedProgressNote);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteProgressNote = async (
+  req: Request<Record<string, never>, Record<string, never>, DeleteProgressNoteRequestBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { noteId, studentId } = req.body;
+
+    const errors = validationResult(req);
+    validationErrorParser(errors);
+
+    const deletedProgressNote = await ProgressNote.findOneAndDelete({ _id: noteId });
+
+    if (!deletedProgressNote) {
+      throw ValidationError.PROGRESS_NOTE_NOT_FOUND;
+    }
+
+    const student = await StudentModel.findOneAndUpdate(
+      { _id: studentId },
+      { $pull: { progressNotes: noteId } },
+    );
+
+    if (!student) {
+      throw ValidationError.STUDENT_NOT_FOUND;
+    }
+
+    res.status(200).json(deletedProgressNote);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getAllProgressNotes = async (
+  req: Request<Record<string, never>, Record<string, never>, LoginUserRequestBody>,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { uid } = req.body;
+    const user = await UserModel.findById(uid);
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }

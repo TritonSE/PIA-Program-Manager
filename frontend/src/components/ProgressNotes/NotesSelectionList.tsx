@@ -9,9 +9,14 @@ import { getAllStudents } from "@/api/students";
 import { StudentWithNotes } from "@/pages/notes";
 
 type NotesSelectionListProps = {
+  studentProps: {
+    allStudents: StudentWithNotes[];
+    setAllStudents: Dispatch<SetStateAction<StudentWithNotes[]>>;
+  };
   selectedStudent: StudentWithNotes;
   setSelectedStudent: Dispatch<SetStateAction<StudentWithNotes>>;
   allProgressNotes: Record<string, ProgressNote> | undefined;
+  handleSelectStudent: (student: StudentWithNotes) => void;
 };
 
 export const dateOptions = {
@@ -21,11 +26,13 @@ export const dateOptions = {
 } as const;
 
 function NotesSelectionList({
+  studentProps,
   selectedStudent,
   setSelectedStudent,
   allProgressNotes,
+  handleSelectStudent,
 }: NotesSelectionListProps) {
-  const [allStudents, setAllStudents] = useState<StudentWithNotes[]>([]);
+  const { allStudents, setAllStudents } = studentProps;
   const [allPrograms, setAllPrograms] = useState<ProgramMap>({});
   const [isLoading, setIsLoading] = useState(true);
 
@@ -58,7 +65,12 @@ function NotesSelectionList({
           const studentDataWithNotes: StudentWithNotes[] = result.data.map((student) => ({
             ...student,
             progressNotes: student.progressNotes
-              ? student.progressNotes.map((noteId) => allProgressNotes[noteId])
+              ? student.progressNotes
+                  .map((noteId) => allProgressNotes[noteId])
+                  .sort(
+                    (a, b) =>
+                      new Date(b.dateLastUpdated).getTime() - new Date(a.dateLastUpdated).getTime(),
+                  )
               : [],
           }));
           studentDataWithNotes.sort((a, b) => {
@@ -66,12 +78,13 @@ function NotesSelectionList({
             const bName = `${b.student.firstName} ${b.student.lastName}`;
             return aName.localeCompare(bName);
           });
+
+          setSelectedStudent(studentDataWithNotes[0]);
           setAllStudents(studentDataWithNotes);
           setIsLoading(false);
           if (result.data.length < 0) {
             throw new Error("No students found");
           }
-          setSelectedStudent(studentDataWithNotes[0]);
         } else {
           console.log(result.error);
         }
@@ -80,7 +93,7 @@ function NotesSelectionList({
         console.log(error);
       },
     );
-  }, [allProgressNotes]);
+  }, []);
 
   if (isLoading) return <p>Loading...</p>;
 
@@ -90,7 +103,7 @@ function NotesSelectionList({
         {allStudents.map((studentData) => {
           let latestNote = { note: "No notes available", date: "" };
           if (studentData.progressNotes.length !== 0) {
-            const noteData = studentData.progressNotes.slice(-1)[0];
+            const noteData = studentData.progressNotes[0];
             latestNote = {
               note: noteData.content,
               date: new Date(noteData.dateLastUpdated).toLocaleDateString("en-US", dateOptions),
@@ -99,15 +112,24 @@ function NotesSelectionList({
           return (
             <li
               onClick={() => {
-                setSelectedStudent(studentData);
+                handleSelectStudent(studentData);
               }}
               key={studentData._id}
               aria-current={selectedStudent._id === studentData._id ? "true" : "false"}
-              className="overflow-hidden border-b-[1px] border-l-[8px] border-b-[#B4B4B4] border-l-white bg-white  transition-colors first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md last:rounded-br-md last:border-b-0 aria-current:border-l-[8px] aria-current:border-l-pia_dark_green aria-current:bg-[#188B8A14]"
+              className="
+              relative bg-white
+              transition-colors before:absolute 
+              before:bottom-0 before:h-[1px]
+              before:w-full before:bg-[#B4B4B4]
+              before:content-['']
+              first:rounded-tl-md
+              first:rounded-tr-md last:rounded-bl-md last:rounded-br-md last:before:hidden 
+              hover:bg-pia_primary_light_green_hover aria-current:bg-pia_primary_light_green_hover aria-current:after:absolute
+              aria-current:after:bottom-0 aria-current:after:left-0 aria-current:after:h-full aria-current:after:w-[5px] aria-current:after:bg-pia_dark_green aria-current:after:content-[''] aria-current:first:after:rounded-tl-md aria-current:last:after:rounded-bl-md"
             >
               <button
                 className={`
-                  w-full px-[20px] py-[10px] transition-colors `}
+                  w-full px-[20px] py-[18px] transition-colors `}
               >
                 <div className="flex justify-between">
                   <h2 className="pb-2 font-bold">{`${studentData.student.firstName} ${studentData.student.lastName}`}</h2>

@@ -12,7 +12,21 @@ router.post(
   ProgressNoteValidator.createProgressNote,
   ProgressNoteController.createProgressNote,
 );
-// router.put("/edit/:id", ProgressNoteValidator.editStudent, ProgressNoteController.editStudent);
+
+router.put(
+  "/edit",
+  [verifyAuthToken],
+  ProgressNoteValidator.editProgressNote,
+  ProgressNoteController.editProgressNote,
+);
+
+router.delete(
+  "/delete",
+  [verifyAuthToken],
+  ProgressNoteValidator.deleteProgressNote,
+  ProgressNoteController.deleteProgressNote,
+);
+
 router.get("/all", [verifyAuthToken], ProgressNoteController.getAllProgressNotes);
 
 export default router;

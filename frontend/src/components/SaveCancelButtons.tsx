@@ -1,46 +1,86 @@
 import React from "react";
 
+import RedQuestionMarkIcon from "../../public/icons/red_question_mark.svg";
+
 import { Button } from "./Button";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
+import ModalConfirmation from "./ModalConfirmation";
+import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 
-type SaveCancelButtonsProps = {
+type SaveCancelButtonsPropsBase = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-
-  onCancelClick?: () => void;
-  onSaveClick?: () => void;
+  onCancelClick?: (e: React.MouseEvent) => void;
+  onSaveClick?: (e: React.MouseEvent) => void;
+  onLeave?: () => void;
 };
 
+type SaveCancelButtonsPropsWithAutoClose = SaveCancelButtonsPropsBase & {
+  isOpen: boolean;
+  //Children is used for save button dialog content
+  children?: React.ReactNode;
+  //Will automatically close save button dialog after specified time in seconds
+  automaticClose: number;
+};
+
+type SaveCancelButtonsPropsWithoutAutoClose = SaveCancelButtonsPropsBase & {
+  isOpen?: never;
+  automaticClose?: never;
+  children?: never;
+};
+
+type SaveCancelButtonsProps =
+  | SaveCancelButtonsPropsWithAutoClose
+  | SaveCancelButtonsPropsWithoutAutoClose;
+
 export default function SaveCancelButtons({
+  isOpen,
   setOpen,
   onCancelClick,
   onSaveClick,
+  onLeave,
+  automaticClose,
+  children,
 }: SaveCancelButtonsProps) {
+  const handleAutomaticClose = () => {
+    if (automaticClose) {
+      setTimeout(() => {
+        setOpen(false);
+      }, automaticClose * 1000);
+    }
+  };
+
   return (
     <div className="ml-auto mt-5 flex w-fit gap-5">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button label="Cancel" kind="secondary" onClick={onCancelClick} />
-        </DialogTrigger>
-        <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
-          <div className="p-3 min-[450px]:p-10">
-            <p className="my-10 text-center">Leave without saving changes?</p>
-            <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
-              <DialogClose asChild>
-                <Button label="Back" kind="secondary" />
-              </DialogClose>
-              <DialogClose asChild>
-                <Button
-                  label="Continue"
-                  onClick={() => {
-                    if (setOpen) setOpen(false);
-                  }}
-                />
-              </DialogClose>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-      <Button label="Save Changes" onClick={onSaveClick} />
+      <ModalConfirmation
+        icon={<RedQuestionMarkIcon />}
+        triggerElement={<Button label="Cancel" kind="secondary" onClick={onCancelClick} />}
+        onConfirmClick={() => {
+          if (setOpen) setOpen(false);
+          if (onLeave) onLeave();
+        }}
+        title="Are you sure you want to leave?"
+        confirmText="Leave"
+        kind="destructive"
+      />
+      {/* If there is no children, save button closes by default, otherwise show children as save button dialog content */}
+      {!children ? (
+        <Button label="Save Changes" onClick={onSaveClick} />
+      ) : (
+        <Dialog open={isOpen} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button
+              label="Save Changes"
+              onClick={(e) => {
+                setOpen(true);
+                if (onSaveClick) onSaveClick(e);
+                handleAutomaticClose();
+              }}
+            />
+          </DialogTrigger>
+          <DialogContent className="max-h-[30%] w-fit max-w-[80%] rounded-[8px] md:max-w-[50%] lg:max-w-[30%]">
+            {children}
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

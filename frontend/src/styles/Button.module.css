@@ -86,8 +86,8 @@
 
 .destructiveSecondary {
   background-color: rgb(var(--white));
-  color: rgb(var(--error-red));
-  border: 0.0625rem solid rgb(var(--error-red));
+  color: rgb(var(--black));
+  border: 0.0625rem solid rgb(var(--black));
 }
 .destructiveSecondary:hover {
   background-color: rgba(var(--error-red), 22%);

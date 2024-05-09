@@ -12,13 +12,13 @@ import { firebaseAdminAuth } from "../util/firebase";
 import { handleImageParsing } from "../util/image";
 import validationErrorParser from "../util/validationErrorParser";
 
-import { UserIdRequest } from "./types/types";
+import { UserIdRequestBody } from "./types/types";
 import {
   CreateUserRequestBody,
   EditEmailRequestBody,
   EditLastChangedPasswordRequestBody,
   EditNameRequestBody,
-  EditPhotoRequest,
+  EditPhotoRequestBody,
   LoginUserRequestBody,
 } from "./types/userTypes";
 
@@ -93,30 +93,32 @@ export const loginUser = async (
   }
 };
 
-export const editPhoto = (req: Request, res: Response, nxt: NextFunction) => {
+export const editPhoto = (req: EditPhotoRequestBody, res: Response, nxt: NextFunction) => {
   try {
-    const customReq = req as EditPhotoRequest;
-
     //Validation logic inside handleImageParsing
-    handleImageParsing(customReq, res, nxt);
+    handleImageParsing(req, res, nxt);
   } catch (e) {
     console.log(e);
     nxt(e);
   }
 };
 
-export const getPhoto = async (req: Request, res: Response, nxt: NextFunction) => {
+export const getPhoto = async (
+  req: Request<Record<string, never>, Record<string, never>, UserIdRequestBody>,
+  res: Response,
+  nxt: NextFunction,
+) => {
   try {
-    const customReq = req as UserIdRequest;
-    const imageId = req.params.id;
-    const userId = customReq.userId;
+    const { uid } = req.body;
+    const { id: imageId } = req.params;
+
     if (!mongoose.Types.ObjectId.isValid(imageId)) {
       return res
         .status(ValidationError.INVALID_MONGO_ID.status)
         .send({ error: ValidationError.INVALID_MONGO_ID.message });
     }
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(uid);
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
@@ -126,7 +128,7 @@ export const getPhoto = async (req: Request, res: Response, nxt: NextFunction) =
       throw ValidationError.IMAGE_NOT_FOUND;
     }
 
-    if (image.userId !== userId) {
+    if (image.userId !== uid) {
       throw ValidationError.IMAGE_USER_MISMATCH;
     }
 
@@ -142,23 +144,25 @@ export const getPhoto = async (req: Request, res: Response, nxt: NextFunction) =
   }
 };
 
-export const editName = async (req: Request, res: Response, nxt: NextFunction) => {
+export const editName = async (
+  req: Request<Record<string, never>, Record<string, never>, EditNameRequestBody>,
+  res: Response,
+  nxt: NextFunction,
+) => {
   try {
-    const customReq = req as UserIdRequest;
-    const { newName } = customReq.body as EditNameRequestBody;
-    const userId = customReq.userId;
+    const { uid, newName } = req.body;
 
-    const errors = validationResult(customReq);
+    const errors = validationResult(req);
 
     validationErrorParser(errors);
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(uid);
 
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
 
-    await UserModel.findByIdAndUpdate(userId, { name: newName });
+    await UserModel.findByIdAndUpdate(uid, { name: newName });
 
     res.status(200).json(newName);
   } catch (error) {
@@ -169,25 +173,27 @@ export const editName = async (req: Request, res: Response, nxt: NextFunction) =
   }
 };
 
-export const editEmail = async (req: Request, res: Response, nxt: NextFunction) => {
+export const editEmail = async (
+  req: Request<Record<string, never>, Record<string, never>, EditEmailRequestBody>,
+  res: Response,
+  nxt: NextFunction,
+) => {
   try {
-    const customReq = req as UserIdRequest;
-    const { newEmail } = customReq.body as EditEmailRequestBody;
-    const userId = customReq.userId;
+    const { uid, newEmail } = req.body;
 
-    const errors = validationResult(customReq);
+    const errors = validationResult(req);
 
     validationErrorParser(errors);
 
-    await firebaseAdminAuth.updateUser(userId, { email: newEmail });
+    await firebaseAdminAuth.updateUser(uid, { email: newEmail });
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(uid);
 
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
 
-    await UserModel.findByIdAndUpdate(userId, { email: newEmail });
+    await UserModel.findByIdAndUpdate(uid, { email: newEmail });
 
     return res.status(200).json(newEmail);
   } catch (error) {
@@ -195,23 +201,25 @@ export const editEmail = async (req: Request, res: Response, nxt: NextFunction) 
   }
 };
 
-export const editLastChangedPassword = async (req: Request, res: Response, nxt: NextFunction) => {
+export const editLastChangedPassword = async (
+  req: Request<Record<string, never>, Record<string, never>, EditLastChangedPasswordRequestBody>,
+  res: Response,
+  nxt: NextFunction,
+) => {
   try {
-    const customReq = req as UserIdRequest;
-    const { currentDate } = customReq.body as EditLastChangedPasswordRequestBody;
-    const userId = customReq.userId;
+    const { uid, currentDate } = req.body;
 
     const errors = validationResult(req);
 
     validationErrorParser(errors);
 
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(uid);
 
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
 
-    await UserModel.findByIdAndUpdate(userId, { lastChangedPassword: currentDate });
+    await UserModel.findByIdAndUpdate(uid, { lastChangedPassword: currentDate });
 
     res.status(200).json(currentDate);
   } catch (error) {

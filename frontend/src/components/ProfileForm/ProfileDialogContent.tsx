@@ -1,3 +1,4 @@
+import CloseIcon from "../../../public/icons/close.svg";
 import { DialogClose, DialogContent } from "../ui/dialog";
 
 type ProfileDialogProps = {
@@ -35,19 +36,7 @@ export default function ProfileDialogContent({
           </svg>
         ) : (
           <DialogClose className="w-fit py-2">
-            <svg
-              className="transition-opacity hover:opacity-50"
-              width="14"
-              height="14"
-              viewBox="0 0 14 14"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M2.88388 1.11612C2.39573 0.627961 1.60427 0.627961 1.11612 1.11612C0.627961 1.60427 0.627961 2.39573 1.11612 2.88388L5.23223 7L1.11612 11.1161C0.627961 11.6043 0.627961 12.3957 1.11612 12.8839C1.60427 13.372 2.39573 13.372 2.88388 12.8839L7 8.76777L11.1161 12.8839C11.6043 13.372 12.3957 13.372 12.8839 12.8839C13.372 12.3957 13.372 11.6043 12.8839 11.1161L8.76777 7L12.8839 2.88388C13.372 2.39573 13.372 1.60427 12.8839 1.11612C12.3957 0.627962 11.6043 0.627962 11.1161 1.11612L7 5.23223L2.88388 1.11612Z"
-                fill="#484848"
-              />
-            </svg>
+            <CloseIcon className="transition-opacity hover:opacity-50" />
           </DialogClose>
         )}
         <h2 className="text-xl sm:text-2xl ">{title}</h2>

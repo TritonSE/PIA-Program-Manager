@@ -1,7 +1,7 @@
 import { Request } from "express";
 
 export type UserId = {
-  userId: string;
+  uid: string;
 };
 
-export type UserIdRequest = Request & UserId;
+export type UserIdRequestBody = Request & UserId;

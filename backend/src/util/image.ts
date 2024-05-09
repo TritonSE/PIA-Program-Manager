@@ -2,7 +2,7 @@ import busboy from "busboy";
 import { NextFunction, Response } from "express";
 import mongoose from "mongoose";
 
-import { EditPhotoRequest, SaveImageRequest } from "../controllers/types/userTypes";
+import { EditPhotoRequestBody, SaveImageRequest } from "../controllers/types/userTypes";
 import { ValidationError } from "../errors";
 import { ServiceError } from "../errors/service";
 import { Image } from "../models/image";
@@ -68,10 +68,10 @@ async function saveImage(req: SaveImageRequest) {
   }
 }
 
-export function handleImageParsing(req: EditPhotoRequest, res: Response, nxt: NextFunction) {
+export function handleImageParsing(req: EditPhotoRequestBody, res: Response, nxt: NextFunction) {
   let previousImageId = "";
   //req.userId is assigned in verifyAuthToken middleware
-  const userId: string = req.userId;
+  const uid = req.body.uid;
 
   const bb = busboy({ headers: req.headers });
 
@@ -92,7 +92,7 @@ export function handleImageParsing(req: EditPhotoRequest, res: Response, nxt: Ne
         const saveImageRequest: SaveImageRequest = {
           body: {
             previousImageId,
-            userId,
+            userId: uid,
           },
           file: {
             buffer: fileBuffer,
