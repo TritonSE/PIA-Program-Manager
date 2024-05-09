@@ -1,8 +1,9 @@
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Poppins } from "next/font/google";
 import * as React from "react";
 import { DayPicker } from "react-day-picker";
 
+import LeftArrowIcon from "../../../public/icons/left_arrow.svg";
+import RightArrowIcon from "../../../public/icons/right_arrow.svg";
 import { cn } from "../../lib/utils";
 
 import { buttonVariants } from "./button";
@@ -22,10 +23,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         caption: "flex justify-center pt-1 relative items-center",
         caption_label: "text-sm font-bold",
         nav: "space-x-1 flex items-center",
-        nav_button: cn(
-          buttonVariants({ variant: "outline" }),
-          "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
-        ),
+        nav_button: cn("hover:opacity-50 transition-opacity"),
         nav_button_previous: "absolute left-1 border-none",
         nav_button_next: "absolute right-1 border-none",
         table: "w-full border-collapse space-y-1",
@@ -35,7 +33,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         cell: "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-accent/50 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
         day: cn(
           buttonVariants({ variant: "ghost" }),
-          "h-9 w-9 p-0 font-normal aria-selected:opacity-100",
+          "h-9 w-9 p-0 font-bold aria-selected:opacity-100",
         ),
         day_range_end: "day-range-end",
         day_selected:
@@ -49,8 +47,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         ...classNames,
       }}
       components={{
-        IconLeft: () => <ArrowLeft className="h-4 w-4" strokeWidth={3} />,
-        IconRight: () => <ArrowRight className="h-4 w-4" strokeWidth={3} />,
+        IconLeft: () => <LeftArrowIcon className="text-[#0C2B35]" />,
+        IconRight: () => <RightArrowIcon className="text-[#0C2B35]" />,
       }}
       {...props}
     />
