@@ -6,6 +6,7 @@ import NotePreview from "@/components/ProgressNotes/NotePreview";
 import NotesSelectionList from "@/components/ProgressNotes/NotesSelectionList";
 import { ProgressNote } from "@/components/ProgressNotes/types";
 import { UserContext } from "@/contexts/user";
+import { useWindowSize } from "@/hooks/useWindowSize";
 
 export type StudentWithNotes = Omit<Student, "progressNotes"> & {
   progressNotes: ProgressNote[];
@@ -23,6 +24,9 @@ function Notes() {
   const [allStudents, setAllStudents] = useState<StudentWithNotes[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<StudentWithNotes>({} as StudentWithNotes);
   const [selectedNote, setSelectedNote] = useState<ProgressNote>({} as ProgressNote);
+  const [mobileView, setMobileView] = useState<"studentList" | "studentDetails">("studentList");
+  const { isMobile } = useWindowSize();
+
   // Used for undoing note deletion
   const [deletedNote, setDeletedNote] = useState<ProgressNote | undefined>(undefined);
   // List mode shows all notes for the selected student
@@ -101,6 +105,9 @@ function Notes() {
 
   const handleSelectStudent = (studentData: StudentWithNotes) => {
     if (studentData._id !== selectedNote.studentId) {
+      if (isMobile) {
+        setMobileView("studentDetails");
+      }
       setNoteMode("list");
       setSelectedNote({} as ProgressNote);
     }
@@ -136,27 +143,58 @@ function Notes() {
     setSelectedNote({} as ProgressNote);
   };
 
+  const handleMobileBack = () => {
+    setMobileView("studentList");
+  };
+
   if (!firebaseUser || allProgressNotes === undefined) return <h1>Loading...</h1>;
 
   return (
-    <main className="flex h-full flex-col">
-      <h1 className={"font-[alternate-gothic] text-4xl"}>Progress Notes</h1>
+    <main className="flex h-full flex-col text-sm lg:text-base">
+      <h1 className={"mb-5 font-[alternate-gothic] text-4xl"}>Progress Notes</h1>
       <div className="flex flex-1 gap-5 overflow-hidden">
-        <NotesSelectionList
-          selectedStudent={selectedStudent}
-          setSelectedStudent={setSelectedStudent}
-          allProgressNotes={allProgressNotes}
-          handleSelectStudent={handleSelectStudent}
-          studentProps={{ allStudents, setAllStudents }}
-        />
-        <NotePreview
-          allProgressNotes={allProgressNotes}
-          selectedStudent={selectedStudent}
-          firebaseToken={firebaseToken}
-          handleNoteUpdate={handleNoteUpdate}
-          noteProps={{ noteMode, setNoteMode, selectedNote, setSelectedNote }}
-          deleteProps={{ deletedNote, setDeletedNote, handleFinishDelete }}
-        />
+        {!isMobile ? (
+          <>
+            <NotesSelectionList
+              selectedStudent={selectedStudent}
+              setSelectedStudent={setSelectedStudent}
+              allProgressNotes={allProgressNotes}
+              handleSelectStudent={handleSelectStudent}
+              studentProps={{ allStudents, setAllStudents }}
+            />
+            <NotePreview
+              allProgressNotes={allProgressNotes}
+              selectedStudent={selectedStudent}
+              firebaseToken={firebaseToken}
+              handleNoteUpdate={handleNoteUpdate}
+              noteProps={{ noteMode, setNoteMode, selectedNote, setSelectedNote }}
+              deleteProps={{ deletedNote, setDeletedNote, handleFinishDelete }}
+            />
+          </>
+        ) : (
+          <>
+            {mobileView === "studentList" ? (
+              <NotesSelectionList
+                selectedStudent={selectedStudent}
+                setSelectedStudent={setSelectedStudent}
+                allProgressNotes={allProgressNotes}
+                handleSelectStudent={handleSelectStudent}
+                studentProps={{ allStudents, setAllStudents }}
+              />
+            ) : (
+              <NotePreview
+                allProgressNotes={allProgressNotes}
+                selectedStudent={selectedStudent}
+                firebaseToken={firebaseToken}
+                handleNoteUpdate={handleNoteUpdate}
+                noteProps={{ noteMode, setNoteMode, selectedNote, setSelectedNote }}
+                deleteProps={{ deletedNote, setDeletedNote, handleFinishDelete }}
+                isMobile={isMobile}
+                handleMobileBack={handleMobileBack}
+              />
+            )}
+          </>
+        )}
       </div>
     </main>
   );

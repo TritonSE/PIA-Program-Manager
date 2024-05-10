@@ -1,6 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
 
+import BackIcon from "../../../public/icons/back.svg";
 import EditPencilIcon from "../../../public/icons/edit_pencil.svg";
+import MobilePlusIcon from "../../../public/icons/mobile_plus.svg";
 import PlusIcon from "../../../public/icons/plus.svg";
 import { Button } from "../Button";
 
@@ -9,6 +11,7 @@ import EditNote from "./EditNote";
 import { dateOptions } from "./NotesSelectionList";
 import { ProgressNote } from "./types";
 
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { HandleNoteUpdate, StudentWithNotes, ViewMode } from "@/pages/notes";
 
 type NotePreviewProps = {
@@ -23,6 +26,8 @@ type NotePreviewProps = {
     setSelectedNote: Dispatch<SetStateAction<ProgressNote>>;
   };
   deleteProps: DeleteProps;
+  isMobile?: boolean;
+  handleMobileBack?: () => void;
 };
 
 export type DeleteProps = {
@@ -38,8 +43,10 @@ function NotePreview({
   handleNoteUpdate,
   noteProps,
   deleteProps,
+  handleMobileBack,
 }: NotePreviewProps) {
   const { noteMode, setNoteMode, selectedNote, setSelectedNote } = noteProps;
+  const { windowSize, isMobile } = useWindowSize();
 
   const handleSelectNote = (note: ProgressNote) => {
     setSelectedNote(note);
@@ -66,7 +73,7 @@ function NotePreview({
   const studentFullName = `${selectedStudent.student.firstName} ${selectedStudent.student.lastName}`;
 
   return (
-    <section className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] hidden w-full rounded-md bg-white sm:flex sm:flex-col">
+    <section className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] flex w-full flex-col rounded-md bg-white ">
       {noteMode !== "list" ? (
         <EditNote
           selectedStudent={selectedStudent}
@@ -80,17 +87,31 @@ function NotePreview({
         />
       ) : (
         <>
-          <div className="flex justify-between px-8 pb-3 pt-7 ">
-            <h2 className="text-3xl font-bold">{studentFullName}</h2>
-            <div className="flex gap-5">
-              <Button
-                label="Add Notes"
-                icon={<PlusIcon />}
-                onClick={() => {
-                  // setSelectedNote({} as ProgressNote);
-                  setNoteMode("add");
-                }}
-              />
+          {isMobile ? (
+            <button onClick={handleMobileBack} className="px-8 pt-3">
+              <BackIcon />
+            </button>
+          ) : null}
+          <div className="flex justify-between px-8 pb-3 pt-3 sm:pt-7 ">
+            <h2 className="text-2xl font-bold lg:text-3xl">{studentFullName}</h2>
+            <div className="flex gap-8 lg:gap-5">
+              {windowSize.width < 1200 ? (
+                <button
+                  onClick={() => {
+                    setNoteMode("add");
+                  }}
+                >
+                  <MobilePlusIcon className="scale-[1.6]" aria-label="Add Note" />
+                </button>
+              ) : (
+                <Button
+                  label="Add Notes"
+                  icon={<PlusIcon />}
+                  onClick={() => {
+                    setNoteMode("add");
+                  }}
+                />
+              )}
               <DownloadNotesDialog
                 allProgressNotes={allProgressNotes}
                 selectedStudent={selectedStudent}

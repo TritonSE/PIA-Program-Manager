@@ -6,6 +6,7 @@ import { ProgressNote } from "./types";
 
 import { Program, getAllPrograms } from "@/api/programs";
 import { getAllStudents } from "@/api/students";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { StudentWithNotes } from "@/pages/notes";
 
 type NotesSelectionListProps = {
@@ -34,8 +35,7 @@ function NotesSelectionList({
 }: NotesSelectionListProps) {
   const { allStudents, setAllStudents } = studentProps;
   const [allPrograms, setAllPrograms] = useState<ProgramMap>({});
-  const [isLoading, setIsLoading] = useState(true);
-
+  const { isMobile } = useWindowSize();
   console.log({ allPrograms });
   useEffect(() => {
     getAllPrograms().then(
@@ -81,7 +81,6 @@ function NotesSelectionList({
 
           setSelectedStudent(studentDataWithNotes[0]);
           setAllStudents(studentDataWithNotes);
-          setIsLoading(false);
           if (result.data.length < 0) {
             throw new Error("No students found");
           }
@@ -95,11 +94,9 @@ function NotesSelectionList({
     );
   }, []);
 
-  if (isLoading) return <p>Loading...</p>;
-
   return (
     <>
-      <ul className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] scrollbar w-full overflow-auto sm:w-2/5">
+      <ul className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] scrollbar w-full overflow-auto sm:w-3/5 xl:w-2/5">
         {allStudents.map((studentData) => {
           let latestNote = { note: "No notes available", date: "" };
           if (studentData.progressNotes.length !== 0) {
@@ -115,7 +112,7 @@ function NotesSelectionList({
                 handleSelectStudent(studentData);
               }}
               key={studentData._id}
-              aria-current={selectedStudent._id === studentData._id ? "true" : "false"}
+              aria-current={selectedStudent._id === studentData._id && !isMobile ? "true" : "false"}
               className="
               relative bg-white
               transition-colors before:absolute 
@@ -125,7 +122,7 @@ function NotesSelectionList({
               first:rounded-tl-md
               first:rounded-tr-md last:rounded-bl-md last:rounded-br-md last:before:hidden 
               hover:bg-pia_primary_light_green_hover aria-current:bg-pia_primary_light_green_hover aria-current:after:absolute
-              aria-current:after:bottom-0 aria-current:after:left-0 aria-current:after:h-full aria-current:after:w-[5px] aria-current:after:bg-pia_dark_green aria-current:after:content-[''] aria-current:first:after:rounded-tl-md aria-current:last:after:rounded-bl-md"
+              aria-current:after:left-0 aria-current:after:h-full aria-current:after:w-[5px] aria-current:after:bg-pia_dark_green aria-current:after:content-[''] aria-current:first:after:rounded-tl-md aria-current:last:after:rounded-bl-md"
             >
               <button
                 className={`

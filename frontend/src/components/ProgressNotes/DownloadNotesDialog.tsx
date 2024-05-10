@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 
 import DownloadIcon from "../../../public/icons/download.svg";
 import GreenDownloadIcon from "../../../public/icons/green_download.svg";
+import MobileDownloadIcon from "../../../public/icons/mobile_download.svg";
 import { Button } from "../Button";
 import { Textfield } from "../Textfield";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../ui/dialog";
@@ -10,6 +11,7 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../ui/dialog"
 import DownloadNotes from "./DownloadNotes";
 import { ProgressNote } from "./types";
 
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { validateDate } from "@/lib/validateDate";
 import { StudentWithNotes } from "@/pages/notes";
 
@@ -34,6 +36,7 @@ export default function DownloadNotesDialog({
   const [downloadDisabled, setDownloadDisabled] = useState(true);
   const downloadStartDate = watch("startDate");
   const downloadEndDate = watch("endDate");
+  const { windowSize } = useWindowSize();
 
   useEffect(() => {
     let error = "";
@@ -60,7 +63,13 @@ export default function DownloadNotesDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button label="Download" icon={<DownloadIcon />} />
+        {windowSize.width < 1200 ? (
+          <button>
+            <MobileDownloadIcon className="scale-[1.6]" aria-label="Download Notes" />
+          </button>
+        ) : (
+          <Button label="Download" icon={<DownloadIcon />} />
+        )}
       </DialogTrigger>
       <DialogContent className="max-h-[70%] max-w-[80%] rounded-[8px] md:max-w-[50%] lg:max-w-[25%]">
         <div className="grid place-items-center p-3 min-[450px]:p-10 ">

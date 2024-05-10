@@ -137,7 +137,7 @@ function EditNote({
   }, [openDeleteDialog]);
 
   return (
-    <article className="flex h-full flex-col px-8 py-7">
+    <article className="flex h-full flex-col px-8 pt-3 sm:py-7">
       <div className="flex justify-between pb-5">
         <button onClick={handleBackButton}>
           <BackIcon />
