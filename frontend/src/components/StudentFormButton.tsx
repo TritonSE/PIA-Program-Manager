@@ -15,6 +15,8 @@ import { ProgramsContext } from "./StudentsTable/StudentsTable";
 import { StudentMap } from "./StudentsTable/types";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
+import { UserContext } from "@/contexts/user";
+
 type BaseProps = {
   classname?: string;
   setAllStudents: Dispatch<SetStateAction<StudentMap>>;
@@ -51,6 +53,7 @@ export default function StudentFormButton({
   const [openForm, setOpenForm] = useState(false);
   const programsMap = useContext(ProgramsContext);
   const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
+  const { isAdmin } = useContext(UserContext);
 
   const onFormSubmit: SubmitHandler<StudentFormData> = (formData: StudentFormData) => {
     const programAbbreviationToId = {} as Record<string, string>; // abbreviation -> programId
@@ -180,11 +183,11 @@ export default function StudentFormButton({
             classname,
           )}
         >
-          <fieldset>
+          <fieldset disabled={!isAdmin}>
             <legend className="mb-5 w-full text-left font-bold">Contact Information</legend>
             <ContactInfo register={register} data={data ?? null} type={type} />
           </fieldset>
-          <fieldset>
+          <fieldset disabled={!isAdmin}>
             <legend className="mb-5 w-full text-left font-bold">Student Background</legend>
             <StudentBackground
               register={register}
@@ -192,7 +195,7 @@ export default function StudentFormButton({
               setCalendarValue={setCalendarValue}
             />
           </fieldset>
-          <fieldset>
+          <fieldset disabled={!isAdmin}>
             <legend className="mb-5 w-full text-left font-bold">Student Information</legend>
             <StudentInfo
               register={register}
@@ -202,30 +205,40 @@ export default function StudentFormButton({
           </fieldset>
           <div className="ml-auto mt-5 flex gap-5">
             {/* Modal Confirmation Dialog */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button label="Cancel" kind="secondary" />
-              </DialogTrigger>
-              <Button label="Save Changes" type="submit" />
-              <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
-                <div className="p-3 min-[450px]:p-10">
-                  <p className="my-10 text-center">Leave without saving changes?</p>
-                  <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
-                    <DialogClose asChild>
-                      <Button label="Back" kind="secondary" />
-                    </DialogClose>
-                    <DialogClose asChild>
-                      <Button
-                        label="Continue"
-                        onClick={() => {
-                          setOpenForm(false);
-                        }}
-                      />
-                    </DialogClose>
+            {isAdmin ? (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button label="Cancel" kind="secondary" />
+                </DialogTrigger>
+                <Button label="Save Changes" type="submit" />
+                <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
+                  <div className="p-3 min-[450px]:p-10">
+                    <p className="my-10 text-center">Leave without saving changes?</p>
+                    <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
+                      <DialogClose asChild>
+                        <Button label="Back" kind="secondary" />
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          label="Continue"
+                          onClick={() => {
+                            setOpenForm(false);
+                          }}
+                        />
+                      </DialogClose>
+                    </div>
                   </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+                </DialogContent>
+              </Dialog>
+            ) : (
+              <Button
+                label="Exit"
+                kind="secondary"
+                onClick={() => {
+                  setOpenForm(false);
+                }}
+              />
+            )}
           </div>
         </form>
       </DialogContent>

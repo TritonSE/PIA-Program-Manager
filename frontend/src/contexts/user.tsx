@@ -1,7 +1,7 @@
 "use client";
 
 import { User as FirebaseUser, onAuthStateChanged } from "firebase/auth";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useEffect, useMemo, useState } from "react";
 
 import { User, verifyUser } from "@/api/user";
 import { initFirebase } from "@/firebase/firebase";
@@ -11,6 +11,7 @@ type IUserContext = {
   piaUser: User | null;
   loadingUser: boolean;
   reloadUser: () => unknown;
+  isAdmin: boolean;
 };
 
 /**
@@ -22,6 +23,7 @@ export const UserContext = createContext<IUserContext>({
   piaUser: null,
   loadingUser: true,
   reloadUser: () => {},
+  isAdmin: false,
 });
 
 /**
@@ -73,8 +75,13 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(reloadUser, [initialLoading, firebaseUser]);
 
+  const isAdmin = useMemo(
+    () => firebaseUser !== null && piaUser !== null && piaUser.role === "admin",
+    [firebaseUser, piaUser],
+  );
+
   return (
-    <UserContext.Provider value={{ firebaseUser, piaUser, loadingUser, reloadUser }}>
+    <UserContext.Provider value={{ firebaseUser, piaUser, loadingUser, reloadUser, isAdmin }}>
       {children}
     </UserContext.Provider>
   );
