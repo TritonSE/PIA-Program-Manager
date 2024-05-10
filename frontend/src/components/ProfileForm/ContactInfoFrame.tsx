@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 
 import { cn } from "../../lib/utils";
 import { FrameProps } from "../../pages/profile";
-import SaveCancelButtons from "../SaveCancelButtons";
+import SaveCancelButtons from "../Modals/SaveCancelButtons";
 import { Textfield } from "../Textfield";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 

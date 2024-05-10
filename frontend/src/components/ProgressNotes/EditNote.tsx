@@ -7,8 +7,8 @@ import EditIcon from "../../../public/icons/edit.svg";
 import GreenCheckMarkIcon from "../../../public/icons/green_check_mark.svg";
 import RedDeleteIcon from "../../../public/icons/red_delete.svg";
 import { Button } from "../Button";
-import ModalConfirmation from "../ModalConfirmation";
-import SaveCancelButtons from "../SaveCancelButtons";
+import ModalConfirmation from "../Modals/ModalConfirmation";
+import SaveCancelButtons from "../Modals/SaveCancelButtons";
 
 import { DeleteProps } from "./NotePreview";
 import { dateOptions } from "./NotesSelectionList";

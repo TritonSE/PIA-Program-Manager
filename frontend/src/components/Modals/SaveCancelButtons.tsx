@@ -1,10 +1,10 @@
 import React from "react";
 
-import RedQuestionMarkIcon from "../../public/icons/red_question_mark.svg";
+import RedQuestionMarkIcon from "../../../public/icons/red_question_mark.svg";
+import { Button } from "../Button";
+import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 
-import { Button } from "./Button";
 import ModalConfirmation from "./ModalConfirmation";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
 
 type SaveCancelButtonsPropsBase = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,9 +34,9 @@ type SaveCancelButtonsProps =
 export default function SaveCancelButtons({
   isOpen,
   setOpen,
-  onCancelClick,
-  onSaveClick,
-  onLeave,
+  onCancelClick = () => {},
+  onSaveClick = () => {},
+  onLeave = () => {},
   automaticClose,
   children,
 }: SaveCancelButtonsProps) {
@@ -71,7 +71,7 @@ export default function SaveCancelButtons({
               label="Save Changes"
               onClick={(e) => {
                 setOpen(true);
-                if (onSaveClick) onSaveClick(e);
+                onSaveClick(e);
                 handleAutomaticClose();
               }}
             />

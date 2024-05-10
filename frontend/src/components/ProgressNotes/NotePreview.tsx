@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction } from "react";
 
-import DownloadIcon from "../../../public/icons/download.svg";
 import EditPencilIcon from "../../../public/icons/edit_pencil.svg";
 import PlusIcon from "../../../public/icons/plus.svg";
 import { Button } from "../Button";
 
+import DownloadNotesDialog from "./DownloadNotesDialog";
 import EditNote from "./EditNote";
 import { dateOptions } from "./NotesSelectionList";
 import { ProgressNote } from "./types";
@@ -63,6 +63,8 @@ function NotePreview({
 
   if (!allProgressNotes) return <h1>Loading...</h1>;
 
+  const studentFullName = `${selectedStudent.student.firstName} ${selectedStudent.student.lastName}`;
+
   return (
     <section className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] hidden w-full rounded-md bg-white sm:flex sm:flex-col">
       {noteMode !== "list" ? (
@@ -79,7 +81,7 @@ function NotePreview({
       ) : (
         <>
           <div className="flex justify-between px-8 pb-3 pt-7 ">
-            <h2 className="text-3xl font-bold">{`${selectedStudent.student.firstName} ${selectedStudent.student.lastName}`}</h2>
+            <h2 className="text-3xl font-bold">{studentFullName}</h2>
             <div className="flex gap-5">
               <Button
                 label="Add Notes"
@@ -89,7 +91,11 @@ function NotePreview({
                   setNoteMode("add");
                 }}
               />
-              <Button label="Download" icon={<DownloadIcon />} />
+              <DownloadNotesDialog
+                allProgressNotes={allProgressNotes}
+                selectedStudent={selectedStudent}
+                studentFullName={studentFullName}
+              />
             </div>
           </div>
           <ul className="scrollbar overflow-auto">

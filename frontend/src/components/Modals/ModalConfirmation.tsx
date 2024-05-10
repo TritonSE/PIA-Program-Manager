@@ -1,7 +1,7 @@
 import { forwardRef } from "react";
 
-import { Button } from "./Button";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
+import { Button } from "../Button";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../ui/dialog";
 
 type ModalConfirmationProps = {
   ref?: React.RefObject<HTMLDivElement>;
@@ -25,8 +25,8 @@ const ModalConfirmation = forwardRef<HTMLDivElement, ModalConfirmationProps>(
     {
       icon,
       triggerElement,
-      onCancelClick,
-      onConfirmClick,
+      onCancelClick = () => {},
+      onConfirmClick = () => {},
       title,
       description,
       cancelText = "Cancel",
@@ -49,23 +49,19 @@ const ModalConfirmation = forwardRef<HTMLDivElement, ModalConfirmationProps>(
             <div className="mb-8">{icon}</div>
             <h3 className="text-bold mb-2 text-lg font-bold">{title}</h3>
             {description ? <p>{description}</p> : null}
-            <div className="grid justify-center gap-5 pt-6 min-[450px]:flex min-[450px]:justify-between">
+            <div className="grid justify-center gap-5 pt-6 min-[450px]:flex min-[450px]:w-[70%] min-[450px]:justify-between min-[450px]:[&>*]:basis-full">
               <DialogClose asChild>
-                <div className="flex-1">
-                  <Button
-                    label={cancelText}
-                    kind={kind === "primary" ? "secondary" : "destructive-secondary"}
-                    onClick={onCancelClick}
-                  />
-                </div>
+                <Button
+                  label={cancelText}
+                  kind={kind === "primary" ? "secondary" : "destructive-secondary"}
+                  onClick={onCancelClick}
+                />
               </DialogClose>
               {nestedDialog ? (
                 nestedDialog
               ) : (
                 <DialogClose asChild>
-                  <div className="flex-1">
-                    <Button label={confirmText} kind={kind} onClick={onConfirmClick} />
-                  </div>
+                  <Button label={confirmText} kind={kind} onClick={onConfirmClick} />
                 </DialogClose>
               )}
             </div>
