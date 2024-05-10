@@ -1,11 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-
-import { ProgramMap } from "../StudentsTable/types";
+import { Dispatch, SetStateAction, useContext, useEffect } from "react";
 
 import { ProgressNote } from "./types";
 
-import { Program, getAllPrograms } from "@/api/programs";
 import { getAllStudents } from "@/api/students";
+import { ProgramsContext } from "@/contexts/program";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { StudentWithNotes } from "@/pages/notes";
 
@@ -34,29 +32,10 @@ function NotesSelectionList({
   handleSelectStudent,
 }: NotesSelectionListProps) {
   const { allStudents, setAllStudents } = studentProps;
-  const [allPrograms, setAllPrograms] = useState<ProgramMap>({});
   const { isMobile } = useWindowSize();
-  console.log({ allPrograms });
-  useEffect(() => {
-    getAllPrograms().then(
-      (result) => {
-        if (result.success) {
-          const programsObject = result.data.reduce(
-            (obj, program) => {
-              obj[program._id] = program;
-              return obj;
-            },
-            {} as Record<string, Program>,
-          );
-          setAllPrograms(programsObject);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  }, []);
+  const { allPrograms } = useContext(ProgramsContext);
 
+  console.log({ allPrograms });
   useEffect(() => {
     if (!allProgressNotes) return;
     getAllStudents().then(

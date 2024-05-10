@@ -1,12 +1,11 @@
 import Image from "next/image";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo } from "react";
 
-import { Program, getAllPrograms } from "../api/programs";
 import { ProgramCard } from "../components/ProgramCard";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 
-import { ProgramMap } from "@/components/StudentsTable/types";
+import { ProgramsContext } from "@/contexts/program";
 import { UserContext } from "@/contexts/user";
 import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
@@ -18,29 +17,8 @@ export default function Programs() {
   const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);
   const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
 
-  const [programs, setPrograms] = useState<ProgramMap>({});
-
+  const { allPrograms: programs, setAllPrograms: setPrograms } = useContext(ProgramsContext);
   const { isAdmin } = useContext(UserContext);
-
-  useEffect(() => {
-    getAllPrograms().then(
-      (result) => {
-        if (result.success) {
-          const programsObject = result.data.reduce(
-            (obj, program) => {
-              obj[program._id] = program;
-              return obj;
-            },
-            {} as Record<string, Program>,
-          );
-          setPrograms(programsObject);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  });
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar flex flex-col";
   let titleClass = "font-[alternate-gothic]";

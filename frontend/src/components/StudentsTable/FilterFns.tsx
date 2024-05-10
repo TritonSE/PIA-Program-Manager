@@ -5,9 +5,9 @@ import { useContext, useMemo } from "react";
 import { Dropdown } from "../Dropdown";
 import { ProgramLink } from "../StudentForm/types";
 
-import { ProgramsContext } from "./StudentsTable";
 import { StudentTableRow } from "./types";
 
+import { ProgramsContext } from "@/contexts/program";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 // Extend the FilterFns and FilterMeta interfaces
@@ -39,24 +39,24 @@ export const programFilterFn: FilterFn<unknown> = (rows, id, filterValue) => {
 export function ProgramFilter({ column }: { column: Column<StudentTableRow> }) {
   const { isTablet } = useWindowSize();
 
-  const programsMap = useContext(ProgramsContext);
+  const { allPrograms } = useContext(ProgramsContext);
   // Get unique programs to display in the program filter dropdown
   const sortedUniqueValues = useMemo(() => {
-    const values = new Set(Object.values(programsMap).map((program) => program.name));
+    const values = new Set(Object.values(allPrograms).map((program) => program.name));
 
     return Array.from(values)
       .sort()
       .filter((v) => v !== "");
-  }, [programsMap]);
+  }, [allPrograms]);
 
   // Create a map from program name to program id for easy lookup (dropdown uses names but filter needs ids)
   const programNameToId = useMemo(() => {
     const map: Record<string, string> = {};
-    for (const [id, program] of Object.entries(programsMap)) {
+    for (const [id, program] of Object.entries(allPrograms)) {
       map[program.name] = id;
     }
     return map;
-  }, [programsMap]);
+  }, [allPrograms]);
 
   return (
     <Dropdown

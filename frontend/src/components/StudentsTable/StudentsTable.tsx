@@ -15,45 +15,23 @@ import { Table } from "../ui/table";
 import { fuzzyFilter, programFilterFn, statusFilterFn } from "./FilterFns";
 import TBody from "./TBody";
 import THead from "./THead";
-import { ProgramMap, StudentMap, StudentTableRow } from "./types";
+import { StudentMap, StudentTableRow } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
 
-import { Program, getAllPrograms } from "@/api/programs";
+import { ProgramsContext } from "@/contexts/program";
 import { UserContext } from "@/contexts/user";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
-export const ProgramsContext = React.createContext({} as ProgramMap);
-
 export default function StudentsTable() {
   const [allStudents, setAllStudents] = useState<StudentMap>({});
-  const [allPrograms, setAllPrograms] = useState<ProgramMap>({}); // map from program id to program
   const [isLoading, setIsLoading] = useState(true);
   const [studentTable, setStudentTable] = useState<StudentTableRow[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const { isTablet } = useWindowSize();
 
+  const { allPrograms } = useContext(ProgramsContext);
   const { isAdmin } = useContext(UserContext);
-
-  useEffect(() => {
-    getAllPrograms().then(
-      (result) => {
-        if (result.success) {
-          const programsObject = result.data.reduce(
-            (obj, program) => {
-              obj[program._id] = program;
-              return obj;
-            },
-            {} as Record<string, Program>,
-          );
-          setAllPrograms(programsObject);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  }, []);
 
   useEffect(() => {
     getAllStudents().then(
@@ -122,29 +100,27 @@ export default function StudentsTable() {
   if (isLoading) return <p>Loading...</p>;
 
   return (
-    <ProgramsContext.Provider value={allPrograms}>
-      <div className="w-full space-y-5 overflow-x-auto">
-        <div className="flex w-full items-center justify-between">
-          <h1
-            className={cn(
-              "font-['Alternate Gothic No3 D'] text-[40px] font-medium text-neutral-800",
-              isTablet && "text-2xl",
-            )}
-          >
-            Students
-          </h1>
-          {isAdmin && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
-        </div>
-        <Table
+    <div className="w-full space-y-5 overflow-x-auto">
+      <div className="flex w-full items-center justify-between">
+        <h1
           className={cn(
-            "h-fit w-[100%] min-w-[640px] max-w-[1480px] border-collapse rounded-lg bg-pia_primary_white font-['Poppins']",
-            isTablet && "text-[12px]",
+            "font-['Alternate Gothic No3 D'] text-[40px] font-medium text-neutral-800",
+            isTablet && "text-2xl",
           )}
         >
-          <THead table={table} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
-          <TBody table={table} />
-        </Table>
+          Students
+        </h1>
+        {isAdmin && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
       </div>
-    </ProgramsContext.Provider>
+      <Table
+        className={cn(
+          "h-fit w-[100%] min-w-[640px] max-w-[1480px] border-collapse rounded-lg bg-pia_primary_white font-['Poppins']",
+          isTablet && "text-[12px]",
+        )}
+      >
+        <THead table={table} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+        <TBody table={table} />
+      </Table>
+    </div>
   );
 }
