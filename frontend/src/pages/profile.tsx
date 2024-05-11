@@ -74,9 +74,9 @@ export default function Profile() {
   if (!piaUser || !firebaseUser) return <h1>Loading...</h1>;
 
   return (
-    <main className={"mx-1 pt-2 sm:ml-6 sm:mr-16 sm:pt-10"}>
-      <h1 className={"font-[alternate-gothic] text-4xl uppercase"}>Personal Info</h1>
-      <div className={isMobile ? "pt-4 text-xs" : "text-m pt-10"}>
+    <main>
+      <h1 className={"font-[alternate-gothic] text-4xl "}>Personal Info</h1>
+      <div className={isMobile ? "pt-4 text-sm" : "text-m pt-10"}>
         Personal info and options to manage it. You can change or update your info at anytime.
       </div>
 

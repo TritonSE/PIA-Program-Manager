@@ -48,8 +48,7 @@ export default function Programs() {
     }
   } else {
     titleClass += " text-[40px] leading-none h-10";
-    headerClass += " p-5 pt-10 pb-5";
-    cardClass += " p-5";
+    headerClass += "pt-10 pb-5";
     emptyClass += " pb-40";
     emptyHeight = 99;
     emptyWidth = 156;
@@ -58,7 +57,7 @@ export default function Programs() {
       cardsGridClass += " grid-cols-3 max-w-[1740px]";
       headerClass += " max-w-[1740px]";
     } else {
-      cardsGridClass += " grid-cols-2 max-w-[1160px]";
+      cardsGridClass += " grid-cols-2 max-w-[1160px] gap-10";
       headerClass += " max-w-[1160px]";
     }
   }

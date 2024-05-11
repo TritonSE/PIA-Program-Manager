@@ -71,7 +71,6 @@ export default function StudentsTable() {
 
   const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents });
   const data = useMemo(() => studentTable, [studentTable]);
-  console.log(data);
   // const data = useMemo(() => [], [allStudents]);  // uncomment this line and comment the line above to see empty table state
 
   const table = useReactTable({
@@ -104,7 +103,7 @@ export default function StudentsTable() {
       <div className="flex w-full items-center justify-between">
         <h1
           className={cn(
-            "font-['Alternate Gothic No3 D'] text-[40px] font-medium text-neutral-800",
+            "font-[alternate-gothic] text-[40px] font-medium text-neutral-800 leading-none",
             isTablet && "text-2xl",
           )}
         >

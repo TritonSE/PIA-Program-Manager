@@ -15,6 +15,7 @@ type ButtonStyles = {
   selected: string;
   big: string;
   wide: string;
+  rounded: string;
 };
 
 const poppins = Poppins({ weight: "400", style: "normal", subsets: [] });
@@ -24,6 +25,7 @@ export type ButtonProps = {
   icon?: React.ReactNode | null;
   kind?: "primary" | "secondary" | "destructive" | "destructive-secondary";
   size?: "default" | "small" | "big" | "wide";
+  rounded?: boolean;
   disabled?: boolean;
   selected?: boolean;
 } & React.ComponentProps<"button">;
@@ -34,6 +36,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     icon = null,
     kind = "primary",
     size = "default",
+    rounded = false,
     disabled = false,
     selected = false,
     className,
@@ -90,6 +93,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   // Lets developers apply their own styling
   if (className) {
     buttonClass += ` ${className}`;
+  }
+
+  if (rounded) {
+    buttonClass += ` ${buttonStyles.rounded}`;
   }
 
   // Set font to poppins

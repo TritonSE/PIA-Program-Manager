@@ -40,7 +40,7 @@
 
 .disabled {
   background-color: rgb(var(--gray-2));
-  color: rgb(--var(white));
+  color: rgb(var(--white));
   border: none;
 }
 
@@ -94,4 +94,9 @@
 }
 .destructiveSecondary:active {
   background-color: rgba(var(--error-red), 20%);
+}
+
+.rounded {
+  border-radius: 100vw;
+  padding-inline: 1.75rem;
 }

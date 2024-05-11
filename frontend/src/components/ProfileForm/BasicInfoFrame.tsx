@@ -134,7 +134,7 @@ export function BasicInfoFrame({
   return (
     <section className={cn(frameFormat, className)}>
       {/*Info header*/}
-      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl">Basic Info</div>
+      <div className="ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl">Basic Info</div>
       {/*Info Fields*/}
       <div className=" h-auto w-full flex-grow">
         <div className="flex h-full flex-col divide-y-2">

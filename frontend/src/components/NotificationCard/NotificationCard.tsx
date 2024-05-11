@@ -1,3 +1,5 @@
+import { Button } from "../Button";
+
 type UserInfo = {
   name: string;
   email: string;
@@ -9,7 +11,7 @@ export default function NotificationCard({ name, email, account_type }: UserInfo
     <>
       <div
         className={
-          "flex items-center justify-between px-[40px] py-[60px] font-['Poppins'] text-[18px] "
+          "flex flex-col justify-between gap-5 px-[40px] py-[60px] font-['Poppins'] text-[18px]  md:flex-row md:items-center "
         }
       >
         <div id="person_info" className="">
@@ -19,13 +21,9 @@ export default function NotificationCard({ name, email, account_type }: UserInfo
           Account Type: {account_type}
         </div>
 
-        <div id="buttons" className="flex items-center space-x-[30px]">
-          <button className="h-[48px] w-[116px] rounded-full border border-pia_dark_green bg-pia_primary_white text-pia_dark_green">
-            Deny
-          </button>
-          <button className="h-[48px] w-[116px] rounded-full border bg-pia_dark_green text-pia_primary_white">
-            Approve
-          </button>
+        <div id="buttons" className="flex items-center gap-5 w-[calc(8em*2)]">
+          <Button label="Deny" kind="secondary" rounded={true} className="flex-1" />
+          <Button label="Approve" rounded={true} className="flex-1" />
         </div>
       </div>
     </>

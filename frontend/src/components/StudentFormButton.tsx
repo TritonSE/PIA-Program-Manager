@@ -176,7 +176,7 @@ export default function StudentFormButton({
           />
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[95%] max-w-[98%] rounded-[13px] sm:max-w-[80%]">
+      <DialogContent className="max-h-[85%] max-w-[90%] rounded-[13px] text-sm sm:max-w-[80%]">
         <form
           onSubmit={handleSubmit(onFormSubmit)}
           className={cn(
@@ -185,11 +185,15 @@ export default function StudentFormButton({
           )}
         >
           <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left font-bold">Contact Information</legend>
+            <legend className="mb-5 w-full text-left text-base font-bold">
+              Contact Information
+            </legend>
             <ContactInfo register={register} data={data ?? null} type={type} />
           </fieldset>
           <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left font-bold">Student Background</legend>
+            <legend className="mb-5 w-full text-left text-base font-bold">
+              Student Background
+            </legend>
             <StudentBackground
               register={register}
               data={data ?? null}
@@ -197,7 +201,9 @@ export default function StudentFormButton({
             />
           </fieldset>
           <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left font-bold">Student Information</legend>
+            <legend className="text-basefont-bold mb-5 w-full text-left">
+              Student Information
+            </legend>
             <StudentInfo
               register={register}
               data={data ?? null}
