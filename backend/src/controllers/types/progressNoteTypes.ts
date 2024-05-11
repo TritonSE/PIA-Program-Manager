@@ -31,6 +31,7 @@ export type EditProgressNoteRequestBody = {
 };
 
 export type DeleteProgressNoteRequestBody = {
+  uid: string;
   noteId: Schema.Types.ObjectId;
   studentId: Schema.Types.ObjectId;
 };

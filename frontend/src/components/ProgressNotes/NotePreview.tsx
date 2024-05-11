@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 
 import BackIcon from "../../../public/icons/back.svg";
 import EditPencilIcon from "../../../public/icons/edit_pencil.svg";
@@ -13,6 +13,7 @@ import EditNote from "./EditNote";
 import { dateOptions } from "./NotesSelectionList";
 import { ProgressNote } from "./types";
 
+import { UserContext } from "@/contexts/user";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { HandleNoteUpdate, StudentWithNotes, ViewMode } from "@/pages/notes";
 
@@ -49,6 +50,7 @@ function NotePreview({
   noteProps,
   deleteProps,
 }: NotePreviewProps) {
+  const { isAdmin } = useContext(UserContext);
   const { noteMode, setNoteMode, selectedNote, setSelectedNote } = noteProps;
   const { windowSize, isMobile } = useWindowSize();
   const { handleNoteUpdate, handleFilterQuery, handleMobileBack } = handlers;
@@ -124,11 +126,13 @@ function NotePreview({
                     }}
                   />
                 )}
-                <DownloadNotesDialog
-                  allProgressNotes={allProgressNotes}
-                  selectedStudent={selectedStudent}
-                  studentFullName={studentFullName}
-                />
+                {isAdmin ? (
+                  <DownloadNotesDialog
+                    allProgressNotes={allProgressNotes}
+                    selectedStudent={selectedStudent}
+                    studentFullName={studentFullName}
+                  />
+                ) : null}
               </div>
             </div>
             <ul className="scrollbar overflow-auto">
@@ -153,15 +157,17 @@ function NotePreview({
                           {new Date(note.dateLastUpdated).toLocaleDateString("en-US", dateOptions)}
                           &nbsp;| By {note.lastEditedBy}
                         </p>
-                        <button
-                          className=" transition-colors hover:text-pia_dark_green focus-visible:text-pia_dark_green"
-                          aria-label="Edit Note"
-                          onClick={(e: React.MouseEvent) => {
-                            handleEditButton(e, note);
-                          }}
-                        >
-                          <EditPencilIcon aria-hidden="true" />
-                        </button>
+                        {isAdmin ? (
+                          <button
+                            className=" transition-colors hover:text-pia_dark_green focus-visible:text-pia_dark_green"
+                            aria-label="Edit Note"
+                            onClick={(e: React.MouseEvent) => {
+                              handleEditButton(e, note);
+                            }}
+                          >
+                            <EditPencilIcon aria-hidden="true" />
+                          </button>
+                        ) : null}
                       </div>
                       <p className="line-clamp-4 text-ellipsis">{note.content}</p>
                     </button>

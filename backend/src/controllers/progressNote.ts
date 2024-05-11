@@ -70,6 +70,10 @@ export const editProgressNote = async (
       throw ValidationError.USER_NOT_FOUND;
     }
 
+    if (user.accountType !== "admin") {
+      throw ValidationError.UNAUTHORIZED_USER;
+    }
+
     const errors = validationResult(req);
     validationErrorParser(errors);
 
@@ -101,7 +105,16 @@ export const deleteProgressNote = async (
   next: NextFunction,
 ) => {
   try {
-    const { noteId, studentId } = req.body;
+    const { noteId, studentId, uid } = req.body;
+
+    const user = await UserModel.findById(uid);
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    if (user.accountType !== "admin") {
+      throw ValidationError.UNAUTHORIZED_USER;
+    }
 
     const errors = validationResult(req);
     validationErrorParser(errors);

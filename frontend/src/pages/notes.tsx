@@ -23,6 +23,8 @@ export type ViewMode = "list" | "view" | "edit" | "add";
 
 function Notes() {
   useRedirectToLoginIfNotSignedIn();
+  const { firebaseUser } = useContext(UserContext);
+
   const [firebaseToken, setFirebaseToken] = useState<string>("");
   const [filteredStudents, setFilteredStudents] = useState<StudentWithNotes[]>([]);
   const [allStudents, setAllStudents] = useState<StudentWithNotes[]>([]);
@@ -39,7 +41,6 @@ function Notes() {
   const [allProgressNotes, setAllProgressNotes] = useState<
     Record<string, ProgressNote> | undefined
   >(undefined);
-  const { firebaseUser } = useContext(UserContext);
 
   useEffect(() => {
     if (firebaseUser) {

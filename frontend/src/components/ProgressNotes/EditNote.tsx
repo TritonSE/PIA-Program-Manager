@@ -44,7 +44,7 @@ function EditNote({
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const deleteDialogRef = useRef<HTMLDivElement>(null);
   const { deletedNote, setDeletedNote, handleFinishDelete } = deleteProps;
-  const { piaUser } = useContext(UserContext);
+  const { piaUser, isAdmin } = useContext(UserContext);
   const currentUser = piaUser?.name;
 
   const handleSaveClick = (e: React.MouseEvent) => {
@@ -142,61 +142,60 @@ function EditNote({
         <button onClick={handleBackButton}>
           <BackIcon />
         </button>
-        <div className="flex gap-3">
-          <button
-            onClick={(e: React.MouseEvent) => {
-              handleEditButton(e, selectedNote);
-            }}
-          >
-            <EditIcon
-              className={
-                noteMode === "edit"
-                  ? "text-pia_dark_green"
-                  : "transition-colors hover:text-pia_dark_green"
+        {isAdmin ? (
+          <div className="flex gap-3">
+            <button
+              onClick={(e: React.MouseEvent) => {
+                handleEditButton(e, selectedNote);
+              }}
+            >
+              <EditIcon
+                className={
+                  noteMode === "edit"
+                    ? "text-pia_dark_green"
+                    : "transition-colors hover:text-pia_dark_green"
+                }
+              />
+            </button>
+            <ModalConfirmation
+              ref={deleteDialogRef}
+              icon={<RedDeleteIcon />}
+              triggerElement={
+                <button>
+                  <DeleteIcon className="transition-colors hover:text-pia_dark_green" />
+                </button>
+              }
+              title="Are you sure you want to delete?"
+              confirmText="Delete"
+              kind="destructive"
+              isParentOpen={openDeleteDialog}
+              setIsParentOpen={setOpenDeleteDialog}
+              nestedDialog={
+                <ModalConfirmation
+                  icon={<GreenCheckMarkIcon />}
+                  triggerElement={
+                    <Button
+                      label="Delete"
+                      kind="destructive"
+                      // This onClick is the same as onConfirmClick for parent dialog
+                      // Fixes small visual bug when parent dialog closes slightly after child dialog
+                      onClick={() => {
+                        if (deleteDialogRef.current) deleteDialogRef.current.style.opacity = "0";
+                        handleDelete();
+                      }}
+                    />
+                  }
+                  title="Notes have been deleted"
+                  cancelText="Undo"
+                  confirmText="Done"
+                  onCancelClick={handleUndoDelete}
+                  setIsParentOpen={setOpenDeleteDialog}
+                  kind="primary"
+                />
               }
             />
-          </button>
-          <ModalConfirmation
-            ref={deleteDialogRef}
-            icon={<RedDeleteIcon />}
-            triggerElement={
-              <button>
-                <DeleteIcon className="transition-colors hover:text-pia_dark_green" />
-              </button>
-            }
-            title="Are you sure you want to delete?"
-            confirmText="Delete"
-            kind="destructive"
-            isParentOpen={openDeleteDialog}
-            setIsParentOpen={setOpenDeleteDialog}
-            nestedDialog={
-              <ModalConfirmation
-                icon={<GreenCheckMarkIcon />}
-                triggerElement={
-                  <Button
-                    label="Delete"
-                    kind="destructive"
-                    // This onClick is the same as onConfirmClick for parent dialog
-                    // Fixes small visual bug when parent dialog closes slightly after child dialog
-                    onClick={() => {
-                      if (deleteDialogRef.current) deleteDialogRef.current.style.opacity = "0";
-                      handleDelete();
-                    }}
-                  />
-                }
-                title="Notes have been deleted"
-                cancelText="Undo"
-                confirmText="Done"
-                onCancelClick={handleUndoDelete}
-                setIsParentOpen={setOpenDeleteDialog}
-                onConfirmClick={() => {
-                  // handleDelete();
-                }}
-                kind="primary"
-              />
-            }
-          />
-        </div>
+          </div>
+        ) : null}
       </div>
       <h2 className="text-2xl font-bold">
         Notes for {`${selectedStudent.student.firstName} ${selectedStudent.student.lastName}`}
