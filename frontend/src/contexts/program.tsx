@@ -3,21 +3,21 @@ import React, { ReactNode, createContext, useEffect, useState } from "react";
 import { Program, getAllPrograms } from "@/api/programs";
 import { ProgramMap } from "@/components/StudentsTable/types";
 
-type ProgramContext = {
+type ProgramsContext = {
   allPrograms: ProgramMap;
-  loading: boolean;
+  isLoading: boolean;
   setAllPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
-export const ProgramsContext = createContext<ProgramContext>({
+export const ProgramsContext = createContext<ProgramsContext>({
   allPrograms: {},
   setAllPrograms: () => {},
-  loading: true,
+  isLoading: true,
 });
 
 export const ProgramsContextProvider = ({ children }: { children: ReactNode }) => {
   const [allPrograms, setAllPrograms] = useState<ProgramMap>({});
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getAllPrograms().then(
@@ -31,18 +31,18 @@ export const ProgramsContextProvider = ({ children }: { children: ReactNode }) =
             {} as Record<string, Program>,
           );
           setAllPrograms(programsObject);
-          setLoading(false);
+          setIsLoading(false);
         }
       },
       (error) => {
         console.log(error);
-        setLoading(false);
+        setIsLoading(false);
       },
     );
   }, []);
 
   return (
-    <ProgramsContext.Provider value={{ allPrograms, setAllPrograms, loading }}>
+    <ProgramsContext.Provider value={{ allPrograms, setAllPrograms, isLoading }}>
       {children}
     </ProgramsContext.Provider>
   );

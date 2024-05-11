@@ -4,15 +4,21 @@ import { useForm } from "react-hook-form";
 import { Textfield } from "./Textfield";
 
 const DebouncedInput = ({
-  value: initialValue,
+  initialValue = "",
   onChange,
   debounce = 500,
   placeholder = "",
+  icon,
+  className,
+  iconClassName,
 }: {
-  value: string;
+  initialValue?: string;
   onChange: (val: string) => void;
   debounce?: number;
   placeholder?: string;
+  icon?: React.ReactNode;
+  className?: string;
+  iconClassName?: string;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) => {
   const [value, setValue] = useState(initialValue);
   const { register } = useForm();
@@ -33,12 +39,15 @@ const DebouncedInput = ({
 
   return (
     <Textfield
+      className={className}
       register={register}
       name="debounced_input"
       placeholder={placeholder}
       handleInputChange={(e) => {
         setValue(e.target.value);
       }}
+      icon={icon}
+      iconClassName={iconClassName}
     />
   );
 };

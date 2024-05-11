@@ -21,7 +21,7 @@ export default function NotificationCard({ name, email, account_type }: UserInfo
           Account Type: {account_type}
         </div>
 
-        <div id="buttons" className="flex items-center gap-5 w-[calc(8em*2)]">
+        <div id="buttons" className="flex w-[calc(8em*2)] items-center gap-5">
           <Button label="Deny" kind="secondary" rounded={true} className="flex-1" />
           <Button label="Approve" rounded={true} className="flex-1" />
         </div>

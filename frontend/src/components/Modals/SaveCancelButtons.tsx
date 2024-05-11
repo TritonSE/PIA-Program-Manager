@@ -51,7 +51,7 @@ export default function SaveCancelButtons({
   return (
     <div className="ml-auto mt-5 flex w-fit gap-5">
       <ModalConfirmation
-        icon={<RedQuestionMarkIcon />}
+        icon={<RedQuestionMarkIcon aria-hidden="true" />}
         triggerElement={<Button label="Cancel" kind="secondary" onClick={onCancelClick} />}
         onConfirmClick={() => {
           if (setOpen) setOpen(false);

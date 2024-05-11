@@ -8,7 +8,7 @@ import { Button } from "../Button";
 import { Textfield } from "../Textfield";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../ui/dialog";
 
-import DownloadNotes from "./DownloadNotes";
+import DownloadNotesPDF from "./DownloadNotesPDF";
 import { ProgressNote } from "./types";
 
 import { useWindowSize } from "@/hooks/useWindowSize";
@@ -73,11 +73,11 @@ export default function DownloadNotesDialog({
       </DialogTrigger>
       <DialogContent className="max-h-[70%] max-w-[80%] rounded-[8px] md:max-w-[50%] lg:max-w-[25%]">
         <div className="grid place-items-center p-3 min-[450px]:p-10 ">
-          <GreenDownloadIcon className="mb-8" />
+          <GreenDownloadIcon className="mb-8" aria-hidden="true" />
           <h3 className="text-bold mb-5 text-lg font-bold">Select Date Range</h3>
           <form className="flex w-full flex-col items-center gap-5">
             <fieldset className="w-full">
-              <legend className="mb-2text-left ">Start Date</legend>
+              <legend className="mb-2 text-left ">Start Date</legend>
               <Textfield
                 name="startDate"
                 placeholder="MM/DD/YYYY"
@@ -90,7 +90,7 @@ export default function DownloadNotesDialog({
               <legend className="mb-2 w-full text-left ">End Date</legend>
               <Textfield
                 name="endDate"
-                placeholder="00/00/0000"
+                placeholder="MM/DD/YYYY"
                 calendar={true}
                 setCalendarValue={setCalendarValue}
                 register={register}
@@ -105,7 +105,7 @@ export default function DownloadNotesDialog({
               <DialogClose asChild>
                 <Button label="Cancel" kind="secondary" style={{ paddingInline: "0" }} />
               </DialogClose>
-              <DownloadNotes
+              <DownloadNotesPDF
                 allProgressNotes={allProgressNotes}
                 studentId={selectedStudent._id}
                 studentName={studentFullName}

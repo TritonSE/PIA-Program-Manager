@@ -9,6 +9,7 @@ import {
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { getAllStudents } from "../../api/students";
+import LoadingSpinner from "../LoadingSpinner";
 import StudentFormButton from "../StudentFormButton";
 import { Table } from "../ui/table";
 
@@ -96,14 +97,12 @@ export default function StudentsTable() {
     debugColumns: false,
   });
 
-  if (isLoading) return <p>Loading...</p>;
-
   return (
     <div className="w-full space-y-5 overflow-x-auto">
       <div className="flex w-full items-center justify-between">
         <h1
           className={cn(
-            "font-[alternate-gothic] text-[40px] font-medium text-neutral-800 leading-none",
+            "font-[alternate-gothic] text-4xl font-medium leading-none text-neutral-800",
             isTablet && "text-2xl",
           )}
         >
@@ -111,15 +110,19 @@ export default function StudentsTable() {
         </h1>
         {isAdmin && <StudentFormButton type="add" setAllStudents={setAllStudents} />}
       </div>
-      <Table
-        className={cn(
-          "h-fit w-[100%] min-w-[640px] max-w-[1480px] border-collapse rounded-lg bg-pia_primary_white font-['Poppins']",
-          isTablet && "text-[12px]",
-        )}
-      >
-        <THead table={table} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
-        <TBody table={table} />
-      </Table>
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <Table
+          className={cn(
+            "h-fit w-[100%] min-w-[640px] max-w-[1480px] border-collapse rounded-lg bg-pia_primary_white font-['Poppins']",
+            isTablet && "text-[12px]",
+          )}
+        >
+          <THead table={table} globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} />
+          <TBody table={table} />
+        </Table>
+      )}
     </div>
   );
 }

@@ -21,6 +21,8 @@ type BaseProps<T extends FieldValues> = {
   handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   className?: string;
+  icon?: React.ReactNode;
+  iconClassName?: string;
   mode?: "filled" | "outlined";
   registerOptions?: RegisterOptions;
 };
@@ -46,7 +48,8 @@ export function Textfield<T extends FieldValues>({
   calendar = false,
   handleInputChange,
   className,
-
+  icon,
+  iconClassName,
   type = "text",
   defaultValue = "",
   mode = "outlined",
@@ -73,6 +76,9 @@ export function Textfield<T extends FieldValues>({
           className,
         )}
       >
+        {icon ? (
+          <span className={cn("grid place-items-center pl-1", iconClassName)}>{icon}</span>
+        ) : null}
         <input
           {...register(name as Path<T>, registerOptions)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"

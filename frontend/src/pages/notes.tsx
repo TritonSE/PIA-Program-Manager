@@ -2,10 +2,12 @@ import { useContext, useEffect, useState } from "react";
 
 import { getAllProgressNotes } from "@/api/progressNotes";
 import { Student } from "@/api/students";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import NotePreview from "@/components/ProgressNotes/NotePreview";
 import NotesSelectionList from "@/components/ProgressNotes/NotesSelectionList";
 import { ProgressNote } from "@/components/ProgressNotes/types";
 import { UserContext } from "@/contexts/user";
+import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 import { useWindowSize } from "@/hooks/useWindowSize";
 
 export type StudentWithNotes = Omit<Student, "progressNotes"> & {
@@ -20,7 +22,9 @@ export type HandleNoteUpdate = {
 export type ViewMode = "list" | "view" | "edit" | "add";
 
 function Notes() {
+  useRedirectToLoginIfNotSignedIn();
   const [firebaseToken, setFirebaseToken] = useState<string>("");
+  const [filteredStudents, setFilteredStudents] = useState<StudentWithNotes[]>([]);
   const [allStudents, setAllStudents] = useState<StudentWithNotes[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<StudentWithNotes>({} as StudentWithNotes);
   const [selectedNote, setSelectedNote] = useState<ProgressNote>({} as ProgressNote);
@@ -72,8 +76,8 @@ function Notes() {
   }, [firebaseUser]);
 
   const updateStudentProgressNotes = ({ action, noteData }: HandleNoteUpdate) => {
-    setAllStudents((prevStudents) => {
-      return prevStudents.map((student) => {
+    setFilteredStudents((prevStudents) => {
+      const updatedStudents = prevStudents.map((student) => {
         if (student._id === noteData.studentId) {
           let updatedProgressNotes;
 
@@ -100,6 +104,9 @@ function Notes() {
         }
         return student;
       });
+
+      setAllStudents(updatedStudents);
+      return updatedStudents;
     });
   };
 
@@ -143,60 +150,92 @@ function Notes() {
     setSelectedNote({} as ProgressNote);
   };
 
+  const handlePopulatingStudents = (students: StudentWithNotes[]) => {
+    setSelectedStudent(students[0]);
+    setAllStudents(students);
+    setFilteredStudents(students);
+  };
+
   const handleMobileBack = () => {
     setMobileView("studentList");
   };
 
-  if (!firebaseUser || allProgressNotes === undefined) return <h1>Loading...</h1>;
+  const handleFilterQuery = (query: string) => {
+    if (query === "") {
+      setFilteredStudents(allStudents);
+    } else {
+      setFilteredStudents(
+        allStudents.filter((student) => {
+          return (
+            `${student.student.firstName} ${student.student.lastName}`
+              .toLowerCase()
+              .includes(query.toLowerCase()) ||
+            student.progressNotes.some((note) =>
+              note.content.toLowerCase().includes(query.toLowerCase()),
+            )
+          );
+        }),
+      );
+    }
+  };
 
   return (
-    <main className="flex h-full flex-col text-sm lg:text-base">
+    <section className="flex h-full flex-col text-sm ">
       <h1 className={"mb-5 font-[alternate-gothic] text-4xl"}>Progress Notes</h1>
-      <div className="flex flex-1 gap-5 overflow-hidden">
-        {!isMobile ? (
-          <>
-            <NotesSelectionList
-              selectedStudent={selectedStudent}
-              setSelectedStudent={setSelectedStudent}
-              allProgressNotes={allProgressNotes}
-              handleSelectStudent={handleSelectStudent}
-              studentProps={{ allStudents, setAllStudents }}
-            />
-            <NotePreview
-              allProgressNotes={allProgressNotes}
-              selectedStudent={selectedStudent}
-              firebaseToken={firebaseToken}
-              handleNoteUpdate={handleNoteUpdate}
-              noteProps={{ noteMode, setNoteMode, selectedNote, setSelectedNote }}
-              deleteProps={{ deletedNote, setDeletedNote, handleFinishDelete }}
-            />
-          </>
-        ) : (
-          <>
-            {mobileView === "studentList" ? (
+      {!firebaseUser || allProgressNotes === undefined ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="flex h-full gap-5 overflow-hidden">
+          {!isMobile ? (
+            <>
               <NotesSelectionList
-                selectedStudent={selectedStudent}
-                setSelectedStudent={setSelectedStudent}
                 allProgressNotes={allProgressNotes}
-                handleSelectStudent={handleSelectStudent}
-                studentProps={{ allStudents, setAllStudents }}
+                studentHandlers={{ handleSelectStudent, handlePopulatingStudents }}
+                studentProps={{
+                  selectedStudent,
+                  allStudents,
+                  filteredStudents,
+                  setFilteredStudents,
+                }}
               />
-            ) : (
               <NotePreview
                 allProgressNotes={allProgressNotes}
                 selectedStudent={selectedStudent}
                 firebaseToken={firebaseToken}
-                handleNoteUpdate={handleNoteUpdate}
+                handlers={{ handleFilterQuery, handleNoteUpdate }}
                 noteProps={{ noteMode, setNoteMode, selectedNote, setSelectedNote }}
                 deleteProps={{ deletedNote, setDeletedNote, handleFinishDelete }}
-                isMobile={isMobile}
-                handleMobileBack={handleMobileBack}
               />
-            )}
-          </>
-        )}
-      </div>
-    </main>
+            </>
+          ) : (
+            <>
+              {mobileView === "studentList" ? (
+                <NotesSelectionList
+                  allProgressNotes={allProgressNotes}
+                  studentHandlers={{ handleSelectStudent, handlePopulatingStudents }}
+                  studentProps={{
+                    selectedStudent,
+                    allStudents,
+                    filteredStudents,
+                    setFilteredStudents,
+                  }}
+                />
+              ) : (
+                <NotePreview
+                  allProgressNotes={allProgressNotes}
+                  selectedStudent={selectedStudent}
+                  firebaseToken={firebaseToken}
+                  handlers={{ handleFilterQuery, handleNoteUpdate, handleMobileBack }}
+                  noteProps={{ noteMode, setNoteMode, selectedNote, setSelectedNote }}
+                  deleteProps={{ deletedNote, setDeletedNote, handleFinishDelete }}
+                  isMobile={isMobile}
+                />
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </section>
   );
 }
 export default Notes;

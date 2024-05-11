@@ -5,6 +5,7 @@ import { ProgramCard } from "../components/ProgramCard";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { ProgramsContext } from "@/contexts/program";
 import { UserContext } from "@/contexts/user";
 import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
@@ -17,7 +18,11 @@ export default function Programs() {
   const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);
   const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
 
-  const { allPrograms: programs, setAllPrograms: setPrograms } = useContext(ProgramsContext);
+  const {
+    allPrograms: programs,
+    setAllPrograms: setPrograms,
+    isLoading,
+  } = useContext(ProgramsContext);
   const { isAdmin } = useContext(UserContext);
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar flex flex-col";
@@ -47,7 +52,7 @@ export default function Programs() {
       cardClass += " p-2";
     }
   } else {
-    titleClass += " text-[40px] leading-none h-10";
+    titleClass += " text-4xl leading-none h-10";
     headerClass += "pt-10 pb-5";
     emptyClass += " pb-40";
     emptyHeight = 99;
@@ -85,27 +90,33 @@ export default function Programs() {
         )}
         {/* Should be replaced with Add Button when created */}
       </div>
-      {Object.keys(programs).length === 0 && (
-        <div className={emptyClass}>
-          <div className={"flex flex-row justify-center"}>
-            <Image
-              id="emptyId"
-              alt="empty"
-              src="/programs/Empty.png"
-              height={emptyHeight}
-              width={emptyWidth}
-            />
-          </div>
-        </div>
-      )}
-      {Object.keys(programs).length > 0 && (
-        <div className={cardsGridClass}>
-          {Object.values(programs).map((program) => (
-            <div className={cardClass} key={program._id}>
-              <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          {Object.keys(programs).length === 0 && (
+            <div className={emptyClass}>
+              <div className={"flex flex-row justify-center"}>
+                <Image
+                  id="emptyId"
+                  alt="empty"
+                  src="/programs/Empty.png"
+                  height={emptyHeight}
+                  width={emptyWidth}
+                />
+              </div>
             </div>
-          ))}
-        </div>
+          )}
+          {Object.keys(programs).length > 0 && (
+            <div className={cardsGridClass}>
+              {Object.values(programs).map((program) => (
+                <div className={cardClass} key={program._id}>
+                  <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </main>
   );

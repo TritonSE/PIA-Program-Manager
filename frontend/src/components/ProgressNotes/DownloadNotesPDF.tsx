@@ -1,12 +1,22 @@
 // React PDF Documentation: https://react-pdf.org/
-import { Document, Font, PDFDownloadLink, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
+import {
+  Document,
+  Font,
+  Line,
+  PDFDownloadLink,
+  Page,
+  StyleSheet,
+  Svg,
+  Text,
+  View,
+} from "@react-pdf/renderer";
 
 import { Button } from "../Button";
 
 import { dateOptions } from "./NotesSelectionList";
 import { ProgressNote } from "./types";
 
-type DownloadNotesProps = {
+type DownloadNotesPDFProps = {
   allProgressNotes: Record<string, ProgressNote>;
   studentId: string;
   studentName: string;
@@ -15,12 +25,12 @@ type DownloadNotesProps = {
   downloadDisabled: boolean;
 };
 
-type NotesDocProps = Omit<DownloadNotesProps, "downloadDisabled">;
+type NotesDocProps = Omit<DownloadNotesPDFProps, "downloadDisabled">;
 
-Font.register({
-  family: "Poppins",
-  src: "http://fonts.gstatic.com/s/poppins/v1/TDTjCH39JjVycIF24TlO-Q.ttf",
-});
+// Font.register({
+//   family: "Poppins",
+//   src: "http://fonts.gstatic.com/s/poppins/v1/TDTjCH39JjVycIF24TlO-Q.ttf",
+// });
 Font.registerEmojiSource({
   format: "png",
   url: "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/",
@@ -29,19 +39,24 @@ Font.registerEmojiSource({
 const styles = StyleSheet.create({
   page: {
     flexDirection: "column",
-    backgroundColor: "#E4E4E4",
+    backgroundColor: "white",
     paddingHorizontal: 30,
     paddingVertical: 20,
     fontSize: 12,
-    fontFamily: "Poppins",
+    // fontFamily: "Poppins"
   },
   section: {
     margin: 10,
     padding: 10,
     flexGrow: 1,
   },
-  noteContainer: {
-    marginVertical: 10,
+  horizontalLineTitle: {
+    marginBottom: 15,
+    marginLeft: -30,
+  },
+  horizontalLine: {
+    marginVertical: 15,
+    marginLeft: -30,
   },
   title: {
     fontSize: 20,
@@ -52,7 +67,7 @@ const styles = StyleSheet.create({
     color: "#929292",
     display: "flex",
     justifyContent: "space-between",
-    paddingBottom: 2,
+    paddingBottom: 5,
   },
 });
 
@@ -68,6 +83,9 @@ const NotesDoc = ({
     <Document title={title}>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>{title}</Text>
+        <Svg style={styles.horizontalLineTitle} height="10" width="595">
+          <Line x1="0" y1="5" x2="595" y2="5" strokeWidth={1} stroke="rgb(199, 199, 199)" />
+        </Svg>
         {Object.values(allProgressNotes)
           .filter((note) => {
             return (
@@ -82,13 +100,15 @@ const NotesDoc = ({
             (a, b) => new Date(b.dateLastUpdated).getTime() - new Date(a.dateLastUpdated).getTime(),
           )
           .map((note) => (
-            <View key={note._id} style={styles.noteContainer}>
+            <View key={note._id}>
               <Text style={styles.dateText}>
                 {new Date(note.dateLastUpdated).toLocaleDateString("en-US", dateOptions)}
                 &nbsp;| By {note.lastEditedBy}
               </Text>
-
               <Text>{note.content}</Text>
+              <Svg style={styles.horizontalLine} height="10" width="595">
+                <Line x1="0" y1="5" x2="595" y2="5" strokeWidth={1} stroke="rgb(199, 199, 199)" />
+              </Svg>
             </View>
           ))}
       </Page>
@@ -96,14 +116,14 @@ const NotesDoc = ({
   );
 };
 
-const DownloadNotes = ({
+const DownloadNotesPDF = ({
   allProgressNotes,
   studentId,
   studentName,
   downloadStartDate,
   downloadEndDate,
   downloadDisabled,
-}: DownloadNotesProps) => {
+}: DownloadNotesPDFProps) => {
   const underlinedName = studentName.replace(" ", "_");
   return (
     <div className="basis-full cursor-not-allowed">
@@ -141,4 +161,4 @@ const DownloadNotes = ({
   );
 };
 
-export default DownloadNotes;
+export default DownloadNotesPDF;

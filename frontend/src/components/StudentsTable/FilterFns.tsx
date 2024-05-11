@@ -8,7 +8,7 @@ import { ProgramLink } from "../StudentForm/types";
 import { StudentTableRow } from "./types";
 
 import { ProgramsContext } from "@/contexts/program";
-import { useWindowSize } from "@/hooks/useWindowSize";
+import { cn } from "@/lib/utils";
 
 // Extend the FilterFns and FilterMeta interfaces
 /* eslint-disable */
@@ -36,9 +36,13 @@ export const programFilterFn: FilterFn<unknown> = (rows, id, filterValue) => {
   return containsProgram;
 };
 
-export function ProgramFilter({ column }: { column: Column<StudentTableRow> }) {
-  const { isTablet } = useWindowSize();
-
+export function ProgramFilter({
+  setValue,
+  className,
+}: {
+  setValue: (value: string) => void;
+  className?: string;
+}) {
   const { allPrograms } = useContext(ProgramsContext);
   // Get unique programs to display in the program filter dropdown
   const sortedUniqueValues = useMemo(() => {
@@ -63,11 +67,11 @@ export function ProgramFilter({ column }: { column: Column<StudentTableRow> }) {
       label="Program"
       name="program"
       placeholder="Program"
-      className={`rounded-md ${isTablet ? "w-[200px]" : "w-[244px]"}`}
+      className={cn(`rounded-md`, className)}
       defaultValue="All Programs"
       options={sortedUniqueValues}
       onChange={(value): void => {
-        column.setFilterValue(programNameToId[value] || "");
+        setValue(programNameToId[value] || "");
       }}
     />
   );
@@ -86,7 +90,6 @@ export const statusFilterFn: FilterFn<unknown> = (rows, id, filterValue) => {
 };
 
 export function StatusFilter({ column }: { column: Column<StudentTableRow> }) {
-  const { isTablet } = useWindowSize();
   const statusOptions = ["Joined", "Waitlisted", "Archived", "Not a fit"];
 
   return (
@@ -94,7 +97,7 @@ export function StatusFilter({ column }: { column: Column<StudentTableRow> }) {
       label="Status"
       name="status"
       placeholder="Status"
-      className={`rounded-md ${isTablet ? "w-[200px]" : "w-[244px]"}`}
+      className={`rounded-md`}
       defaultValue="All Statuses"
       options={statusOptions}
       onChange={(value): void => {

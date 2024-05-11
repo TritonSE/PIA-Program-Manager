@@ -1,21 +1,25 @@
-import { Dispatch, SetStateAction, useContext, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
+
+import { ProgramFilter } from "../StudentsTable/FilterFns";
 
 import { ProgressNote } from "./types";
 
 import { getAllStudents } from "@/api/students";
-import { ProgramsContext } from "@/contexts/program";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { StudentWithNotes } from "@/pages/notes";
 
 type NotesSelectionListProps = {
   studentProps: {
+    selectedStudent: StudentWithNotes;
     allStudents: StudentWithNotes[];
-    setAllStudents: Dispatch<SetStateAction<StudentWithNotes[]>>;
+    filteredStudents: StudentWithNotes[];
+    setFilteredStudents: Dispatch<SetStateAction<StudentWithNotes[]>>;
   };
-  selectedStudent: StudentWithNotes;
-  setSelectedStudent: Dispatch<SetStateAction<StudentWithNotes>>;
+  studentHandlers: {
+    handlePopulatingStudents: (students: StudentWithNotes[]) => void;
+    handleSelectStudent: (student: StudentWithNotes) => void;
+  };
   allProgressNotes: Record<string, ProgressNote> | undefined;
-  handleSelectStudent: (student: StudentWithNotes) => void;
 };
 
 export const dateOptions = {
@@ -26,16 +30,15 @@ export const dateOptions = {
 
 function NotesSelectionList({
   studentProps,
-  selectedStudent,
-  setSelectedStudent,
   allProgressNotes,
-  handleSelectStudent,
+  studentHandlers,
 }: NotesSelectionListProps) {
-  const { allStudents, setAllStudents } = studentProps;
-  const { isMobile } = useWindowSize();
-  const { allPrograms } = useContext(ProgramsContext);
+  const { allStudents, selectedStudent, filteredStudents, setFilteredStudents } = studentProps;
+  const { handlePopulatingStudents, handleSelectStudent } = studentHandlers;
 
-  console.log({ allPrograms });
+  const { isMobile } = useWindowSize();
+
+  //Consider lifting fetching progress notes to parent component for better loading experience
   useEffect(() => {
     if (!allProgressNotes) return;
     getAllStudents().then(
@@ -58,8 +61,7 @@ function NotesSelectionList({
             return aName.localeCompare(bName);
           });
 
-          setSelectedStudent(studentDataWithNotes[0]);
-          setAllStudents(studentDataWithNotes);
+          handlePopulatingStudents(studentDataWithNotes);
           if (result.data.length < 0) {
             throw new Error("No students found");
           }
@@ -73,10 +75,24 @@ function NotesSelectionList({
     );
   }, []);
 
+  const handleSelectProgram = (programId: string) => {
+    setFilteredStudents(
+      allStudents.filter((student) => {
+        return (
+          student.programs.filter((studentProgram) => {
+            if (programId === "") return true;
+            return studentProgram.programId === programId && studentProgram.status === "Joined";
+          }).length > 0
+        );
+      }),
+    );
+  };
+
   return (
-    <>
-      <ul className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] scrollbar w-full overflow-auto sm:w-3/5 xl:w-2/5">
-        {allStudents.map((studentData) => {
+    <div className="flex w-full flex-col gap-5 sm:w-3/5 xl:w-2/5">
+      <ProgramFilter setValue={handleSelectProgram} className="w-full bg-white" />
+      <ul className="shadow-[0_8px_24px_0px_rgba(24, 139, 138, 0.08)] scrollbar overflow-auto">
+        {filteredStudents.map((studentData) => {
           let latestNote = { note: "No notes available", date: "" };
           if (studentData.progressNotes.length !== 0) {
             const noteData = studentData.progressNotes[0];
@@ -94,12 +110,10 @@ function NotesSelectionList({
               aria-current={selectedStudent._id === studentData._id && !isMobile ? "true" : "false"}
               className="
               relative bg-white
-              transition-colors before:absolute 
-              before:bottom-0 before:h-[1px]
-              before:w-full before:bg-[#B4B4B4]
-              before:content-['']
-              first:rounded-tl-md
-              first:rounded-tr-md last:rounded-bl-md last:rounded-br-md last:before:hidden 
+              transition-colors 
+              before:absolute before:bottom-0 before:h-[1px] before:w-full before:bg-[#B4B4B4] before:content-['']
+              first:rounded-tl-md first:rounded-tr-md 
+              last:rounded-bl-md last:rounded-br-md last:before:hidden 
               hover:bg-pia_primary_light_green_hover aria-current:bg-pia_primary_light_green_hover aria-current:after:absolute
               aria-current:after:left-0 aria-current:after:h-full aria-current:after:w-[5px] aria-current:after:bg-pia_dark_green aria-current:after:content-[''] aria-current:first:after:rounded-tl-md aria-current:last:after:rounded-bl-md"
             >
@@ -117,7 +131,7 @@ function NotesSelectionList({
           );
         })}
       </ul>
-    </>
+    </div>
   );
 }
 export default NotesSelectionList;
