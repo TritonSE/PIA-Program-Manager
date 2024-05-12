@@ -10,6 +10,7 @@ import { StudentMap } from "./StudentsTable/types";
 import { Textfield } from "./Textfield";
 
 import { Program } from "@/api/programs";
+import { useWindowSize } from "@/hooks/useWindowSize";
 
 export type TableProps = {
   program: Program;
@@ -45,9 +46,12 @@ export function AttendanceTable({ program, students, date }: TableProps) {
     "Nov",
     "Dec",
   ];
+
+  const { isMobile, isTablet } = useWindowSize();
+
   console.log(students);
   return (
-    <div className="relative w-[600px] overflow-x-auto bg-white shadow-md sm:rounded-lg lg:w-[1050px]">
+    <div className="relative w-[360px] overflow-x-auto bg-white shadow-md sm:rounded-lg md:w-[500px] lg:w-[1050px]">
       <div className="text-sm">
         <h1
           className={cn(
@@ -69,21 +73,31 @@ export function AttendanceTable({ program, students, date }: TableProps) {
               className={cn(
                 "mr-5 flex grid grid-cols-3 bg-white",
                 index < program.students.length - (2 - (program.students.length % 2)) && "border-b",
-                index % 2 === 0 ? "ml-5" : "ml-10",
+                index % 2 === 0 ? "ml-5" : "ml-5 lg:ml-10",
               )}
               key={index}
             >
-              <div className="p-5 pl-0">
+              <div className={cn("p-5 pl-0", isMobile && "col-span-2")}>
                 <div className="flex items-center">
-                  <Image src="/missingprofilepic.png" className="mr-2 w-5 md:w-5" alt="" />
+                  <Image
+                    src="/missingprofilepic.png"
+                    className="mr-2 w-5 md:w-5"
+                    alt=""
+                    width="5"
+                    height="5"
+                  />
                   {students[student].student.firstName + " " + students[student].student.lastName}
                 </div>
               </div>
 
-              <div className="col-span-2 mt-2">
+              <div className="col-span-3 md:col-span-2 md:mt-2">
                 <form className="flex grid grid-cols-3 items-center">
                   <Textfield
-                    className="mr-2 h-10 w-20 justify-self-end"
+                    className={cn(
+                      "mr-2 h-10 w-20",
+                      !isMobile && "justify-self-end",
+                      isMobile && "mb-2",
+                    )}
                     register={register}
                     name={"email"}
                     label={""}
@@ -94,7 +108,12 @@ export function AttendanceTable({ program, students, date }: TableProps) {
                     units="Hrs"
                     registerOptions={{ required: "Email cannot be empty" }}
                   />
-                  <div className="col-span-2 ml-1 grid w-[210px] grid-cols-2 overflow-x-auto">
+                  <div
+                    className={cn(
+                      "col-span-2 ml-1 grid w-[210px] grid-cols-2 overflow-x-auto",
+                      isMobile && "mb-2",
+                    )}
+                  >
                     <div>
                       <input
                         type="radio"
@@ -133,11 +152,17 @@ export function AttendanceTable({ program, students, date }: TableProps) {
           );
         })}
       </div>
-      <div className="grid w-full grid-cols-5 items-end">
-        <h1 className="col-span-4 mb-5 ml-5 inline-block align-bottom text-xs text-gray-400">
-          When you mark attendance for this session, each student’s calendar will be updated.
-        </h1>
-        <Button label="Mark Attendance" className="mb-5 mr-5" size="small" />
+      <div className={cn("grid w-full items-end md:grid-cols-2 lg:grid-cols-5")}>
+        {!(isMobile || isTablet) && (
+          <h1 className="col-span-2 mb-5 ml-5 inline-block align-bottom text-xs text-gray-400 lg:col-span-4">
+            When you mark attendance for this session, each student’s calendar will be updated.
+          </h1>
+        )}
+        <Button
+          label="Mark Attendance"
+          className={cn("mb-5 mr-5 md:col-start-2 lg:col-start-5", isMobile && "ml-5")}
+          size="small"
+        />
       </div>
     </div>
   );
