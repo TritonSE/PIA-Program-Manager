@@ -71,7 +71,7 @@ export default function DownloadNotesDialog({
           <Button label="Download" icon={<DownloadIcon />} />
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[70%] max-w-[80%] rounded-[8px] md:max-w-[50%] lg:max-w-[25%]">
+      <DialogContent className="max-h-[70%] max-w-[80%] rounded-[8px] text-[12px] sm:text-sm md:max-w-[50%] lg:max-w-[25%]">
         <div className="grid place-items-center p-3 min-[450px]:p-10 ">
           <GreenDownloadIcon className="mb-8" aria-hidden="true" />
           <h3 className="text-bold mb-5 text-lg font-bold">Select Date Range</h3>

@@ -10,7 +10,6 @@ import { Button } from "../Button";
 import ModalConfirmation from "../Modals/ModalConfirmation";
 import SaveCancelButtons from "../Modals/SaveCancelButtons";
 
-import { DeleteProps } from "./NotePreview";
 import { dateOptions } from "./NotesSelectionList";
 import { ProgressNote } from "./types";
 
@@ -25,7 +24,7 @@ type EditNoteProps = {
   handleBackButton: () => void;
   handleEditButton: (e: React.MouseEvent, note: ProgressNote) => void;
   handleNoteUpdate: (data: HandleNoteUpdate) => void;
-  deleteProps: DeleteProps;
+  handleFinishDelete: () => void;
   noteMode: ViewMode;
 };
 
@@ -36,14 +35,14 @@ function EditNote({
   handleBackButton,
   handleEditButton,
   handleNoteUpdate,
-  deleteProps,
+  handleFinishDelete,
   noteMode,
 }: EditNoteProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const [openSaveDialog, setOpenSaveDialog] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deletedNote, setDeletedNote] = useState<ProgressNote | undefined>(undefined);
   const deleteDialogRef = useRef<HTMLDivElement>(null);
-  const { deletedNote, setDeletedNote, handleFinishDelete } = deleteProps;
   const { piaUser, isAdmin } = useContext(UserContext);
   const currentUser = piaUser?.name;
 
@@ -137,7 +136,7 @@ function EditNote({
   }, [openDeleteDialog]);
 
   return (
-    <article className="flex h-full flex-col px-8 pt-3 sm:py-7">
+    <article className="flex h-full flex-col px-8 py-3 sm:py-7">
       <div className="flex justify-between pb-5">
         <button onClick={handleBackButton}>
           <BackIcon />
@@ -220,29 +219,28 @@ function EditNote({
           defaultValue={selectedNote.content}
         />
         {noteMode !== "view" && (
-          <div className="ml-auto flex gap-5">
-            <SaveCancelButtons
-              isOpen={openSaveDialog}
-              onSaveClick={handleSaveClick}
-              automaticClose={1.5} //1.5 seconds
-              setOpen={setOpenSaveDialog}
-              onLeave={handleBackButton}
-            >
-              {/* Save Dialog Content */}
-              <div className="grid place-items-center p-3 min-[450px]:px-12 min-[450px]:pb-12 min-[450px]:pt-10">
-                <button
-                  className="ml-auto"
-                  onClick={() => {
-                    setOpenSaveDialog(false);
-                  }}
-                >
-                  <CloseIcon />
-                </button>
-                <GreenCheckMarkIcon className="mb-5" />
-                <h3 className="text-lg font-bold">Progress note has been saved!</h3>
-              </div>
-            </SaveCancelButtons>
-          </div>
+          <SaveCancelButtons
+            isOpen={openSaveDialog}
+            onSaveClick={handleSaveClick}
+            automaticClose={1.5} //1.5 seconds
+            setOpen={setOpenSaveDialog}
+            onLeave={handleBackButton}
+            saveText="Save"
+          >
+            {/* Save Dialog Content */}
+            <div className="grid place-items-center p-3 min-[450px]:px-12 min-[450px]:pb-12 min-[450px]:pt-10">
+              <button
+                className="ml-auto"
+                onClick={() => {
+                  setOpenSaveDialog(false);
+                }}
+              >
+                <CloseIcon />
+              </button>
+              <GreenCheckMarkIcon className="mb-5" />
+              <h3 className="text-lg font-bold">Progress note has been saved!</h3>
+            </div>
+          </SaveCancelButtons>
         )}
       </div>
     </article>

@@ -25,6 +25,7 @@ type NotePreviewProps = {
     handleFilterQuery: (query: string) => void;
     handleNoteUpdate: (data: HandleNoteUpdate) => void;
     handleMobileBack?: () => void;
+    handleFinishDelete: () => void;
   };
   noteProps: {
     noteMode: ViewMode;
@@ -32,14 +33,7 @@ type NotePreviewProps = {
     selectedNote: ProgressNote;
     setSelectedNote: Dispatch<SetStateAction<ProgressNote>>;
   };
-  deleteProps: DeleteProps;
   isMobile?: boolean;
-};
-
-export type DeleteProps = {
-  deletedNote: ProgressNote | undefined;
-  setDeletedNote: Dispatch<SetStateAction<ProgressNote | undefined>>;
-  handleFinishDelete: () => void;
 };
 
 function NotePreview({
@@ -48,12 +42,11 @@ function NotePreview({
   allProgressNotes,
   handlers,
   noteProps,
-  deleteProps,
 }: NotePreviewProps) {
   const { isAdmin } = useContext(UserContext);
   const { noteMode, setNoteMode, selectedNote, setSelectedNote } = noteProps;
   const { windowSize, isMobile } = useWindowSize();
-  const { handleNoteUpdate, handleFilterQuery, handleMobileBack } = handlers;
+  const { handleNoteUpdate, handleFilterQuery, handleMobileBack, handleFinishDelete } = handlers;
   const handleSelectNote = (note: ProgressNote) => {
     setSelectedNote(note);
     setNoteMode("view");
@@ -71,15 +64,14 @@ function NotePreview({
   };
 
   if (Object.keys(selectedStudent).length === 0) {
-    return <p>Loading...</p>;
+    return;
   }
 
   const studentFullName = `${selectedStudent.student.firstName} ${selectedStudent.student.lastName}`;
   return (
     <div className="flex h-full w-full flex-col">
       <DebouncedInput
-        icon={<SearchIcon />}
-        iconClassName="scale-90"
+        icon={<SearchIcon width={20} height={20} />}
         initialValue=""
         onChange={(val) => {
           handleFilterQuery(val);
@@ -95,9 +87,9 @@ function NotePreview({
             firebaseToken={firebaseToken}
             handleBackButton={handleBackButton}
             handleEditButton={handleEditButton}
-            noteMode={noteMode}
             handleNoteUpdate={handleNoteUpdate}
-            deleteProps={deleteProps}
+            handleFinishDelete={handleFinishDelete}
+            noteMode={noteMode}
           />
         ) : (
           <>

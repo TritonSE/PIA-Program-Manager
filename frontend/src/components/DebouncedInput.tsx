@@ -10,7 +10,6 @@ const DebouncedInput = ({
   placeholder = "",
   icon,
   className,
-  iconClassName,
 }: {
   initialValue?: string;
   onChange: (val: string) => void;
@@ -18,7 +17,6 @@ const DebouncedInput = ({
   placeholder?: string;
   icon?: React.ReactNode;
   className?: string;
-  iconClassName?: string;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) => {
   const [value, setValue] = useState(initialValue);
   const { register } = useForm();
@@ -47,7 +45,6 @@ const DebouncedInput = ({
         setValue(e.target.value);
       }}
       icon={icon}
-      iconClassName={iconClassName}
     />
   );
 };

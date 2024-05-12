@@ -27,10 +27,10 @@ type DownloadNotesPDFProps = {
 
 type NotesDocProps = Omit<DownloadNotesPDFProps, "downloadDisabled">;
 
-// Font.register({
-//   family: "Poppins",
-//   src: "http://fonts.gstatic.com/s/poppins/v1/TDTjCH39JjVycIF24TlO-Q.ttf",
-// });
+Font.register({
+  family: "Poppins",
+  src: "http://fonts.gstatic.com/s/poppins/v1/TDTjCH39JjVycIF24TlO-Q.ttf",
+});
 Font.registerEmojiSource({
   format: "png",
   url: "https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/",
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     paddingVertical: 20,
     fontSize: 12,
-    // fontFamily: "Poppins"
+    fontFamily: "Poppins",
   },
   section: {
     margin: 10,

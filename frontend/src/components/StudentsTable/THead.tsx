@@ -32,14 +32,13 @@ function TableActionsHeader({
               return null;
             })}
             <DebouncedInput
-              icon={<SearchIcon />}
+              icon={<SearchIcon width="20" height="20" />}
               value={globalFilter ?? ""}
               onChange={(val) => {
                 setGlobalFilter(val);
               }}
               placeholder="Search in Students"
               className="h-full min-w-[200px] p-0  px-2"
-              iconClassName="scale-90"
             />
           </span>
         </div>

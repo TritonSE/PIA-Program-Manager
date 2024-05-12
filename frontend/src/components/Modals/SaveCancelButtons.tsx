@@ -11,6 +11,7 @@ type SaveCancelButtonsPropsBase = {
   onCancelClick?: (e: React.MouseEvent) => void;
   onSaveClick?: (e: React.MouseEvent) => void;
   onLeave?: () => void;
+  saveText?: string;
 };
 
 type SaveCancelButtonsPropsWithAutoClose = SaveCancelButtonsPropsBase & {
@@ -39,6 +40,7 @@ export default function SaveCancelButtons({
   onLeave = () => {},
   automaticClose,
   children,
+  saveText = "Save Changes",
 }: SaveCancelButtonsProps) {
   const handleAutomaticClose = () => {
     if (automaticClose) {
@@ -63,12 +65,12 @@ export default function SaveCancelButtons({
       />
       {/* If there is no children, save button closes by default, otherwise show children as save button dialog content */}
       {!children ? (
-        <Button label="Save Changes" onClick={onSaveClick} />
+        <Button label={saveText} onClick={onSaveClick} />
       ) : (
         <Dialog open={isOpen} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
-              label="Save Changes"
+              label={saveText}
               onClick={(e) => {
                 setOpen(true);
                 onSaveClick(e);
