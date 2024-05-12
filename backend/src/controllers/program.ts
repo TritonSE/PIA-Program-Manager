@@ -25,7 +25,7 @@ export type Program = {
 
 function getDatesBetween(start: Date, end: Date, daysOfWeek: string[]): Date[] {
   const datesBetween: Date[] = [];
-  let currentDate = new Date(start);
+  const currentDate = new Date(start);
 
   while (currentDate <= end) {
     const dayOfWeek = currentDate.getDay();
@@ -50,20 +50,20 @@ export const createProgram: RequestHandler = async (req, res, next) => {
     const programForm = await ProgramModel.create(programInfo);
 
     const defaultStudentBody = programInfo.studentUIDs.map((studentId) => ({
-      studentId: studentId.toString(),
+      studentId,
       attended: false,
       hoursAttended: 0,
     }));
 
-    let createdSessions = []
+    const createdSessions = [];
 
     for (const date of getDatesBetween(
       programInfo.startDate,
       programInfo.endDate,
       programInfo.daysOfWeek,
     )) {
-      const newSession = {programId: programForm.id, date: date, students: defaultStudentBody};
-      createdSessions.push(SessionModel.create(newSession);
+      const newSession = { programId: programForm.id, date, students: defaultStudentBody };
+      createdSessions.push(SessionModel.create(newSession));
     }
 
     await Promise.all(createdSessions);

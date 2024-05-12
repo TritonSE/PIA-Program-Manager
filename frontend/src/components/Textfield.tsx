@@ -15,12 +15,15 @@ import { cn } from "../lib/utils";
 type BaseProps<T extends FieldValues> = {
   register: UseFormRegister<T>;
   name: Path<T>;
+  placeholder: string;
   label?: string;
   type?: string;
-  placeholder: string;
+  disabled?: boolean;
   handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   className?: string;
+  unitsClassName?: string;
+  units?: string;
   mode?: "filled" | "outlined";
   registerOptions?: RegisterOptions;
 };
@@ -48,8 +51,11 @@ export function Textfield<T extends FieldValues>({
   className,
 
   type = "text",
+  disabled = false,
   defaultValue = "",
+  units = "",
   mode = "outlined",
+  unitsClassName = "",
   registerOptions = {},
 }: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
@@ -78,10 +84,13 @@ export function Textfield<T extends FieldValues>({
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
           id={name + label + placeholder}
           type={type}
+          disabled={disabled}
           onChange={handleInputChange ?? register(name as Path<T>, registerOptions).onChange}
           placeholder={placeholder}
           defaultValue={defaultValue}
         />
+
+        {units !== "" && <h1 className={cn("ml-[-20px]", unitsClassName)}>{units}</h1>}
 
         {label ? (
           <label
@@ -139,6 +148,7 @@ export function Textfield<T extends FieldValues>({
         placeholder={placeholder}
         defaultValue={defaultValue}
       />
+      {units !== "" && <h1 className={cn(unitsClassName, "ml-[-20px]")}>{units}</h1>}
     </div>
   );
 }
