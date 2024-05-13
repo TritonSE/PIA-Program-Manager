@@ -20,7 +20,7 @@ export default function NotesFilter({
           {/* Subtract by 12px to account for padding */}
           <ProgramFilter
             setValue={handleSelectProgram}
-            className="w-full bg-white sm:w-[calc(60%-12px)] xl:w-[calc(40%-12px)]"
+            className="w-full rounded-[2px] bg-white sm:w-[calc(60%-12px)] md:rounded-md xl:w-[calc(40%-12px)]"
           />
           <div className="w-full">
             <DebouncedInput
@@ -29,7 +29,7 @@ export default function NotesFilter({
               onChange={(val) => {
                 handleFilterQuery(val);
               }}
-              className="mb-5 w-full bg-white xl:w-1/2"
+              className="mb-5 w-full rounded-[2px] bg-white md:rounded-md xl:w-1/2"
               placeholder="Search Students or Notes"
             />
           </div>

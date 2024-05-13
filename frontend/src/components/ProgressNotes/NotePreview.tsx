@@ -67,8 +67,7 @@ function NotePreview({
   }
   return (
     <div className="flex h-full w-full flex-col">
-      {/* <section className="shadow-[5px_8px_24px_5px_rgba(24, 139, 138, 1)]  flex h-full flex-col overflow-auto rounded-md bg-white"> */}
-      <section className="flex h-full flex-col overflow-auto rounded-md bg-white shadow-[0_8px_24px_0px_rgba(0,0,0,0.08)]">
+      <section className="flex h-full flex-col overflow-auto rounded-lg bg-white shadow-[0_8px_24px_0px_rgba(0,0,0,0.08)]">
         {Object.keys(selectedStudent).length === 0 ? (
           <NoStudents />
         ) : (
@@ -133,8 +132,8 @@ function NotePreview({
                       )
                       .map((note) => (
                         <li
-                          className="border-b-[1px] border-b-[#B4B4B4] transition-colors first:rounded-tl-md first:rounded-tr-md last:rounded-bl-md 
-                last:rounded-br-md last:border-b-0 hover:bg-[#188B8A14] "
+                          className="border-b-[1px] border-b-[#B4B4B4] transition-colors first:rounded-tl-lg first:rounded-tr-lg last:rounded-bl-lg 
+                last:rounded-br-lg last:border-b-0 hover:bg-[#188B8A14] "
                           key={note._id}
                           onClick={() => {
                             handleSelectNote(note);

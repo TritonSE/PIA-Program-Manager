@@ -56,10 +56,10 @@ function NotesSelectionList({ studentProps, handlers }: NotesSelectionListProps)
                 relative bg-white
                 transition-colors 
                 before:absolute before:bottom-0 before:h-[1px] before:w-full before:bg-[#B4B4B4] before:content-['']
-                first:rounded-tl-md first:rounded-tr-md 
-                last:rounded-bl-md last:rounded-br-md last:before:hidden 
+                first:rounded-tl-lg first:rounded-tr-lg
+                last:rounded-bl-lg last:rounded-br-lg last:before:hidden 
                 hover:bg-pia_primary_light_green_hover aria-current:bg-pia_primary_light_green_hover aria-current:after:absolute
-                aria-current:after:left-0 aria-current:after:h-full aria-current:after:w-[5px] aria-current:after:bg-pia_dark_green aria-current:after:content-[''] aria-current:first:after:rounded-tl-md aria-current:last:after:rounded-bl-md"
+                aria-current:after:left-0 aria-current:after:h-full aria-current:after:w-[8px] aria-current:after:bg-pia_dark_green aria-current:after:content-[''] aria-current:first:after:rounded-tl-lg aria-current:last:after:rounded-bl-lg"
               >
                 <button
                   className={`
