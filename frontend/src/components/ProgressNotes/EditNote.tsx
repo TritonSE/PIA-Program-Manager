@@ -226,6 +226,7 @@ function EditNote({
             setOpen={setOpenSaveDialog}
             onLeave={handleBackButton}
             saveText="Save"
+            sameSize
           >
             {/* Save Dialog Content */}
             <div className="grid place-items-center p-3 min-[450px]:px-12 min-[450px]:pb-12 min-[450px]:pt-10">

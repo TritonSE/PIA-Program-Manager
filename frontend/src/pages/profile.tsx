@@ -74,8 +74,8 @@ export default function Profile() {
 
   return (
     <div>
-      <h1 className={"font-[alternate-gothic] text-4xl"}>Personal Info</h1>
-      <div className="text-smsm:text-m pt-4 sm:pt-10">
+      <h1 className={"font-[alternate-gothic] text-2xl lg:text-4xl"}>Personal Info</h1>
+      <div className="sm:text-m pt-4 text-sm sm:pt-10">
         Personal info and options to manage it. You can change or update your info at anytime.
       </div>
       {!piaUser || !firebaseUser ? (
