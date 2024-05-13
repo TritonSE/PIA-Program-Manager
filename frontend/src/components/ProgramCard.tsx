@@ -1,9 +1,11 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 import { Program } from "../api/programs";
 import ProgramFormButton from "../components/ProgramFormButton";
+import { ProgramProfile } from "../components/ProgramProfile";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -45,17 +47,21 @@ function toggleEdit(id: string) {
 export function ProgramCard({ program, isAdmin, className, setPrograms }: CardProps) {
   const { isTablet } = useWindowSize();
 
+  const cardId = "card" + program._id;
   const editId = "edit" + program._id;
   const optionsId = "option" + program._id;
+
+  const router = useRouter();
 
   const optionsButton = document.getElementById(optionsId);
   if (optionsButton !== null) {
     optionsButton.onclick = function (event) {
-      event.preventDefault();
+      event.stopPropagation();
       toggleEdit(program._id);
     };
   }
 
+  const cardClass = "relative z-0 cursor-pointer";
   let editClass = "absolute right-2 hidden z-10";
   let outerDivClass = "text-white grow overflow-hidden tracking-wide leading-6";
   let topDivClass = "flex flex-row";
@@ -67,6 +73,8 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
   let numClass;
   let numTextClass;
   let iconClass = "relative";
+  const dialogBgClass = "fixed left-0 top-0 h-full w-full py-20 bg-black bg-opacity-50 z-20 hidden";
+  const dialogClass = "z-20 h-full w-[900px] m-auto overflow-hidden rounded-xl";
 
   let optionsHeight = 18;
   let optionsWidth = 16;
@@ -98,7 +106,7 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     optionsWidth /= 2;
     numClass = "h-5 gap-x-1.5 flex flex-row relative top-2 left-3";
     numTextClass = cn("text-[10px]", poppins.className);
-    iconClass = "h-2 w-3 mt-[7px]";
+    iconClass = "h-2 w-3 mt-[7.5px]";
   } else {
     editClass += " top-12 w-24 h-8";
     outerDivClass += " rounded-2xl h-68";
@@ -148,50 +156,90 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     </button>
   );
 
+  function openDialog() {
+    console.log("open");
+    if (isTablet) {
+      router.push("/program/" + program._id);
+    } else {
+      const dialogBox = document.getElementById("dialog" + program._id);
+      if (dialogBox) {
+        dialogBox.style.display = "block";
+      }
+    }
+  }
+
+  function closeDialog() {
+    console.log("close");
+    const dialogBox = document.getElementById("dialog" + program._id);
+    if (dialogBox) {
+      dialogBox.style.display = "none";
+    }
+  }
+
   return (
-    <div className="relative z-0">
-      <div id={editId} className={editClass}>
-        <ProgramFormButton
-          type="edit"
-          component={editButton}
-          data={programFields}
-          setPrograms={setPrograms}
-        />
-      </div>
-      <div className={outerDivClass}>
-        <div className={topDivClass} style={{ backgroundColor: program.color }}>
-          <div>
-            <p className={typeClass}>{program.type} Program</p>
-            <p className={titleClass}>{program.name}</p>
-          </div>
-          {isAdmin && (
-            <div className={optionsDiv}>
-              <Image
-                id={optionsId}
-                alt="options"
-                src="/programs/Options.png"
-                height={optionsHeight}
-                width={optionsWidth}
-                className={optionsClass}
-              />
-            </div>
-          )}
+    <div>
+      <div id={cardId} className={cardClass} onClick={openDialog}>
+        <div
+          id={editId}
+          className={editClass}
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
+        >
+          <ProgramFormButton
+            type="edit"
+            component={editButton}
+            data={programFields}
+            uniqueId={"card" + program._id}
+            setPrograms={setPrograms}
+          />
         </div>
-        <div className={botDivClass}>
-          <div className={numClass}>
-            <Image
-              alt="students"
-              src="/programs/Students.png"
-              height={12}
-              width={18}
-              className={iconClass}
-            />
-            {program.students.length === 0 && <p className={numTextClass}>No Students</p>}
-            {program.students.length === 1 && <p className={numTextClass}>1 Student</p>}
-            {program.students.length > 1 && (
-              <p className={numTextClass}>{program.students.length} Students</p>
+        <div className={outerDivClass}>
+          <div className={topDivClass} style={{ backgroundColor: program.color }}>
+            <div>
+              <p className={typeClass}>{program.type} Program</p>
+              <p className={titleClass}>{program.name}</p>
+            </div>
+            {isAdmin && (
+              <div className={optionsDiv}>
+                <Image
+                  id={optionsId}
+                  alt="options"
+                  src="/programs/Options.png"
+                  height={optionsHeight}
+                  width={optionsWidth}
+                  className={optionsClass}
+                />
+              </div>
             )}
           </div>
+          <div className={botDivClass}>
+            <div className={numClass}>
+              <Image
+                alt="students"
+                src="/programs/Students.png"
+                height={12}
+                width={18}
+                className={iconClass}
+              />
+              <p className={numTextClass}>5 Placeholder</p>
+              {/* {program.students.length === 0 && <p className={numTextClass}>No Students</p>}
+              {program.students.length === 1 && <p className={numTextClass}>1 Student</p>}
+              {program.students.length > 1 && (
+                <p className={numTextClass}>{program.students.length} Students</p>
+              )} */}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id={"dialog" + program._id} className={dialogBgClass} onClick={closeDialog}>
+        <div
+          className={dialogClass}
+          onClick={(event) => {
+            event.stopPropagation();
+          }}
+        >
+          {<ProgramProfile id={program._id}></ProgramProfile>}
         </div>
       </div>
     </div>

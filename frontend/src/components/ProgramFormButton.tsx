@@ -17,6 +17,7 @@ import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger }
 type BaseProperties = {
   classname?: string;
   component: React.JSX.Element;
+  uniqueId: string;
   setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
@@ -35,6 +36,7 @@ type ProgramFormProperties = EditProperties | AddProperties;
 export default function ProgramFormButton({
   type = "edit",
   component = <p>Please add a component</p>,
+  uniqueId,
   data = null,
   setPrograms,
   classname,
@@ -115,10 +117,10 @@ export default function ProgramFormButton({
     }
   };
 
-  const inputComponent = document.getElementById("componentId");
+  const inputComponent = document.getElementById("componentId" + uniqueId);
   if (inputComponent !== null) {
     inputComponent.onclick = function (event: MouseEvent) {
-      event.preventDefault();
+      event.stopPropagation();
       setOpenForm(true);
     };
   }
@@ -126,7 +128,7 @@ export default function ProgramFormButton({
   return !isMobile ? (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogTrigger id="componentId" asChild>
+        <DialogTrigger id={"componentId" + uniqueId} asChild>
           {component}
         </DialogTrigger>
         <DialogContentSlide className="w-full bg-white object-right p-6 sm:w-[50%]">
@@ -222,7 +224,7 @@ export default function ProgramFormButton({
   ) : (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        <DialogTrigger id="componentId" asChild>
+        <DialogTrigger id={"componentId" + uniqueId} asChild>
           {component}
         </DialogTrigger>
         <DialogContent className="bg-white p-3">

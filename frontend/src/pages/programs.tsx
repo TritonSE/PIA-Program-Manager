@@ -104,7 +104,12 @@ export default function Programs() {
         <h1 className={titleClass}>Programs</h1>
         <div className="grow"></div>
         {isAdmin && (
-          <ProgramFormButton type="add" component={addButton} setPrograms={setPrograms} />
+          <ProgramFormButton
+            type="add"
+            component={addButton}
+            uniqueId="add"
+            setPrograms={setPrograms}
+          />
         )}
       </div>
       {Object.keys(programs).length === 0 && (
@@ -123,10 +128,8 @@ export default function Programs() {
       {Object.keys(programs).length > 0 && (
         <div className={cardsGridClass}>
           {Object.values(programs).map((program) => (
-            <div className={cardClass} key={program._id}>
-              <a href={"/program/" + program._id} key={program._id}>
-                <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
-              </a>
+            <div id={"card" + program._id} className={cardClass} key={program._id}>
+              <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
             </div>
           ))}
         </div>
