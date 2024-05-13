@@ -65,10 +65,10 @@ function NotePreview({
   if (Object.keys(selectedStudent).length !== 0) {
     studentFullName = `${selectedStudent.student.firstName} ${selectedStudent.student.lastName}`;
   }
-
   return (
     <div className="flex h-full w-full flex-col">
-      <section className="shadow-[0_8px_24px_0px_rgba(24, 139,  138, 0.08)] flex h-full flex-col overflow-auto rounded-md bg-white">
+      {/* <section className="shadow-[5px_8px_24px_5px_rgba(24, 139, 138, 1)]  flex h-full flex-col overflow-auto rounded-md bg-white"> */}
+      <section className="flex h-full flex-col overflow-auto rounded-md bg-white shadow-[0_8px_24px_0px_rgba(0,0,0,0.08)]">
         {Object.keys(selectedStudent).length === 0 ? (
           <NoStudents />
         ) : (

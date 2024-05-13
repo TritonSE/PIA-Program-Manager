@@ -33,7 +33,7 @@ function NotesSelectionList({ studentProps, handlers }: NotesSelectionListProps)
           <NoStudents />
         </div>
       ) : (
-        <ul className="scrollbar overflow-auto">
+        <ul className="scrollbar overflow-auto shadow-[0_8px_24px_0px_rgba(0,0,0,0.08)]">
           {filteredStudents.map((studentData) => {
             let latestNote = { note: "No notes available", date: "" };
             if (studentData.progressNotes.length !== 0) {

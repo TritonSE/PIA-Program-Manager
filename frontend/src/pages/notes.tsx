@@ -58,7 +58,7 @@ function Notes() {
       {!firebaseUser || allProgressNotes === undefined || allStudents === undefined ? (
         <LoadingSpinner />
       ) : (
-        <div className="flex h-full gap-5 overflow-hidden">
+        <div className="flex h-full gap-5 overflow-clip" style={{ overflowClipMargin: "25px" }}>
           {/* Show both components on Desktop */}
           {!isMobile ? (
             <>
