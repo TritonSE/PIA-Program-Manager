@@ -29,7 +29,7 @@ type NotesDocProps = Omit<DownloadNotesPDFProps, "downloadDisabled">;
 
 Font.register({
   family: "Poppins",
-  src: "http://fonts.gstatic.com/s/poppins/v1/TDTjCH39JjVycIF24TlO-Q.ttf",
+  src: "https://fonts.gstatic.com/s/poppins/v1/TDTjCH39JjVycIF24TlO-Q.ttf",
 });
 Font.registerEmojiSource({
   format: "png",
