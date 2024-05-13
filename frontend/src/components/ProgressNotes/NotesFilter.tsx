@@ -22,15 +22,17 @@ export default function NotesFilter({
             setValue={handleSelectProgram}
             className="w-full bg-white sm:w-[calc(60%-12px)] xl:w-[calc(40%-12px)]"
           />
-          <DebouncedInput
-            icon={<SearchIcon width={20} height={20} />}
-            initialValue=""
-            onChange={(val) => {
-              handleFilterQuery(val);
-            }}
-            className="mb-5 w-full bg-white "
-            placeholder="Search Students or Notes"
-          />
+          <div className="w-full">
+            <DebouncedInput
+              icon={<SearchIcon width={20} height={20} />}
+              initialValue=""
+              onChange={(val) => {
+                handleFilterQuery(val);
+              }}
+              className="mb-5 w-full bg-white xl:w-1/2"
+              placeholder="Search Students or Notes"
+            />
+          </div>
         </div>
       ) : null}
     </>

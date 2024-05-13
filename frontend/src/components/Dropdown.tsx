@@ -58,7 +58,7 @@ export function Dropdown<T extends FieldValues>({
       <DropdownMenuTrigger
         ref={triggerRef}
         className={cn(
-          "relative inline-flex h-[46px] w-[244px] items-center justify-start gap-2 rounded-sm border border-pia_border px-4 py-3 outline-none",
+          "relative inline-flex h-[46px] w-[244px] items-center justify-start gap-2 rounded-sm border border-pia_border px-4 py-3 ",
           className,
         )}
       >
