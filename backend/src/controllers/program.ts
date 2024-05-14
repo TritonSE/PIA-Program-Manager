@@ -12,10 +12,7 @@ export type Program = {
   abbreviation: string;
   type: string;
   daysOfWeek: string[];
-  startDate: Date;
-  endDate: Date;
   color: string; //colorValueHex;
-  renewalDate: Date;
   hourlyPay: string;
   sessions: [string[]];
 };

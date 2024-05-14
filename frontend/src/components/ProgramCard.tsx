@@ -87,13 +87,13 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     abbreviation: program.abbreviation,
     type: program.type,
     daysOfWeek: program.daysOfWeek,
-    startDate: program.startDate,
-    endDate: program.endDate,
+    //startDate: program.startDate,
+    //endDate: program.endDate,
     color: program.color,
-    renewalDate: program.renewalDate,
-    hourly: program.hourly,
+    //renewalDate: program.renewalDate,
+    hourlyPay: program.hourlyPay,
     sessions: program.sessions,
-    students: program.students,
+    //students: program.students,
   };
 
   if (isTablet) {
@@ -196,11 +196,13 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
               width={18}
               className={iconClass}
             />
-            {program.students.length === 0 && <p className={numTextClass}>No Students</p>}
-            {program.students.length === 1 && <p className={numTextClass}>1 Student</p>}
-            {program.students.length > 1 && (
-              <p className={numTextClass}>{program.students.length} Students</p>
-            )}
+            {/*program.students.length === 0 && <p className={numTextClass}>No Students</p>*/}
+            {/*program.students.length === 1 && <p className={numTextClass}>1 Student</p>*/}
+            {
+              //program.students.length > 1 && (
+              <p className={numTextClass}>{/*program.students.length*/}0 Students</p>
+              //)
+            }
           </div>
         </div>
       </div>
