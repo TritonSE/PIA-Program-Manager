@@ -135,33 +135,49 @@ function EditNote({
     }
   }, [openDeleteDialog]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleBackButton();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <article className="flex h-full flex-col px-8 py-3 sm:py-7">
       <div className="flex justify-between pb-5">
-        <button onClick={handleBackButton}>
-          <BackIcon />
+        <button
+          onClick={handleBackButton}
+          aria-label="Go Back"
+          className="transition-opacity hover:opacity-50 focus-visible:opacity-50 "
+        >
+          <BackIcon aria-hidden="true" />
         </button>
         {isAdmin ? (
           <div className="flex gap-3">
             <button
+              aria-label="Edit Note"
               onClick={(e: React.MouseEvent) => {
                 handleEditButton(e, selectedNote);
               }}
+              className={
+                noteMode === "edit"
+                  ? "text-pia_dark_green"
+                  : "transition-opacity hover:opacity-50 focus-visible:opacity-50"
+              }
             >
-              <EditIcon
-                className={
-                  noteMode === "edit"
-                    ? "text-pia_dark_green"
-                    : "transition-colors hover:text-pia_dark_green"
-                }
-              />
+              <EditIcon aria-hidden="true" />
             </button>
             <ModalConfirmation
               ref={deleteDialogRef}
               icon={<RedDeleteIcon />}
               triggerElement={
-                <button>
-                  <DeleteIcon className="transition-colors hover:text-pia_dark_green" />
+                <button className="transition-opacity hover:opacity-50 focus-visible:opacity-50">
+                  <DeleteIcon aria-hidden="true" />
                 </button>
               }
               title="Are you sure you want to delete?"
@@ -225,8 +241,6 @@ function EditNote({
             automaticClose={1.5} //1.5 seconds
             setOpen={setOpenSaveDialog}
             onLeave={handleBackButton}
-            saveText="Save"
-            sameSize
           >
             {/* Save Dialog Content */}
             <div className="grid place-items-center p-3 min-[450px]:px-12 min-[450px]:pb-12 min-[450px]:pt-10">

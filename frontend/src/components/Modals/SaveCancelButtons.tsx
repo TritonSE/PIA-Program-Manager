@@ -6,15 +6,11 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 
 import ModalConfirmation from "./ModalConfirmation";
 
-import { cn } from "@/lib/utils";
-
 type SaveCancelButtonsPropsBase = {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onCancelClick?: (e: React.MouseEvent) => void;
   onSaveClick?: (e: React.MouseEvent) => void;
   onLeave?: () => void;
-  saveText?: string;
-  sameSize?: boolean;
 };
 
 type SaveCancelButtonsPropsWithAutoClose = SaveCancelButtonsPropsBase & {
@@ -43,8 +39,6 @@ export default function SaveCancelButtons({
   onLeave = () => {},
   automaticClose,
   children,
-  saveText = "Save Changes",
-  sameSize = false,
 }: SaveCancelButtonsProps) {
   const handleAutomaticClose = () => {
     if (automaticClose) {
@@ -54,10 +48,8 @@ export default function SaveCancelButtons({
     }
   };
 
-  const sameSizeClasses = sameSize ? "w-[230px] [&>*]:flex-1" : "";
-
   return (
-    <div className={cn("ml-auto mt-5 flex w-fit gap-5", sameSizeClasses)}>
+    <div className="ml-auto mt-5 flex w-[230px] gap-5 [&>*]:flex-1">
       <ModalConfirmation
         icon={<RedQuestionMarkIcon aria-hidden="true" />}
         triggerElement={<Button label="Cancel" kind="secondary" onClick={onCancelClick} />}
@@ -71,12 +63,12 @@ export default function SaveCancelButtons({
       />
       {/* If there is no children, save button closes by default, otherwise show children as save button dialog content */}
       {!children ? (
-        <Button label={saveText} onClick={onSaveClick} />
+        <Button label="Save" onClick={onSaveClick} />
       ) : (
         <Dialog open={isOpen} onOpenChange={setOpen}>
           <DialogTrigger asChild>
             <Button
-              label={saveText}
+              label="Save"
               onClick={(e) => {
                 setOpen(true);
                 onSaveClick(e);

@@ -86,7 +86,10 @@ function NotePreview({
             ) : (
               <>
                 {isMobile ? (
-                  <button onClick={handleMobileBack} className="px-8 pt-3">
+                  <button
+                    onClick={handleMobileBack}
+                    className="mx-8 mt-3 w-fit transition-opacity hover:opacity-50 focus-visible:opacity-50"
+                  >
                     <BackIcon />
                   </button>
                 ) : null}
@@ -132,36 +135,41 @@ function NotePreview({
                       )
                       .map((note) => (
                         <li
-                          className="border-b-[1px] border-b-[#B4B4B4] transition-colors first:rounded-tl-lg first:rounded-tr-lg last:rounded-bl-lg 
-                last:rounded-br-lg last:border-b-0 hover:bg-[#188B8A14] "
+                          className="w-full border-b-[1px] border-b-[#B4B4B4] px-8 py-7 text-left 
+                          transition-colors hover:bg-[#188B8A14] focus-visible:bg-[#188B8A14]"
                           key={note._id}
                           onClick={() => {
                             handleSelectNote(note);
                           }}
+                          tabIndex={0}
+                          role="button"
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              handleSelectNote(note);
+                            }
+                          }}
                         >
-                          <button className="w-full px-8 py-7 text-left focus-visible:bg-[#188B8A14]">
-                            <div className="flex justify-between pb-2 text-[#929292]">
-                              <p>
-                                {new Date(note.dateLastUpdated).toLocaleDateString(
-                                  "en-US",
-                                  dateOptions,
-                                )}
-                                &nbsp;| By {note.lastEditedBy}
-                              </p>
-                              {isAdmin ? (
-                                <button
-                                  className=" transition-colors hover:text-pia_dark_green focus-visible:text-pia_dark_green"
-                                  aria-label="Edit Note"
-                                  onClick={(e: React.MouseEvent) => {
-                                    handleEditButton(e, note);
-                                  }}
-                                >
-                                  <EditPencilIcon aria-hidden="true" />
-                                </button>
-                              ) : null}
-                            </div>
-                            <p className="line-clamp-4 text-ellipsis">{note.content}</p>
-                          </button>
+                          <div className="flex justify-between pb-2 text-[#929292]">
+                            <p>
+                              {new Date(note.dateLastUpdated).toLocaleDateString(
+                                "en-US",
+                                dateOptions,
+                              )}
+                              &nbsp;| By {note.lastEditedBy}
+                            </p>
+                            {isAdmin ? (
+                              <button
+                                className=" transition-colors hover:text-pia_dark_green focus-visible:text-pia_dark_green"
+                                aria-label="Edit Note"
+                                onClick={(e: React.MouseEvent) => {
+                                  handleEditButton(e, note);
+                                }}
+                              >
+                                <EditPencilIcon aria-hidden="true" />
+                              </button>
+                            ) : null}
+                          </div>
+                          <p className="line-clamp-4 text-ellipsis">{note.content}</p>
                         </li>
                       ))
                   )}
