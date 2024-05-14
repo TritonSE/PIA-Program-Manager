@@ -44,6 +44,7 @@ function EditNote({
   const [deletedNote, setDeletedNote] = useState<ProgressNote | undefined>(undefined);
   const deleteDialogRef = useRef<HTMLDivElement>(null);
   const { piaUser, isAdmin } = useContext(UserContext);
+  const articleRef = useRef<HTMLDivElement>(null);
   const currentUser = piaUser?.name;
 
   const handleSaveClick = (e: React.MouseEvent) => {
@@ -141,14 +142,14 @@ function EditNote({
         handleBackButton();
       }
     };
-    document.addEventListener("keydown", handleKeyDown);
+    articleRef.current?.addEventListener("keydown", handleKeyDown);
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      articleRef.current?.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
 
   return (
-    <article className="flex h-full flex-col px-8 py-3 sm:py-7">
+    <article ref={articleRef} className="flex h-full flex-col px-8 py-3 sm:py-7">
       <div className="flex justify-between pb-5">
         <button
           onClick={handleBackButton}
