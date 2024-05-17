@@ -1,8 +1,22 @@
+import { MouseEventHandler, useState } from "react";
+import { useForm } from "react-hook-form";
+
+import { Program, archiveProgram } from "../../api/programs";
+import { Button } from "../Button";
+import { Textfield } from "../Textfield";
+import { Dialog, DialogClose, DialogContentSlide, DialogTrigger } from "../ui/dialog";
+
 type props = {
   label: string;
 };
 
-export default function ProgramArchiveHeader({ label }: props) {
+type archiveProps = {
+  setOpenParent: React.Dispatch<React.SetStateAction<boolean>>;
+  data: Program;
+  isMobile?: boolean;
+};
+
+function ProgramArchiveHeader({ label }: props) {
   return (
     <div>
       <h2 className="absolute inset-3 mb-4 max-h-[5%] text-2xl font-bold text-neutral-800">
@@ -30,5 +44,101 @@ export default function ProgramArchiveHeader({ label }: props) {
         <li>You’ll be able to restore this program</li>
       </ul>
     </div>
+  );
+}
+
+//Currently no functionality, just a button that closes the form
+export default function ProgramArchive({ setOpenParent, data, isMobile = false }: archiveProps) {
+  const [openArchive, setOpenArchive] = useState(false);
+  const {
+    register: archiveRegister,
+    reset: archiveReset,
+    setValue: setArchiveCalendarValue,
+    getValues: getArchiveValue,
+  } = useForm<{ date: string }>();
+
+  const archive: MouseEventHandler = () => {
+    const date = new Date(getArchiveValue("date"));
+    const today = new Date();
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
+      archiveProgram(data)
+        .then((result) => {
+          if (result.success) {
+            console.log(result.data);
+            archiveReset();
+            setOpenArchive(false);
+            setOpenParent(false);
+          } else {
+            console.log(result.error);
+            alert("Unable to archive program: " + result.error);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
+  return (
+    <Dialog open={openArchive}>
+      <div className="absolute inset-3 flex h-[10%] justify-end">
+        <DialogTrigger asChild>
+          {!isMobile ? (
+            <Button
+              label="Archive"
+              kind="destructive-secondary"
+              onClick={() => {
+                setOpenArchive(true);
+              }}
+            />
+          ) : (
+            <div
+              className="pt-1 text-destructive"
+              onClick={() => {
+                setOpenArchive(true);
+              }}
+            >
+              Archive
+            </div>
+          )}
+        </DialogTrigger>
+      </div>
+      <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">
+        <div className="flex flex-col justify-center">
+          <div className="pl-12 pr-20 sm:pl-24">
+            <ProgramArchiveHeader label={data.name} />
+            <p className="pb-3 pt-4 text-sm">Confirm by entering today&apos;s date</p>
+            <form>
+              <Textfield
+                className="mb-12"
+                name="date"
+                placeholder="Date"
+                register={archiveRegister}
+                calendar={true}
+                setCalendarValue={setArchiveCalendarValue}
+              />
+              <div className="flex flex-row gap-3">
+                <DialogClose asChild>
+                  <Button
+                    label="Back"
+                    kind="destructive-secondary"
+                    onClick={() => {
+                      setOpenArchive(false);
+                    }}
+                  />
+                </DialogClose>
+                <DialogClose asChild>
+                  <Button label="Archive" onClick={archive} kind="destructive" />
+                </DialogClose>
+              </div>{" "}
+            </form>
+          </div>{" "}
+        </div>
+      </DialogContentSlide>
+    </Dialog>
   );
 }

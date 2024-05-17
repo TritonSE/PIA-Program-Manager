@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { Program, getAllPrograms } from "../api/programs";
@@ -19,8 +20,7 @@ export default function Programs() {
 
   const [programs, setPrograms] = useState<ProgramMap>({});
 
-  const { isAdmin, loadingUser } = useContext(UserContext);
-  const _loadingUser = loadingUser;
+  const { isAdmin } = useContext(UserContext);
 
   useEffect(() => {
     getAllPrograms().then(
@@ -42,15 +42,22 @@ export default function Programs() {
     );
   });
 
-  let mainClass = "h-full overflow-y-scroll no-scrollbar";
+  let mainClass = "h-full overflow-y-scroll no-scrollbar flex flex-col";
   let titleClass = "font-[alternate-gothic]";
   let headerClass = "flex flex-row";
   let cardsGridClass = "grid";
   let cardClass = "";
 
+  let emptyClass = "w-fill grow content-center justify-center";
+  let emptyHeight;
+  let emptyWidth;
+
   if (isTablet) {
     titleClass += " text-2xl leading-none h-6";
     mainClass += " p-0";
+    emptyClass += " pb-24";
+    emptyHeight = 46;
+    emptyWidth = 86;
 
     if (isMobile) {
       headerClass += " pt-2 pb-3";
@@ -65,6 +72,9 @@ export default function Programs() {
     titleClass += " text-[40px] leading-none h-10";
     headerClass += " p-5 pt-10 pb-5";
     cardClass += " p-5";
+    emptyClass += " pb-40";
+    emptyHeight = 99;
+    emptyWidth = 156;
 
     if (extraLarge) {
       cardsGridClass += " grid-cols-3 max-w-[1740px]";
@@ -75,21 +85,51 @@ export default function Programs() {
     }
   }
 
+  let addButtonClass = "m-0 rounded-3xl bg-pia_dark_green text-white";
+  if (isTablet) {
+    addButtonClass += " text-[10px] h-6 px-[10px]";
+  } else {
+    addButtonClass += " text-base h-12 px-6";
+  }
+
+  const addButton: React.JSX.Element = (
+    <button type="submit" className={addButtonClass}>
+      + Create Program
+    </button>
+  );
+
   return (
     <main className={mainClass}>
       <div className={headerClass}>
         <h1 className={titleClass}>Programs</h1>
         <div className="grow"></div>
-        {isAdmin && <ProgramFormButton type="add" setPrograms={setPrograms} />}
+        {isAdmin && (
+          <ProgramFormButton type="add" component={addButton} setPrograms={setPrograms} />
+        )}
         {/* Should be replaced with Add Button when created */}
       </div>
-      <div className={cardsGridClass}>
-        {Object.values(programs).map((program) => (
-          <div className={cardClass} key={program._id}>
-            <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+      {Object.keys(programs).length === 0 && (
+        <div className={emptyClass}>
+          <div className={"flex flex-row justify-center"}>
+            <Image
+              id="emptyId"
+              alt="empty"
+              src="/programs/Empty.png"
+              height={emptyHeight}
+              width={emptyWidth}
+            />
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+      {Object.keys(programs).length > 0 && (
+        <div className={cardsGridClass}>
+          {Object.values(programs).map((program) => (
+            <div className={cardClass} key={program._id}>
+              <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+            </div>
+          ))}
+        </div>
+      )}
     </main>
   );
 }

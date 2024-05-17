@@ -3,15 +3,24 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../ui/dialog"
 
 type cancelProps = {
   isMobile?: boolean;
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onCancel: () => void;
 };
 
-export default function ProgramCancel({ isMobile = false, onCancel }: cancelProps) {
+export default function ProgramCancel({ isMobile = false, open, setOpen, onCancel }: cancelProps) {
   return (
-    <Dialog>
+    <Dialog open={open}>
       <DialogTrigger asChild>
         {!isMobile ? (
-          <Button label="Cancel" kind="secondary" type="button" />
+          <Button
+            label="Cancel"
+            kind="secondary"
+            type="button"
+            onClick={() => {
+              setOpen(true);
+            }}
+          />
         ) : (
           <div className="absolute flex pl-3 pt-4 text-sm text-neutral-400">Cancel</div>
         )}
@@ -47,7 +56,13 @@ export default function ProgramCancel({ isMobile = false, onCancel }: cancelProp
           </p>
           <div className="grid gap-6 min-[450px]:flex min-[450px]:justify-center">
             <DialogClose asChild>
-              <Button label="Back" kind="destructive-secondary" />
+              <Button
+                label="Back"
+                kind="destructive-secondary"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              />
             </DialogClose>
             <DialogClose asChild>
               <Button label="Leave" kind="destructive" onClick={onCancel} />

@@ -2,15 +2,11 @@ import { InferSchemaType, Schema, model } from "mongoose";
 
 const programSchema = new Schema({
   name: { type: String, required: true },
-  abbreviation: { type: String, required: true }, // e.g. ENTR
+  abbreviation: { type: String, required: true }, // e.g. ENTR, should be unique
   type: { type: String, required: true }, // regular vs. varying
   daysOfWeek: { type: [String], required: true }, // M, T, W, TH, F
-  startDate: { type: Date, required: true },
-  endDate: { type: Date, required: true },
   color: { type: String, required: true },
-  students: { type: [Schema.Types.ObjectId], ref: "Students", required: false },
-  renewalDate: { type: Date, required: true },
-  hourly: { type: Number, required: true },
+  hourlyPay: { type: Number, required: true },
   sessions: { type: [[String]], required: true },
   archived: { type: Boolean, required: false },
 });

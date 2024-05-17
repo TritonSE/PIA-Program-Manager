@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { Schema } from "mongoose";
 //import { error } from "firebase-functions/logger";
 
 import ProgramModel from "../models/program";
-import StudentModel from "../models/student";
 import validationErrorParser from "../util/validationErrorParser";
 
 export type Program = {
@@ -14,11 +12,7 @@ export type Program = {
   abbreviation: string;
   type: string;
   daysOfWeek: string[];
-  startDate: Date;
-  endDate: Date;
   color: string; //colorValueHex;
-  studentUIDs: Schema.Types.ObjectId[];
-  renewalDate: Date;
   hourlyPay: string;
   sessions: [string[]];
   archived?: boolean;
@@ -74,7 +68,7 @@ export const archiveProgram: RequestHandler = async (req, res, next) => {
     if (!program)
       return res.status(404).json({ message: "Program with this id not found in database" });
 
-    //in case this program doesnt have students field
+    /*//in case this program doesnt have students field
     const studentList = program.students ?? [];
 
     await Promise.all(
@@ -90,7 +84,7 @@ export const archiveProgram: RequestHandler = async (req, res, next) => {
           { arrayFilters: [{ "element.programId": programID }], new: true },
         );
       }),
-    );
+    );*/
 
     return res.status(200).json(program);
   } catch (error) {
