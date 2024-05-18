@@ -96,7 +96,6 @@ export default function ProgramFormButton({
               if (Object.keys(prevPrograms).includes(result.data._id))
                 return { ...prevPrograms, [result.data._id]: { ...result.data } };
               else console.log("Program ID does not exist");
-              alert("Program ID does not exist");
               return prevPrograms;
             });
           } else {

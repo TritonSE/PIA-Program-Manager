@@ -3,6 +3,7 @@ import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 //import { error } from "firebase-functions/logger";
 
+import EnrollmentModel from "../models/enrollment";
 import ProgramModel from "../models/program";
 import validationErrorParser from "../util/validationErrorParser";
 
@@ -52,7 +53,14 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
       return res.status(404).json({ message: "No object in database with provided ID" });
     }
 
-    res.status(200).json(editedProgram);
+    // Waitlist all archived students. Making sure to only waitlist Archived students
+    // will prevent enrollments from being updated every time the program is updated
+    const updateReport = await EnrollmentModel.updateMany(
+      { programId: { $eq: programId }, status: { $eq: "Archived" } },
+      { $set: { status: "Waitlisted", dateUpdated: Date.now() } },
+    );
+
+    res.status(200).json({ ...editedProgram, updateReport });
   } catch (error) {
     next(error);
   }
@@ -63,30 +71,18 @@ export const archiveProgram: RequestHandler = async (req, res, next) => {
   try {
     validationErrorParser(errors);
 
-    const programID = req.params.id;
-    const program = await ProgramModel.findByIdAndUpdate(programID, { $set: { archived: true } });
+    const programId = req.params.id;
+    const program = await ProgramModel.findByIdAndUpdate(programId, { $set: { archived: true } });
     if (!program)
       return res.status(404).json({ message: "Program with this id not found in database" });
 
-    /*//in case this program doesnt have students field
-    const studentList = program.students ?? [];
+    //Archive all students
+    const updateReport = await EnrollmentModel.updateMany(
+      { programId: { $eq: programId } },
+      { $set: { status: "Archived", dateUpdated: Date.now() } },
+    );
 
-    await Promise.all(
-      studentList.map(async (studentID) => {
-        await StudentModel.findByIdAndUpdate(
-          studentID,
-          {
-            $set: {
-              "programs.$[element].status": "Archived",
-              "programs.$[element].dateUpdated": Date.now(),
-            },
-          },
-          { arrayFilters: [{ "element.programId": programID }], new: true },
-        );
-      }),
-    );*/
-
-    return res.status(200).json(program);
+    return res.status(200).json({ ...program, updateReport });
   } catch (error) {
     next(error);
   }
