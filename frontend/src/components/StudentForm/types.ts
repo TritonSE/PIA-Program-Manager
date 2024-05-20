@@ -21,9 +21,12 @@ export type StudentData = {
   birthday: Date;
   intakeDate: Date;
   tourDate: Date;
-  programs: ProgramLink[];
   dietary: string[];
-  otherString: string;
+  conservation: boolean;
+  UCINumber: string;
+  incidentForm: string;
+  documents: string[];
+  profilePicture: string;
 };
 
 export type StudentFormData = {
@@ -46,6 +49,23 @@ export type StudentFormData = {
   other: string;
   intake_date: Date;
   tour_date: Date;
-  regular_programs: string[];
-  varying_programs: string[];
+  conservation: boolean;
+  UCINumber: string;
+  incidentForm: string;
+  documents: string[];
+  profilePicture: string;
+  programs: Enrollment[];
+};
+
+export type Enrollment = {
+  studentId: string;
+  programId: string;
+  status: string;
+  dateUpdated: Date;
+  hoursLeft: number;
+  schedule: string;
+  sessionTime: string[];
+  startDate: Date;
+  renewalDate: Date;
+  authNumber: string;
 };

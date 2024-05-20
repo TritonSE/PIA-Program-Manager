@@ -185,22 +185,25 @@ export default function StudentFormButton({
             <legend className="mb-5 w-full text-left font-bold">Contact Information</legend>
             <ContactInfo register={register} data={data ?? null} type={type} />
           </fieldset>
-          <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left font-bold">Student Background</legend>
-            <StudentBackground
-              register={register}
-              data={data ?? null}
-              setCalendarValue={setCalendarValue}
-            />
-          </fieldset>
-          <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left font-bold">Student Information</legend>
-            <StudentInfo
-              register={register}
-              data={data ?? null}
-              setCalendarValue={setCalendarValue}
-            />
-          </fieldset>
+          <div className="grid w-full gap-5 lg:grid-cols-2">
+            <fieldset disabled={!isAdmin}>
+              <legend className="mb-5 w-full text-left font-bold">Student Background</legend>
+              <StudentBackground
+                register={register}
+                data={data ?? null}
+                setCalendarValue={setCalendarValue}
+              />
+            </fieldset>
+            <fieldset disabled={!isAdmin}>
+              <legend className="mb-5 w-full text-left font-bold">Student Information</legend>
+
+              <StudentInfo
+                register={register}
+                data={data ?? null}
+                setCalendarValue={setCalendarValue}
+              />
+            </fieldset>
+          </div>
           <div className="ml-auto mt-5 flex gap-5">
             {/* Modal Confirmation Dialog */}
             {isAdmin ? (

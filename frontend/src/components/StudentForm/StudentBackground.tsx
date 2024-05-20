@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { Student } from "../../api/students";
@@ -14,7 +15,7 @@ type StudentBackgroundProps = {
   data: Student | null;
 };
 
-const dietaryList = ["Nuts", "Eggs", "Seafood", "Pollen", "Dairy", "Other"];
+const conservationList = ["Yes", "No"];
 
 export const convertDateToString = (date: Date | undefined) => {
   return date
@@ -33,47 +34,65 @@ export default function StudentBackground({
   setCalendarValue,
 }: StudentBackgroundProps) {
   return (
-    <div className="grid w-full gap-5 lg:grid-cols-2">
-      <div className={cn("grid flex-1 gap-x-3 gap-y-5 md:grid-cols-2", classname)}>
-        <div>
-          <h3 className="block">Address</h3>
-          <Textfield
-            register={register}
-            name="address"
-            placeholder="123 Maple St"
-            defaultValue={data?.location}
-          />
-        </div>
-        <div>
-          <h3>Birthdate</h3>
-          <Textfield
-            register={register}
-            name="birthdate"
-            placeholder="00/00/0000"
-            calendar={true}
-            setCalendarValue={setCalendarValue}
-            defaultValue={convertDateToString(data?.birthday)}
-          />
-        </div>
-        <div>
-          <h3>Medication</h3>
-          <Textfield
-            register={register}
-            name="medication"
-            placeholder="Specify"
-            defaultValue={data?.medication}
-          />
-        </div>
+    <div className={cn("grid flex-1 gap-x-3 gap-y-5 md:grid-cols-2", classname)}>
+      <div>
+        <h3 className="block">Address</h3>
+        <Textfield
+          register={register}
+          name="address"
+          placeholder="123 Maple St"
+          defaultValue={data?.location}
+        />
       </div>
-      <div className="flex-1">
-        <h3>Dietary Restrictions</h3>
+      <div>
+        <h3>Birthdate</h3>
+        <Textfield
+          register={register}
+          name="birthdate"
+          placeholder="00/00/0000"
+          calendar={true}
+          setCalendarValue={setCalendarValue}
+          defaultValue={convertDateToString(data?.birthday)}
+        />
+      </div>
+      <div className="col-span-2">
+        <h3>Conservation</h3>
         <Checkbox
           register={register}
-          name="dietary"
-          options={dietaryList}
-          defaultValue={data?.dietary}
-          defaultOtherValue={data?.otherString}
-          className="sm:grid-cols-2 min-[1150px]:grid-cols-3"
+          name="conservation"
+          options={conservationList}
+          defaultValue={[data?.conservation ? "Yes" : "No"]}
+          className="h-[50px] sm:grid-cols-2 min-[1150px]:grid-cols-3"
+        />
+      </div>
+      <div className="col-span-2">
+        <h3>Medication and Medical</h3>
+        <Textfield
+          register={register}
+          name="medication"
+          placeholder="Specify"
+          defaultValue={data?.medication}
+        />
+      </div>
+      <div className="col-span-2">
+        <span className="align-center flex w-full justify-between">
+          <h3>Profile Picture</h3>
+          <button
+            className="flex gap-2"
+            onClick={(e) => {
+              e.preventDefault();
+              // TODO: Implement image upload
+            }}
+          >
+            <Image src="../pencil.svg" alt="edit profile picture" height="20" width="20" />
+            <span className="leading-normal tracking-tight">Edit Image</span>
+          </button>
+        </span>
+        <Image
+          src={data?.profilePicture ?? "../defaultProfilePic.svg"}
+          alt="Profile Picture"
+          height="85"
+          width="85"
         />
       </div>
     </div>
