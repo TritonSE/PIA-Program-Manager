@@ -73,8 +73,9 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
   let numClass;
   let numTextClass;
   let iconClass = "relative";
-  const dialogBgClass = "fixed left-0 top-0 h-full w-full py-20 bg-black bg-opacity-50 z-20 hidden";
-  const dialogClass = "z-20 h-full w-[900px] m-auto overflow-hidden rounded-xl";
+  const dialogBgClass =
+    "fixed left-0 top-0 h-full w-full py-20 px-40 bg-black bg-opacity-50 z-20 hidden";
+  const dialogClass = "relative z-20 h-full w-full m-auto overflow-hidden rounded-xl";
 
   let optionsHeight = 18;
   let optionsWidth = 16;
@@ -89,7 +90,8 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     //endDate: program.endDate,
     color: program.color,
     //renewalDate: program.renewalDate,
-    hourlyPay: program.hourlyPay,
+    //hourlyPay: program.hourlyPay,
+    hourlyPay: 0,
     sessions: program.sessions,
     //students: program.students,
   };
@@ -190,7 +192,6 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
             type="edit"
             component={editButton}
             data={programFields}
-            uniqueId={"card" + program._id}
             setPrograms={setPrograms}
           />
         </div>
@@ -239,7 +240,14 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
             event.stopPropagation();
           }}
         >
-          {<ProgramProfile id={program._id}></ProgramProfile>}
+          <ProgramProfile id={program._id}></ProgramProfile>
+          <button
+            id="closeButton"
+            className="absolute bottom-[40px] right-[40px] rounded bg-pia_dark_green px-[24px] py-[12px] text-white"
+            onClick={closeDialog}
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>

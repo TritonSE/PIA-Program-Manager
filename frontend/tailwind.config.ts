@@ -128,6 +128,9 @@ module.exports = {
         pia_neutral_gray: {
           DEFAULT: "#D8D8D8",
         },
+        pia_light_gray: {
+          DEFAULT: "#F3F3F3",
+        },
         pia_primary_white: {
           DEFAULT: "#FFF",
         },
@@ -175,6 +178,18 @@ module.exports = {
         },
         secondary_fuchsia: {
           DEFAULT: "#EE6CEE",
+        },
+        joined_green: {
+          DEFAULT: "#3BB966",
+        },
+        archived_gray: {
+          DEFAULT: "#909090",
+        },
+        waitlisted_yellow: {
+          DEFAULT: "#DEBB01",
+        },
+        notafit_red: {
+          DEFAULT: "#B93B3B",
         },
       },
       borderRadius: {

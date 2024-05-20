@@ -46,8 +46,11 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
   let iconHeight = 12;
   let iconWidth = 18;
   let messageClass = "relative font-normal text-wrap grow-0";
-  const tableDivClass =
-    "relative border-red border-2 top-0 grow padding w-auto h-1 px-10 overflow-x-scroll no-scrollbar overflow-y-hidden";
+  const middleDivClass = "relative top-0 grow w-full h-1";
+  let outerTableClass = "h-full w-full px-10";
+  let innerTableClass =
+    "h-full overflow-y-scroll overflow-hidden no-scrollbar rounded border-pia_neutral_gray border-[1px]";
+  let bottomDivClass = "";
 
   if (isTablet) {
     headerClass += " h-auto pb-8 text-[18px] leading-[27px]";
@@ -55,19 +58,23 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
     iconClass += " py-[3px] pl-2";
     iconHeight = 10;
     iconWidth = 16;
+    messageClass += " pt-[32px] pb-[12px]";
+    outerTableClass += " overflow-x-scroll no-scrollbar";
+    innerTableClass += " w-[844px]";
+    bottomDivClass += "h-[40px]";
     if (isMobile) {
       headerClass += " pt-[36px] px-[16px]";
-      messageClass += " top-[24px] px-[24px] text-[12px] leading-[16px]";
+      messageClass += " px-[24px] text-[12px] leading-[16px]";
     } else {
       headerClass += " pt-6 px-12";
-      messageClass += " top-[24px] px-[48px] text-[12px] leading-[16px]";
+      messageClass += " px-[48px] text-[12px] leading-[16px]";
     }
   } else {
     headerClass += " h-[154px] p-10 text-[28px] leading-[42px]";
     detailsClass += " top-0.5 text-[16px] leading-[24px] gap-x-4";
     iconClass += " p-1.5";
-    messageClass +=
-      " pt-[32px] pb-[12px] px-[40px] text-[16px] leading-[24px] border-black border-2";
+    messageClass += " pt-[32px] pb-[12px] px-[40px] text-[16px] leading-[24px]";
+    bottomDivClass += "h-[112px]";
   }
 
   function isVarying(type: string) {
@@ -113,7 +120,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
         )}
         {!program && <p>{fillerText}</p>}
       </div>
-      <div className="flex h-full flex-col border-2 border-black bg-white">
+      <div className="flex h-full flex-col bg-white">
         {/* Replace Student Link once student page is ready */}
         {program && (
           <>
@@ -123,12 +130,14 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
                 <a href="/students">all students</a>
               </u>
             </p>
-            <div className={tableDivClass}>
-              <ProgramProfileTable id={id} />
+            <div className={middleDivClass}>
+              <div className={outerTableClass}>
+                <div className={innerTableClass}>
+                  <ProgramProfileTable id={id} />
+                </div>
+              </div>
             </div>
-            <div className="h-[112px]">
-              <p>test</p>
-            </div>
+            <div className={bottomDivClass}></div>
           </>
         )}
       </div>
