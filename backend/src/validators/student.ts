@@ -115,13 +115,57 @@ const makeTourDateValidator = () =>
     .toDate()
     .withMessage("Tour Date string must be a valid date-time string");
 
-const makePrograms = () =>
-  body("programs")
+const makeConservationValidator = () =>
+  body("conservation")
     .exists()
-    .withMessage("Programs field required")
+    .withMessage("Conservation field required")
+    .bail()
+    .isBoolean()
+    .withMessage("Conservation must be a boolean");
+
+const makeUCINumberValidator = () =>
+  body("UCINumber")
+    .exists()
+    .withMessage("UCI Number field required")
+    .bail()
+    .isString()
+    .withMessage("UCI Number must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("UCI Number field required");
+
+const makeIncidentFormValidator = () =>
+  body("incidentForm")
+    .exists()
+    .withMessage("Incident Form field required")
+    .bail()
+    .isString()
+    .withMessage("Incident Form must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("Incident Form field required");
+
+const makeDocumentsValidator = () =>
+  body("documents")
+    .exists()
+    .withMessage("Documents field required")
     .bail()
     .isArray()
-    .withMessage("Programs must be a non-empty array")
+    .withMessage("Documents must be an array")
+    .bail()
+    .custom((value: string[]) => value.every((doc) => typeof doc === "string"))
+    .withMessage("Documents must be an array of strings");
+
+const makeProfilePictureValidator = () =>
+  body("profilePicture").optional().isString().withMessage("Profile picture must be a string");
+
+const makeEnrollments = () =>
+  body("enrollments")
+    .exists()
+    .withMessage("Enrollments field required")
+    .bail()
+    .isArray()
+    .withMessage("Enrollments must be a non-empty array")
     .bail()
     .custom(programValidatorUtil);
 
@@ -153,7 +197,12 @@ export const createStudent = [
   makeBirthdayValidator(),
   makeIntakeDateValidator(),
   makeTourDateValidator(),
-  makePrograms(),
+  makeConservationValidator(),
+  makeUCINumberValidator(),
+  makeIncidentFormValidator(),
+  makeDocumentsValidator(),
+  makeProfilePictureValidator(),
+  makeEnrollments(),
   makeDietaryArrayValidator(),
   makeDietaryItemsValidator(),
   makeDietaryOtherValidator(),

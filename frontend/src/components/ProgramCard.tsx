@@ -85,13 +85,13 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     abbreviation: program.abbreviation,
     type: program.type,
     daysOfWeek: program.daysOfWeek,
-    startDate: program.startDate,
-    endDate: program.endDate,
+    //startDate: program.startDate,
+    //endDate: program.endDate,
     color: program.color,
-    renewalDate: program.renewalDate,
-    hourly: program.hourly,
+    //renewalDate: program.renewalDate,
+    hourlyPay: program.hourlyPay,
     sessions: program.sessions,
-    students: program.students,
+    //students: program.students,
   };
 
   if (isTablet) {

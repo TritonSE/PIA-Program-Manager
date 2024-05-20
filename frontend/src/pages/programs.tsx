@@ -104,13 +104,9 @@ export default function Programs() {
         <h1 className={titleClass}>Programs</h1>
         <div className="grow"></div>
         {isAdmin && (
-          <ProgramFormButton
-            type="add"
-            component={addButton}
-            uniqueId="add"
-            setPrograms={setPrograms}
-          />
+          <ProgramFormButton type="add" component={addButton} setPrograms={setPrograms} />
         )}
+        {/* Should be replaced with Add Button when created */}
       </div>
       {Object.keys(programs).length === 0 && (
         <div className={emptyClass}>

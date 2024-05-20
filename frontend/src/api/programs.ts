@@ -3,7 +3,7 @@ import { CreateProgramRequest } from "../components/ProgramForm/types";
 
 import type { APIResult } from "../api/requests";
 
-export type Program = CreateProgramRequest & { _id: string; students: string[] };
+export type Program = CreateProgramRequest & { _id: string };
 
 export async function createProgram(program: CreateProgramRequest): Promise<APIResult<Program>> {
   try {
