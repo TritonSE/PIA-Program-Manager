@@ -50,6 +50,8 @@ export async function approveUser(email: string): Promise<APIResult<void>> {
 }
 
 export async function denyUser(email: string): Promise<APIResult<void>> {
+  console.log("In frontend/src/api/user.ts denyUser()");
+
   try {
     const response = await POST(`/user/deny`, { email });
     if (response.ok) {

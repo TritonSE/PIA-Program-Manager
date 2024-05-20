@@ -180,6 +180,7 @@ export const approveUser = async (req: Request, res: Response, nxt: NextFunction
 
 export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
   console.log("Inside denyUser controller");
+
   try {
     const { email } = req.body;
 
