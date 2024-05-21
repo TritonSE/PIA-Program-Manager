@@ -40,7 +40,6 @@ const studentSchema = new Schema({
   incidentForm: { type: String, required: true },
   documents: { type: [String], required: true },
   profilePicture: { type: Schema.Types.ObjectId, ref: "Image", required: false },
-
   progressNotes: {
     type: [Schema.Types.ObjectId],
     ref: "ProgressNote",
