@@ -5,10 +5,10 @@ import { useContext, useMemo } from "react";
 import { Dropdown } from "../Dropdown";
 import { ProgramLink } from "../StudentForm/types";
 
-import { ProgramsContext } from "./StudentsTable";
 import { StudentTableRow } from "./types";
 
-import { useWindowSize } from "@/hooks/useWindowSize";
+import { ProgramsContext } from "@/contexts/program";
+import { cn } from "@/lib/utils";
 
 // Extend the FilterFns and FilterMeta interfaces
 /* eslint-disable */
@@ -36,38 +36,42 @@ export const programFilterFn: FilterFn<unknown> = (rows, id, filterValue) => {
   return containsProgram;
 };
 
-export function ProgramFilter({ column }: { column: Column<StudentTableRow> }) {
-  const { isTablet } = useWindowSize();
-
-  const programsMap = useContext(ProgramsContext);
+export function ProgramFilter({
+  setValue,
+  className,
+}: {
+  setValue: (value: string) => void;
+  className?: string;
+}) {
+  const { allPrograms } = useContext(ProgramsContext);
   // Get unique programs to display in the program filter dropdown
   const sortedUniqueValues = useMemo(() => {
-    const values = new Set(Object.values(programsMap).map((program) => program.name));
+    const values = new Set(Object.values(allPrograms).map((program) => program.name));
 
     return Array.from(values)
       .sort()
       .filter((v) => v !== "");
-  }, [programsMap]);
+  }, [allPrograms]);
 
   // Create a map from program name to program id for easy lookup (dropdown uses names but filter needs ids)
   const programNameToId = useMemo(() => {
     const map: Record<string, string> = {};
-    for (const [id, program] of Object.entries(programsMap)) {
+    for (const [id, program] of Object.entries(allPrograms)) {
       map[program.name] = id;
     }
     return map;
-  }, [programsMap]);
+  }, [allPrograms]);
 
   return (
     <Dropdown
       label="Program"
       name="program"
       placeholder="Program"
-      className={`rounded-md ${isTablet ? "w-[200px]" : "w-[244px]"}`}
+      className={cn(`rounded-md`, className)}
       defaultValue="All Programs"
       options={sortedUniqueValues}
       onChange={(value): void => {
-        column.setFilterValue(programNameToId[value] || "");
+        setValue(programNameToId[value] || "");
       }}
     />
   );
@@ -86,7 +90,6 @@ export const statusFilterFn: FilterFn<unknown> = (rows, id, filterValue) => {
 };
 
 export function StatusFilter({ column }: { column: Column<StudentTableRow> }) {
-  const { isTablet } = useWindowSize();
   const statusOptions = ["Joined", "Waitlisted", "Archived", "Not a fit"];
 
   return (
@@ -94,7 +97,7 @@ export function StatusFilter({ column }: { column: Column<StudentTableRow> }) {
       label="Status"
       name="status"
       placeholder="Status"
-      className={`rounded-md ${isTablet ? "w-[200px]" : "w-[244px]"}`}
+      className={`rounded-md`}
       defaultValue="All Statuses"
       options={statusOptions}
       onChange={(value): void => {

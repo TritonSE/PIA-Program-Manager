@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FieldValues, Path, PathValue, UseFormSetValue } from "react-hook-form";
 
 import {
@@ -36,12 +36,17 @@ export function Dropdown<T extends FieldValues>({
 }: DropdownProps<T>) {
   const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
   const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (selectedOption && setDropdownValue) {
       setDropdownValue(name, selectedOption as PathValue<T, Path<T>>);
     }
   }, [selectedOption]);
+
+  const menuItemStyle = `cursor-pointer py-6 h-10 w-[240px] before:absolute before:bottom-0 before:h-[1px] before:w-full before:bg-[#B4B4B4] before:content-[''] 
+    hover:bg-pia_primary_light_green
+    ${triggerRef.current ? `w-[${triggerRef.current.clientWidth}px]` : `w-[240px]`}`;
 
   return (
     <DropdownMenu
@@ -51,8 +56,9 @@ export function Dropdown<T extends FieldValues>({
       }}
     >
       <DropdownMenuTrigger
+        ref={triggerRef}
         className={cn(
-          "relative inline-flex h-[46px] w-[244px] items-center justify-start gap-2 rounded-sm border border-pia_border px-4 py-3 outline-none",
+          "relative inline-flex h-[46px] w-[244px] items-center justify-start gap-2 rounded-sm border border-pia_border px-4 py-3 ",
           className,
         )}
       >
@@ -69,25 +75,26 @@ export function Dropdown<T extends FieldValues>({
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem
-          className="h-10 w-[244px] hover:bg-pia_primary_light_green"
+          className={menuItemStyle}
+          style={triggerRef.current ? { width: `${triggerRef.current.clientWidth}px` } : {}}
           key={""}
           onSelect={() => {
             onChange("");
             setSelectedOption(defaultValue);
           }}
         >
-          {defaultValue}
+          <span className="px-3">{defaultValue}</span>
         </DropdownMenuItem>
         {options.map((option) => (
           <DropdownMenuItem
-            className="h-10 w-[244px] hover:bg-pia_primary_light_green"
+            className={menuItemStyle}
             key={option}
             onSelect={() => {
               onChange(option);
               setSelectedOption(option);
             }}
           >
-            {option}
+            <span className="px-3">{option}</span>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>
