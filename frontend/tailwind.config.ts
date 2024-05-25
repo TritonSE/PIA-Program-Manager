@@ -99,6 +99,9 @@ module.exports = {
       },
     },
     extend: {
+      aria: {
+        current: 'current="true"',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -121,6 +124,9 @@ module.exports = {
         },
         pia_primary_light_green: {
           DEFAULT: "#EEF7F7",
+        },
+        pia_primary_light_green_hover: {
+          DEFAULT: "#188B8A14",
         },
         pia_accent_green: {
           DEFAULT: "#A1DAD7",

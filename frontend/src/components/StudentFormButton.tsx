@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { Dispatch, SetStateAction, useContext, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
+import PlusIcon from "../../public/icons/plus.svg";
 import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
 
@@ -10,10 +11,10 @@ import ContactInfo from "./StudentForm/ContactInfo";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
-import { ProgramsContext } from "./StudentsTable/StudentsTable";
 import { StudentMap } from "./StudentsTable/types";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
+import { ProgramsContext } from "@/contexts/program";
 import { UserContext } from "@/contexts/user";
 
 type BaseProps = {
@@ -50,13 +51,14 @@ export default function StudentFormButton({
   //Default values can be set for all fields but I specified these three fields because the checkbox value can sometimes be a string if it's a single value rather than array of strings. https://github.com/react-hook-form/react-hook-form/releases/tag/v7.30.0
 
   const [openForm, setOpenForm] = useState(false);
-  const programsMap = useContext(ProgramsContext);
-  const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
+  const { allPrograms } = useContext(ProgramsContext);
   const { isAdmin } = useContext(UserContext);
 
   const onFormSubmit: SubmitHandler<StudentFormData> = (formData: StudentFormData) => {
     const programAbbreviationToId = {} as Record<string, string>; // abbreviation -> programId
-    allPrograms.forEach((program) => (programAbbreviationToId[program.abbreviation] = program._id));
+    Object.values(allPrograms).forEach(
+      (program) => (programAbbreviationToId[program.abbreviation] = program._id),
+    );
 
     const transformedData: StudentData = {
       student: {
@@ -168,14 +170,15 @@ export default function StudentFormButton({
           />
         ) : (
           <Button
-            label={"＋ Add Student"}
+            label="Add Student"
+            icon={<PlusIcon />}
             onClick={() => {
               setOpenForm(true);
             }}
           />
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[95%] max-w-[98%] rounded-[13px] sm:max-w-[80%]">
+      <DialogContent className="max-h-[85%] max-w-[90%] rounded-[13px] text-sm sm:max-w-[80%]">
         <form
           onSubmit={handleSubmit(onFormSubmit)}
           className={cn(
@@ -184,11 +187,15 @@ export default function StudentFormButton({
           )}
         >
           <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left font-bold">Contact Information</legend>
+            <legend className="mb-5 w-full text-left text-base font-bold">
+              Contact Information
+            </legend>
             <ContactInfo register={register} data={data ?? null} type={type} />
           </fieldset>
           <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left font-bold">Student Background</legend>
+            <legend className="mb-5 w-full text-left text-base font-bold">
+              Student Background
+            </legend>
             <StudentBackground
               register={register}
               data={data ?? null}
@@ -196,7 +203,9 @@ export default function StudentFormButton({
             />
           </fieldset>
           <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left font-bold">Student Information</legend>
+            <legend className="text-basefont-bold mb-5 w-full text-left">
+              Student Information
+            </legend>
             <StudentInfo
               register={register}
               data={data ?? null}

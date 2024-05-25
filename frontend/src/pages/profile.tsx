@@ -6,6 +6,7 @@ import { ContactFrame } from "../components/ProfileForm/ContactInfoFrame";
 import { PasswordFrame } from "../components/ProfileForm/PasswordFrame";
 import { useWindowSize } from "../hooks/useWindowSize";
 
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { UserContext } from "@/contexts/user";
 import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
@@ -71,44 +72,45 @@ export default function Profile() {
     }
   }, [piaUser, firebaseUser, firebaseToken]);
 
-  if (!piaUser || !firebaseUser) return <h1>Loading...</h1>;
-
   return (
-    <main className={"mx-1 pt-2 sm:ml-6 sm:mr-16 sm:pt-10"}>
-      <h1 className={"font-[alternate-gothic] text-4xl uppercase"}>Personal Info</h1>
-      <div className={isMobile ? "pt-4 text-xs" : "text-m pt-10"}>
+    <div>
+      <h1 className={"font-[alternate-gothic] text-2xl lg:text-4xl"}>Personal Info</h1>
+      <div className="sm:text-m pt-4 text-sm sm:pt-10">
         Personal info and options to manage it. You can change or update your info at anytime.
       </div>
-
-      <div className="flex flex-col gap-6 pt-4">
-        <BasicInfoFrame
-          className=""
-          isMobile={isMobile}
-          frameFormat={frameFormat}
-          data={basicInfoData}
-          setData={setBasicInfoData}
-          previousImageId={currentImageId}
-          setCurrentImageId={setCurrentImageId}
-          firebaseToken={firebaseToken}
-        />
-        <ContactFrame
-          className=""
-          isMobile={isMobile}
-          frameFormat={frameFormat}
-          data={contactInfoData}
-          setData={setContactInfoData}
-          firebaseToken={firebaseToken}
-        />
-        <PasswordFrame
-          className="mb-32"
-          passwordLength={10}
-          isMobile={isMobile}
-          frameFormat={frameFormat}
-          data={passwordData}
-          setData={setPasswordData}
-          firebaseToken={firebaseToken}
-        />
-      </div>
-    </main>
+      {!piaUser || !firebaseUser ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="flex flex-col gap-6 pt-4">
+          <BasicInfoFrame
+            className=""
+            isMobile={isMobile}
+            frameFormat={frameFormat}
+            data={basicInfoData}
+            setData={setBasicInfoData}
+            previousImageId={currentImageId}
+            setCurrentImageId={setCurrentImageId}
+            firebaseToken={firebaseToken}
+          />
+          <ContactFrame
+            className=""
+            isMobile={isMobile}
+            frameFormat={frameFormat}
+            data={contactInfoData}
+            setData={setContactInfoData}
+            firebaseToken={firebaseToken}
+          />
+          <PasswordFrame
+            className="mb-32"
+            passwordLength={10}
+            isMobile={isMobile}
+            frameFormat={frameFormat}
+            data={passwordData}
+            setData={setPasswordData}
+            firebaseToken={firebaseToken}
+          />
+        </div>
+      )}
+    </div>
   );
 }
