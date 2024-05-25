@@ -1,5 +1,5 @@
 import Image from "next/image";
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, useState } from "react";
 
 import { ProgramCard } from "../components/ProgramCard";
 import ProgramFormButton from "../components/ProgramFormButton";
@@ -17,7 +17,6 @@ export default function Programs() {
   const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);
   const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);
   const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
-
 
   //const [programs, setPrograms] = useState<ProgramMap>({});
   const [archiveView, setArchiveView] = useState(false);
@@ -154,12 +153,16 @@ export default function Programs() {
             </div>
           )}
           {Object.keys(programs).length > 0 && (
-            <div className={cardsGridClass}>
-              {Object.values(programs).map((program) => (
-                <div className={cardClass} key={program._id}>
-                  <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
-                </div>
-              ))}
+            <div className={cardsGridClass} key={archiveView ? "Archive" : "Active"}>
+              {Object.values(programs).map((program) =>
+                program.archived === archiveView || program.archived === undefined ? (
+                  <div className={cardClass} key={program._id}>
+                    <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+                  </div>
+                ) : (
+                  <></>
+                ),
+              )}
             </div>
           )}
         </>
