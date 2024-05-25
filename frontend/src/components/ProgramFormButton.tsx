@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
@@ -7,16 +6,16 @@ import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
 import { Button } from "./Button";
-import ProgramArchiveHeader from "./ProgramForm/ProgramArchive";
+import ProgramArchive from "./ProgramForm/ProgramArchive";
 import ProgramCancel from "./ProgramForm/ProgramCancel";
 import { ProgramInfo } from "./ProgramForm/ProgramInfo";
 import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
 import { ProgramMap } from "./StudentsTable/types";
-import { Textfield } from "./Textfield";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
 
 type BaseProperties = {
   classname?: string;
+  component: React.JSX.Element;
   setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
 };
 
@@ -34,20 +33,15 @@ type ProgramFormProperties = EditProperties | AddProperties;
 
 export default function ProgramFormButton({
   type = "edit",
+  component = <p>Please add a component</p>,
   data = null,
   setPrograms,
   classname,
 }: ProgramFormProperties) {
   const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<ProgramData>();
-  const {
-    register: archiveRegister,
-    reset: archiveReset,
-    setValue: setArchiveCalendarValue,
-    getValues: getArchiveValue,
-  } = useForm<{ date: string }>();
 
   const [openForm, setOpenForm] = useState(false);
-  const [openArchive, setOpenArchive] = useState(false);
+  const [openCancel, setOpenCancel] = useState(false);
   const { width } = useWindowSize().windowSize;
   const isMobile = useMemo(() => width <= 640, [width]);
 
@@ -56,18 +50,20 @@ export default function ProgramFormButton({
       ? formData.sessions.filter((session: string[]) => session[0] || session[1])
       : [["", ""]];
 
+    const programRequestType = data ? data.type : formData.type; //type selector is disabled when editing
+
+    //If the program type is not regular, then daysOfWeek and sessions will be empty lists.
     const programRequest: CreateProgramRequest = {
       name: formData.name,
       abbreviation: formData.abbreviation,
-      type: formData.type,
-      daysOfWeek: formData.days ? formData.days : [],
-      startDate: new Date(formData.startDate),
-      endDate: new Date(formData.endDate),
+      type: programRequestType,
+      daysOfWeek:
+        formData.daysOfWeek && programRequestType === "regular" ? formData.daysOfWeek : [],
       color: formData.color,
-      renewalDate: new Date(formData.renewalDate),
-      hourly: formData.hourly,
-      sessions: sanitizedSessions,
+      hourlyPay: formData.hourlyPay,
+      sessions: programRequestType === "regular" ? sanitizedSessions : [],
     };
+
     console.log(`${type} program`, programRequest);
     if (type === "add") {
       createProgram(programRequest)
@@ -89,7 +85,7 @@ export default function ProgramFormButton({
         });
     }
     if (type === "edit" && data) {
-      const updatedProgram: Program = { ...programRequest, _id: data._id, students: data.students };
+      const updatedProgram: Program = { ...programRequest, _id: data._id };
       console.log(`${type} program`, updatedProgram);
       editProgram(updatedProgram)
         .then((result) => {
@@ -117,93 +113,16 @@ export default function ProgramFormButton({
   return !isMobile ? (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        {type === "add" && (
-          <DialogTrigger asChild>
-            <Button
-              label="Add Program"
-              onClick={() => {
-                setOpenForm(true);
-              }}
-            />
-          </DialogTrigger>
-        )}
-        {type === "edit" && (
-          <DialogTrigger asChild>
-            <Image
-              alt="options"
-              src="/programs/Options.png"
-              height={18}
-              width={16}
-              className={"relative float-right hover:cursor-pointer"}
-            />
-          </DialogTrigger>
-        )}
-        <DialogContentSlide className="w-full bg-white object-right p-6 sm:w-[50%]">
+        <DialogTrigger asChild>{component}</DialogTrigger>
+        <DialogContentSlide
+          className="w-full bg-white object-right p-6 sm:w-[50%]"
+          onPointerDownOutside={(event) => {
+            event.preventDefault();
+            setOpenCancel(true);
+          }}
+        >
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
-            {type === "edit" && (
-              <Dialog open={openArchive}>
-                <div className="absolute inset-3 flex h-auto justify-end">
-                  <DialogTrigger asChild>
-                    {/*<Button
-                      label="Archive"
-                      kind="destructive-secondary"
-                      onClick={() => {
-                        setOpenArchive(true);
-                      }}
-                    />*/}
-                  </DialogTrigger>
-                </div>
-                <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">
-                  <div className="flex flex-col justify-center">
-                    <div className="pl-24 pr-20">
-                      <ProgramArchiveHeader label={data ? data.name : ""} />
-                      <p className="pb-3 pt-4 text-sm">Confirm by entering today&apos;s date</p>
-                      <form>
-                        <Textfield
-                          className="mb-12"
-                          name="date"
-                          placeholder="Date"
-                          register={archiveRegister}
-                          calendar={true}
-                          setCalendarValue={setArchiveCalendarValue}
-                        />
-                        <div className="flex flex-row gap-3">
-                          <DialogClose asChild>
-                            <Button
-                              label="Back"
-                              kind="destructive-secondary"
-                              onClick={() => {
-                                setOpenArchive(false);
-                              }}
-                            />
-                          </DialogClose>
-                          <DialogClose asChild>
-                            <Button
-                              label="Archive"
-                              onClick={() => {
-                                const date = new Date(getArchiveValue("date"));
-                                const today = new Date();
-                                if (
-                                  date.getUTCDate() === today.getUTCDate() &&
-                                  date.getUTCMonth() === today.getUTCMonth() &&
-                                  date.getUTCFullYear() === today.getUTCFullYear()
-                                ) {
-                                  //set archive to true
-                                  archiveReset();
-                                  setOpenArchive(false);
-                                  setOpenForm(false);
-                                }
-                              }}
-                              kind="destructive"
-                            />
-                          </DialogClose>
-                        </div>{" "}
-                      </form>
-                    </div>{" "}
-                  </div>
-                </DialogContentSlide>
-              </Dialog>
-            )}
+            {type === "edit" && data && <ProgramArchive setOpenParent={setOpenForm} data={data} />}
 
             <h2 className="mb-4 text-2xl font-bold text-neutral-800">
               {type === "add" ? "Add new program" : data?.name}
@@ -213,12 +132,17 @@ export default function ProgramFormButton({
               register={register}
               data={data ?? null}
               setCalendarValue={setCalendarValue}
+              mode={type}
             />
 
             <div className="flex flex-row-reverse gap-3">
               <Button label={type === "add" ? "Create" : "Save Changes"} type="submit" />
               <ProgramCancel
+                isMobile={isMobile}
+                open={openCancel}
+                setOpen={setOpenCancel}
                 onCancel={() => {
+                  setOpenCancel(false);
                   setOpenForm(false);
                   reset();
                 }}
@@ -231,103 +155,22 @@ export default function ProgramFormButton({
   ) : (
     <>
       <Dialog open={openForm} onOpenChange={setOpenForm}>
-        {type === "add" && (
-          <DialogTrigger asChild>
-            <Button
-              label="Add Program"
-              onClick={() => {
-                setOpenForm(true);
-              }}
-            />
-          </DialogTrigger>
-        )}
-        {type === "edit" && (
-          <DialogTrigger asChild>
-            <Image
-              alt="options"
-              src="/programs/Options.png"
-              height={9}
-              width={8}
-              className={"relative float-right hover:cursor-pointer"}
-            />
-          </DialogTrigger>
-        )}
+        <DialogTrigger asChild>{component}</DialogTrigger>
         <DialogContent className="bg-white p-3">
           <ProgramCancel
             isMobile={isMobile}
+            open={openCancel}
+            setOpen={setOpenCancel}
             onCancel={() => {
               setOpenForm(false);
               reset();
             }}
           />
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
-            {type === "edit" && (
-              <Dialog open={openArchive}>
-                <div className="absolute right-0 top-0 flex max-h-[5%] max-w-[50%] justify-end pr-3 pt-1 pt-4 text-sm text-destructive">
-                  <DialogTrigger asChild>
-                    {/*
-                    <div
-                      onClick={() => {
-                        setOpenArchive(true);
-                      }}
-                    >
-                      Archive
-                    </div>*/}
-                  </DialogTrigger>
-                </div>
-                <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">
-                  <div className="flex flex-col justify-center">
-                    <div className="pl-6 pr-6 sm:pl-24 sm:pr-20">
-                      <ProgramArchiveHeader label={data ? data.name : ""} />
-                      <p className="pb-3 pt-4 text-sm">Confirm by entering today&apos;s date</p>
-                      <form>
-                        <Textfield
-                          className="mb-12"
-                          name="date"
-                          placeholder="Date"
-                          register={archiveRegister}
-                          calendar={true}
-                          setCalendarValue={setArchiveCalendarValue}
-                        />
-                        <div className="absolute inset-x-3 bottom-0 flex flex-row gap-3 pb-3">
-                          <DialogClose asChild>
-                            <Button
-                              label="Back"
-                              kind="destructive-secondary"
-                              size={isMobile ? "wide" : "default"}
-                              onClick={() => {
-                                setOpenArchive(false);
-                              }}
-                            />
-                          </DialogClose>
-                          <DialogClose asChild>
-                            <Button
-                              label="Archive"
-                              size={isMobile ? "wide" : "default"}
-                              onClick={() => {
-                                const date = new Date(getArchiveValue("date"));
-                                const today = new Date();
-                                if (
-                                  date.getUTCDate() === today.getUTCDate() &&
-                                  date.getUTCMonth() === today.getUTCMonth() &&
-                                  date.getUTCFullYear() === today.getUTCFullYear()
-                                ) {
-                                  //set archive to true
-                                  archiveReset();
-                                  setOpenArchive(false);
-                                  setOpenForm(false);
-                                }
-                              }}
-                              kind="destructive"
-                            />
-                          </DialogClose>
-                        </div>{" "}
-                      </form>
-                    </div>{" "}
-                  </div>
-                </DialogContentSlide>
-              </Dialog>
+            {type === "edit" && data && (
+              <ProgramArchive setOpenParent={setOpenForm} data={data} isMobile={isMobile} />
             )}
+
             {type === "add" ? (
               <h2 className="pb-6 text-center text-xl font-bold text-neutral-800">
                 Add new program
@@ -341,6 +184,7 @@ export default function ProgramFormButton({
               register={register}
               data={data ?? null}
               setCalendarValue={setCalendarValue}
+              mode={type}
             />
             <DialogClose asChild>
               <div className="pt-6">

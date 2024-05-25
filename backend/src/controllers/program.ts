@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { Schema } from "mongoose";
 //import { error } from "firebase-functions/logger";
 
 import ProgramModel from "../models/program";
-import SessionModel from "../models/session";
 import validationErrorParser from "../util/validationErrorParser";
 
 export type Program = {
@@ -14,59 +12,20 @@ export type Program = {
   abbreviation: string;
   type: string;
   daysOfWeek: string[];
-  startDate: Date;
-  endDate: Date;
   color: string; //colorValueHex;
-  studentUIDs: Schema.Types.ObjectId[];
-  renewalDate: Date;
   hourlyPay: string;
-  sessions: [string[]];
+  sessions: { start_time: string; end_time: string; }[];
 };
-
-function getDatesBetween(start: Date, end: Date, daysOfWeek: string[]): Date[] {
-  const datesBetween: Date[] = [];
-  const currentDate = new Date(start);
-
-  while (currentDate <= end) {
-    const dayOfWeek = currentDate.getDay();
-    const abbreviatedDay = ["SU", "M", "T", "W", "TH", "F", "S"][dayOfWeek];
-    if (daysOfWeek.includes(abbreviatedDay)) {
-      datesBetween.push(new Date(currentDate));
-    }
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  return datesBetween;
-}
 
 export const createProgram: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
 
   try {
     validationErrorParser(errors);
-
+    req.body["sessions"] = req.body["sessions"].map((session: string[]) => {return {"start_time": session[0], "end_time": session[1]}})
     const programInfo = req.body as Program;
 
     const programForm = await ProgramModel.create(programInfo);
-
-    const defaultStudentBody = programInfo.studentUIDs.map((studentId) => ({
-      studentId,
-      attended: false,
-      hoursAttended: 0,
-    }));
-
-    const createdSessions = [];
-
-    for (const date of getDatesBetween(
-      programInfo.startDate,
-      programInfo.endDate,
-      programInfo.daysOfWeek,
-    )) {
-      const newSession = { programId: programForm.id, date, students: defaultStudentBody };
-      createdSessions.push(SessionModel.create(newSession));
-    }
-
-    await Promise.all(createdSessions);
 
     res.status(201).json(programForm);
   } catch (error) {

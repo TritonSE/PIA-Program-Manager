@@ -6,6 +6,13 @@ import { InferSchemaType, Schema, model } from "mongoose";
 const sessionSchema = new Schema({
   programId: { type: Schema.Types.ObjectId, ref: "Program", required: true },
   date: { type: Date, required: true },
+  sessionTime: {
+    type: {
+      start_time: { type: String, required: true },
+      end_time: { type: String, required: true },
+    },
+    required: true,
+  },
   students: {
     type: [
       {
@@ -16,6 +23,7 @@ const sessionSchema = new Schema({
     ],
     required: true,
   },
+  marked: { type: Boolean, required: true },
 });
 
 type Session = InferSchemaType<typeof sessionSchema>;
