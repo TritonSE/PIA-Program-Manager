@@ -62,6 +62,7 @@ export default function ProgramFormButton({
       color: formData.color,
       hourlyPay: formData.hourlyPay,
       sessions: programRequestType === "regular" ? sanitizedSessions : [],
+      archived: formData.archived ? formData.archived : false,
     };
 
     console.log(`${type} program`, programRequest);

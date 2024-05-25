@@ -94,6 +94,7 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     hourlyPay: program.hourlyPay,
     sessions: program.sessions,
     //students: program.students,
+    archived: program.archived,
   };
 
   if (isTablet) {
