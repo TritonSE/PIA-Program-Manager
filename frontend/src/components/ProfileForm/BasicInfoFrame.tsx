@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { cn } from "../../lib/utils";
 import { FrameProps } from "../../pages/profile";
 import { Button } from "../Button";
-import SaveCancelButtons from "../SaveCancelButtons";
+import SaveCancelButtons from "../Modals/SaveCancelButtons";
 import { Textfield } from "../Textfield";
 import { Dialog, DialogTrigger } from "../ui/dialog";
 
@@ -134,7 +134,7 @@ export function BasicInfoFrame({
   return (
     <section className={cn(frameFormat, className)}>
       {/*Info header*/}
-      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl">Basic Info</div>
+      <div className="ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl">Basic Info</div>
       {/*Info Fields*/}
       <div className=" h-auto w-full flex-grow">
         <div className="flex h-full flex-col divide-y-2">

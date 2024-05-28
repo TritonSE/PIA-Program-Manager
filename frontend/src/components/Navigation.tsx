@@ -139,7 +139,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
       </nav>
 
       <div
-        className="h-full w-full overflow-x-auto overflow-y-auto p-[24px] max-lg:absolute max-lg:pt-14 lg:w-[calc(100%-240px)]"
+        className="h-full w-full overflow-x-auto overflow-y-auto p-[24px] pt-14 max-lg:absolute sm:p-[32px] sm:pt-14 lg:w-[calc(100%-240px)]"
         onClick={(e) => {
           if (isMobile) {
             e.stopPropagation();

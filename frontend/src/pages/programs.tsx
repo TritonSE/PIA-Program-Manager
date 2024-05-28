@@ -1,12 +1,12 @@
 import Image from "next/image";
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo } from "react";
 
-import { Program, getAllPrograms } from "../api/programs";
 import { ProgramCard } from "../components/ProgramCard";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
 
-import { ProgramMap } from "@/components/StudentsTable/types";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { ProgramsContext } from "@/contexts/program";
 import { UserContext } from "@/contexts/user";
 import { useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
@@ -18,29 +18,12 @@ export default function Programs() {
   const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);
   const extraLarge = useMemo(() => windowSize.width >= 2000, [windowSize.width]);
 
-  const [programs, setPrograms] = useState<ProgramMap>({});
-
+  const {
+    allPrograms: programs,
+    setAllPrograms: setPrograms,
+    isLoading,
+  } = useContext(ProgramsContext);
   const { isAdmin } = useContext(UserContext);
-
-  useEffect(() => {
-    getAllPrograms().then(
-      (result) => {
-        if (result.success) {
-          const programsObject = result.data.reduce(
-            (obj, program) => {
-              obj[program._id] = program;
-              return obj;
-            },
-            {} as Record<string, Program>,
-          );
-          setPrograms(programsObject);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  });
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar flex flex-col";
   let headerClass = "flex flex-row";
@@ -69,9 +52,8 @@ export default function Programs() {
       cardClass += " p-2";
     }
   } else {
-    titleClass += " text-[40px] leading-none h-10";
-    headerClass += " p-5 pt-10 pb-5";
-    cardClass += " p-5";
+    titleClass += " text-4xl leading-none h-10";
+    headerClass += "pt-10 pb-5";
     emptyClass += " pb-40";
     emptyHeight = 99;
     emptyWidth = 156;
@@ -80,7 +62,7 @@ export default function Programs() {
       cardsGridClass += " grid-cols-3 max-w-[1740px]";
       headerClass += " max-w-[1740px]";
     } else {
-      cardsGridClass += " grid-cols-2 max-w-[1160px]";
+      cardsGridClass += " grid-cols-2 max-w-[1160px] gap-10";
       headerClass += " max-w-[1160px]";
     }
   }
@@ -108,27 +90,33 @@ export default function Programs() {
         )}
         {/* Should be replaced with Add Button when created */}
       </div>
-      {Object.keys(programs).length === 0 && (
-        <div className={emptyClass}>
-          <div className={"flex flex-row justify-center"}>
-            <Image
-              id="emptyId"
-              alt="empty"
-              src="/programs/Empty.png"
-              height={emptyHeight}
-              width={emptyWidth}
-            />
-          </div>
-        </div>
-      )}
-      {Object.keys(programs).length > 0 && (
-        <div className={cardsGridClass}>
-          {Object.values(programs).map((program) => (
-            <div id={"card" + program._id} className={cardClass} key={program._id}>
-              <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <>
+          {Object.keys(programs).length === 0 && (
+            <div className={emptyClass}>
+              <div className={"flex flex-row justify-center"}>
+                <Image
+                  id="emptyId"
+                  alt="empty"
+                  src="/programs/Empty.png"
+                  height={emptyHeight}
+                  width={emptyWidth}
+                />
+              </div>
             </div>
-          ))}
-        </div>
+          )}
+          {Object.keys(programs).length > 0 && (
+            <div className={cardsGridClass}>
+              {Object.values(programs).map((program) => (
+                <div className={cardClass} key={program._id}>
+                  <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </main>
   );
