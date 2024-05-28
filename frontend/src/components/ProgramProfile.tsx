@@ -2,7 +2,7 @@ import { Poppins } from "next/font/google";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
-import { Program, getProgram } from "../api/programs";
+import { Enrollment, Program, getProgram, getProgramEnrollments } from "../api/programs";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -21,6 +21,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
 
   const [program, setProgram] = useState<Program>();
   const [fillerText, setFillerText] = useState<string>("Loading");
+  const [enrollments, setEnrollments] = useState<[Enrollment]>();
 
   useEffect(() => {
     getProgram(id).then(
@@ -31,6 +32,19 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
         } else {
           setFillerText("No Program Found");
           console.log(fillerText);
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+    getProgramEnrollments(id).then(
+      (result) => {
+        if (result.success) {
+          setEnrollments(result.data);
+          console.log("enrollments found");
+        } else {
+          console.log("error finding enrollments");
         }
       },
       (error) => {
@@ -89,6 +103,14 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
     return output;
   }
 
+  function getStudentNum(num: number): string {
+    if (num === 1) {
+      return "1 student";
+    } else {
+      return num + " students";
+    }
+  }
+
   titleClass = cn(titleClass, poppins.className);
   return (
     <div className="flex h-full flex-col">
@@ -102,7 +124,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
               {!isVarying(program.type) && !isTablet && <p>{reformatDays(program.daysOfWeek)}</p>}
               <p> • </p>
               <div className="flex flex-row">
-                {isTablet && <p>5 placeholder</p>}
+                {isTablet && enrollments && <p>{getStudentNum(enrollments.length)}</p>}
                 <div className={iconClass}>
                   <Image
                     alt="students"
@@ -111,7 +133,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
                     width={iconWidth}
                   />
                 </div>
-                {!isTablet && <p>5 placeholder</p>}
+                {!isTablet && enrollments && <p>{getStudentNum(enrollments.length)}</p>}
               </div>
               <p> • </p>
               <p>${program.hourlyPay}/hour</p>
@@ -133,7 +155,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
             <div className={middleDivClass}>
               <div className={outerTableClass}>
                 <div className={innerTableClass}>
-                  <ProgramProfileTable id={id} />
+                  {enrollments && <ProgramProfileTable enrollments={enrollments} />}
                 </div>
               </div>
             </div>

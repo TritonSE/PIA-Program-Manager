@@ -1,9 +1,9 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { Program } from "../api/programs";
+import { Enrollment, Program, getProgramEnrollments } from "../api/programs";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { ProgramProfile } from "../components/ProgramProfile";
 import { useWindowSize } from "../hooks/useWindowSize";
@@ -52,6 +52,24 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
   const optionsId = "option" + program._id;
 
   const router = useRouter();
+
+  const [enrollments, setEnrollments] = useState<[Enrollment]>();
+
+  useEffect(() => {
+    getProgramEnrollments(program._id).then(
+      (result) => {
+        if (result.success) {
+          setEnrollments(result.data);
+          console.log("enrollments found");
+        } else {
+          console.log("error finding enrollments");
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+  }, []);
 
   const optionsButton = document.getElementById(optionsId);
   if (optionsButton !== null) {
@@ -177,6 +195,14 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     }
   }
 
+  function getStudentNum(num: number): string {
+    if (num === 1) {
+      return "1 student";
+    } else {
+      return num + " students";
+    }
+  }
+
   return (
     <div>
       <div id={cardId} className={cardClass} onClick={openDialog}>
@@ -222,7 +248,7 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
                 width={18}
                 className={iconClass}
               />
-              <p className={numTextClass}>5 Placeholder</p>
+              {enrollments && <p className={numTextClass}>{getStudentNum(enrollments.length)}</p>}
               {/* {program.students.length === 0 && <p className={numTextClass}>No Students</p>}
               {program.students.length === 1 && <p className={numTextClass}>1 Student</p>}
               {program.students.length > 1 && (

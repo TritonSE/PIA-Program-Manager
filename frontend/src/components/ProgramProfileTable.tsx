@@ -1,31 +1,11 @@
-import { useEffect, useState } from "react";
-
-import { Enrollment, getProgramEnrollments } from "../api/programs";
+import { Enrollment } from "../api/programs";
 
 export type ProgramProfileTableProps = {
-  id: string;
+  enrollments: [Enrollment];
   className?: string;
 };
 
-export function ProgramProfileTable({ id, className }: ProgramProfileTableProps) {
-  const [enrollments, setEnrollments] = useState<[Enrollment]>();
-
-  useEffect(() => {
-    getProgramEnrollments(id).then(
-      (result) => {
-        if (result.success) {
-          setEnrollments(result.data);
-          console.log("enrollments found");
-        } else {
-          console.log("error finding enrollments");
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  });
-
+export function ProgramProfileTable({ enrollments, className }: ProgramProfileTableProps) {
   let outerDivClass = "";
 
   if (className) {
