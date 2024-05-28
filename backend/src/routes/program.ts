@@ -13,5 +13,6 @@ router.patch("/:id", ProgramValidator.updateProgram, ProgramController.updatePro
 router.post("/create", ProgramValidator.createProgram, ProgramController.createProgram);
 router.get("/all", ProgramController.getAllPrograms);
 router.get("/:id", ProgramController.getProgram);
+router.get("/enrollments/:id", ProgramController.getProgramEnrollments);
 
 export default router;

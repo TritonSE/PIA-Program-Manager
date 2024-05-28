@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 import createHttpError from "http-errors";
 // import { error } from "firebase-functions/logger";
 
+import EnrollmentModel from "../models/enrollment";
 import ProgramModel from "../models/program";
 import validationErrorParser from "../util/validationErrorParser";
 
@@ -75,6 +76,18 @@ export const getAllPrograms: RequestHandler = async (req, res, next) => {
     const programs = await ProgramModel.find();
 
     res.status(200).json(programs);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProgramEnrollments: RequestHandler = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const enrollments = await EnrollmentModel.find({ programId: id });
+
+    res.status(200).json(enrollments);
   } catch (error) {
     next(error);
   }
