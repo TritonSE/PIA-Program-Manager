@@ -114,7 +114,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
                 {!isTablet && <p>5 placeholder</p>}
               </div>
               <p> • </p>
-              <p>${program.hourly}/hour</p>
+              <p>${program.hourlyPay}/hour</p>
             </div>
           </div>
         )}
