@@ -8,7 +8,9 @@ const programSchema = new Schema({
   color: { type: String, required: true },
   hourlyPay: { type: Number, required: true },
   sessions: { type: [[String]], required: true },
-  archived: { type: Boolean, required: false },
+  archived: { type: Boolean, required: true },
+
+  dateUpdated: { type: String, required: true },
 });
 
 type Program = InferSchemaType<typeof programSchema>;

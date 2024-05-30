@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 
 import { Program, archiveProgram } from "../../api/programs";
 import { Button } from "../Button";
+import { ProgramMap } from "../StudentsTable/types";
 import { Textfield } from "../Textfield";
 import { Dialog, DialogClose, DialogContentSlide, DialogTrigger } from "../ui/dialog";
 
@@ -14,6 +15,8 @@ type archiveProps = {
   setOpenParent: React.Dispatch<React.SetStateAction<boolean>>;
   data: Program;
   isMobile?: boolean;
+  setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
+  setAlertState: React.Dispatch<React.SetStateAction<{ open: boolean; message: string }>>;
 };
 
 function ProgramArchiveHeader({ label }: props) {
@@ -48,7 +51,13 @@ function ProgramArchiveHeader({ label }: props) {
 }
 
 //Currently no functionality, just a button that closes the form
-export default function ProgramArchive({ setOpenParent, data, isMobile = false }: archiveProps) {
+export default function ProgramArchive({
+  setOpenParent,
+  data,
+  isMobile = false,
+  setPrograms,
+  setAlertState,
+}: archiveProps) {
   const [openArchive, setOpenArchive] = useState(false);
   const {
     register: archiveRegister,
@@ -72,6 +81,13 @@ export default function ProgramArchive({ setOpenParent, data, isMobile = false }
             archiveReset();
             setOpenArchive(false);
             setOpenParent(false);
+            setAlertState({ open: true, message: result.data.name + " has been archived" });
+            setPrograms((prevPrograms: ProgramMap) => {
+              if (Object.keys(prevPrograms).includes(result.data._id))
+                return { ...prevPrograms, [result.data._id]: { ...result.data } };
+              else console.log("Program ID does not exist");
+              return prevPrograms;
+            });
           } else {
             console.log(result.error);
             alert("Unable to archive program: " + result.error);

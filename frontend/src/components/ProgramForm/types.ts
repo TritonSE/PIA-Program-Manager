@@ -7,6 +7,7 @@ export type ProgramData = {
   hourlyPay: string;
   sessions: [string[]];
   archived: boolean;
+  dateUpdated: string;
 };
 
 export type CreateProgramRequest = {

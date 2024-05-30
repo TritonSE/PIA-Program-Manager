@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React, { useContext, useMemo, useState } from "react";
 
+import AlertCard from "../components/AlertCard";
 import { ProgramCard } from "../components/ProgramCard";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { useWindowSize } from "../hooks/useWindowSize";
@@ -21,6 +22,11 @@ export default function Programs() {
   //const [programs, setPrograms] = useState<ProgramMap>({});
   const [archiveView, setArchiveView] = useState(false);
   const [sliderOffset, setSliderOffset] = useState(0);
+
+  const [alertState, setAlertState] = useState<{ open: boolean; message: string }>({
+    open: false,
+    message: "",
+  });
 
   const {
     allPrograms: programs,
@@ -97,10 +103,16 @@ export default function Programs() {
         <h1 className={titleClass}>Programs</h1>
         <div className="grow"></div>
         {isAdmin && (
-          <ProgramFormButton type="add" component={addButton} setPrograms={setPrograms} />
+          <ProgramFormButton
+            type="add"
+            component={addButton}
+            setPrograms={setPrograms}
+            setAlertState={setAlertState}
+          />
         )}
         {/* Should be replaced with Add Button when created */}
       </div>
+
       <div className={selectorWrapper}>
         <div className={selectorClass}>
           <input
@@ -157,7 +169,13 @@ export default function Programs() {
               {Object.values(programs).map((program) =>
                 program.archived === archiveView || program.archived === undefined ? (
                   <div className={cardClass} key={program._id}>
-                    <ProgramCard program={program} isAdmin={isAdmin} setPrograms={setPrograms} />
+                    <ProgramCard
+                      program={program}
+                      isAdmin={isAdmin}
+                      setPrograms={setPrograms}
+                      archiveView={archiveView}
+                      setAlertState={setAlertState}
+                    />
                   </div>
                 ) : (
                   <></>
@@ -167,6 +185,12 @@ export default function Programs() {
           )}
         </>
       )}
+      <AlertCard
+        {...alertState}
+        onClose={() => {
+          setAlertState({ ...alertState, open: false });
+        }}
+      />
     </main>
   );
 }
