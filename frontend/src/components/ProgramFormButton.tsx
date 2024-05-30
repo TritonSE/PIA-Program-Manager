@@ -178,6 +178,7 @@ export default function ProgramFormButton({
             setOpen={setOpenCancel}
             onCancel={() => {
               setOpenForm(false);
+              setOpenCancel(false);
               reset();
             }}
           />

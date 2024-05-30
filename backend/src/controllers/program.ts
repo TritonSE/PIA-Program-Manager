@@ -91,7 +91,6 @@ export const archiveProgram: RequestHandler = async (req, res, next) => {
     await EnrollmentModel.updateMany(
       { programId: { $eq: programId } },
       { $set: { status: "Archived", dateUpdated: Date.now() } },
-      { returnDocument: "after" },
     );
 
     return res.status(200).json(program);

@@ -101,19 +101,20 @@ export default function ProgramArchive({
 
   return (
     <Dialog open={openArchive}>
-      <div className="absolute inset-3 flex h-[10%] justify-end">
+      <div className="pointer-events-none absolute inset-3 flex h-[10%] justify-end">
         <DialogTrigger asChild>
           {!isMobile ? (
             <Button
               label="Archive"
               kind="destructive-secondary"
+              className="pointer-events-auto"
               onClick={() => {
                 setOpenArchive(true);
               }}
             />
           ) : (
             <div
-              className="pt-1 text-destructive"
+              className="pointer-events-auto pt-1 text-destructive"
               onClick={() => {
                 setOpenArchive(true);
               }}

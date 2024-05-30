@@ -11,8 +11,8 @@ export default function AlertCard({
 }) {
   if (!open) return <></>;
   return (
-    <div className="absolute bottom-0 left-0 flex min-h-16 w-full justify-center">
-      <div className="z-20 flex max-h-12 min-w-[10%] max-w-[40%] items-center rounded-sm bg-black">
+    <div className="absolute bottom-0 left-0 flex min-h-12 w-full justify-center sm:min-h-16">
+      <div className="z-20 flex max-h-8 min-w-[10%] max-w-[90%] items-center rounded-sm bg-black sm:max-h-12 sm:max-w-[40%]">
         <div className="flex max-w-full flex-row items-center overflow-hidden " onClick={onClose}>
           <svg
             width="16"
@@ -27,7 +27,7 @@ export default function AlertCard({
               fill="White"
             />
           </svg>
-          <p className="truncate pr-4 text-white">{message}</p>
+          <p className="truncate pr-4 text-sm text-white sm:text-lg">{message}</p>
         </div>
       </div>
     </div>
