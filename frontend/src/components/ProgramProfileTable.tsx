@@ -1,11 +1,18 @@
 import { Enrollment } from "../api/programs";
 
+import { StudentMap } from "./StudentsTable/types";
+
 export type ProgramProfileTableProps = {
   enrollments: [Enrollment];
+  allStudents: StudentMap;
   className?: string;
 };
 
-export function ProgramProfileTable({ enrollments, className }: ProgramProfileTableProps) {
+export function ProgramProfileTable({
+  enrollments,
+  allStudents,
+  className,
+}: ProgramProfileTableProps) {
   let outerDivClass = "";
 
   if (className) {
@@ -74,6 +81,17 @@ export function ProgramProfileTable({ enrollments, className }: ProgramProfileTa
     return dateString;
   }
 
+  function getName(id: string): string {
+    let name = "No Name Found";
+    Object.values(allStudents).forEach((studentObj) => {
+      if (studentObj._id === id) {
+        name = studentObj.student.firstName + " " + studentObj.student.lastName;
+      }
+    });
+
+    return name;
+  }
+
   return (
     <div className={outerDivClass}>
       <table className={tableClass}>
@@ -93,14 +111,11 @@ export function ProgramProfileTable({ enrollments, className }: ProgramProfileTa
           <tbody>
             {enrollments.map((enrollment) => (
               <tr key={enrollment._id}>
-                <td className={tdClass + " border-l-0"}>{enrollment._id}</td>
+                <td className={tdClass + " border-l-0"}>{getName(enrollment.studentId)}</td>
                 <td className={tdClass}>{getStatus(enrollment.status)}</td>
                 <td className={tdClass}>{enrollment.schedule.join("/")}</td>
                 <td className={tdClass}>{dateToString(enrollment.startDate)}</td>
-                <td className={tdClass}>Temp</td>
-
-                {/* <td className={tdClass}>{dateToString(enrollment.renewalDate)}</td> */}
-
+                <td className={tdClass}>{dateToString(enrollment.renewalDate)}</td>
                 <td className={tdClass}>{enrollment.hoursLeft}</td>
                 <td className={tdClass + " border-r-0"}>{enrollment.authNumber}</td>
               </tr>

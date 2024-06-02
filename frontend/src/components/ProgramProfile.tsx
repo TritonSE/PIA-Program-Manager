@@ -7,6 +7,9 @@ import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
 import { ProgramProfileTable } from "./ProgramProfileTable";
+import { StudentMap } from "./StudentsTable/types";
+
+import { getAllStudents } from "@/api/students";
 
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
 
@@ -22,6 +25,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
   const [program, setProgram] = useState<Program>();
   const [fillerText, setFillerText] = useState<string>("Loading");
   const [enrollments, setEnrollments] = useState<[Enrollment]>();
+  const [allStudents, setAllStudents] = useState<StudentMap>({});
 
   useEffect(() => {
     getProgram(id).then(
@@ -45,6 +49,24 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
           console.log("enrollments found");
         } else {
           console.log("error finding enrollments");
+        }
+      },
+      (error) => {
+        console.log(error);
+      },
+    );
+    getAllStudents().then(
+      (result) => {
+        if (result.success) {
+          // Convert student array to object with keys as ids and values as corresponding student
+          const studentsObject = result.data.reduce((obj, student) => {
+            obj[student._id] = student;
+            return obj;
+          }, {} as StudentMap);
+
+          setAllStudents(studentsObject);
+        } else {
+          console.log(result.error);
         }
       },
       (error) => {
@@ -155,7 +177,9 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
             <div className={middleDivClass}>
               <div className={outerTableClass}>
                 <div className={innerTableClass}>
-                  {enrollments && <ProgramProfileTable enrollments={enrollments} />}
+                  {enrollments && allStudents && (
+                    <ProgramProfileTable enrollments={enrollments} allStudents={allStudents} />
+                  )}
                 </div>
               </div>
             </div>
