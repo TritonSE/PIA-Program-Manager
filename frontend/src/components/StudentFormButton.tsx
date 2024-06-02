@@ -7,6 +7,7 @@ import { cn } from "../lib/utils";
 
 import { Button } from "./Button";
 import ContactInfo from "./StudentForm/ContactInfo";
+import EnrollmentsEdit, { emptyEnrollment } from "./StudentForm/EnrollmentsEdit";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
@@ -44,8 +45,9 @@ export default function StudentFormButton({
     setValue: setCalendarValue,
     reset,
     handleSubmit,
+    control,
   } = useForm<StudentFormData>({
-    defaultValues: { varying_programs: [], regular_programs: [], dietary: [] },
+    defaultValues: { enrollments: [emptyEnrollment] },
   });
   //Default values can be set for all fields but I specified these three fields because the checkbox value can sometimes be a string if it's a single value rather than array of strings. https://github.com/react-hook-form/react-hook-form/releases/tag/v7.30.0
 
@@ -56,49 +58,54 @@ export default function StudentFormButton({
 
   const onFormSubmit: SubmitHandler<StudentFormData> = (formData: StudentFormData) => {
     const programAbbreviationToId = {} as Record<string, string>; // abbreviation -> programId
-    allPrograms.forEach((program) => (programAbbreviationToId[program.abbreviation] = program._id));
+    allPrograms.forEach(
+      (enrollments) => (programAbbreviationToId[enrollments.abbreviation] = enrollments._id),
+    );
 
     const transformedData: StudentData = {
       student: {
-        firstName: formData.student_name,
-        lastName: formData.student_last,
-        email: formData.student_email,
-        phoneNumber: formData.student_phone,
+        firstName: formData.studentName,
+        lastName: formData.studentLast,
+        email: formData.studentEmail,
+        phoneNumber: formData.studentPhone,
       },
       emergency: {
-        firstName: formData.emergency_name,
-        lastName: formData.emergency_last,
-        email: formData.emergency_email,
-        phoneNumber: formData.emergency_phone,
+        firstName: formData.emergencyName,
+        lastName: formData.emergencyLast,
+        email: formData.emergencyEmail,
+        phoneNumber: formData.emergencyPhone,
       },
       serviceCoordinator: {
-        firstName: formData.serviceCoordinator_name,
-        lastName: formData.serviceCoordinator_last,
-        email: formData.serviceCoordinator_email,
-        phoneNumber: formData.serviceCoordinator_phone,
+        firstName: formData.serviceCoordinatorName,
+        lastName: formData.serviceCoordinatorLast,
+        email: formData.serviceCoordinatorEmail,
+        phoneNumber: formData.serviceCoordinatorPhone,
       },
       location: formData.address,
       medication: formData.medication,
       birthday: new Date(formData.birthdate),
-      intakeDate: new Date(formData.intake_date),
-      tourDate: new Date(formData.tour_date),
-      programs: formData.regular_programs
-        .map((abbreviation) => ({
-          programId: programAbbreviationToId[abbreviation],
-          status: "Joined",
-          dateUpdated: new Date(),
-          hoursLeft: 0,
-        }))
-        .concat(
-          formData.varying_programs.map((abbreviation) => ({
-            programId: programAbbreviationToId[abbreviation],
-            status: "Joined",
-            dateUpdated: new Date(),
-            hoursLeft: 0,
-          })),
-        ),
-      dietary: formData.dietary,
-      otherString: formData.other,
+      intakeDate: new Date(formData.intakeDate),
+      tourDate: new Date(formData.tourDate),
+      enrollments: formData?.enrollments,
+      // .map((abbreviation) => ({
+      //   programId: programAbbreviationToId[abbreviation],
+      //   status: "Joined",
+      //   dateUpdated: new Date(),
+      //   hoursLeft: 0,
+      // }))
+      // .concat(
+      //   formData.varyingPrograms.map((abbreviation) => ({
+      //   programId: programAbbreviationToId[abbreviation],
+      //   status: "Joined",
+      //   dateUpdated: new Date(),
+      //   hoursLeft: 0,
+      //   })),
+      // ),
+      conservation: formData.conservation,
+      UCINumber: formData.UCINumber,
+      incidentForm: formData.incidentForm,
+      documents: formData.documents,
+      profilePicture: formData.profilePicture,
     };
 
     console.log(transformedData);
@@ -204,6 +211,14 @@ export default function StudentFormButton({
               />
             </fieldset>
           </div>
+          <fieldset disabled={!isAdmin}>
+            <EnrollmentsEdit
+              register={register}
+              setCalendarValue={setCalendarValue}
+              data={data ?? null}
+              control={control}
+            />
+          </fieldset>
           <div className="ml-auto mt-5 flex gap-5">
             {/* Modal Confirmation Dialog */}
             {isAdmin ? (

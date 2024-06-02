@@ -85,7 +85,7 @@ export default function StudentsTable() {
         id: studentObj._id,
         student: studentObj.student.firstName + " " + studentObj.student.lastName,
         emergencyContact: studentObj.emergency,
-        programs: studentObj.programs,
+        enrollments: studentObj.enrollments,
       } as StudentTableRow;
     });
     setStudentTable(studentsInformation);
@@ -118,6 +118,8 @@ export default function StudentsTable() {
     debugHeaders: true,
     debugColumns: false,
   });
+
+  console.log(data);
 
   if (isLoading) return <p>Loading...</p>;
 

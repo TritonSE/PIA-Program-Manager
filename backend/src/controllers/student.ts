@@ -80,7 +80,7 @@ export const getAllStudents: RequestHandler = async (_, res, next) => {
     const hydratedStudents = await Promise.all(
       students.map(async (student) => {
         const enrollments = await EnrollmentModel.find({ studentId: student._id });
-        return { ...student.toObject(), programs: enrollments };
+        return { ...student.toObject(), enrollments };
       }),
     );
 

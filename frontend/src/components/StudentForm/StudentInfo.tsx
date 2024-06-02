@@ -34,7 +34,7 @@ export default function StudentInfo({
         <h3>Intake date</h3>
         <Textfield
           register={register}
-          name="intake_date"
+          name="intakeDate"
           placeholder="00/00/0000"
           calendar={true}
           setCalendarValue={setCalendarValue}
@@ -45,7 +45,7 @@ export default function StudentInfo({
         <h3>Tour date</h3>
         <Textfield
           register={register}
-          name="tour_date"
+          name="tourDate"
           placeholder="00/00/0000"
           calendar={true}
           setCalendarValue={setCalendarValue}
@@ -56,7 +56,7 @@ export default function StudentInfo({
         <h3>Incident Form</h3>
         <Textfield
           register={register}
-          name="incident_form"
+          name="incidentForm"
           placeholder="http://www.company.com"
           defaultValue={data?.incidentForm}
         />
@@ -65,7 +65,7 @@ export default function StudentInfo({
         <h3>UCI Number</h3>
         <Textfield
           register={register}
-          name="uci_number"
+          name="UCINumber"
           placeholder="123456"
           defaultValue={data?.UCINumber}
         />

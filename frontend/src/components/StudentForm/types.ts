@@ -21,40 +21,39 @@ export type StudentData = {
   birthday: Date;
   intakeDate: Date;
   tourDate: Date;
-  dietary: string[];
   conservation: boolean;
   UCINumber: string;
   incidentForm: string;
   documents: string[];
   profilePicture: string;
+  enrollments: Enrollment[];
 };
 
 export type StudentFormData = {
-  student_name: string;
-  student_last: string;
-  student_email: string;
-  student_phone: string;
-  emergency_name: string;
-  emergency_last: string;
-  emergency_email: string;
-  emergency_phone: string;
-  serviceCoordinator_name: string;
-  serviceCoordinator_last: string;
-  serviceCoordinator_email: string;
-  serviceCoordinator_phone: string;
+  studentName: string;
+  studentLast: string;
+  studentEmail: string;
+  studentPhone: string;
+  emergencyName: string;
+  emergencyLast: string;
+  emergencyEmail: string;
+  emergencyPhone: string;
+  serviceCoordinatorName: string;
+  serviceCoordinatorLast: string;
+  serviceCoordinatorEmail: string;
+  serviceCoordinatorPhone: string;
   address: string;
   birthdate: Date;
   medication: string;
-  dietary: string[];
   other: string;
-  intake_date: Date;
-  tour_date: Date;
+  intakeDate: Date;
+  tourDate: Date;
   conservation: boolean;
   UCINumber: string;
   incidentForm: string;
   documents: string[];
   profilePicture: string;
-  programs: Enrollment[];
+  enrollments: Enrollment[];
 };
 
 export type Enrollment = {
