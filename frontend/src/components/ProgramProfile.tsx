@@ -32,7 +32,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
       (result) => {
         if (result.success) {
           setProgram(result.data);
-          console.log(id);
+          console.log("Program Found");
         } else {
           setFillerText("No Program Found");
           console.log(fillerText);
@@ -46,9 +46,9 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
       (result) => {
         if (result.success) {
           setEnrollments(result.data);
-          console.log("enrollments found");
+          console.log("Enrollments Found");
         } else {
-          console.log("error finding enrollments");
+          console.log("Enrollments Not Found");
         }
       },
       (error) => {

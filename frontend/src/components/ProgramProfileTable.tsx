@@ -1,6 +1,10 @@
+import { useMemo } from "react";
+
 import { Enrollment } from "../api/programs";
 
 import { StudentMap } from "./StudentsTable/types";
+
+import { useWindowSize } from "@/hooks/useWindowSize";
 
 export type ProgramProfileTableProps = {
   enrollments: [Enrollment];
@@ -13,6 +17,9 @@ export function ProgramProfileTable({
   allStudents,
   className,
 }: ProgramProfileTableProps) {
+  const { windowSize } = useWindowSize();
+  const isTablet = useMemo(() => windowSize.width < 1024, [windowSize.width]);
+
   let outerDivClass = "";
 
   if (className) {
@@ -20,9 +27,19 @@ export function ProgramProfileTable({
   }
 
   const tableClass = "h-full w-full border-collapse";
-  const tdClass = "border-pia_neutral_gray border-[1px] p-[12px]";
-  const thClass = tdClass + " bg-pia_light_gray border-t-0";
-  const dotClass = "my-[8px] mr-[8px] h-[8px] w-[8px] rounded-full";
+  let tdClass = "border-pia_neutral_gray border-[1px]";
+  let thClass = "bg-pia_light_gray border-t-0";
+  let dotClass = "rounded-full";
+
+  if (isTablet) {
+    tdClass += " p-[8px] text-xs";
+    dotClass += " my-[4px] mx-[8px] h-[8px] w-[8px]";
+  } else {
+    tdClass += " p-[12px] text-base";
+    dotClass += " my-[8px] mr-[8px] h-[8px] w-[8px]";
+  }
+
+  thClass += " " + tdClass;
 
   function getStatus(status: string): React.JSX.Element {
     status = status.toLowerCase();
@@ -120,6 +137,33 @@ export function ProgramProfileTable({
                 <td className={tdClass + " border-r-0"}>{enrollment.authNumber}</td>
               </tr>
             ))}
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
+            <tr>
+              <td className={tdClass}>temp</td>
+            </tr>
           </tbody>
         )}
       </table>
