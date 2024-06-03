@@ -1,15 +1,5 @@
 import { APIResult, GET, PATCH, handleAPIError } from "@/api/requests";
 
-type VerifyUser = {
-  uid: string;
-  role: "admin" | "team";
-  approvalStatus: boolean;
-  profilePicture: string;
-  name: string;
-  email: string;
-  lastChangedPassword: Date;
-};
-
 export type User = {
   _id: string;
   name: string;
@@ -25,10 +15,10 @@ export const createAuthHeader = (firebaseToken: string) => ({
   Authorization: `Bearer ${firebaseToken}`,
 });
 
-export const verifyUser = async (firebaseToken: string): Promise<APIResult<VerifyUser>> => {
+export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>> => {
   try {
     const response = await GET("/user", createAuthHeader(firebaseToken));
-    const json = (await response.json()) as VerifyUser;
+    const json = (await response.json()) as User;
     return { success: true, data: json };
   } catch (error) {
     return handleAPIError(error);

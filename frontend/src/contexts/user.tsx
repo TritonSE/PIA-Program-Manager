@@ -76,7 +76,7 @@ export const UserContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(reloadUser, [initialLoading, firebaseUser]);
 
   const isAdmin = useMemo(
-    () => firebaseUser !== null && piaUser !== null && piaUser.role === "admin",
+    () => firebaseUser !== null && piaUser !== null && piaUser.accountType === "admin",
     [firebaseUser, piaUser],
   );
 
