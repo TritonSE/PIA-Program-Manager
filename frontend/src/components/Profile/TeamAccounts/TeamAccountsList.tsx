@@ -1,15 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import ArchiveIcon from "../../../../public/icons/archive.svg";
 import GreenCheckMarkIcon from "../../../../public/icons/green_check_mark.svg";
 
-import { User, editAccountType, editArchiveStatus, getAllTeamAccounts } from "@/api/user";
+import { AccountTypes } from "./TeamAccounts";
+import { useFetchTeamAccounts } from "./hooks/useFetchTeamAccounts";
+import { useHandleAccountArchive } from "./hooks/useHandleAccountArchive";
+
+import { User } from "@/api/user";
 import { Button } from "@/components/Button";
 import ModalConfirmation from "@/components/Modals/ModalConfirmation";
 import { UserData } from "@/pages/profile";
 
 type TeamAccountsListProps = {
-  accountType: string;
+  accountType: AccountTypes;
   userData: UserData;
 };
 
@@ -19,82 +23,15 @@ export default function TeamAccountsList({ accountType, userData }: TeamAccounts
   const [allAccounts, setAllAccounts] = useState<User[]>([]);
   const [filteredAccounts, setFilteredAccounts] = useState<User[]>([]);
 
-  useEffect(() => {
-    if (firebaseUser) {
-      firebaseUser
-        ?.getIdToken()
-        .then((token) => {
-          getAllTeamAccounts(token).then(
-            (result) => {
-              setFirebaseToken(token);
-              if (result.success) {
-                console.log("Fetched all users", result.data);
-                setAllAccounts(result.data);
-                setFilteredAccounts(result.data);
-              } else {
-                console.error(result.error);
-              }
-            },
-            (error) => {
-              console.error(error);
-            },
-          );
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
-  }, [firebaseUser]);
+  useFetchTeamAccounts({ firebaseUser, setAllAccounts, setFilteredAccounts, setFirebaseToken });
 
-  useEffect(() => {
-    const tempAccounts = allAccounts.filter((account) => {
-      if (accountType === "current") {
-        return !account.archived;
-      } else if (accountType === "archived") {
-        return account.archived;
-      }
-      return true;
-    });
-    setFilteredAccounts(tempAccounts);
-  }, [accountType, allAccounts]);
-
-  const handleArchive = (accountId: string) => {
-    editArchiveStatus(accountId, firebaseToken)
-      .then(
-        (result) => {
-          if (result.success) {
-            console.log("Archived user", result.data);
-          } else {
-            console.error(result.error);
-          }
-        },
-        (error) => {
-          console.error(error);
-        },
-      )
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const handleAccountUpdate = (accountId: string) => {
-    editAccountType(accountId, firebaseToken)
-      .then(
-        (result) => {
-          if (result.success) {
-            console.log("Updated user", result.data);
-          } else {
-            console.error(result.error);
-          }
-        },
-        (error) => {
-          console.error(error);
-        },
-      )
-      .catch((error) => {
-        console.error(error);
-      });
-  };
+  const { handleAccountUpdate, handleArchive } = useHandleAccountArchive({
+    firebaseToken,
+    accountType,
+    allAccounts,
+    setAllAccounts,
+    setFilteredAccounts,
+  });
 
   return (
     <ul
@@ -114,7 +51,7 @@ export default function TeamAccountsList({ accountType, userData }: TeamAccounts
               <p>Account Type: Team</p>
             </div>
             <div className="flex gap-5">
-              {accountType === "current" ? (
+              {accountType === "current" && !account.archived ? (
                 <>
                   <ModalConfirmation
                     icon={<ArchiveIcon />}

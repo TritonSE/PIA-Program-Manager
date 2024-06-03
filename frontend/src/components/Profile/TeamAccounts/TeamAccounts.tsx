@@ -13,9 +13,11 @@ type TeamAccountsProps = {
   userData: UserData;
 };
 
+export type AccountTypes = "current" | "archived";
+
 export default function TeamAccounts({ userData }: TeamAccountsProps) {
   const { isAdmin } = useContext(UserContext);
-  const [accountType, setAccountType] = useState<"current" | "archived">("current");
+  const [accountType, setAccountType] = useState<AccountTypes>("current");
 
   if (!isAdmin) return;
 

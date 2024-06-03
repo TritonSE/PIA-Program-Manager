@@ -312,8 +312,10 @@ export const editArchiveStatus = async (
       throw ValidationError.UNAUTHORIZED_USER;
     }
 
+    // Disable Firebase account to prevent login
+    await firebaseAdminAuth.updateUser(updateUserId, { disabled: true });
+
     const updatedUserAdmin = await UserModel.findByIdAndUpdate(updateUserId, { archived: true });
-    console.log(updatedUserAdmin);
 
     return res.status(200).json(updatedUserAdmin);
   } catch (error) {
