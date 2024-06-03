@@ -38,7 +38,7 @@ export const sendDenialEmail = async (email: string) => {
   try {
     await transporter.sendMail({
       from: process.env.EMAIL_ADDRESS_1,
-      to: email, 
+      to: email,
       subject: "An Update on Your PIA Account Approval Status",
       // text: `Hello,
       //         Thank you for your interest in Plant It Again.

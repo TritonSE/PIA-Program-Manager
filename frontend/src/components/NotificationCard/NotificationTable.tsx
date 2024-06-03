@@ -12,6 +12,8 @@ export default function NotificationTable() {
       try {
         const result = await getNotApprovedUsers();
         if (result.success) {
+          console.log("notApprovedUsers:", result.data);
+
           setNotApprovedUsers(result.data);
         } else {
           console.error("Failed to fetch not-approved users:", result.error);
@@ -72,7 +74,6 @@ export default function NotificationTable() {
   //   }
   // };
 
-
   const handleDenyUser = async (email: string) => {
     try {
       // Immediately update the UI (remove corresponding Notification Card)
@@ -90,7 +91,6 @@ export default function NotificationTable() {
       } else {
         console.error(`Failed to delete user with email ${email}:`, deletionResult.error);
       }
-
     } catch (error) {
       console.error("Error handling user denial:", error);
     }
@@ -103,7 +103,8 @@ export default function NotificationTable() {
           <NotificationCard
             name={user.name}
             email={user.email}
-            account_type={user.role}
+            // account_type={user.role}
+            account_type={user.accountType} // console log shows correct property name is accountType
             onApprove={() => handleApproveUser(user.email)}
             onDeny={() => handleDenyUser(user.email)}
           />

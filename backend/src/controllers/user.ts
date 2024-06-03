@@ -177,7 +177,7 @@ export const approveUser = async (req: Request, res: Response, nxt: NextFunction
 //     nxt(error);
 //   }
 // };
- 
+
 export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
   console.log("Inside denyUser controller");
 
@@ -191,7 +191,7 @@ export const denyUser = async (req: Request, res: Response, nxt: NextFunction) =
     console.log("denyUser controller : 2");
 
     // const user = await UserModel.findOne({ email });
-    const user = await UserModel.findOne({ email : email });
+    const user = await UserModel.findOne({ email });
 
     console.log("denyUser controller : 3");
 
