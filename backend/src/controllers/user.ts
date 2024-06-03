@@ -162,55 +162,27 @@ export const approveUser = async (req: Request, res: Response, nxt: NextFunction
   }
 };
 
-// export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
-//   try {
-//     const { userId, email } = req.body; // firebaseuid and email
-
-//     await UserModel.findByIdAndUpdate(userId, { approvalStatus: false });
-
-//     // await sendDenialEmail(email);
-//     await sendDenialEmail(email as string);
-
-//     res.status(200).send("User denied successfully");
-//   } catch (error) {
-//     console.error(error);
-//     nxt(error);
-//   }
-// };
-
 export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
   console.log("Inside denyUser controller");
 
   try {
-    console.log("denyUser controller : 1");
-
     const { email } = req.body;
 
     console.log("Email from request body:", email);
 
-    console.log("denyUser controller : 2");
-
     // const user = await UserModel.findOne({ email });
     const user = await UserModel.findOne({ email });
 
-    console.log("denyUser controller : 3");
-
     if (!user) {
-      console.log("Inside !user if statement");
-
       return res.status(404).send("User not found");
     }
 
     console.log("User object:", user);
-    console.log("denyUser controller : 4");
 
     const userId = user._id;
 
     await UserModel.findByIdAndUpdate(userId, { approvalStatus: false });
 
-    console.log("denyUser controller : 5");
-
-    console.log("About to send denial email");
     console.log(email as string);
     // await sendDenialEmail(email);
     await sendDenialEmail(email as string);
