@@ -34,7 +34,6 @@ const verifyAuthToken = async (req: RequestWithUserId, res: Response, next: Next
   let userInfo: DecodedIdToken;
   try {
     userInfo = await decodeAuthToken(token);
-    // req.userId = userInfo.uid;
   } catch (e) {
     return res
       .status(AuthError.INVALID_AUTH_TOKEN.status)

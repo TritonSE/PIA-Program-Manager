@@ -3,16 +3,16 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { cn } from "../../lib/utils";
-import { FrameProps } from "../../pages/profile";
-import { Button } from "../Button";
-import SaveCancelButtons from "../Modals/SaveCancelButtons";
-import { Textfield } from "../Textfield";
-import { Dialog, DialogTrigger } from "../ui/dialog";
+import { cn } from "../../../../lib/utils";
+import { FrameProps } from "../../../../pages/profile";
+import { Button } from "../../../Button";
+import { Textfield } from "../../../Textfield";
+import { Dialog, DialogTrigger } from "../../../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
 import { editName, editPhoto } from "@/api/user";
+import SaveCancelButtons from "@/components/Modals/SaveCancelButtons";
 
 type ProfileBasicData = {
   name: string;
@@ -134,7 +134,9 @@ export function BasicInfoFrame({
   return (
     <section className={cn(frameFormat, className)}>
       {/*Info header*/}
-      <div className="ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl">Basic Info</div>
+      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-xl lg:text-2xl">
+        Basic Info
+      </div>
       {/*Info Fields*/}
       <div className=" h-auto w-full flex-grow">
         <div className="flex h-full flex-col divide-y-2">
@@ -142,12 +144,12 @@ export function BasicInfoFrame({
           <Dialog open={openProfileForm} onOpenChange={setOpenProfileForm}>
             <DialogTrigger asChild>
               <div
-                className="cursor-pointer text-xs hover:bg-pia_accent_green sm:text-base"
+                className="cursor-pointer text-xs hover:bg-[#e7f0f0] sm:text-base"
                 onClick={() => {
                   setOpenProfileForm(true);
                 }}
               >
-                <div className="ml-3 flex h-full w-auto flex-row py-5 pr-5 sm:ml-14">
+                <div className="ml-3 flex h-full w-auto flex-row gap-3 py-5 pr-5 sm:ml-14">
                   <div className="flex w-1/3 flex-none items-center sm:w-1/5">Profile Picture</div>
                   <div className="flex flex-grow items-center text-[#6C6C6C]">
                     {isMobile
@@ -226,7 +228,7 @@ export function BasicInfoFrame({
           <Dialog open={openNameForm} onOpenChange={setOpenNameForm}>
             <DialogTrigger asChild>
               <div
-                className=" flex-grow cursor-pointer py-6 text-xs transition-colors hover:bg-pia_accent_green sm:text-base"
+                className=" flex-grow cursor-pointer py-6 text-xs transition-colors hover:bg-[#e7f0f0] sm:text-base"
                 onClick={() => {
                   setOpenNameForm(true);
                 }}

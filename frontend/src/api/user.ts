@@ -1,6 +1,6 @@
 import { APIResult, GET, PATCH, handleAPIError } from "@/api/requests";
 
-export type User = {
+type VerifyUser = {
   uid: string;
   role: "admin" | "team";
   approvalStatus: boolean;
@@ -10,14 +10,25 @@ export type User = {
   lastChangedPassword: Date;
 };
 
+export type User = {
+  _id: string;
+  name: string;
+  accountType: "admin" | "team";
+  approvalStatus: boolean;
+  email: string;
+  profilePicture: string;
+  lastChangedPassword: Date;
+  archived: boolean;
+};
+
 export const createAuthHeader = (firebaseToken: string) => ({
   Authorization: `Bearer ${firebaseToken}`,
 });
 
-export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>> => {
+export const verifyUser = async (firebaseToken: string): Promise<APIResult<VerifyUser>> => {
   try {
     const response = await GET("/user", createAuthHeader(firebaseToken));
-    const json = (await response.json()) as User;
+    const json = (await response.json()) as VerifyUser;
     return { success: true, data: json };
   } catch (error) {
     return handleAPIError(error);
@@ -122,6 +133,49 @@ export async function editLastChangedPassword(firebaseToken: string): Promise<AP
     const response = await PATCH(`/user/editLastChangedPassword`, dateData, headers);
 
     const json = (await response.json()) as string;
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function getAllTeamAccounts(firebaseToken: string): Promise<APIResult<User[]>> {
+  try {
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET(`/user/getAllTeamAccounts`, headers);
+
+    const json = (await response.json()) as User[];
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function editAccountType(
+  updateUserId: string,
+  firebaseToken: string,
+): Promise<APIResult<User>> {
+  try {
+    const updateAccountData = { updateUserId };
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/user/editAccountType`, updateAccountData, headers);
+
+    const json = (await response.json()) as User;
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function editArchiveStatus(
+  updateUserId: string,
+  firebaseToken: string,
+): Promise<APIResult<User>> {
+  try {
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/user/editArchiveStatus`, { updateUserId }, headers);
+
+    const json = (await response.json()) as User;
     return { success: true, data: json };
   } catch (error) {
     return handleAPIError(error);

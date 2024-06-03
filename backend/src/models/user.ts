@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true },
   profilePicture: { type: String, required: false, default: "default" },
   lastChangedPassword: { type: Date, required: false, default: Date.now() },
+  archived: { type: Boolean, required: false, default: false },
 });
 
 type User = InferSchemaType<typeof userSchema>;

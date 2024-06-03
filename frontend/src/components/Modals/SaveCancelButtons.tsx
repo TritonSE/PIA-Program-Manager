@@ -58,6 +58,7 @@ export default function SaveCancelButtons({
           if (onLeave) onLeave();
         }}
         title="Are you sure you want to leave?"
+        description="Your changes will not be saved."
         confirmText="Leave"
         kind="destructive"
       />
