@@ -50,10 +50,38 @@ export default function NotificationTable() {
     }
   };
 
+  // const handleDenyUser = async (email: string) => {
+  //   try {
+  //     // Immediately update the UI (remove corresponding Notification Card)
+  //     setNotApprovedUsers((prevUsers) => prevUsers.filter((user) => user.email !== email));
+
+  //     // Delete the user from Firebase and MongoDB
+  //     const deletionResult = await deleteUserByEmail(email);
+  //     if (deletionResult.success) {
+  //       console.log(`User with email ${email} successfully deleted.`);
+  //     } else {
+  //       console.error(`Failed to delete user with email ${email}:`, deletionResult.error);
+  //     }
+
+  //     const denialResult = await denyUser(email);
+  //     if (!denialResult.success) {
+  //       console.error("Failed to deny user:", denialResult.error);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error handling user denial:", error);
+  //   }
+  // };
+
+
   const handleDenyUser = async (email: string) => {
     try {
       // Immediately update the UI (remove corresponding Notification Card)
       setNotApprovedUsers((prevUsers) => prevUsers.filter((user) => user.email !== email));
+
+      const denialResult = await denyUser(email);
+      if (!denialResult.success) {
+        console.error("Failed to deny user:", denialResult.error);
+      }
 
       // Delete the user from Firebase and MongoDB
       const deletionResult = await deleteUserByEmail(email);
@@ -63,10 +91,6 @@ export default function NotificationTable() {
         console.error(`Failed to delete user with email ${email}:`, deletionResult.error);
       }
 
-      const denialResult = await denyUser(email);
-      if (!denialResult.success) {
-        console.error("Failed to deny user:", denialResult.error);
-      }
     } catch (error) {
       console.error("Error handling user denial:", error);
     }

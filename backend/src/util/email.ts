@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 export const sendApprovalEmail = async (email: string) => {
   try {
     await transporter.sendMail({
-      from: "PIA-email@gmail.com",
+      from: process.env.EMAIL_ADDRESS_1,
       to: email,
       subject: "Welcome to PIA! Your Account Has Been Approved",
       // text: `Hello,
@@ -37,8 +37,8 @@ export const sendDenialEmail = async (email: string) => {
   console.log("Sending Denial Email");
   try {
     await transporter.sendMail({
-      from: "PIA-email@gmail.com",
-      to: email,
+      from: process.env.EMAIL_ADDRESS_1,
+      to: email, 
       subject: "An Update on Your PIA Account Approval Status",
       // text: `Hello,
       //         Thank you for your interest in Plant It Again.
