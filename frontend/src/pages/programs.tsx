@@ -67,7 +67,8 @@ export default function Programs() {
     }
   }
 
-  let addButtonClass = "m-0 rounded-3xl bg-pia_dark_green text-white";
+  let addButtonClass =
+    "m-0 rounded-3xl bg-pia_dark_green text-white hover:opacity-80 active:opacity-90";
   if (isTablet) {
     addButtonClass += " text-[10px] h-6 px-[10px]";
   } else {

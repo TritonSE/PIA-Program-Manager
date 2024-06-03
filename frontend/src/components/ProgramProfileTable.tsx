@@ -26,8 +26,8 @@ export function ProgramProfileTable({
     outerDivClass = className;
   }
 
-  const tableClass = "h-full w-full border-collapse";
-  let tdClass = "border-pia_neutral_gray border-[1px]";
+  const tableClass = "h-full w-full border-collapse table-auto";
+  let tdClass = "border-pia_neutral_gray border-[1px] text-nowrap overflow-hidden";
   let thClass = "bg-pia_light_gray border-t-0";
   let dotClass = "rounded-full";
 
@@ -45,35 +45,35 @@ export function ProgramProfileTable({
     status = status.toLowerCase();
     if (status === "joined") {
       return (
-        <div className="flex flex-row">
+        <div className="flex w-[100px] flex-row">
           <p className={dotClass + " bg-joined_green"} />
           <p className="text-joined_green">Joined</p>
         </div>
       );
     } else if (status === "waitlisted") {
       return (
-        <div className="flex flex-row">
+        <div className="flex w-[100px] flex-row">
           <p className={dotClass + " bg-waitlisted_yellow"} />
-          <p className="text-waitlisted_yellow">Waitlisted</p>
+          <p className="grow-0 text-waitlisted_yellow">Waitlisted</p>
         </div>
       );
     } else if (status === "archived") {
       return (
-        <div className="flex flex-row">
+        <div className="flex w-[100px] flex-row">
           <p className={dotClass + " bg-archived_gray"} />
           <p className="text-archived_gray">Archived</p>
         </div>
       );
     } else if (status === "not a fit") {
       return (
-        <div className="flex flex-row">
+        <div className="flex w-[100px] flex-row">
           <p className={dotClass + " bg-notafit_red"} />
           <p className="text-notafit_red">Not a Fit</p>
         </div>
       );
     } else {
       return (
-        <div className="flex flex-row">
+        <div className="flex w-[100px] flex-row">
           <p className={dotClass + " bg-black"} />
           <p className="text-black">Invalid</p>
         </div>
@@ -137,33 +137,6 @@ export function ProgramProfileTable({
                 <td className={tdClass + " border-r-0"}>{enrollment.authNumber}</td>
               </tr>
             ))}
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
-            <tr>
-              <td className={tdClass}>temp</td>
-            </tr>
           </tbody>
         )}
       </table>
