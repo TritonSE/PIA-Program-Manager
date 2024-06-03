@@ -14,7 +14,7 @@ export type Program = {
   daysOfWeek: string[];
   color: string; //colorValueHex;
   hourlyPay: string;
-  sessions: { start_time: string; end_time: string; }[];
+  sessions: { start_time: string; end_time: string }[];
 };
 
 export const createProgram: RequestHandler = async (req, res, next) => {
@@ -22,7 +22,6 @@ export const createProgram: RequestHandler = async (req, res, next) => {
 
   try {
     validationErrorParser(errors);
-    req.body["sessions"] = req.body["sessions"].map((session: string[]) => {return {"start_time": session[0], "end_time": session[1]}})
     const programInfo = req.body as Program;
 
     const programForm = await ProgramModel.create(programInfo);

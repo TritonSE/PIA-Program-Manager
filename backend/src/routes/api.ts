@@ -1,9 +1,9 @@
 import express from "express";
 
 import programRoutes from "./program";
+import sessionRoutes from "./session";
 import studentRoutes from "./student";
 import userRouter from "./user";
-import sessionRoutes from "./session";
 
 const router = express.Router();
 

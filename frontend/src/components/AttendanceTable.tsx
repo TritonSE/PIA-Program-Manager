@@ -11,14 +11,15 @@ import { Textfield } from "./Textfield";
 
 import { Program } from "@/api/programs";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import { Session } from "@/api/sessions";
 
 export type TableProps = {
   program: Program;
+  session: Session;
   students: StudentMap;
-  date: Date;
 };
 
-export function AttendanceTable({ program, students, date }: TableProps) {
+export function AttendanceTable({ program, session, students }: TableProps) {
   const {
     register,
     setValue,
@@ -30,7 +31,7 @@ export function AttendanceTable({ program, students, date }: TableProps) {
   const _handleSubmit = handleSubmit;
   const _errors = errors;
 
-  const dateObj = new Date(date.toString());
+  const dateObj = new Date(session.date.toString());
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthsOfYear = [
     "Jan",
@@ -49,7 +50,7 @@ export function AttendanceTable({ program, students, date }: TableProps) {
 
   const { isMobile, isTablet } = useWindowSize();
 
-  console.log(students);
+  console.log(session.students);
   return (
     <div className="relative w-[360px] overflow-x-auto bg-white shadow-md sm:rounded-lg md:w-[500px] lg:w-[1050px]">
       <div className="text-sm">
@@ -67,12 +68,12 @@ export function AttendanceTable({ program, students, date }: TableProps) {
         </h1>
       </div>
       <div className="mb-8 grid w-full overflow-x-auto text-left text-sm lg:grid-cols-2 rtl:text-right">
-        {program.students.map((student, index) => {
+        {session.students.map((student, index) => {
           return (
             <div
               className={cn(
                 "mr-5 flex grid grid-cols-3 bg-white",
-                index < program.students.length - (2 - (program.students.length % 2)) && "border-b",
+                index < session.students.length - (2 - (session.students.length % 2)) && "border-b",
                 index % 2 === 0 ? "ml-5" : "ml-5 lg:ml-10",
               )}
               key={index}
@@ -86,7 +87,7 @@ export function AttendanceTable({ program, students, date }: TableProps) {
                     width="5"
                     height="5"
                   />
-                  {students[student].student.firstName + " " + students[student].student.lastName}
+                  {students[student.studentId].student.firstName + " " + students[student.studentId].student.lastName}
                 </div>
               </div>
 

@@ -8,6 +8,6 @@ import * as SessionController from "../controllers/session";
 
 const router = express.Router();
 
-router.post("/get", SessionController.getRecentSessions);
+router.get("/get", SessionController.getRecentSessions);
 
 export default router;
