@@ -85,7 +85,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
   const middleDivClass = "relative top-0 grow w-full h-1";
   let outerTableClass = "h-full w-full px-10";
   let innerTableClass =
-    "h-full overflow-y-scroll overflow-hidden no-scrollbar rounded border-pia_neutral_gray border-[1px]";
+    "h-full overflow-scroll no-scrollbar rounded border-pia_neutral_gray border-[1px]";
   let bottomDivClass = "";
 
   if (isTablet) {
