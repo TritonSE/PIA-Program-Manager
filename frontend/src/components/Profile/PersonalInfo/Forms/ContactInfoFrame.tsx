@@ -6,9 +6,9 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import { cn } from "../../../../lib/utils";
-import { FrameProps } from "../../../../pages/profile";
 import { Textfield } from "../../../Textfield";
 import { Dialog, DialogTrigger } from "../../../ui/dialog";
+import { FrameProps } from "../PersonalInfo";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
