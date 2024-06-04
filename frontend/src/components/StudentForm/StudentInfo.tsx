@@ -4,11 +4,12 @@ import { useFormContext } from "react-hook-form";
 
 import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
-import { ProgramsContext } from "../StudentsTable/StudentsTable";
 import { Textfield } from "../Textfield";
 
 import { convertDateToString } from "./StudentBackground";
 import { StudentFormData } from "./types";
+
+import { ProgramsContext } from "@/contexts/program";
 
 type StudentInfoProps = {
   classname?: string;
@@ -18,7 +19,7 @@ type StudentInfoProps = {
 export default function StudentInfo({ classname, data }: StudentInfoProps) {
   const { register, setValue: setCalendarValue } = useFormContext<StudentFormData>();
 
-  const programsMap = useContext(ProgramsContext);
+  const { allPrograms: programsMap } = useContext(ProgramsContext);
   const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
   if (!allPrograms) return null;
 

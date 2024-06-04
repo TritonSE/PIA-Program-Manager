@@ -9,9 +9,9 @@ import {
 } from "react-hook-form";
 
 import { Student } from "../../api/students";
+import { ProgramsContext } from "../../contexts/program";
 import { cn } from "../../lib/utils";
 import { Dropdown } from "../Dropdown";
-import { ProgramsContext } from "../StudentsTable/StudentsTable";
 import { Textfield } from "../Textfield";
 
 import { convertDateToString } from "./StudentBackground";
@@ -111,7 +111,7 @@ const EnrollmentFormItem = ({
       defaultValue: item.authNumber,
     },
   ];
-  const programsMap = useContext(ProgramsContext);
+  const { allPrograms: programsMap } = useContext(ProgramsContext);
   const { register, setValue } = useFormContext<StudentFormData>();
 
   const initialTime = `${timeToAmPm(item.sessionTime[0])} - ${timeToAmPm(item.sessionTime[1])}`;
@@ -234,7 +234,7 @@ const EnrollmentFormItem = ({
 
 function EnrollmentsEdit({ classname, data, varying }: EnrollmentsEditProps) {
   const { control, watch } = useFormContext<StudentFormData>();
-  const programsMap = useContext(ProgramsContext);
+  const { allPrograms: programsMap } = useContext(ProgramsContext);
 
   // used for dropdown options
   const varyingPrograms = useMemo(
@@ -251,6 +251,8 @@ function EnrollmentsEdit({ classname, data, varying }: EnrollmentsEditProps) {
         .map((program) => program.abbreviation),
     [programsMap],
   );
+
+  console.log(varyingPrograms);
 
   const fieldName = varying ? "varyingEnrollments" : "regularEnrollments";
   const { fields, append, update } = useFieldArray({

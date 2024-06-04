@@ -1,7 +1,8 @@
 import Image from "next/image";
-import { Dispatch, SetStateAction, createContext, useContext, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, createContext, useContext, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
+import PlusIcon from "../../public/icons/plus.svg";
 import { Student, createStudent, editStudent } from "../api/students";
 import { cn } from "../lib/utils";
 
@@ -11,10 +12,10 @@ import EnrollmentsEdit from "./StudentForm/EnrollmentsEdit";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
-import { ProgramsContext } from "./StudentsTable/StudentsTable";
 import { StudentMap } from "./StudentsTable/types";
 import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
+import { ProgramsContext } from "@/contexts/program";
 import { UserContext } from "@/contexts/user";
 import { amPmToTime } from "@/lib/sessionTimeParsing";
 
@@ -49,17 +50,14 @@ export default function StudentFormButton({
   //Default values can be set for all fields but I specified these three fields because the checkbox value can sometimes be a string if it's a single value rather than array of strings. https://github.com/react-hook-form/react-hook-form/releases/tag/v7.30.0
 
   const [openForm, setOpenForm] = useState(false);
-  const programsMap = useContext(ProgramsContext);
-  const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
+  const { allPrograms } = useContext(ProgramsContext);
   const { isAdmin } = useContext(UserContext);
 
   const onFormSubmit: SubmitHandler<StudentFormData> = (formData: StudentFormData) => {
     const programAbbreviationToId = {} as Record<string, string>; // abbreviation -> programId
-    allPrograms.forEach(
-      (enrollments) => (programAbbreviationToId[enrollments.abbreviation] = enrollments._id),
+    Object.values(allPrograms).forEach(
+      (program) => (programAbbreviationToId[program.abbreviation] = program._id),
     );
-
-    console.log("original form data: ", formData);
 
     const transformedData: StudentData = {
       _id: data?._id,
@@ -182,7 +180,8 @@ export default function StudentFormButton({
           />
         ) : (
           <Button
-            label={"＋ Add Student"}
+            label="Add Student"
+            icon={<PlusIcon />}
             onClick={() => {
               setOpenForm(true);
             }}

@@ -5,6 +5,7 @@ import type { APIResult } from "../api/requests";
 
 export type Student = CreateStudentRequest & {
   _id: string;
+  progressNotes?: string[];
 };
 
 export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {
