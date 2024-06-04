@@ -119,8 +119,6 @@ export default function StudentsTable() {
     debugColumns: false,
   });
 
-  console.log(data);
-
   if (isLoading) return <p>Loading...</p>;
 
   return (

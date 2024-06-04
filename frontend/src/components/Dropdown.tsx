@@ -16,6 +16,7 @@ type BaseProps<T extends FieldValues> = {
   label?: string;
   placeholder: string;
   defaultValue?: string;
+  initialValue?: string;
   className?: string;
 };
 
@@ -29,12 +30,13 @@ export function Dropdown<T extends FieldValues>({
   setDropdownValue,
   label,
   name,
-  options,
+  options, // list of options - should be memoized
   onChange = () => void 0,
-  defaultValue = "",
+  defaultValue, // value if you want a permanent default label that is not really a value (see home page dropdowns)
+  initialValue, // value if you want a default value that is a value in the list of options (see create/edit student dropdowns)
   className,
 }: DropdownProps<T>) {
-  const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
+  const [selectedOption, setSelectedOption] = useState<string>(defaultValue ?? initialValue ?? "");
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -42,6 +44,11 @@ export function Dropdown<T extends FieldValues>({
       setDropdownValue(name, selectedOption as PathValue<T, Path<T>>);
     }
   }, [selectedOption]);
+
+  // clear out value if we get a new set of options
+  useEffect(() => {
+    setSelectedOption(defaultValue ?? initialValue ?? "");
+  }, [options]);
 
   return (
     <DropdownMenu
@@ -56,7 +63,7 @@ export function Dropdown<T extends FieldValues>({
           className,
         )}
       >
-        <span className="text-neutral-400">{label + ": "}</span>
+        {label && <span className="text-neutral-400">{label + ": "}</span>}
         <span className="text-neutral-800">{selectedOption ?? ""}</span>
         <Image
           src="/ic_round-arrow-drop-up.svg"
@@ -68,20 +75,22 @@ export function Dropdown<T extends FieldValues>({
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem
-          className="h-10 w-[244px] hover:bg-pia_primary_light_green"
-          key={""}
-          onSelect={() => {
-            onChange("");
-            setSelectedOption(defaultValue);
-          }}
-        >
-          {defaultValue}
-        </DropdownMenuItem>
-        {options.map((option) => (
+        {defaultValue && (
           <DropdownMenuItem
             className="h-10 w-[244px] hover:bg-pia_primary_light_green"
-            key={option}
+            key={""}
+            onSelect={() => {
+              onChange("");
+              setSelectedOption(defaultValue);
+            }}
+          >
+            {defaultValue}
+          </DropdownMenuItem>
+        )}
+        {options.map((option, i) => (
+          <DropdownMenuItem
+            className="h-10 w-[244px] hover:bg-pia_primary_light_green"
+            key={i}
             onSelect={() => {
               onChange(option);
               setSelectedOption(option);

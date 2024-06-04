@@ -62,7 +62,6 @@ export function ProgramFilter({ column }: { column: Column<StudentTableRow> }) {
     <Dropdown
       label="Program"
       name="program"
-      placeholder="Program"
       className={`rounded-md ${isTablet ? "w-[200px]" : "w-[244px]"}`}
       defaultValue="All Programs"
       options={sortedUniqueValues}
@@ -93,7 +92,6 @@ export function StatusFilter({ column }: { column: Column<StudentTableRow> }) {
     <Dropdown
       label="Status"
       name="status"
-      placeholder="Status"
       className={`rounded-md ${isTablet ? "w-[200px]" : "w-[244px]"}`}
       defaultValue="All Statuses"
       options={statusOptions}

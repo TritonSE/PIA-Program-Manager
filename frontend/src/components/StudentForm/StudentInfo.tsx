@@ -1,10 +1,9 @@
 import Image from "next/image";
 import { useContext, useMemo } from "react";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
-import { Checkbox } from "../Checkbox";
 import { ProgramsContext } from "../StudentsTable/StudentsTable";
 import { Textfield } from "../Textfield";
 
@@ -12,18 +11,13 @@ import { convertDateToString } from "./StudentBackground";
 import { StudentFormData } from "./types";
 
 type StudentInfoProps = {
-  register: UseFormRegister<StudentFormData>;
   classname?: string;
-  setCalendarValue: UseFormSetValue<StudentFormData>;
   data: Student | null;
 };
 
-export default function StudentInfo({
-  register,
-  classname,
-  setCalendarValue,
-  data,
-}: StudentInfoProps) {
+export default function StudentInfo({ classname, data }: StudentInfoProps) {
+  const { register, setValue: setCalendarValue } = useFormContext<StudentFormData>();
+
   const programsMap = useContext(ProgramsContext);
   const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
   if (!allPrograms) return null;
@@ -53,7 +47,7 @@ export default function StudentInfo({
         />
       </div>
       <div className="col-span-2">
-        <h3>Incident Form</h3>
+        <h3 className="mb-5 w-full text-left text-lg font-bold">Incident Form</h3>
         <Textfield
           register={register}
           name="incidentForm"
@@ -62,7 +56,7 @@ export default function StudentInfo({
         />
       </div>
       <div className="col-span-2">
-        <h3>UCI Number</h3>
+        <h3 className="mb-5 w-full text-left text-lg font-bold">UCI Number</h3>
         <Textfield
           register={register}
           name="UCINumber"
@@ -72,16 +66,16 @@ export default function StudentInfo({
       </div>
       <div className="col-span-2">
         <span className="align-center flex w-full justify-between">
-          <h3>Documents</h3>
+          <h3 className="mb-5 w-full text-left text-lg font-bold">Documents</h3>
           <button
-            className="flex gap-2"
+            className="flex w-fit gap-2"
             onClick={(e) => {
               e.preventDefault();
               // TODO: Implement file upload
             }}
           >
             <Image src="../plus.svg" alt="edit profile picture" height="20" width="20" />
-            <span className="leading-normal tracking-tight">Edit Image</span>
+            <span className="whitespace-nowrap leading-normal tracking-tight">Edit Image</span>
           </button>
         </span>
       </div>

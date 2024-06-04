@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
@@ -9,9 +9,7 @@ import { Textfield } from "../Textfield";
 import { StudentFormData } from "./types";
 
 type StudentBackgroundProps = {
-  register: UseFormRegister<StudentFormData>;
   classname?: string;
-  setCalendarValue: UseFormSetValue<StudentFormData>;
   data: Student | null;
 };
 
@@ -27,12 +25,9 @@ export const convertDateToString = (date: Date | undefined) => {
     : "";
 };
 
-export default function StudentBackground({
-  data,
-  register,
-  classname,
-  setCalendarValue,
-}: StudentBackgroundProps) {
+export default function StudentBackground({ data, classname }: StudentBackgroundProps) {
+  const { register, setValue: setCalendarValue } = useFormContext<StudentFormData>();
+
   return (
     <div className={cn("grid flex-1 gap-x-3 gap-y-5 md:grid-cols-2", classname)}>
       <div>
@@ -56,7 +51,7 @@ export default function StudentBackground({
         />
       </div>
       <div className="col-span-2">
-        <h3>Conservation</h3>
+        <h3 className="mb-5 w-full text-left text-lg font-bold">Conservation</h3>
         <Checkbox
           register={register}
           name="conservation"
@@ -66,7 +61,7 @@ export default function StudentBackground({
         />
       </div>
       <div className="col-span-2">
-        <h3>Medication and Medical</h3>
+        <h3 className="mb-5 w-full text-left text-lg font-bold">Medication and Medical</h3>
         <Textfield
           register={register}
           name="medication"
@@ -76,16 +71,16 @@ export default function StudentBackground({
       </div>
       <div className="col-span-2">
         <span className="align-center flex w-full justify-between">
-          <h3>Profile Picture</h3>
+          <h3 className="mb-5 text-left text-lg font-bold">Profile Picture</h3>
           <button
-            className="flex gap-2"
+            className="flex w-fit gap-2"
             onClick={(e) => {
               e.preventDefault();
               // TODO: Implement image upload
             }}
           >
-            <Image src="../pencil.svg" alt="edit profile picture" height="20" width="20" />
-            <span className="leading-normal tracking-tight">Edit Image</span>
+            <Image src="../pencil.svg" alt="edit profile picture" width="20" height="20" />
+            <span className="whitespace-nowrap leading-normal tracking-tight">Edit Image</span>
           </button>
         </span>
         <Image

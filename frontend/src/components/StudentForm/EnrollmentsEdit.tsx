@@ -1,30 +1,28 @@
 import Image from "next/image";
-import { useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import {
-  Controller,
-  UseFieldArrayRemove,
+  FieldArrayWithId,
+  Path,
   UseFormRegister,
-  UseFormSetValue,
   useFieldArray,
+  useFormContext,
 } from "react-hook-form";
 
 import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
-import { Checkbox } from "../Checkbox";
+import { Dropdown } from "../Dropdown";
 import { ProgramsContext } from "../StudentsTable/StudentsTable";
 import { Textfield } from "../Textfield";
 
 import { convertDateToString } from "./StudentBackground";
-import { StudentFormData } from "./types";
+import { StatusOptions, StudentFormData } from "./types";
 
-import { Program } from "@/api/programs";
+import { timeToAmPm } from "@/lib/sessionTimeParsing";
 
 type EnrollmentsEditProps = {
-  register: UseFormRegister<StudentFormData>;
   classname?: string;
-  setCalendarValue: UseFormSetValue<StudentFormData>;
   data: Student | null;
-  control: any;
+  varying: boolean;
 };
 
 export const emptyEnrollment = {
@@ -32,97 +30,303 @@ export const emptyEnrollment = {
   programId: "",
   status: "",
   dateUpdated: new Date(),
-  hoursLeft: 0,
-  schedule: "",
+  hoursLeft: 8,
+  schedule: [] as string[],
   sessionTime: [] as string[],
-  startDate: new Date(),
-  renewalDate: new Date(),
+  startDate: "",
+  renewalDate: "",
   authNumber: "",
+  varying: false,
 };
 
-function EnrollmentsEdit({
-  register,
-  classname,
-  setCalendarValue,
-  data,
-  control,
-}: EnrollmentsEditProps) {
-  const programsMap = useContext(ProgramsContext);
-  const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
+// Adapted types from ProgramInfo.tsx
+type CheckcircleProps = {
+  options: string[];
+  className?: string;
+  name: Path<StudentFormData>;
+  register: UseFormRegister<StudentFormData>;
+  data: string[] | undefined;
+};
 
-  const { fields, remove, append } = useFieldArray({
-    control,
-    name: "enrollments",
-  });
+export function Checkcircle({ options, className, name, register, data }: CheckcircleProps) {
+  return (
+    <div className={cn("flex flex-row gap-2 sm:gap-3", className)}>
+      {options.map((option, index) => {
+        return (
+          <div
+            className="relative flex items-center overflow-hidden rounded-full"
+            key={option + index}
+          >
+            <input
+              {...register(name)}
+              className="peer flex h-10 w-10 appearance-none rounded-full border-[1px] border-pia_border transition-colors hover:cursor-pointer hover:bg-[#00686766] focus-visible:bg-[#00686766] sm:h-12 sm:w-12 sm:border-[2px]"
+              id={option + index}
+              type="checkbox"
+              value={option}
+              defaultChecked={data?.includes(option)}
+            />
+            <div className="pointer-events-none absolute flex h-full w-full items-center justify-center text-sm text-neutral-800 peer-checked:bg-pia_dark_green peer-checked:text-white sm:text-base">
+              {option}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+// item is the enrollment object, index is the index of the enrollment in the array
+const EnrollmentFormItem = ({
+  item,
+  index,
+  allPrograms,
+  fieldName,
+  varying,
+}: {
+  item: FieldArrayWithId<StudentFormData, "regularEnrollments" | "varyingEnrollments">;
+  index: number;
+  allPrograms: string[];
+  fieldName: "regularEnrollments" | "varyingEnrollments";
+  varying: boolean;
+}) => {
+  const textFields = [
+    {
+      name: "Start Date",
+      fieldName: `${fieldName}.${index}.startDate`,
+      placeholder: "00/00/0000",
+      calendar: true,
+      defaultValue: item.startDate,
+    },
+    {
+      name: "Renewal Date",
+      fieldName: `${fieldName}.${index}.renewalDate`,
+      placeholder: "00/00/0000",
+      calendar: true,
+      defaultValue: item.renewalDate,
+    },
+    {
+      name: "Authorization Code",
+      fieldName: `${fieldName}.${index}.authNumber`,
+      placeholder: "123456",
+      defaultValue: item.authNumber,
+    },
+  ];
+  const programsMap = useContext(ProgramsContext);
+  const { register, setValue } = useFormContext<StudentFormData>();
+
+  const initialTime = `${timeToAmPm(item.sessionTime[0])} - ${timeToAmPm(item.sessionTime[1])}`;
+  const [selectedSession, setSelectedSession] = useState<string>(initialTime);
+  const [selectedStatus, setSelectedStatus] = useState<string>(item.status);
+  const [selectedProgram, setSelectedProgram] = useState<string>("");
+
+  const sessionOptions = useMemo(() => {
+    return (
+      programsMap[item.programId]?.sessions?.map((timeSlot) => {
+        if (timeSlot.length !== 2) return "Invalid Time Slot";
+        return `${timeToAmPm(timeSlot[0])} - ${timeToAmPm(timeSlot[1])}`;
+      }) || []
+    );
+  }, [item.programId]);
+
+  // these 3 useEffects keep our custom dropdown and react-hook-form in sync
+  useEffect(() => {
+    item.sessionTime = [selectedSession];
+    setValue(`${fieldName}.${index}.sessionTime`, [selectedSession]);
+  }, [selectedSession]);
 
   useEffect(() => {
-    console.log(data);
-  }, [data]);
+    const progId = Object.keys(programsMap).find(
+      (key) => programsMap[key].abbreviation === selectedProgram,
+    );
+    if (progId) {
+      item.programId = progId;
+      setValue(`${fieldName}.${index}.programId`, progId);
+    }
+    setSelectedSession(sessionOptions[0] || "");
+  }, [selectedProgram]);
 
-  if (!allPrograms) return null;
+  useEffect(() => {
+    item.sessionTime = [selectedStatus];
+    setValue(`${fieldName}.${index}.status`, selectedStatus);
+  }, [selectedStatus]);
 
   return (
-    <div className="grid w-full gap-5 lg:grid-cols-2">
+    <>
+      <div className="mb-5 grid w-full gap-x-3 gap-y-5 md:grid-cols-2">
+        <div>
+          <h3>Program Name</h3>
+          <Dropdown
+            name="name"
+            placeholder="Select Program"
+            label="Select Program"
+            className={`h-[50px] w-full rounded-md`}
+            options={allPrograms}
+            initialValue={programsMap[item.programId]?.abbreviation}
+            onChange={(value): void => {
+              setSelectedProgram(value);
+            }}
+          />
+        </div>
+        <div>
+          <h3>Status</h3>
+          <Dropdown
+            name="status"
+            placeholder="Select Status"
+            label="Select Status"
+            className={`h-[50px] w-full rounded-md`}
+            initialValue={item.status}
+            options={useMemo(() => Object.values(StatusOptions), [StatusOptions])}
+            onChange={(value): void => {
+              setSelectedStatus(value);
+            }}
+          />
+        </div>
+        {textFields.map((cur, i) => {
+          return (
+            <div key={i}>
+              <h3>{cur.name}</h3>
+              <Textfield
+                register={register}
+                name={cur.fieldName as keyof StudentFormData}
+                placeholder={cur.placeholder}
+                calendar={cur.calendar}
+                setCalendarValue={cur.calendar ? setValue : undefined}
+                defaultValue={cur.defaultValue}
+              />
+            </div>
+          );
+        })}
+        <div>
+          <h3>Session</h3>
+          <Dropdown
+            name="sessions"
+            placeholder="Select Session"
+            className={`h-[50px] w-full rounded-md`}
+            options={sessionOptions}
+            initialValue={initialTime}
+            onChange={(value): void => {
+              setSelectedSession(value);
+            }}
+          />
+        </div>
+
+        {/* <button
+          type="button"
+          onClick={() => {
+            remove(index);
+          }}
+        >
+          <Image src="../trash.svg" alt="remove program" height="20" width="20" />
+        </button> */}
+      </div>
+
+      {varying && (
+        <Checkcircle
+          register={register}
+          name={`${fieldName}.${index}.schedule`}
+          options={["Su", "M", "T", "W", "Th", "F", "Sa"]}
+          data={item.schedule}
+        />
+      )}
+    </>
+  );
+};
+
+function EnrollmentsEdit({ classname, data, varying }: EnrollmentsEditProps) {
+  const { control, watch } = useFormContext<StudentFormData>();
+  const programsMap = useContext(ProgramsContext);
+
+  // used for dropdown options
+  const varyingPrograms = useMemo(
+    () =>
+      Object.values(programsMap)
+        .filter((program) => program.type === "varying")
+        .map((program) => program.abbreviation),
+    [programsMap],
+  );
+  const regularPrograms = useMemo(
+    () =>
+      Object.values(programsMap)
+        .filter((program) => program.type === "regular")
+        .map((program) => program.abbreviation),
+    [programsMap],
+  );
+
+  const fieldName = varying ? "varyingEnrollments" : "regularEnrollments";
+  const { fields, append, update } = useFieldArray({
+    control,
+    name: fieldName,
+    shouldUnregister: true,
+  });
+
+  watch(fieldName, fields);
+
+  useEffect(() => {
+    if (data) {
+      data.enrollments
+        .filter((enrollment) =>
+          varying
+            ? programsMap[enrollment.programId].type === "varying"
+            : programsMap[enrollment.programId].type === "regular",
+        )
+        .forEach((enrollment, index) => {
+          update(index, {
+            ...enrollment,
+            varying,
+            dateUpdated: new Date(enrollment.dateUpdated),
+            // messy way to format dates since mongo returns them as strings with exact time
+            startDate: convertDateToString(new Date(enrollment.startDate)),
+            renewalDate: convertDateToString(new Date(enrollment.renewalDate)),
+          });
+        });
+    }
+  }, [data]);
+
+  if (!programsMap) return null;
+
+  return (
+    <div className={cn("grid w-full gap-5", classname)}>
       <div className="grid gap-y-5">
         <span className="align-center flex w-full justify-between">
-          <h3>Regular Programs</h3>
+          <h3>{varying ? "Varying" : "Regular"} Programs</h3>
           <button
             className="flex gap-2"
             onClick={(e) => {
               e.preventDefault();
-              append(emptyEnrollment);
+              append({ ...emptyEnrollment, varying });
             }}
           >
-            <Image src="../plus.svg" alt="edit profile picture" height="20" width="20" />
+            <Image src="../plus.svg" alt="add program" height="20" width="20" />
             <span className="leading-normal tracking-tight">Add Program</span>
           </button>
         </span>
-        <ul>
-          {fields.map((item, index) => {
-            return (
-              <li key={item.id}>
-                <EnrollmentFormItem register={register} data={data} index={index} remove={remove} />
-              </li>
-            );
-          })}
+        <ul className="flex flex-col gap-10">
+          {fields
+            .filter(
+              (enrollment) =>
+                // if we have a program id present, we can filter by whether it is regular or varying, otherwise its probably a new entry
+                !enrollment.programId ||
+                (varying
+                  ? programsMap[enrollment.programId]?.type === "varying"
+                  : programsMap[enrollment.programId]?.type === "regular"),
+            )
+            .map((item, index) => {
+              return (
+                <li key={item.id}>
+                  <EnrollmentFormItem
+                    item={item}
+                    index={index}
+                    allPrograms={varying ? varyingPrograms : regularPrograms}
+                    fieldName={fieldName}
+                    varying={varying}
+                  />
+                </li>
+              );
+            })}
         </ul>
       </div>
     </div>
   );
 }
-
-const EnrollmentFormItem = ({
-  register,
-  data,
-  index,
-  remove,
-}: {
-  register: UseFormRegister<StudentFormData>;
-  data: Student | null;
-  index: number;
-  remove: UseFieldArrayRemove;
-}) => {
-  return (
-    <>
-      <div className="col-span-2">
-        <h3>Program Name</h3>
-        <Textfield
-          register={register}
-          name={`enrollments.${index}.programId`}
-          placeholder="Specify"
-          defaultValue={data?.enrollments[index].programId}
-        />
-      </div>
-      <button
-        type="button"
-        onClick={() => {
-          remove(index);
-        }}
-      >
-        Delete
-      </button>
-    </>
-  );
-};
 
 export default EnrollmentsEdit;

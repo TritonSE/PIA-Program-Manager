@@ -66,7 +66,7 @@ export const editStudent: RequestHandler = async (req, res, next) => {
       }),
     );
 
-    res.status(200).json({ ...updatedStudent, enrollments });
+    res.status(200).json({ ...updatedStudent.toObject(), enrollments });
   } catch (error) {
     next(error);
   }

@@ -13,6 +13,7 @@ export type ProgramLink = {
 };
 
 export type StudentData = {
+  _id?: string;
   student: Contact;
   emergency: Contact;
   serviceCoordinator: Contact;
@@ -48,12 +49,13 @@ export type StudentFormData = {
   other: string;
   intakeDate: Date;
   tourDate: Date;
-  conservation: boolean;
+  conservation: string;
   UCINumber: string;
   incidentForm: string;
   documents: string[];
   profilePicture: string;
-  enrollments: Enrollment[];
+  regularEnrollments: EnrollmentFormEntry[];
+  varyingEnrollments: EnrollmentFormEntry[];
 };
 
 export type Enrollment = {
@@ -62,9 +64,28 @@ export type Enrollment = {
   status: string;
   dateUpdated: Date;
   hoursLeft: number;
-  schedule: string;
+  schedule: string[];
   sessionTime: string[];
   startDate: Date;
   renewalDate: Date;
   authNumber: string;
 };
+
+export type EnrollmentFormEntry = Omit<Enrollment, "startDate" | "renewalDate"> & {
+  startDate: string;
+  renewalDate: string;
+  varying: boolean;
+};
+
+// get [XX:YY, ZZ:AA] -> form interprets starting time and uses string
+// XX:YY AM - ZZ:AA PM
+// when we modify the session time on the form we update the resulting string
+// make request to backed with [XX:YY, ZZ:AA] as the session time
+
+export enum StatusOptions {
+  Joined = "Joined",
+  Waitlisted = "Waitlisted",
+  Archived = "Archived",
+  NotAFit = "Not a fit",
+  Completed = "Completed",
+}
