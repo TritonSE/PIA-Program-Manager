@@ -7,6 +7,7 @@ export type Student = CreateStudentRequest & {
   _id: string;
   medication: string;
   otherString: string;
+  progressNotes?: string[];
 };
 
 export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {

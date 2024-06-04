@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-import { Schema } from "mongoose";
 //import { error } from "firebase-functions/logger";
 
 import ProgramModel from "../models/program";
@@ -13,11 +12,7 @@ export type Program = {
   abbreviation: string;
   type: string;
   daysOfWeek: string[];
-  startDate: Date;
-  endDate: Date;
   color: string; //colorValueHex;
-  studentUIDs: Schema.Types.ObjectId[];
-  renewalDate: Date;
   hourlyPay: string;
   sessions: [string[]];
 };

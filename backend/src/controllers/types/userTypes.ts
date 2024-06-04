@@ -1,5 +1,7 @@
 import { Request } from "express";
 
+import { UserId } from "./types";
+
 export type CreateUserRequestBody = {
   name: string;
   accountType: "admin" | "team";
@@ -11,13 +13,7 @@ export type LoginUserRequestBody = {
   uid: string;
 };
 
-type UserId = {
-  userId: string;
-};
-
-export type UserIdRequest = Request & UserId;
-
-export type EditNameRequestBody = {
+export type EditNameRequestBody = UserId & {
   newName: string;
 };
 
@@ -42,7 +38,6 @@ export type SaveImageRequest = {
   };
 };
 
-export type EditPhotoRequest = Request &
-  UserId & {
-    rawBody?: Buffer;
-  };
+export type EditPhotoRequestBody = Request<Record<string, never>, Record<string, never>, UserId> & {
+  rawBody?: Buffer;
+};

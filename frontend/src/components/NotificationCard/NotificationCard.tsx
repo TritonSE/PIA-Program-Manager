@@ -1,3 +1,5 @@
+import { Button } from "../Button";
+
 type UserInfo = {
   name: string;
   email: string;
@@ -18,7 +20,7 @@ export default function NotificationCard({
     <>
       <div
         className={
-          "flex items-center justify-between px-[40px] py-[60px] font-['Poppins'] text-[18px] "
+          "flex flex-col justify-between gap-5 px-[40px] py-[60px] font-['Poppins'] text-[18px]  md:flex-row md:items-center "
         }
       >
         <div id="person_info" className="">
@@ -41,6 +43,7 @@ export default function NotificationCard({
           >
             Approve
           </button>
+
         </div>
       </div>
     </>

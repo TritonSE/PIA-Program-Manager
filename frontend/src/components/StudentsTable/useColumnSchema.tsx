@@ -1,3 +1,4 @@
+import { Poppins } from "next/font/google";
 import { useMemo } from "react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
@@ -9,12 +10,26 @@ import { Columns, ProgramMap, StudentMap } from "./types";
 import { Program } from "@/api/programs";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { formatPhoneNumber } from "@/lib/formatPhoneNumber";
+import { cn } from "@/lib/utils";
 
-const ProgramPill = ({ name, color }: { name: string; color: string }) => (
-  <span className="rounded-[20px] px-2.5 text-sm" style={{ background: `${color}45`, color }}>
-    {name}
-  </span>
-);
+const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
+
+const ProgramPill = ({ name, color }: { name: string; color: string }) => {
+  const { isTablet } = useWindowSize();
+
+  return (
+    <span
+      className={cn(
+        "rounded-[20px] px-2.5 font-[Poppins] text-sm font-bold",
+        poppins.className,
+        isTablet ? "text-[12px]" : "",
+      )}
+      style={{ background: `${color}45`, color }}
+    >
+      {name}
+    </span>
+  );
+};
 
 const PopoverInfoRow = ({ label, value }: { label: string; value: string }) => (
   <span className="capitalize text-neutral-400">
@@ -27,8 +42,8 @@ const ProgramPopover = ({ link, program }: { link: ProgramLink; program: Program
   const rowInfo = [
     ["Type", program.type],
     ["Schedule", program.daysOfWeek.join(", ")],
-    ["Start Date", new Date(program.startDate).toLocaleDateString("en-US")],
-    ["Renewal Date", new Date(program.endDate).toLocaleDateString("en-US")],
+    ["Start Date", new Date(/*program.startDate*/).toLocaleDateString("en-US")],
+    ["Renewal Date", new Date(/*program.endDate*/).toLocaleDateString("en-US")],
     ["Hours Left", link.hoursLeft.toString()],
   ];
 
@@ -59,7 +74,7 @@ const ProgramHistoryPopover = ({
   return (
     <Popover>
       <PopoverTrigger className="pr-2.5 underline">{programs.length + " programs"}</PopoverTrigger>
-      <PopoverContent className="flex w-[280px] flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow">
+      <PopoverContent className="flex w-[290px] flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow">
         <div className="text-base">Program History</div>
         <div className="flex flex-col gap-3">
           {programs.map((program, i) => {
@@ -68,7 +83,7 @@ const ProgramHistoryPopover = ({
               progInfo && (
                 <div key={i}>
                   <ProgramPill name={progInfo.abbreviation} color={progInfo.color} />
-                  <span className="ml-6">
+                  <span className="ml-6 text-sm">
                     {program.status}
                     <span className="text-neutral-400">
                       {" on " + new Date(program.dateUpdated).toLocaleDateString("en-US")}
@@ -115,6 +130,7 @@ export function useColumnSchema({
         const program = allPrograms[link.programId];
         return <ProgramPopover link={link} program={program} />;
       },
+      filterFn: "programFilter",
     },
     {
       accessorKey: "programs",
@@ -128,7 +144,7 @@ export function useColumnSchema({
         const program = allPrograms[link.programId];
         return <ProgramPopover link={link} program={program} />;
       },
-      enableColumnFilter: false,
+      filterFn: "statusFilter",
     },
     {
       id: "programs",
