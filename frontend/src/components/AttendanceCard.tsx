@@ -8,8 +8,8 @@ import { Button } from "./Button";
 import { Textfield } from "./Textfield";
 
 import { Program } from "@/api/programs";
-import { Student } from "@/api/students";
 import { createAbsenceSession } from "@/api/sessions";
+import { Student } from "@/api/students";
 
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
 
