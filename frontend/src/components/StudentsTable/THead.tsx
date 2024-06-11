@@ -1,5 +1,7 @@
 import { HeaderGroup, Table, flexRender } from "@tanstack/react-table";
+import React from "react";
 
+import SearchIcon from "../../../public/icons/search.svg";
 import DebouncedInput from "../DebouncedInput";
 import { TableHead, TableHeader, TableRow } from "../ui/table";
 
@@ -23,22 +25,21 @@ function TableActionsHeader({
             {headerGroup.headers.map((header) => {
               if (!header.column.getCanFilter()) return null;
               if (["Curr. Program 1", "Curr. P1"].includes(header.column.id)) {
-                return <ProgramFilter key={header.id} column={header.column} />;
+                return <ProgramFilter key={header.id} setValue={header.column.setFilterValue} />;
               } else if (["Curr. Program 2", "Curr. P2"].includes(header.column.id)) {
                 return <StatusFilter key={header.id} column={header.column} />;
               }
               return null;
             })}
-            <div className="w-[200px]">
-              <DebouncedInput
-                value={globalFilter ?? ""}
-                onChange={(val) => {
-                  setGlobalFilter(val);
-                }}
-                className="font-lg border-block border p-2 shadow"
-                placeholder="Search in Students"
-              />
-            </div>
+            <DebouncedInput
+              icon={<SearchIcon width="20" height="20" />}
+              value={globalFilter ?? ""}
+              onChange={(val) => {
+                setGlobalFilter(val);
+              }}
+              placeholder="Search in Students"
+              className="h-full min-w-[200px] p-0  px-2"
+            />
           </span>
         </div>
       </TableHead>
@@ -75,14 +76,14 @@ export default function THead({
   return (
     <TableHeader className="text-left">
       {table.getHeaderGroups().map((headerGroup) => (
-        <>
+        <React.Fragment key={headerGroup.id}>
           <TableActionsHeader
             headerGroup={headerGroup}
             globalFilter={globalFilter}
             setGlobalFilter={setGlobalFilter}
           />
           <TableDataHeader headerGroup={headerGroup} />
-        </>
+        </React.Fragment>
       ))}
     </TableHeader>
   );

@@ -40,6 +40,12 @@ const studentSchema = new Schema({
   incidentForm: { type: String, required: true },
   documents: { type: [String], required: true },
   profilePicture: { type: Schema.Types.ObjectId, ref: "Image", required: false },
+  progressNotes: {
+    type: [Schema.Types.ObjectId],
+    ref: "ProgressNote",
+    default: [],
+    required: false,
+  },
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },
