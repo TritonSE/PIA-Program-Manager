@@ -47,8 +47,12 @@ export default function ProgramFormButton({
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
     const sanitizedSessions = formData.sessions
-      ? formData.sessions.filter((session: string[]) => session[0] || session[1])
-      : [["", ""]];
+      ? formData.sessions.map((session: string[]) =>
+          session[0] && session[1]
+            ? { start_time: session[0], end_time: session[1] }
+            : { start_time: "", end_time: "" },
+        )
+      : [{ start_time: "", end_time: "" }];
 
     const programRequestType = data ? data.type : formData.type; //type selector is disabled when editing
 

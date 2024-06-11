@@ -11,7 +11,6 @@ const sessionSchema = new Schema({
       start_time: { type: String, required: true },
       end_time: { type: String, required: true },
     },
-    required: true,
   },
   students: {
     type: [
@@ -24,6 +23,7 @@ const sessionSchema = new Schema({
     required: true,
   },
   marked: { type: Boolean, required: true },
+  isAbsenceSession: { type: Boolean, required: true },
 });
 
 type Session = InferSchemaType<typeof sessionSchema>;
