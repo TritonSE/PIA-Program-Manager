@@ -116,7 +116,7 @@ export function AttendanceTable({
     >
       <form
         className={cn(
-          "relative w-[360px] overflow-x-auto bg-white shadow-md sm:rounded-lg md:w-[500px] lg:w-[1050px] border border-gray",
+          "border-gray relative w-[360px] overflow-x-auto border bg-white shadow-md sm:rounded-lg md:w-[500px] lg:w-[1050px]",
         )}
         onSubmit={handleSubmit(onSubmit)}
       >
@@ -131,8 +131,9 @@ export function AttendanceTable({
           </h1>
           <h1 className="ml-5 mt-1 text-gray-400">
             {daysOfWeek[dateObj.getUTCDay()]}, {monthsOfYear[dateObj.getMonth()]}{" "}
-            {dateObj.getDate()} {program.type === "regular" && "from " + session.sessionTime.start_time + "to " +
-            session.sessionTime.end_time}
+            {dateObj.getDate()}{" "}
+            {program.type === "regular" &&
+              "from " + session.sessionTime.start_time + "to " + session.sessionTime.end_time}
           </h1>
         </div>
         <div className="mb-8 grid w-full overflow-x-auto text-left text-sm lg:grid-cols-2 rtl:text-right">
