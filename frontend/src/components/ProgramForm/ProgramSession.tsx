@@ -8,7 +8,7 @@ type SessionListProps<T extends FieldValues> = {
   className?: string;
   name: Path<T>;
   register: UseFormRegister<T>;
-  defaultValue?: {start_time: string, end_time: string}[];
+  defaultValue?: { start_time: string; end_time: string }[];
 };
 
 export function SessionList<T extends FieldValues>({
@@ -17,7 +17,9 @@ export function SessionList<T extends FieldValues>({
   className,
   defaultValue,
 }: SessionListProps<T>) {
-  const [sessions, setSessions] = useState(defaultValue ? defaultValue : [{start_time: "", end_time: ""}]);
+  const [sessions, setSessions] = useState(
+    defaultValue ? defaultValue : [{ start_time: "", end_time: "" }],
+  );
 
   return (
     <div>
@@ -55,7 +57,7 @@ export function SessionList<T extends FieldValues>({
         className="mb-3 mt-3 text-neutral-400 underline-offset-2 hover:underline sm:mb-0 sm:mt-6"
         type="button"
         onClick={() => {
-          setSessions([...sessions, {start_time: "", end_time: ""}]);
+          setSessions([...sessions, { start_time: "", end_time: "" }]);
         }}
       >
         + Add Session
