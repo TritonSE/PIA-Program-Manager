@@ -1,5 +1,5 @@
 import { Poppins } from "next/font/google";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useRef, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { cn } from "../lib/utils";
@@ -32,8 +32,11 @@ export function AttendanceCard({ program, student, setRemainingSessions }: CardP
   const [marked, setMarked] = useState(false);
   const [closed, setClosed] = useState(false);
   const [disabled, setDisabled] = useState(false);
+  const clickedRef = useRef(false);
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    if (clickedRef.current) return;
+    clickedRef.current = true;
     const newAbsenceSession = {
       date: data.date,
       programId: program._id,
