@@ -37,6 +37,8 @@ export type SessionBody = {
   sessionTime: { start_time: string; end_time: string };
   students: StudentInfo[];
   marked: boolean;
+  date: Date;
+  isAbsenceSession: boolean;
 };
 
 export type AbsenceCreateBody = {
@@ -47,10 +49,26 @@ export type AbsenceCreateBody = {
 
 // Gets the dates for the given days of the week since the start date
 function getSessionsSince(start: Date, daysOfWeek: string[]): Date[] {
+  function setToMidnight(date: Date): Date {
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  }
+
+  if (start.getFullYear() === new Date(0).getFullYear()) {
+    const futureDate = setToMidnight(new Date());
+    while (true) {
+      const dayOfWeek = futureDate.getUTCDay();
+      const abbreviatedDay = ["Su", "M", "T", "W", "Th", "F", "Sa"][dayOfWeek];
+      if (daysOfWeek.includes(abbreviatedDay)) {
+        return [futureDate];
+      }
+      futureDate.setDate(futureDate.getDate() + 1);
+    }
+  }
+
   const datesBetween: Date[] = [];
-  const currentDate = new Date(start);
+  const currentDate = setToMidnight(new Date(start));
   while (currentDate <= new Date()) {
-    const dayOfWeek = currentDate.getDay();
+    const dayOfWeek = currentDate.getUTCDay();
     const abbreviatedDay = ["Su", "M", "T", "W", "Th", "F", "Sa"][dayOfWeek];
     if (currentDate.getDate() !== start.getDate() && daysOfWeek.includes(abbreviatedDay)) {
       datesBetween.push(new Date(currentDate));
@@ -73,7 +91,10 @@ const createMissingRegularSessions = async () => {
   const programs = await ProgramModel.find({ type: "regular" }).lean().exec();
   const programPromises = programs.map(async (program: Program) => {
     // Find the most recent session for the given program
-    const mostRecentSession = await SessionModel.findOne({ programId: program._id })
+    const mostRecentSession = await SessionModel.findOne({
+      programId: program._id,
+      isAbsenceSession: false,
+    })
       .sort({ date: -1 })
       .exec();
 
@@ -82,11 +103,11 @@ const createMissingRegularSessions = async () => {
     if (mostRecentSession !== undefined && mostRecentSession !== null) {
       dates = getSessionsSince(mostRecentSession.date, program.daysOfWeek);
     } else {
-      dates = getSessionsSince(new Date(), program.daysOfWeek);
+      dates = getSessionsSince(new Date(0), program.daysOfWeek);
     }
-    const sessionPromises: Promise<void>[] = dates.map(async (date) => {
-      const dayOfWeek = ["Su", "M", "T", "W", "Th", "F", "Sa"][date.getDay()];
-      await Promise.all(
+    const sessionPromises = dates.map(async (date) => {
+      const dayOfWeek = ["Su", "M", "T", "W", "Th", "F", "Sa"][date.getUTCDay()];
+      const newSessions = await Promise.all(
         program.sessions.map(async (session) => {
           // Get all students who are enrolled in this particular session
           const enrollments = await EnrollmentModel.find({
@@ -97,7 +118,7 @@ const createMissingRegularSessions = async () => {
             programId: program._id,
           });
           if (enrollments.length === 0) {
-            return;
+            return null;
           }
 
           // Create default values for the new session
@@ -111,73 +132,92 @@ const createMissingRegularSessions = async () => {
             sessionTime: session,
             students: studentsInfo,
             marked: false,
+            isAbsenceSession: false,
+            date,
           };
 
-          return SessionModel.findOneAndUpdate({ date, programId: program._id }, newSession, {
-            upsert: true,
-            new: true,
-          });
+          return newSession;
         }),
       );
+      return SessionModel.create(newSessions.filter((session) => session !== null));
     });
     await Promise.all(sessionPromises);
   });
   await Promise.all(programPromises);
 };
 
-// // Dynamically creates any varying sessions since the last created session, or today
-// const createMissingVaryingSessions = async () => {
-//   // Get all varying program
-//   const programs = await ProgramModel.find({ type: "varying" }).lean().exec();
-//   const programPromises = programs.map(async (program: Program) => {
+// Dynamically creates any varying sessions since the last created session, or today
+const createMissingVaryingSessions = async () => {
+  // Get all varying program
+  const programs = await ProgramModel.find({ type: "varying" }).lean().exec();
+  const programPromises = programs.map(async (program: Program) => {
+    // Find most recent session and generate from there
+    const mostRecentSession = await SessionModel.findOne({
+      programId: program._id,
+      isAbsenceSession: false,
+    })
+      .sort({ date: -1 })
+      .exec();
 
-//     // Get all enrollments belonging to this varying program
-//     const enrollments = await EnrollmentModel.find({
-//       programId: program._id,
-//     }).lean().exec();
-//     if (enrollments.length === 0) {
-//       return;
-//     }
+    let mostRecentDate = new Date();
+    if (mostRecentSession !== undefined && mostRecentSession !== null) {
+      mostRecentDate = mostRecentSession.date;
+    }
 
-//     // Get all sessions that already exist for this program and turn it into a map
-//     const existingSessions = await SessionModel.find({
-//       programId: program._id,
-//     });
+    // Get all enrollments belonging to this varying program
+    const enrollments = await EnrollmentModel.find({
+      programId: program._id,
+      startDate: { $lte: mostRecentDate },
+      renewalDate: { $gte: mostRecentDate },
+    })
+      .lean()
+      .exec();
+    if (enrollments.length === 0) {
+      return;
+    }
 
-//     const sessionMap = new Map();
+    const allDays = new Set<string>();
+    enrollments.forEach((enrollment) => {
+      enrollment.schedule.forEach((day: string) => allDays.add(day));
+    });
 
-//     existingSessions.forEach(session => {
-//       const { date, sessionTime } = session;
-//       const key = `${date.toISOString().split('T')[0]}_${sessionTime.start_time}-${sessionTime.end_time}`;
-//       sessionMap.set(key, session);
-//     });
+    const daysOfWeek: string[] = Array.from(allDays);
 
-//     const newEnrollments = enrollments.map(async (enrollment) => {
-//     // Create default values for the new session
-//       const date = enrollment.;
-//       const startTime = '10:00';
-//       const endTime = '12:00';
-//       const key = `${date.toISOString().split('T')[0]}_${startTime}-${endTime}`;
-//       const session = sessionMap.get(key);
-//       const studentsInfo: StudentInfo[] = enrollments.map((enrollment) => ({
-//         studentId: enrollment.studentId,
-//         attended: true,
-//         hoursAttended: hoursAttended(session.start_time, session.end_time),
-//       }));
-//       const newSession: SessionBody = {
-//         programId: program._id,
-//         sessionTime: session,
-//         students: studentsInfo,
-//         marked: false,
-//       };
+    if (mostRecentSession === undefined || mostRecentSession === null) {
+      mostRecentDate = new Date(0);
+    }
 
-//       return SessionModel.findOneAndUpdate({ date, programId: program._id }, newSession, {
-//         upsert: true,
-//         new: true,
-//       });
-//     });
-//   });
-// };
+    const dates = getSessionsSince(mostRecentDate, daysOfWeek);
+
+    const newSessions = dates.map((date: Date) => {
+      // Create default values for the new session
+      const dayOfWeek = ["Su", "M", "T", "W", "Th", "F", "Sa"][date.getUTCDay()];
+
+      const enrolledStudents = enrollments.filter((enrollment) =>
+        enrollment.schedule.includes(dayOfWeek),
+      );
+
+      const studentsInfo: StudentInfo[] = enrolledStudents.map((enrollment) => ({
+        studentId: enrollment.studentId,
+        attended: true,
+        hoursAttended: 0,
+      }));
+
+      const newSession: SessionBody = {
+        programId: program._id,
+        students: studentsInfo,
+        marked: false,
+        date,
+        sessionTime: { start_time: "00:00", end_time: "00:00" },
+        isAbsenceSession: false,
+      };
+
+      return newSession;
+    });
+    return SessionModel.create(newSessions);
+  });
+  return await Promise.all(programPromises);
+};
 
 // Call when creating a session from absence
 export const createAbsenceSession: RequestHandler = async (req, res, next) => {
@@ -245,8 +285,10 @@ export const updateSession: RequestHandler = async (req, res, next) => {
 export const getRecentSessions: RequestHandler = async (_, res, next) => {
   try {
     await createMissingRegularSessions();
-    // await createMissingVaryingSessions();
-    const sessions = await SessionModel.find({ marked: false });
+    await createMissingVaryingSessions();
+    // Show in terms of pacific time
+    const currTime = new Date(new Date().getTime() - 7 * 60 * 60 * 1000);
+    const sessions = await SessionModel.find({ marked: false, date: { $lte: currTime } });
 
     res.status(200).json(sessions);
   } catch (error) {

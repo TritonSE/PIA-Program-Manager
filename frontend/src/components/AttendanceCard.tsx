@@ -61,7 +61,7 @@ export function AttendanceCard({ program, student, setRemainingSessions }: CardP
   };
 
   const outerDivClass =
-    "bg-white rounded-lg w-[240px] min-w-[240px] mr-[20px] flex-col transition-all opacity-100 duration-200 ease-in-out border border-gray";
+    "bg-white rounded-lg w-[240px] min-w-[240px] mr-[20px] h-[326px] flex-col transition-all default:opacity-0 opacity-100 duration-200 ease-in-out border border-gray";
   const innerDivClass = "w-[200px] ml-auto mr-auto mt-0 flex-col";
   const typeClass = cn(
     "relative text-[14px] top-2 left-3 capitalize",
@@ -88,7 +88,7 @@ export function AttendanceCard({ program, student, setRemainingSessions }: CardP
         {program.name} ({program.type})
       </p>
       <p className={titleClass}>{student.student.firstName + " " + student.student.lastName}</p>
-      <div className={innerDivClass}>
+      <div className={cn(innerDivClass, closed && "mr-0 w-0 min-w-0 max-w-0")}>
         <p className={inputTitleClass}>Makeup Date</p>
         <Textfield
           className="mt-6"
@@ -109,7 +109,7 @@ export function AttendanceCard({ program, student, setRemainingSessions }: CardP
           units="Hrs"
           registerOptions={{ required: "Email cannot be empty" }}
         />
-        <div className={optionsClass}>
+        <div className={cn(optionsClass, closed && "mr-0 w-0 min-w-0 max-w-0")}>
           <Button
             label="Mark Makeup"
             size="wide"

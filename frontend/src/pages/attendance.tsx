@@ -9,7 +9,7 @@ import { ProgramMap, StudentMap } from "@/components/StudentsTable/types";
 import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export type Sessions = [Session];
-export type AbsenceSessions = [AbsenceSession];
+export type AbsenceSessions = AbsenceSession[];
 
 export default function AttendanceDashboard() {
   useRedirectToLoginIfNotSignedIn();
@@ -18,7 +18,7 @@ export default function AttendanceDashboard() {
   const [allSessions, setAllSessions] = useState<Sessions>(); // map from program id to program
   const [allPrograms, setAllPrograms] = useState<ProgramMap>({}); // map from program id to program
   const [allStudents, setAllStudents] = useState<StudentMap>({});
-  const [allAbsenceSessions, setAllAbsenceSessions] = useState<AbsenceSessions>();
+  const [allAbsenceSessions, setAllAbsenceSessions] = useState<AbsenceSessions>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [programsLoading, setProgramsLoading] = useState(true);
   const [studentsLoading, setStudentsLoading] = useState(true);
@@ -48,7 +48,7 @@ export default function AttendanceDashboard() {
     return () => {
       current?.removeEventListener("wheel", handleWheel);
     };
-  }, [sessionsLoading, studentsLoading, programsLoading, absencsSessionsLoading]);
+  }, [sessionsLoading || studentsLoading || programsLoading || absencsSessionsLoading]);
 
   useEffect(() => {
     getRecentSessions().then(
@@ -151,7 +151,7 @@ export default function AttendanceDashboard() {
               );
             })}
             {remainingAbsenceSessions === 0 && (
-              <div className="border-gray mt-[20px] flex h-[326px] w-[240px] items-center justify-center rounded-2xl border bg-white">
+              <div className="border-gray flex h-[326px] w-[240px] items-center justify-center rounded-2xl border bg-white">
                 <div className="ml-5">
                   <svg
                     width="40"
@@ -173,19 +173,16 @@ export default function AttendanceDashboard() {
           </div>
 
           <h1 className="mt-[20px] font-[Poppins-Bold] text-[16px]">Program Sessions</h1>
-          {allSessions?.map((session) => {
+          {allSessions?.map((session, i) => {
             return (
               <AttendanceTable
                 setRemainingSessions={setRemainingSessions}
+                setAllAbsenceSessions={setAllAbsenceSessions}
+                setRemainingAbsenceSessions={setRemainingAbsenceSessions}
                 program={allPrograms[session.programId]}
                 session={session}
                 students={allStudents}
-                key={
-                  session.programId +
-                  session.date.toISOString() +
-                  session.sessionTime.start_time +
-                  session.sessionTime.end_time
-                }
+                key={i}
               />
             );
           })}

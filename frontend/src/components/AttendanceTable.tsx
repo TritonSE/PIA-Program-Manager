@@ -12,15 +12,25 @@ import { Textfield } from "./Textfield";
 import { Program } from "@/api/programs";
 import { Session, updateSession } from "@/api/sessions";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import { AbsenceSessions } from "@/pages/attendance";
 
 export type TableProps = {
   program: Program;
   session: Session;
   students: StudentMap;
   setRemainingSessions: Dispatch<SetStateAction<number>>;
+  setAllAbsenceSessions: Dispatch<SetStateAction<AbsenceSessions>>;
+  setRemainingAbsenceSessions: Dispatch<SetStateAction<number>>;
 };
 
-export function AttendanceTable({ program, session, students, setRemainingSessions }: TableProps) {
+export function AttendanceTable({
+  program,
+  session,
+  students,
+  setRemainingSessions,
+  setAllAbsenceSessions,
+  setRemainingAbsenceSessions,
+}: TableProps) {
   const {
     register,
     setValue,
@@ -67,6 +77,19 @@ export function AttendanceTable({ program, session, students, setRemainingSessio
     updateSession(session)
       .then((newSession) => {
         if (newSession.success) {
+          const absentStudents = newSession.data.students.filter((student) => !student.attended);
+
+          const newAbsences: AbsenceSessions = absentStudents.map((student) => ({
+            studentId: student.studentId,
+            programId: program._id,
+          }));
+
+          setAllAbsenceSessions((absenceSessions) => [...absenceSessions, ...newAbsences]);
+
+          setRemainingAbsenceSessions(
+            (remainingSessions) => remainingSessions + newAbsences.length,
+          );
+
           setMarked(true);
           setTimeout(() => {
             setClosed(true);
@@ -86,22 +109,16 @@ export function AttendanceTable({ program, session, students, setRemainingSessio
   return (
     <div
       className={cn(
-        "border-gray mt-[20px] border opacity-100 transition-all duration-200 ease-in-out",
+        "mt-[20px] opacity-100 transition-all duration-200 ease-in-out",
         marked && "translate-x-[50px] opacity-0",
         closed && "mt-0 h-0 max-h-0 transition-none",
       )}
     >
       <form
         className={cn(
-          "relative w-[360px] overflow-x-auto bg-white shadow-md sm:rounded-lg md:w-[500px] lg:w-[1050px]",
+          "relative w-[360px] overflow-x-auto bg-white shadow-md sm:rounded-lg md:w-[500px] lg:w-[1050px] border border-gray",
         )}
         onSubmit={handleSubmit(onSubmit)}
-        id={
-          session.programId +
-          session.date.toISOString() +
-          session.sessionTime.start_time +
-          session.sessionTime.end_time
-        }
       >
         <div className="text-sm">
           <h1
@@ -114,8 +131,8 @@ export function AttendanceTable({ program, session, students, setRemainingSessio
           </h1>
           <h1 className="ml-5 mt-1 text-gray-400">
             {daysOfWeek[dateObj.getUTCDay()]}, {monthsOfYear[dateObj.getMonth()]}{" "}
-            {dateObj.getDate()} from {session.sessionTime.start_time} to{" "}
-            {session.sessionTime.end_time}
+            {dateObj.getDate()} {program.type === "regular" && "from " + session.sessionTime.start_time + "to " +
+            session.sessionTime.end_time}
           </h1>
         </div>
         <div className="mb-8 grid w-full overflow-x-auto text-left text-sm lg:grid-cols-2 rtl:text-right">
@@ -176,7 +193,7 @@ export function AttendanceTable({ program, session, students, setRemainingSessio
                           type="radio"
                           id={
                             session.programId +
-                            session.date.toISOString() +
+                            session.date.toString() +
                             session.sessionTime.start_time +
                             session.sessionTime.end_time +
                             "attended_" +
@@ -190,7 +207,7 @@ export function AttendanceTable({ program, session, students, setRemainingSessio
                         <label
                           htmlFor={
                             session.programId +
-                            session.date.toISOString() +
+                            session.date.toString() +
                             session.sessionTime.start_time +
                             session.sessionTime.end_time +
                             "attended_" +
@@ -207,7 +224,7 @@ export function AttendanceTable({ program, session, students, setRemainingSessio
                           type="radio"
                           id={
                             session.programId +
-                            session.date.toISOString() +
+                            session.date.toString() +
                             session.sessionTime.start_time +
                             session.sessionTime.end_time +
                             "absent_" +
@@ -220,7 +237,7 @@ export function AttendanceTable({ program, session, students, setRemainingSessio
                         <label
                           htmlFor={
                             session.programId +
-                            session.date.toISOString() +
+                            session.date.toString() +
                             session.sessionTime.start_time +
                             session.sessionTime.end_time +
                             "absent_" +
