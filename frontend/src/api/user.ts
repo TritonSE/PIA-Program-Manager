@@ -4,8 +4,7 @@ import { APIResult, DELETE, GET, PATCH, POST, handleAPIError } from "@/api/reque
 
 export type User = {
   uid: string;
-  // role: "admin" | "team";
-  accountType: "admin" | "team";
+  role: "admin" | "team";
   approvalStatus: boolean;
   profilePicture: string;
   name: string;
