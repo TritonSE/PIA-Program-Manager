@@ -51,9 +51,6 @@ export const createUser = async (
       name,
       accountType,
       email,
-      // profilePicture default "default" in User constructor
-      // lastChangedPassword default Date.now() in User constructor
-      // approvalStatus default false in User constructor
     });
 
     res.status(201).json(newUser);
@@ -64,29 +61,6 @@ export const createUser = async (
 
   return;
 };
-
-// export const deleteUser = async (req: Request, res: Response, nxt: NextFunction) => {
-//   try {
-//     const { userId } = req.params;
-
-//     if (!userId || typeof userId !== "string" || userId.trim().length === 0) {
-//       throw new Error("Invalid userId provided");
-//     }
-
-//     // console.log('Received userId:', userId);
-//     // console.log('Type of userId:', typeof userId);
-//     // console.log('Length of userId:', userId.length);
-
-//     // delete user from Firebase and MongoDB
-//     await deleteUserFromFirebase(userId);
-//     await deleteUserFromMongoDB(userId);
-
-//     res.status(200).send("User deleted successfully");
-//   } catch (error) {
-//     console.error("Error deleting user:", error);
-//     nxt(error);
-//   }
-// };
 
 export const deleteUser = async (req: Request, res: Response, nxt: NextFunction) => {
   try {
@@ -122,22 +96,6 @@ export const getNotApprovedUsers = async (req: Request, res: Response, next: Nex
     next(error);
   }
 };
-
-// export const approveUser = async (req: Request, res: Response, nxt: NextFunction) => {
-//   try {
-//     const { userId, email } = req.body; // firebaseuid and email
-
-//     await UserModel.findByIdAndUpdate(userId, { approvalStatus: true });
-
-//     // await sendApprovalEmail(email);
-//     await sendApprovalEmail(email as string);
-
-//     res.status(200).send("User approved successfully");
-//   } catch (error) {
-//     console.error(error);
-//     nxt(error);
-//   }
-// };
 
 export const approveUser = async (req: Request, res: Response, nxt: NextFunction) => {
   try {
@@ -184,7 +142,6 @@ export const denyUser = async (req: Request, res: Response, nxt: NextFunction) =
     await UserModel.findByIdAndUpdate(userId, { approvalStatus: false });
 
     console.log(email as string);
-    // await sendDenialEmail(email);
     await sendDenialEmail(email as string);
 
     res.status(200).send("User denied successfully");

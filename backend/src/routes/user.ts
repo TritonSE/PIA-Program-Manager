@@ -10,17 +10,13 @@ router.use(express.json());
 
 router.post("/create", UserValidator.createUser, UserController.createUser);
 
-// router.post("/approve", [verifyAuthToken], UserController.approveUser);
-router.post("/approve", UserController.approveUser);
-// router.post("/deny", [verifyAuthToken], UserController.denyUser);
-router.post("/deny", UserController.denyUser);
+router.post("/approve", [verifyAuthToken], UserController.approveUser);
 
-// router.delete("/delete", [verifyAuthToken], UserController.deleteUser);
-// router.delete("/delete", UserController.deleteUser);
-router.delete("/delete/:email", UserController.deleteUser);
+router.post("/deny", [verifyAuthToken], UserController.denyUser);
 
-// router.get("/not-approved", [verifyAuthToken], UserController.getNotApprovedUsers);
-router.get("/not-approved", UserController.getNotApprovedUsers);
+router.delete("/delete/:email", [verifyAuthToken], UserController.deleteUser);
+
+router.get("/not-approved", [verifyAuthToken], UserController.getNotApprovedUsers);
 
 router.get("/", [verifyAuthToken], UserController.loginUser);
 router.post("/editPhoto", [verifyAuthToken], UserValidator.editPhoto, UserController.editPhoto);

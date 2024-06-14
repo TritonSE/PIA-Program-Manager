@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { APIResult, DELETE, GET, PATCH, POST, handleAPIError } from "@/api/requests";
 
 export type User = {
@@ -25,9 +27,11 @@ export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>
   }
 };
 
-export async function getNotApprovedUsers(): Promise<APIResult<User[]>> {
+export async function getNotApprovedUsers(firebaseToken: string): Promise<APIResult<User[]>> {
   try {
-    const response = await GET("/user/not-approved");
+    const headers = createAuthHeader(firebaseToken);
+    console.log(headers);
+    const response = await GET("/user/not-approved", headers);
     const json = (await response.json()) as User[];
     return { success: true, data: json };
   } catch (error) {
@@ -35,9 +39,10 @@ export async function getNotApprovedUsers(): Promise<APIResult<User[]>> {
   }
 }
 
-export async function approveUser(email: string): Promise<APIResult<void>> {
+export async function approveUser(email: string, firebaseToken: string): Promise<APIResult<void>> {
   try {
-    const response = await POST(`/user/approve`, { email });
+    const headers = createAuthHeader(firebaseToken);
+    const response = await POST(`/user/approve`, { email }, headers);
     if (response.ok) {
       // return { success: true };
       return { success: true, data: undefined }; // return APIResult<void> with empty data
@@ -50,11 +55,12 @@ export async function approveUser(email: string): Promise<APIResult<void>> {
   }
 }
 
-export async function denyUser(email: string): Promise<APIResult<void>> {
+export async function denyUser(email: string, firebaseToken: string): Promise<APIResult<void>> {
   console.log("In frontend/src/api/user.ts denyUser()");
 
   try {
-    const response = await POST(`/user/deny`, { email });
+    const headers = createAuthHeader(firebaseToken);
+    const response = await POST(`/user/deny`, { email }, headers);
     if (response.ok) {
       // return { success: true };
       return { success: true, data: undefined }; // return APIResult<void> with empty data
@@ -68,9 +74,13 @@ export async function denyUser(email: string): Promise<APIResult<void>> {
 }
 
 // delete user by email
-export async function deleteUserByEmail(email: string): Promise<APIResult<void>> {
+export async function deleteUserByEmail(
+  email: string,
+  firebaseToken: string,
+): Promise<APIResult<void>> {
   try {
-    const response = await DELETE(`/user/delete/${encodeURIComponent(email)}`, undefined);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await DELETE(`/user/delete/${encodeURIComponent(email)}`, undefined, headers);
     if (response.ok) {
       // return { success: true };
       return { success: true, data: undefined };

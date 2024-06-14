@@ -4,13 +4,17 @@ import NotificationCard from "./NotificationCard";
 
 import { User, approveUser, deleteUserByEmail, denyUser, getNotApprovedUsers } from "@/api/user";
 
-export default function NotificationTable() {
+type NotificationsProps = {
+  firebaseToken: string;
+};
+
+export default function NotificationTable({ firebaseToken }: NotificationsProps) {
   const [notApprovedUsers, setNotApprovedUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const fetchNotApprovedUsers = async () => {
       try {
-        const result = await getNotApprovedUsers();
+        const result = await getNotApprovedUsers(firebaseToken);
         if (result.success) {
           console.log("notApprovedUsers:", result.data);
 
@@ -26,14 +30,14 @@ export default function NotificationTable() {
     fetchNotApprovedUsers().catch((error) => {
       console.error("Error fetching not-approved users:", error);
     });
-  }, []);
+  }, [firebaseToken]);
 
   const handleApproveUser = async (email: string) => {
     // Immediately update the UI (remove corresponding Notification Card)
     setNotApprovedUsers((prevUsers) => prevUsers.filter((user) => user.email !== email));
 
     try {
-      const result = await approveUser(email);
+      const result = await approveUser(email, firebaseToken);
       if (!result.success) {
         console.error("Failed to approve user:", result.error);
       }
@@ -47,13 +51,13 @@ export default function NotificationTable() {
       // Immediately update the UI (remove corresponding Notification Card)
       setNotApprovedUsers((prevUsers) => prevUsers.filter((user) => user.email !== email));
 
-      const denialResult = await denyUser(email);
+      const denialResult = await denyUser(email, firebaseToken);
       if (!denialResult.success) {
         console.error("Failed to deny user:", denialResult.error);
       }
 
       // Delete the user from Firebase and MongoDB
-      const deletionResult = await deleteUserByEmail(email);
+      const deletionResult = await deleteUserByEmail(email, firebaseToken);
       if (deletionResult.success) {
         console.log(`User with email ${email} successfully deleted.`);
       } else {

@@ -1,5 +1,3 @@
-import { Button } from "../Button";
-
 type UserInfo = {
   name: string;
   email: string;
@@ -43,7 +41,6 @@ export default function NotificationCard({
           >
             Approve
           </button>
-
         </div>
       </div>
     </>
