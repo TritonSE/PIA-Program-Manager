@@ -53,7 +53,7 @@ export const useRedirection = ({ checkShouldRedirect, redirectURL }: UseRedirect
  */
 export const useRedirectToHomeIfSignedIn = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser !== null && piaUser !== null,
+    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser !== null && piaUser !== null && piaUser.approvalStatus,
     redirectURL: HOME_URL,
   });
 };

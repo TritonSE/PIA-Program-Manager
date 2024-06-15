@@ -44,7 +44,6 @@ export default function StudentsTable() {
             obj[student._id] = student;
             return obj;
           }, {} as StudentMap);
-          console.log(result.data);
 
           setAllStudents(studentsObject);
           setIsLoading(false);

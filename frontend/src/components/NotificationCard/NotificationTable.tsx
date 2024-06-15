@@ -76,7 +76,7 @@ export default function NotificationTable({ firebaseToken }: NotificationsProps)
             name={user.name}
             email={user.email}
             // account_type={user.role}
-            account_type={user.accountType} // console log shows correct property name is accountType
+            account_type={user.role} // console log shows correct property name is accountType
             onApprove={() => handleApproveUser(user.email)}
             onDeny={() => handleDenyUser(user.email)}
           />
