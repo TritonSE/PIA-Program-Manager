@@ -17,6 +17,7 @@ type BaseProperties = {
   classname?: string;
   component: React.JSX.Element;
   setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
+  setAlertState: React.Dispatch<React.SetStateAction<{ open: boolean; message: string }>>;
 };
 
 type EditProperties = BaseProperties & {
@@ -36,6 +37,7 @@ export default function ProgramFormButton({
   component = <p>Please add a component</p>,
   data = null,
   setPrograms,
+  setAlertState,
   classname,
 }: ProgramFormProperties) {
   const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<ProgramData>();
@@ -62,6 +64,7 @@ export default function ProgramFormButton({
       color: formData.color,
       hourlyPay: formData.hourlyPay,
       sessions: programRequestType === "regular" ? sanitizedSessions : [],
+      archived: formData.archived ? formData.archived : false,
     };
 
     console.log(`${type} program`, programRequest);
@@ -71,6 +74,7 @@ export default function ProgramFormButton({
           if (result.success) {
             setOpenForm(false);
             console.log(`${type} program`, result.data);
+            setAlertState({ open: true, message: "Added program " + result.data.name });
             setPrograms((prevPrograms: ProgramMap) => {
               return { ...prevPrograms, [result.data._id]: { ...result.data } };
             });
@@ -85,18 +89,22 @@ export default function ProgramFormButton({
         });
     }
     if (type === "edit" && data) {
-      const updatedProgram: Program = { ...programRequest, _id: data._id };
+      const updatedProgram: Program = {
+        ...programRequest,
+        _id: data._id,
+        dateUpdated: data.dateUpdated,
+      };
       console.log(`${type} program`, updatedProgram);
       editProgram(updatedProgram)
         .then((result) => {
           if (result.success) {
             setOpenForm(false);
             console.log(`${type} program`, result.data);
+            setAlertState({ open: true, message: "Edited program " + result.data.name });
             setPrograms((prevPrograms: ProgramMap) => {
               if (Object.keys(prevPrograms).includes(result.data._id))
                 return { ...prevPrograms, [result.data._id]: { ...result.data } };
               else console.log("Program ID does not exist");
-              alert("Program ID does not exist");
               return prevPrograms;
             });
           } else {
@@ -122,7 +130,14 @@ export default function ProgramFormButton({
           }}
         >
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
-            {type === "edit" && data && <ProgramArchive setOpenParent={setOpenForm} data={data} />}
+            {type === "edit" && data && (
+              <ProgramArchive
+                setOpenParent={setOpenForm}
+                data={data}
+                setPrograms={setPrograms}
+                setAlertState={setAlertState}
+              />
+            )}
 
             <h2 className="mb-4 text-2xl font-bold text-neutral-800">
               {type === "add" ? "Add new program" : data?.name}
@@ -163,12 +178,19 @@ export default function ProgramFormButton({
             setOpen={setOpenCancel}
             onCancel={() => {
               setOpenForm(false);
+              setOpenCancel(false);
               reset();
             }}
           />
           <form onSubmit={handleSubmit(onSubmit)} className={cn(classname)}>
             {type === "edit" && data && (
-              <ProgramArchive setOpenParent={setOpenForm} data={data} isMobile={isMobile} />
+              <ProgramArchive
+                setOpenParent={setOpenForm}
+                data={data}
+                isMobile={isMobile}
+                setPrograms={setPrograms}
+                setAlertState={setAlertState}
+              />
             )}
 
             {type === "add" ? (

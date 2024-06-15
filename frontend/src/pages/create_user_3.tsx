@@ -17,7 +17,8 @@ export default function CreateUser() {
 
   const onBack: SubmitHandler<FieldValues> = (data) => {
     console.log(data);
-    void router.push("/create_user_2");
+    // void router.push("/create_user_2");
+    void router.push("/create_user");
   };
 
   const isSuccess = createSuccess === "true";

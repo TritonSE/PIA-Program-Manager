@@ -8,8 +8,10 @@ import { ServiceError } from "../errors/service";
 import { ValidationError } from "../errors/validation";
 import { Image } from "../models/image";
 import UserModel from "../models/user";
+import { sendApprovalEmail, sendDenialEmail } from "../util/email";
 import { firebaseAdminAuth } from "../util/firebase";
 import { handleImageParsing } from "../util/image";
+import { deleteUserFromFirebase, deleteUserFromMongoDB } from "../util/user";
 import validationErrorParser from "../util/validationErrorParser";
 
 import { UserIdRequestBody } from "./types/types";
@@ -49,9 +51,6 @@ export const createUser = async (
       name,
       accountType,
       email,
-      // profilePicture default "default" in User constructor
-      // lastChangedPassword default Date.now() in User constructor
-      // approvalStatus default false in User constructor
     });
 
     res.status(201).json(newUser);
@@ -61,6 +60,95 @@ export const createUser = async (
   }
 
   return;
+};
+
+export const deleteUser = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const { email } = req.params;
+
+    // Find the user by email
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const userId = user._id; // _id is the uid in schema
+
+    // delete user from Firebase and MongoDB
+    await deleteUserFromFirebase(userId);
+    await deleteUserFromMongoDB(userId);
+
+    res.status(200).send("User deleted successfully");
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    nxt(error);
+  }
+};
+
+export const getNotApprovedUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    // const notApprovedUsers: User[] = await UserModel.find({ approvalStatus: false }).exec();
+    const notApprovedUsers = await UserModel.find({ approvalStatus: false }).exec();
+
+    res.status(200).json(notApprovedUsers);
+  } catch (error) {
+    console.error("Error fetching not-approved users:", error);
+    next(error);
+  }
+};
+
+export const approveUser = async (req: Request, res: Response, nxt: NextFunction) => {
+  try {
+    const { email } = req.body;
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    const userId = user._id;
+
+    await UserModel.findByIdAndUpdate(userId, { approvalStatus: true });
+
+    // await sendApprovalEmail(email);
+    await sendApprovalEmail(email as string);
+
+    res.status(200).send("User approved successfully");
+  } catch (error) {
+    console.error(error);
+    nxt(error);
+  }
+};
+
+export const denyUser = async (req: Request, res: Response, nxt: NextFunction) => {
+  console.log("Inside denyUser controller");
+
+  try {
+    const { email } = req.body;
+
+    console.log("Email from request body:", email);
+
+    // const user = await UserModel.findOne({ email });
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    console.log("User object:", user);
+
+    const userId = user._id;
+
+    await UserModel.findByIdAndUpdate(userId, { approvalStatus: false });
+
+    console.log(email as string);
+    await sendDenialEmail(email as string);
+
+    res.status(200).send("User denied successfully");
+  } catch (error) {
+    console.error(error);
+    nxt(error);
+  }
 };
 
 export const loginUser = async (

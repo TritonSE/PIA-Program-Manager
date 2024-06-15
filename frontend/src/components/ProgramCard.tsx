@@ -18,6 +18,8 @@ export type CardProps = {
   isAdmin: boolean;
   className?: string;
   setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
+  setAlertState: React.Dispatch<React.SetStateAction<{ open: boolean; message: string }>>;
+  archiveView?: boolean;
 };
 
 function toggleEdit(id: string) {
@@ -44,7 +46,14 @@ function toggleEdit(id: string) {
   document.body.addEventListener("click", temp, true);
 }
 
-export function ProgramCard({ program, isAdmin, className, setPrograms }: CardProps) {
+export function ProgramCard({
+  program,
+  isAdmin,
+  className,
+  setPrograms,
+  setAlertState,
+  archiveView = false,
+}: CardProps) {
   const { isTablet } = useWindowSize();
 
   const cardId = "card" + program._id;
@@ -111,7 +120,11 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
     hourlyPay: program.hourlyPay,
     sessions: program.sessions,
     //students: program.students,
+    archived: program.archived,
+    dateUpdated: program.dateUpdated,
   };
+
+  const date = new Date(program.dateUpdated);
 
   if (isTablet) {
     editClass += " top-7 w-12 h-5 text-[10px]";
@@ -241,6 +254,24 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
           </div>
           <div className={botDivClass}>
             <div className={numClass}>
+    <div className="relative">
+      <div id={editId} className={editClass}>
+        <ProgramFormButton
+          type="edit"
+          component={editButton}
+          data={programFields}
+          setPrograms={setPrograms}
+          setAlertState={setAlertState}
+        />
+      </div>
+      <div className={outerDivClass}>
+        <div className={topDivClass} style={{ backgroundColor: program.color }}>
+          <div>
+            <p className={typeClass}>{program.type} Program</p>
+            <p className={titleClass}>{program.name}</p>
+          </div>
+          {isAdmin && !archiveView && (
+            <div className={optionsDiv}>
               <Image
                 alt="students"
                 src="/programs/Students.png"
@@ -255,6 +286,38 @@ export function ProgramCard({ program, isAdmin, className, setPrograms }: CardPr
                 <p className={numTextClass}>{program.students.length} Students</p>
               )} */}
             </div>
+          )}
+        </div>
+        <div className={botDivClass}>
+          <div className={numClass}>
+            {!archiveView && (
+              <Image
+                alt="students"
+                src="/programs/Students.png"
+                height={12}
+                width={18}
+                className={iconClass}
+              />
+            )}
+            {/*program.students.length === 0 && <p className={numTextClass}>No Students</p>*/}
+            {/*program.students.length === 1 && <p className={numTextClass}>1 Student</p>*/}
+            {
+              //program.students.length > 1 && (
+              <p className={numTextClass}>
+                {/*program.students.length*/}
+                {
+                  archiveView
+                    ? "Archived on " +
+                      (date.getMonth() + 1) +
+                      "/" +
+                      date.getDate() +
+                      "/" +
+                      date.getFullYear()
+                    : "0 Students" //<---- Change in the future --------
+                }
+              </p>
+              //)
+            }
           </div>
         </div>
       </div>
