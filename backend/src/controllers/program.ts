@@ -85,7 +85,7 @@ export const getProgram: RequestHandler = async (req, res, next) => {
     }
 
     res.status(200).json(program);
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
