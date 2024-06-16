@@ -37,8 +37,8 @@ export default function Programs() {
   const { isAdmin } = useContext(UserContext);
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar flex flex-col";
-  let titleClass = "font-[alternate-gothic]";
   let headerClass = "flex flex-row";
+  let titleClass = "font-[alternate-gothic]";
   let cardsGridClass = "grid ease-in animate-in fade-in-0";
   let cardClass = "";
 
@@ -78,7 +78,8 @@ export default function Programs() {
     }
   }
 
-  let addButtonClass = "m-0 rounded-3xl bg-pia_dark_green text-white";
+  let addButtonClass =
+    "m-0 rounded-3xl bg-pia_dark_green text-white hover:opacity-80 active:opacity-90";
   if (isTablet) {
     addButtonClass += " text-[10px] h-6 px-[10px]";
   } else {

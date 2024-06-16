@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
-//import { error } from "firebase-functions/logger";
+import createHttpError from "http-errors";
+// import { error } from "firebase-functions/logger";
 
 import EnrollmentModel from "../models/enrollment";
 import ProgramModel from "../models/program";
@@ -73,6 +74,22 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getProgram: RequestHandler = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const program = await ProgramModel.findById(id);
+
+    if (program === null) {
+      throw createHttpError(404, "Program not found");
+    }
+
+    res.status(200).json(program);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const archiveProgram: RequestHandler = async (req, res, next) => {
   const errors = validationResult(req);
   try {
@@ -104,6 +121,18 @@ export const getAllPrograms: RequestHandler = async (req, res, next) => {
     const programs = await ProgramModel.find();
 
     res.status(200).json(programs);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProgramEnrollments: RequestHandler = async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const enrollments = await EnrollmentModel.find({ programId: id });
+
+    res.status(200).json(enrollments);
   } catch (error) {
     next(error);
   }

@@ -5,6 +5,20 @@ import type { APIResult } from "../api/requests";
 
 export type Program = CreateProgramRequest & { _id: string; dateUpdated: string };
 
+export type Enrollment = {
+  _id: string;
+  studentId: string;
+  programId: string;
+  status: string;
+  dateUpdated: Date;
+  hoursLeft: number;
+  schedule: string[];
+  sessionTime: string[];
+  startDate: Date;
+  renewalDate: Date;
+  authNumber: string;
+};
+
 export async function createProgram(program: CreateProgramRequest): Promise<APIResult<Program>> {
   try {
     const response = await POST("/program/create", program);
@@ -18,8 +32,18 @@ export async function createProgram(program: CreateProgramRequest): Promise<APIR
 
 export async function getProgram(id: string): Promise<APIResult<Program>> {
   try {
-    const response = await GET(`/api/program/${id}`);
+    const response = await GET(`/program/${id}`);
     const json = (await response.json()) as Program;
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function getProgramEnrollments(id: string): Promise<APIResult<[Enrollment]>> {
+  try {
+    const response = await GET(`/program/enrollments/${id}`);
+    const json = (await response.json()) as [Enrollment];
     return { success: true, data: json };
   } catch (error) {
     return handleAPIError(error);
