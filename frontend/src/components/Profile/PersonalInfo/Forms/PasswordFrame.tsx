@@ -9,11 +9,11 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { cn } from "../../lib/utils";
-import { FrameProps } from "../../pages/profile";
-import { Button } from "../Button";
-import { Textfield } from "../Textfield";
-import { Dialog, DialogTrigger } from "../ui/dialog";
+import { cn } from "../../../../lib/utils";
+import { FrameProps } from "../../../../pages/profile";
+import { Button } from "../../../Button";
+import { Textfield } from "../../../Textfield";
+import { Dialog, DialogTrigger } from "../../../ui/dialog";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
@@ -139,11 +139,13 @@ export function PasswordFrame({
   return (
     <section className={cn(frameFormat, className)}>
       {/*Info header*/}
-      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl ">Password</div>
+      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-xl lg:text-2xl">
+        Password
+      </div>
       {/*Info Fields */}
       <Dialog open={openPasswordForm} onOpenChange={setOpenPasswordForm}>
         <DialogTrigger asChild>
-          <div className=" flex-grow cursor-pointer py-6 text-xs hover:bg-pia_accent_green sm:text-base">
+          <div className=" flex-grow cursor-pointer py-6 text-xs hover:bg-[#e7f0f0] sm:text-base">
             <div className="ml-3 flex h-full w-auto flex-row pr-5 sm:ml-14 ">
               <div className="flex w-1/3 flex-none items-center sm:w-1/5 ">
                 {"\u2022".repeat(passwordLength)}

@@ -29,5 +29,18 @@ router.patch(
   UserValidator.editLastChangedPassword,
   UserController.editLastChangedPassword,
 );
+router.get("/getAllTeamAccounts", [verifyAuthToken], UserController.getAllTeamAccounts);
+router.patch(
+  "/editAccountType",
+  [verifyAuthToken],
+  UserValidator.editAccountType,
+  UserController.editAccountType,
+);
+router.patch(
+  "/editArchiveStatus",
+  [verifyAuthToken],
+  UserValidator.editArchiveStatus,
+  UserController.editArchiveStatus,
+);
 
 export default router;

@@ -1,6 +1,7 @@
-import BackIcon from "../../../public/icons/back.svg";
-import CloseIcon from "../../../public/icons/close.svg";
-import { DialogClose, DialogContent } from "../ui/dialog";
+import BackIcon from "../../../../../public/icons/back.svg";
+import CloseIcon from "../../../../../public/icons/close.svg";
+
+import { DialogClose, DialogContent } from "@/components/ui/dialog";
 
 type ProfileDialogProps = {
   children: React.ReactNode;

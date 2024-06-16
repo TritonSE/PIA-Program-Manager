@@ -3,13 +3,14 @@
 import { APIResult, DELETE, GET, PATCH, POST, handleAPIError } from "@/api/requests";
 
 export type User = {
-  uid: string;
-  role: "admin" | "team";
-  approvalStatus: boolean;
-  profilePicture: string;
+  _id: string;
   name: string;
+  accountType: "admin" | "team";
+  approvalStatus: boolean;
   email: string;
+  profilePicture: string;
   lastChangedPassword: Date;
+  archived: boolean;
 };
 
 export const createAuthHeader = (firebaseToken: string) => ({
@@ -190,6 +191,49 @@ export async function editLastChangedPassword(firebaseToken: string): Promise<AP
     const response = await PATCH(`/user/editLastChangedPassword`, dateData, headers);
 
     const json = (await response.json()) as string;
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function getAllTeamAccounts(firebaseToken: string): Promise<APIResult<User[]>> {
+  try {
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET(`/user/getAllTeamAccounts`, headers);
+
+    const json = (await response.json()) as User[];
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function editAccountType(
+  updateUserId: string,
+  firebaseToken: string,
+): Promise<APIResult<User>> {
+  try {
+    const updateAccountData = { updateUserId };
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/user/editAccountType`, updateAccountData, headers);
+
+    const json = (await response.json()) as User;
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function editArchiveStatus(
+  updateUserId: string,
+  firebaseToken: string,
+): Promise<APIResult<User>> {
+  try {
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/user/editArchiveStatus`, { updateUserId }, headers);
+
+    const json = (await response.json()) as User;
     return { success: true, data: json };
   } catch (error) {
     return handleAPIError(error);

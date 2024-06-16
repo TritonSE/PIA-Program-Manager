@@ -22,6 +22,7 @@ import {
   EditNameRequestBody,
   EditPhotoRequestBody,
   LoginUserRequestBody,
+  UpdateAccountTypeRequestBody,
 } from "./types/userTypes";
 
 export const createUser = async (
@@ -162,15 +163,7 @@ export const loginUser = async (
     if (!user) {
       throw ValidationError.USER_NOT_FOUND;
     }
-    res.status(200).json({
-      uid: user._id,
-      role: user.accountType,
-      approvalStatus: user.approvalStatus,
-      profilePicture: user.profilePicture,
-      name: user.name,
-      email: user.email,
-      lastChangedPassword: user.lastChangedPassword,
-    });
+    res.status(200).json(user);
     return;
   } catch (e) {
     nxt();
@@ -310,6 +303,101 @@ export const editLastChangedPassword = async (
     await UserModel.findByIdAndUpdate(uid, { lastChangedPassword: currentDate });
 
     res.status(200).json(currentDate);
+  } catch (error) {
+    nxt(error);
+    return res.status(400).json({
+      error,
+    });
+  }
+};
+
+export const getAllTeamAccounts = async (
+  req: Request<Record<string, never>, Record<string, never>, UserIdRequestBody>,
+  res: Response,
+  nxt: NextFunction,
+) => {
+  try {
+    const { uid } = req.body;
+
+    const user = await UserModel.findById(uid);
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    if (user.accountType !== "admin") {
+      throw ValidationError.UNAUTHORIZED_USER;
+    }
+
+    const allTeamAccounts = await UserModel.find({ accountType: "team" });
+
+    return res.status(200).json(allTeamAccounts);
+  } catch (error) {
+    nxt(error);
+    return res.status(400).json({
+      error,
+    });
+  }
+};
+
+export const editAccountType = async (
+  req: Request<Record<string, never>, Record<string, never>, UpdateAccountTypeRequestBody>,
+  res: Response,
+  nxt: NextFunction,
+) => {
+  try {
+    const { uid, updateUserId } = req.body;
+
+    const user = await UserModel.findById(uid);
+    const updatedUser = await UserModel.findById(updateUserId);
+    if (!user || !updatedUser) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    if (user.accountType !== "admin") {
+      throw ValidationError.UNAUTHORIZED_USER;
+    }
+
+    const updatedUserAdmin = await UserModel.findByIdAndUpdate(updateUserId, {
+      accountType: "admin",
+    });
+
+    return res.status(200).json(updatedUserAdmin);
+  } catch (error) {
+    nxt(error);
+    return res.status(400).json({
+      error,
+    });
+  }
+};
+
+export const editArchiveStatus = async (
+  req: Request<Record<string, never>, Record<string, never>, UpdateAccountTypeRequestBody>,
+  res: Response,
+  nxt: NextFunction,
+) => {
+  try {
+    const { uid, updateUserId } = req.body;
+
+    const user = await UserModel.findById(uid);
+    const updatedUser = await UserModel.findById(updateUserId);
+    if (!user || !updatedUser) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    if (updatedUser.accountType === "admin") {
+      throw ValidationError.UNAUTHORIZED_USER;
+    }
+
+    if (user.accountType !== "admin") {
+      throw ValidationError.UNAUTHORIZED_USER;
+    }
+
+    // Disable Firebase account to prevent login
+    await firebaseAdminAuth.updateUser(updateUserId, { disabled: true });
+
+    const updatedUserAdmin = await UserModel.findByIdAndUpdate(updateUserId, { archived: true });
+
+    return res.status(200).json(updatedUserAdmin);
   } catch (error) {
     nxt(error);
     return res.status(400).json({

@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { cn } from "../../lib/utils";
-import { FrameProps } from "../../pages/profile";
-import SaveCancelButtons from "../Modals/SaveCancelButtons";
-import { Textfield } from "../Textfield";
-import { Dialog, DialogTrigger } from "../ui/dialog";
+import { cn } from "../../../../lib/utils";
+import { Textfield } from "../../../Textfield";
+import { Dialog, DialogTrigger } from "../../../ui/dialog";
+import { FrameProps } from "../PersonalInfo";
 
 import ProfileDialogContent from "./ProfileDialogContent";
 
 import { editEmail } from "@/api/user";
+import SaveCancelButtons from "@/components/Modals/SaveCancelButtons";
 import { initFirebase } from "@/firebase/firebase";
 
 type ContactFrameProps = {
@@ -70,13 +70,13 @@ export function ContactFrame({
   return (
     <section className={cn(frameFormat, className)}>
       {/*Info header*/}
-      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-2xl">
+      <div className=" ml-3 flex pb-2 pt-6 text-base sm:ml-10 sm:pt-8 sm:text-xl lg:text-2xl">
         Contact Info
       </div>
       {/*Info Fields */}
       <Dialog open={openEmailForm} onOpenChange={setOpenEmailForm}>
         <DialogTrigger asChild>
-          <div className=" flex-grow cursor-pointer py-6 text-xs hover:bg-pia_accent_green sm:text-base">
+          <div className=" flex-grow cursor-pointer py-6 text-xs hover:bg-[#e7f0f0] sm:text-base">
             <div className="ml-3 flex h-full w-auto flex-row pr-5 sm:ml-14">
               <div className="flex w-1/3 flex-none items-center sm:w-1/5">Email</div>
               <div className="flex flex-grow items-center">{data.email}</div>
