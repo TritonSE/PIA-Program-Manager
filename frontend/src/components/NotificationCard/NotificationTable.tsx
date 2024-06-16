@@ -71,12 +71,12 @@ export default function NotificationTable({ firebaseToken }: NotificationsProps)
   return (
     <div className="m-auto max-w-full border-collapse border-separate rounded-[15px] border-[1px] border-pia_neutral_gray bg-pia_primary_white">
       {notApprovedUsers.map((user) => (
-        <div key={user.uid}>
+        <div key={user._id}>
           <NotificationCard
             name={user.name}
             email={user.email}
             // account_type={user.role}
-            account_type={user.role} // console log shows correct property name is accountType
+            account_type={user.accountType} // console log shows correct property name is accountType
             onApprove={() => handleApproveUser(user.email)}
             onDeny={() => handleDenyUser(user.email)}
           />
