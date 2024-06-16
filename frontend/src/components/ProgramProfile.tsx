@@ -1,5 +1,6 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { Enrollment, Program, getProgram, getProgramEnrollments } from "../api/programs";
@@ -171,7 +172,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
             <p className={messageClass}>
               You can add a student to this program from their individual profile. See{" "}
               <u>
-                <a href="/students">all students</a>
+                <Link href="/home">all students</Link>
               </u>
             </p>
             <div className={middleDivClass}>
