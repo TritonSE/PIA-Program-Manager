@@ -74,3 +74,19 @@ export const editLastChangedPassword: ValidationChain[] = [
     .isISO8601()
     .withMessage("Invalid Date format"),
 ];
+
+export const editAccountType: ValidationChain[] = [
+  body("updateUserId")
+    .exists()
+    .withMessage("ID of User to be updated is required")
+    .notEmpty()
+    .withMessage("User ID cannot be empty"),
+];
+
+export const editArchiveStatus: ValidationChain[] = [
+  body("updateUserId")
+    .exists()
+    .withMessage("ID of User to be updated is required")
+    .notEmpty()
+    .withMessage("User ID cannot be empty"),
+];

@@ -22,7 +22,14 @@ export default function ProgramCancel({ isMobile = false, open, setOpen, onCance
             }}
           />
         ) : (
-          <div className="absolute flex pl-3 pt-4 text-sm text-neutral-400">Cancel</div>
+          <div
+            className="absolute flex pl-3 pt-4 text-sm text-neutral-400"
+            onClick={() => {
+              setOpen(true);
+            }}
+          >
+            Cancel
+          </div>
         )}
       </DialogTrigger>
       <DialogContent className="h-auto max-w-[80%] rounded-[8px] sm:max-h-[40%] sm:w-auto sm:max-w-[50%]">

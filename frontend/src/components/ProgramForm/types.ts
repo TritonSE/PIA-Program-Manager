@@ -6,6 +6,8 @@ export type ProgramData = {
   color: string; //colorValueHex;
   hourlyPay: string;
   sessions: [string[]];
+  archived: boolean;
+  dateUpdated: string;
 };
 
 export type CreateProgramRequest = {
@@ -16,4 +18,5 @@ export type CreateProgramRequest = {
   color: string;
   hourlyPay: string;
   sessions: { start_time: string; end_time: string }[];
+  archived: boolean;
 };

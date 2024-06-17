@@ -53,7 +53,8 @@ export const useRedirection = ({ checkShouldRedirect, redirectURL }: UseRedirect
  */
 export const useRedirectToHomeIfSignedIn = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser !== null && piaUser !== null,
+    checkShouldRedirect: ({ firebaseUser, piaUser }) =>
+      firebaseUser !== null && piaUser !== null && piaUser.approvalStatus,
     redirectURL: HOME_URL,
   });
 };
@@ -78,7 +79,7 @@ export const useRedirectToLoginIfNotSignedIn = () => {
 export const useRedirectTo404IfNotAdmin = () => {
   useRedirection({
     checkShouldRedirect: ({ firebaseUser, piaUser }) =>
-      firebaseUser === null || piaUser === null || piaUser.role !== "admin",
+      firebaseUser === null || piaUser === null || piaUser.accountType !== "admin",
     redirectURL: NOT_FOUND_URL,
   });
 };
