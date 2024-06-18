@@ -13,6 +13,7 @@ export type ProgramLink = {
 };
 
 export type StudentData = {
+  _id?: string;
   student: Contact;
   emergency: Contact;
   serviceCoordinator: Contact;
@@ -21,31 +22,70 @@ export type StudentData = {
   birthday: Date;
   intakeDate: Date;
   tourDate: Date;
-  programs: ProgramLink[];
-  dietary: string[];
-  otherString: string;
+  conservation: boolean;
+  UCINumber: string;
+  incidentForm: string;
+  documents: string[];
+  profilePicture: string;
+  enrollments: Enrollment[];
 };
 
 export type StudentFormData = {
-  student_name: string;
-  student_last: string;
-  student_email: string;
-  student_phone: string;
-  emergency_name: string;
-  emergency_last: string;
-  emergency_email: string;
-  emergency_phone: string;
-  serviceCoordinator_name: string;
-  serviceCoordinator_last: string;
-  serviceCoordinator_email: string;
-  serviceCoordinator_phone: string;
+  studentName: string;
+  studentLast: string;
+  studentEmail: string;
+  studentPhone: string;
+  emergencyName: string;
+  emergencyLast: string;
+  emergencyEmail: string;
+  emergencyPhone: string;
+  serviceCoordinatorName: string;
+  serviceCoordinatorLast: string;
+  serviceCoordinatorEmail: string;
+  serviceCoordinatorPhone: string;
   address: string;
   birthdate: Date;
   medication: string;
-  dietary: string[];
   other: string;
-  intake_date: Date;
-  tour_date: Date;
-  regular_programs: string[];
-  varying_programs: string[];
+  intakeDate: Date;
+  tourDate: Date;
+  conservation: string;
+  UCINumber: string;
+  incidentForm: string;
+  documents: string[];
+  profilePicture: string;
+  regularEnrollments: EnrollmentFormEntry[];
+  varyingEnrollments: EnrollmentFormEntry[];
 };
+
+export type Enrollment = {
+  studentId: string;
+  programId: string;
+  status: string;
+  dateUpdated: Date;
+  hoursLeft: number;
+  schedule: string[];
+  sessionTime: string[];
+  startDate: Date;
+  renewalDate: Date;
+  authNumber: string;
+};
+
+export type EnrollmentFormEntry = Omit<Enrollment, "startDate" | "renewalDate"> & {
+  startDate: string;
+  renewalDate: string;
+  varying: boolean;
+};
+
+// get [XX:YY, ZZ:AA] -> form interprets starting time and uses string
+// XX:YY AM - ZZ:AA PM
+// when we modify the session time on the form we update the resulting string
+// make request to backed with [XX:YY, ZZ:AA] as the session time
+
+export enum StatusOptions {
+  Joined = "Joined",
+  Waitlisted = "Waitlisted",
+  Archived = "Archived",
+  NotAFit = "Not a fit",
+  Completed = "Completed",
+}

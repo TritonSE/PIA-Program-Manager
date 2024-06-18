@@ -63,7 +63,7 @@ export default function StudentsTable() {
         id: studentObj._id,
         student: studentObj.student.firstName + " " + studentObj.student.lastName,
         emergencyContact: studentObj.emergency,
-        programs: studentObj.programs,
+        enrollments: studentObj.enrollments,
       } as StudentTableRow;
     });
     setStudentTable(studentsInformation);

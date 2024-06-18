@@ -18,7 +18,7 @@ function TableActionsHeader({
   setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
-    <TableRow key={headerGroup.id + "1"} className="border-b ">
+    <TableRow className="border-b ">
       <TableHead className="h-6 w-full px-10 py-5" colSpan={6}>
         <div className="flex justify-between">
           <span className="flex gap-6">
@@ -49,7 +49,7 @@ function TableActionsHeader({
 
 function TableDataHeader({ headerGroup }: { headerGroup: HeaderGroup<StudentTableRow> }) {
   return (
-    <TableRow key={headerGroup.id + "2"} className="border-b">
+    <TableRow className="border-b">
       {headerGroup.headers.map((header) => (
         <TableHead
           key={header.id}
@@ -75,8 +75,8 @@ export default function THead({
 }) {
   return (
     <TableHeader className="text-left">
-      {table.getHeaderGroups().map((headerGroup) => (
-        <React.Fragment key={headerGroup.id}>
+      {table.getHeaderGroups().map((headerGroup, i) => (
+        <React.Fragment key={i}>
           <TableActionsHeader
             headerGroup={headerGroup}
             globalFilter={globalFilter}

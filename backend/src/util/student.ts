@@ -23,7 +23,7 @@ export const programValidatorUtil = async (enrollments: Enrollment[]) => {
   });
 
   // verify statuses are correct and student is not in more than 2 programs
-  const allowedStatuses = ["Joined", "Waitlisted", "Archived", "Not a fit"];
+  const allowedStatuses = ["Joined", "Waitlisted", "Archived", "Not a fit", "Completed"];
   const programIds = new Set();
   let active = 0;
   let varying = 0;

@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { Dispatch, SetStateAction, useContext, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Dispatch, SetStateAction, createContext, useContext, useState } from "react";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
 import PlusIcon from "../../public/icons/plus.svg";
 import { Student, createStudent, editStudent } from "../api/students";
@@ -8,6 +8,7 @@ import { cn } from "../lib/utils";
 
 import { Button } from "./Button";
 import ContactInfo from "./StudentForm/ContactInfo";
+import EnrollmentsEdit from "./StudentForm/EnrollmentsEdit";
 import StudentBackground from "./StudentForm/StudentBackground";
 import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
@@ -16,6 +17,7 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 import { ProgramsContext } from "@/contexts/program";
 import { UserContext } from "@/contexts/user";
+import { amPmToTime } from "@/lib/sessionTimeParsing";
 
 type BaseProps = {
   classname?: string;
@@ -34,20 +36,17 @@ type AddProps = BaseProps & {
 
 type StudentFormProps = EditProps | AddProps;
 
+export const FormContext = createContext({} as StudentFormData);
+
 export default function StudentFormButton({
   type,
   data = null, //Student data so form can be populated
   setAllStudents, //Update state of allStudents after creating or editing student
   classname,
 }: StudentFormProps) {
-  const {
-    register,
-    setValue: setCalendarValue,
-    reset,
-    handleSubmit,
-  } = useForm<StudentFormData>({
-    defaultValues: { varying_programs: [], regular_programs: [], dietary: [] },
-  });
+  const methods = useForm<StudentFormData>();
+
+  const { reset, handleSubmit } = methods;
   //Default values can be set for all fields but I specified these three fields because the checkbox value can sometimes be a string if it's a single value rather than array of strings. https://github.com/react-hook-form/react-hook-form/releases/tag/v7.30.0
 
   const [openForm, setOpenForm] = useState(false);
@@ -61,49 +60,62 @@ export default function StudentFormButton({
     );
 
     const transformedData: StudentData = {
+      _id: data?._id,
       student: {
-        firstName: formData.student_name,
-        lastName: formData.student_last,
-        email: formData.student_email,
-        phoneNumber: formData.student_phone,
+        firstName: formData.studentName,
+        lastName: formData.studentLast,
+        email: formData.studentEmail,
+        phoneNumber: formData.studentPhone,
       },
       emergency: {
-        firstName: formData.emergency_name,
-        lastName: formData.emergency_last,
-        email: formData.emergency_email,
-        phoneNumber: formData.emergency_phone,
+        firstName: formData.emergencyName,
+        lastName: formData.emergencyLast,
+        email: formData.emergencyEmail,
+        phoneNumber: formData.emergencyPhone,
       },
       serviceCoordinator: {
-        firstName: formData.serviceCoordinator_name,
-        lastName: formData.serviceCoordinator_last,
-        email: formData.serviceCoordinator_email,
-        phoneNumber: formData.serviceCoordinator_phone,
+        firstName: formData.serviceCoordinatorName,
+        lastName: formData.serviceCoordinatorLast,
+        email: formData.serviceCoordinatorEmail,
+        phoneNumber: formData.serviceCoordinatorPhone,
       },
       location: formData.address,
       medication: formData.medication,
       birthday: new Date(formData.birthdate),
-      intakeDate: new Date(formData.intake_date),
-      tourDate: new Date(formData.tour_date),
-      programs: formData.regular_programs
-        .map((abbreviation) => ({
-          programId: programAbbreviationToId[abbreviation],
-          status: "Joined",
-          dateUpdated: new Date(),
-          hoursLeft: 0,
-        }))
+      intakeDate: new Date(formData.intakeDate),
+      tourDate: new Date(formData.tourDate),
+      enrollments: formData?.regularEnrollments
+        .map((enrollment) => {
+          console.log("enrollment regular: ", enrollment);
+          return {
+            ...enrollment,
+            dateUpdated: new Date(enrollment.dateUpdated),
+            startDate: new Date(enrollment.startDate),
+            renewalDate: new Date(enrollment.renewalDate),
+            sessionTime: amPmToTime(enrollment.sessionTime)[0],
+          };
+        })
         .concat(
-          formData.varying_programs.map((abbreviation) => ({
-            programId: programAbbreviationToId[abbreviation],
-            status: "Joined",
-            dateUpdated: new Date(),
-            hoursLeft: 0,
-          })),
+          formData?.varyingEnrollments.map((enrollment) => {
+            console.log("enrollment varying: ", enrollment);
+
+            return {
+              ...enrollment,
+              dateUpdated: new Date(enrollment.dateUpdated),
+              startDate: new Date(enrollment.startDate),
+              renewalDate: new Date(enrollment.renewalDate),
+              sessionTime: amPmToTime(enrollment.sessionTime)[0],
+            };
+          }),
         ),
-      dietary: formData.dietary,
-      otherString: formData.other,
+      conservation: formData.conservation === "yes",
+      UCINumber: formData.UCINumber,
+      incidentForm: formData.incidentForm,
+      documents: formData.documents || [], // TODO: add documents support
+      profilePicture: formData.profilePicture,
     };
 
-    console.log(transformedData);
+    console.log("form data: ", transformedData);
 
     if (type === "add") {
       createStudent(transformedData).then(
@@ -178,78 +190,84 @@ export default function StudentFormButton({
           />
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[85%] max-w-[90%] rounded-[13px] text-sm sm:max-w-[80%]">
-        <form
-          onSubmit={handleSubmit(onFormSubmit)}
-          className={cn(
-            "flex flex-col justify-between gap-5 rounded-md bg-white px-[calc(3vw+2px)] py-10 sm:p-10",
-            classname,
-          )}
-        >
-          <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left text-base font-bold">
-              Contact Information
-            </legend>
-            <ContactInfo register={register} data={data ?? null} type={type} />
-          </fieldset>
-          <fieldset disabled={!isAdmin}>
-            <legend className="mb-5 w-full text-left text-base font-bold">
-              Student Background
-            </legend>
-            <StudentBackground
-              register={register}
-              data={data ?? null}
-              setCalendarValue={setCalendarValue}
-            />
-          </fieldset>
-          <fieldset disabled={!isAdmin}>
-            <legend className="text-basefont-bold mb-5 w-full text-left">
-              Student Information
-            </legend>
-            <StudentInfo
-              register={register}
-              data={data ?? null}
-              setCalendarValue={setCalendarValue}
-            />
-          </fieldset>
-          <div className="ml-auto mt-5 flex gap-5">
-            {/* Modal Confirmation Dialog */}
-            {isAdmin ? (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button label="Cancel" kind="secondary" />
-                </DialogTrigger>
-                <Button label="Save Changes" type="submit" />
-                <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
-                  <div className="p-3 min-[450px]:p-10">
-                    <p className="my-10 text-center">Leave without saving changes?</p>
-                    <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
-                      <DialogClose asChild>
-                        <Button label="Back" kind="secondary" />
-                      </DialogClose>
-                      <DialogClose asChild>
-                        <Button
-                          label="Continue"
-                          onClick={() => {
-                            setOpenForm(false);
-                          }}
-                        />
-                      </DialogClose>
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            ) : (
-              <Button
-                label="Exit"
-                kind="secondary"
-                onClick={() => {
-                  setOpenForm(false);
-                }}
-              />
+      <DialogContent className="max-h-[95%] max-w-[98%] rounded-[13px] sm:max-w-[80%]">
+        <FormProvider {...methods}>
+          <form
+            onSubmit={handleSubmit(onFormSubmit)}
+            className={cn(
+              "flex flex-col justify-between gap-5 rounded-md bg-white px-[calc(3vw+2px)] py-10 sm:p-10",
+              classname,
             )}
-          </div>
-        </form>
+          >
+            <fieldset disabled={!isAdmin}>
+              <legend className="mb-5 w-full text-left text-lg font-bold">
+                Contact Information
+              </legend>
+              <ContactInfo data={data ?? null} type={type} />
+            </fieldset>
+            <div className="grid w-full gap-5 lg:grid-cols-2">
+              <fieldset disabled={!isAdmin}>
+                <legend className="mb-5 w-full text-left text-lg font-bold">
+                  Student Background
+                </legend>
+                <StudentBackground data={data ?? null} />
+              </fieldset>
+              <fieldset disabled={!isAdmin}>
+                <legend className="mb-5 w-full text-left text-lg font-bold">
+                  Student Information
+                </legend>
+
+                <StudentInfo data={data ?? null} />
+              </fieldset>
+            </div>
+            <div className="grid w-full gap-5 lg:grid-cols-2">
+              <fieldset disabled={!isAdmin}>
+                <EnrollmentsEdit data={data ?? null} varying={false} />
+              </fieldset>
+              <fieldset disabled={!isAdmin}>
+                <EnrollmentsEdit data={data ?? null} varying />
+              </fieldset>
+            </div>
+
+            <div className="ml-auto mt-5 flex gap-5">
+              {/* Modal Confirmation Dialog */}
+              {isAdmin ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button label="Cancel" kind="secondary" />
+                  </DialogTrigger>
+                  <Button label="Save Changes" type="submit" />
+                  <DialogContent className="max-h-[30%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[30%]">
+                    <div className="p-3 min-[450px]:p-10">
+                      <p className="my-10 text-center">Leave without saving changes?</p>
+                      <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
+                        <DialogClose asChild>
+                          <Button label="Back" kind="secondary" />
+                        </DialogClose>
+                        <DialogClose asChild>
+                          <Button
+                            label="Continue"
+                            onClick={() => {
+                              setOpenForm(false);
+                            }}
+                          />
+                        </DialogClose>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              ) : (
+                <Button
+                  label="Exit"
+                  kind="secondary"
+                  onClick={() => {
+                    setOpenForm(false);
+                  }}
+                />
+              )}
+            </div>
+          </form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

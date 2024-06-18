@@ -1,89 +1,84 @@
+import Image from "next/image";
 import { useContext, useMemo } from "react";
-import { UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
-import { Checkbox } from "../Checkbox";
 import { Textfield } from "../Textfield";
 
 import { convertDateToString } from "./StudentBackground";
 import { StudentFormData } from "./types";
 
-import { Program } from "@/api/programs";
 import { ProgramsContext } from "@/contexts/program";
 
 type StudentInfoProps = {
-  register: UseFormRegister<StudentFormData>;
   classname?: string;
-  setCalendarValue: UseFormSetValue<StudentFormData>;
   data: Student | null;
 };
 
-export default function StudentInfo({
-  register,
-  classname,
-  setCalendarValue,
-  data,
-}: StudentInfoProps) {
+export default function StudentInfo({ classname, data }: StudentInfoProps) {
+  const { register, setValue: setCalendarValue } = useFormContext<StudentFormData>();
+
   const { allPrograms: programsMap } = useContext(ProgramsContext);
   const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
   if (!allPrograms) return null;
 
   return (
-    <div className="grid w-full gap-5 lg:grid-cols-2">
-      <div className={cn("grid flex-1 gap-x-3 gap-y-5 md:grid-cols-2", classname)}>
-        <div>
-          <h3>Intake date</h3>
-          <Textfield
-            register={register}
-            name="intake_date"
-            placeholder="00/00/0000"
-            calendar={true}
-            setCalendarValue={setCalendarValue}
-            defaultValue={convertDateToString(data?.intakeDate)}
-          />
-        </div>
-        <div>
-          <h3>Tour date</h3>
-          <Textfield
-            register={register}
-            name="tour_date"
-            placeholder="00/00/0000"
-            calendar={true}
-            setCalendarValue={setCalendarValue}
-            defaultValue={convertDateToString(data?.tourDate)}
-          />
-        </div>
+    <div className={cn("grid flex-1 gap-x-3 gap-y-5 md:grid-cols-2", classname)}>
+      <div>
+        <h3>Intake date</h3>
+        <Textfield
+          register={register}
+          name="intakeDate"
+          placeholder="00/00/0000"
+          calendar={true}
+          setCalendarValue={setCalendarValue}
+          defaultValue={convertDateToString(data?.intakeDate)}
+        />
       </div>
-      <div className="grid gap-y-5">
-        <div>
-          <h3>Regular Programs</h3>
-          <Checkbox
-            register={register}
-            name="regular_programs"
-            options={allPrograms
-              .filter((prog) => prog.type === "regular")
-              .slice(0, 2)
-              .map((program: Program) => program.abbreviation)}
-            defaultValue={data?.programs.map(
-              (program) => programsMap[program.programId].abbreviation,
-            )}
-          />
-        </div>
-        <div>
-          <h3>Varying Programs</h3>
-          <Checkbox
-            register={register}
-            name="varying_programs"
-            options={allPrograms
-              .filter((prog) => prog.type === "varying")
-              .slice(0, 2)
-              .map((program: Program) => program.abbreviation)}
-            defaultValue={data?.programs.map(
-              (program) => programsMap[program.programId].abbreviation,
-            )}
-          />
-        </div>
+      <div>
+        <h3>Tour date</h3>
+        <Textfield
+          register={register}
+          name="tourDate"
+          placeholder="00/00/0000"
+          calendar={true}
+          setCalendarValue={setCalendarValue}
+          defaultValue={convertDateToString(data?.tourDate)}
+        />
+      </div>
+      <div className="col-span-2">
+        <h3 className="mb-5 w-full text-left text-lg font-bold">Incident Form</h3>
+        <Textfield
+          register={register}
+          name="incidentForm"
+          placeholder="http://www.company.com"
+          defaultValue={data?.incidentForm}
+        />
+      </div>
+      <div className="col-span-2">
+        <h3 className="mb-5 w-full text-left text-lg font-bold">UCI Number</h3>
+        <Textfield
+          register={register}
+          name="UCINumber"
+          placeholder="123456"
+          defaultValue={data?.UCINumber}
+        />
+      </div>
+      <div className="col-span-2">
+        <span className="align-center flex w-full justify-between">
+          <h3 className="mb-5 w-full text-left text-lg font-bold">Documents</h3>
+          <button
+            className="flex w-fit gap-2"
+            onClick={(e) => {
+              e.preventDefault();
+              // TODO: Implement file upload
+            }}
+          >
+            <Image src="../plus.svg" alt="edit profile picture" height="20" width="20" />
+            <span className="whitespace-nowrap leading-normal tracking-tight">Edit Image</span>
+          </button>
+        </span>
       </div>
     </div>
   );

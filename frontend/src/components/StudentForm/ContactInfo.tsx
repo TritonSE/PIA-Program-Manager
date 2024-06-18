@@ -1,4 +1,4 @@
-import { UseFormRegister } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 
 import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
@@ -6,12 +6,13 @@ import { Textfield } from "../Textfield";
 
 import { StudentFormData } from "./types";
 
+import { camelize } from "@/lib/camelCase";
+
 type ContactRole = "student" | "emergency" | "serviceCoordinator";
 
 type PersonalInfoField = "firstName" | "lastName" | "email" | "phoneNumber";
 
 type ContactInfoProps = {
-  register: UseFormRegister<StudentFormData>;
   classname?: string;
   type: "add" | "edit";
   data: Student | null;
@@ -37,7 +38,9 @@ type DefaultFields = Record<PersonalInfoField, FieldProps>;
 
 type ContactInfo = Record<ContactRole, DefaultFields>;
 
-export default function ContactInfo({ register, type, data, classname }: ContactInfoProps) {
+export default function ContactInfo({ type, data, classname }: ContactInfoProps) {
+  const { register } = useFormContext<StudentFormData>();
+
   const defaultFields: DefaultFields = {
     firstName: {
       name: "name",
@@ -80,7 +83,7 @@ export default function ContactInfo({ register, type, data, classname }: Contact
   //Rename fields to be unique
   Object.entries(contactInfo).forEach(([contactType, fieldList]) => {
     Object.entries(fieldList).forEach(([_fieldType, fieldProps]) => {
-      fieldProps.name = `${contactType}_${fieldProps.name}`;
+      fieldProps.name = camelize(`${contactType} ${fieldProps.name}`);
     });
   });
 

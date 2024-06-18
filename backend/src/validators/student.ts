@@ -169,24 +169,6 @@ const makeEnrollments = () =>
     .bail()
     .custom(programValidatorUtil);
 
-//dietary
-//validates entire array
-const makeDietaryArrayValidator = () =>
-  body("dietary")
-    .optional()
-    .exists()
-    .isArray()
-    .withMessage("Dietary restrictions must be an array");
-//validates individual items
-const makeDietaryItemsValidator = () =>
-  body("dietary.*").exists().isString().withMessage("Dietary restriction element must be a string");
-
-const makeDietaryOtherValidator = () =>
-  body("otherString")
-    .optional()
-    .isString()
-    .withMessage("Other dietary restriction must be a string");
-
 export const createStudent = [
   makeLastNamesValidator(),
   makeFirstNamesValidator(),
@@ -203,9 +185,6 @@ export const createStudent = [
   makeDocumentsValidator(),
   makeProfilePictureValidator(),
   makeEnrollments(),
-  makeDietaryArrayValidator(),
-  makeDietaryItemsValidator(),
-  makeDietaryOtherValidator(),
 ];
 
 export const editStudent = [...createStudent, makeIdValidator()];

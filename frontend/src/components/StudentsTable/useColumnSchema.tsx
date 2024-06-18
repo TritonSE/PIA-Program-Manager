@@ -2,7 +2,7 @@ import { Poppins } from "next/font/google";
 import { useMemo } from "react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
-import { Contact, ProgramLink } from "../StudentForm/types";
+import { Contact, Enrollment, ProgramLink } from "../StudentForm/types";
 import StudentFormButton from "../StudentFormButton";
 
 import { Columns, ProgramMap, StudentMap } from "./types";
@@ -65,28 +65,30 @@ const ProgramPopover = ({ link, program }: { link: ProgramLink; program: Program
 };
 
 const ProgramHistoryPopover = ({
-  programs,
+  enrollments,
   allPrograms,
 }: {
-  programs: ProgramLink[];
+  enrollments: Enrollment[];
   allPrograms: ProgramMap;
 }) => {
   return (
     <Popover>
-      <PopoverTrigger className="pr-2.5 underline">{programs.length + " programs"}</PopoverTrigger>
+      <PopoverTrigger className="pr-2.5 underline">
+        {enrollments.length + " programs"}
+      </PopoverTrigger>
       <PopoverContent className="flex w-[290px] flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4 shadow">
         <div className="text-base">Program History</div>
         <div className="flex flex-col gap-3">
-          {programs.map((program, i) => {
-            const progInfo = allPrograms[program.programId];
+          {enrollments.map((enrollment, i) => {
+            const progInfo = allPrograms[enrollment.programId];
             return (
               progInfo && (
                 <div key={i}>
                   <ProgramPill name={progInfo.abbreviation} color={progInfo.color} />
                   <span className="ml-6 text-sm">
-                    {program.status}
+                    {enrollment.status}
                     <span className="text-neutral-400">
-                      {" on " + new Date(program.dateUpdated).toLocaleDateString("en-US")}
+                      {" on " + new Date(enrollment.dateUpdated).toLocaleDateString("en-US")}
                     </span>
                   </span>
                 </div>
@@ -120,12 +122,12 @@ export function useColumnSchema({
       enableColumnFilter: false,
     },
     {
-      accessorKey: "programs",
+      accessorKey: "enrollments",
       id: isTablet ? "Curr. P1" : "Curr. Program 1",
       header: isTablet ? "Curr. P1" : "Curr. Program 1",
       cell: (info) => {
-        const programs = info.getValue() as unknown as ProgramLink[];
-        const link = programs.filter((prog) => prog.status === "Joined")[0];
+        const enrollments = info.getValue() as unknown as ProgramLink[];
+        const link = enrollments.filter((enr) => enr.status === "Joined")[0];
         if (!link) return null;
         const program = allPrograms[link.programId];
         return <ProgramPopover link={link} program={program} />;
@@ -133,13 +135,12 @@ export function useColumnSchema({
       filterFn: "programFilter",
     },
     {
-      accessorKey: "programs",
+      accessorKey: "enrollments",
       id: isTablet ? "Curr. P2" : "Curr. Program 2",
       header: isTablet ? "Curr. P2" : "Curr. Program 2",
       cell: (info) => {
-        const programs = info.getValue() as unknown as ProgramLink[];
-        // programs.map((prog) => console.log(allPrograms[prog.programId].abbreviation));
-        const link = programs.filter((prog) => prog.status === "Joined")[1];
+        const enrollments = info.getValue() as unknown as ProgramLink[];
+        const link = enrollments.filter((enr) => enr.status === "Joined")[1];
         if (!link) return null;
         const program = allPrograms[link.programId];
         return <ProgramPopover link={link} program={program} />;
@@ -147,12 +148,15 @@ export function useColumnSchema({
       filterFn: "statusFilter",
     },
     {
-      id: "programs",
+      id: "enrollments",
       header: "Program History",
-      accessorFn: (row) => row.programs.length.toString(),
+      accessorFn: (row) => row.enrollments.length.toString(),
       cell: (info) => {
         return (
-          <ProgramHistoryPopover programs={info.row.original.programs} allPrograms={allPrograms} />
+          <ProgramHistoryPopover
+            enrollments={info.row.original.enrollments}
+            allPrograms={allPrograms}
+          />
         );
       },
       enableColumnFilter: false,
