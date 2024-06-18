@@ -17,7 +17,13 @@ const enrollmentSchema = new mongoose.Schema({
   dateUpdated: { type: Date, required: true, default: Date.now() },
   hoursLeft: { type: Number, required: true },
   schedule: { type: [String], required: true },
-  sessionTime: { type: [String], required: true },
+  sessionTime: {
+    type: {
+      start_time: { type: String, required: true },
+      end_time: { type: String, required: true },
+    },
+    required: true,
+  },
   startDate: { type: Date, required: true },
   renewalDate: { type: Date, required: true },
   authNumber: { type: String, required: true },

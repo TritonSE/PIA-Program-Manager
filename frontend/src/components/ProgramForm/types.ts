@@ -17,6 +17,6 @@ export type CreateProgramRequest = {
   daysOfWeek: string[];
   color: string;
   hourlyPay: string;
-  sessions: string[][];
+  sessions: { start_time: string; end_time: string }[];
   archived: boolean;
 };

@@ -16,7 +16,7 @@ export type Program = {
   daysOfWeek: string[];
   color: string; //colorValueHex;
   hourlyPay: string;
-  sessions: [string[]];
+  sessions: { start_time: string; end_time: string }[];
   archived: boolean;
 };
 
