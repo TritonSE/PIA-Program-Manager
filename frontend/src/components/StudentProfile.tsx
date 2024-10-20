@@ -1,4 +1,4 @@
-export default function Student() {
+export default function StudentProfile() {
   return (
     <main className="mx-[30px] space-y-[60px]">
       <div id="top" className="flex justify-between">
@@ -220,12 +220,12 @@ export default function Student() {
         </div>
       </div>
       {/* <div className="my-[30px] ml-[20px] mr-[80px] space-y-[20px]">
-          <div className="font-[alternate-gothic] text-4xl uppercase">Notifications</div>
-          <div className="font-[Poppins] text-[16px]">
-            Review information of new account creations below to approve or deny them.{" "}
-          </div>
-          <NotificationTable />
-        </div> */}
+            <div className="font-[alternate-gothic] text-4xl uppercase">Notifications</div>
+            <div className="font-[Poppins] text-[16px]">
+              Review information of new account creations below to approve or deny them.{" "}
+            </div>
+            <NotificationTable />
+          </div> */}
       <div id="Bottom Buttons" className="flex justify-between">
         <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
           Delete

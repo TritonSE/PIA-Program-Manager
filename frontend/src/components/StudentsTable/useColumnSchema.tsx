@@ -1,9 +1,10 @@
 import { Poppins } from "next/font/google";
+import Image from "next/image";
+import Link from "next/link";
 import { useMemo } from "react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
 import { Contact, ProgramLink } from "../StudentForm/types";
-import StudentFormButton from "../StudentFormButton";
 
 import { Columns, ProgramMap, StudentMap } from "./types";
 
@@ -178,11 +179,15 @@ export function useColumnSchema({
       cell: (info) => {
         return (
           <div className="flex justify-end pr-10">
-            <StudentFormButton
-              type="edit"
-              data={allStudents[info.getValue() as string]}
-              setAllStudents={setAllStudents}
-            />
+            <Link href={`/student/${allStudents[info.getValue() as string]._id}`}>
+              <Image
+                src="/eye.svg"
+                alt="view student"
+                width={40}
+                height={40}
+                className="cursor-pointer"
+              />
+            </Link>
           </div>
         );
       },
