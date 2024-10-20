@@ -143,9 +143,6 @@ module.exports = {
         pia_secondary_green: {
           DEFAULT: "#4FA197",
         },
-        pia_light_gray: {
-          DEFAULT: "#ECECEC",
-        },
         pia_orange: {
           DEFAULT: "#FF7A5E",
         },
