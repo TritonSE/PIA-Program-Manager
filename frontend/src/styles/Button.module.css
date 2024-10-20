@@ -5,6 +5,11 @@
   letter-spacing: 2%;
   line-height: 150%;
   font-size: 16px;
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
 /* styling for default size */
@@ -12,6 +17,13 @@
   height: 3rem;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.wide {
+  height: 3rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  width: 100%;
 }
 
 .big {
@@ -28,7 +40,7 @@
 
 .disabled {
   background-color: rgb(var(--gray-2));
-  color: rgb(--var(white));
+  color: rgb(var(--white));
   border: none;
 }
 
@@ -41,7 +53,7 @@
   color: rgb(var(--white));
   border: none;
 }
-.primary:hover {
+.primary:is(:hover, :focus-visible) {
   background-color: rgba(var(--primary-dark-green), 80%);
 }
 .primary:active {
@@ -53,7 +65,7 @@
   color: rgb(var(--primary-dark-green));
   border: 0.0625rem solid rgb(var(--primary-dark-green));
 }
-.secondary:hover {
+.secondary:is(:hover, :focus-visible) {
   background-color: rgba(var(--primary-dark-green), 8%);
 }
 .secondary:active {
@@ -65,7 +77,7 @@
   color: rgb(var(--white));
   border: none;
 }
-.destructive:hover {
+.destructive:is(:hover, :focus-visible) {
   background-color: rgba(var(--error-red), 88%);
 }
 .destructive:active {
@@ -77,9 +89,14 @@
   color: rgb(var(--error-red));
   border: 0.0625rem solid rgb(var(--error-red));
 }
-.destructiveSecondary:hover {
+.destructiveSecondary:is(:hover, :focus-visible) {
   background-color: rgba(var(--error-red), 22%);
 }
 .destructiveSecondary:active {
   background-color: rgba(var(--error-red), 20%);
+}
+
+.rounded {
+  border-radius: 100vw;
+  padding-inline: 1.75rem;
 }

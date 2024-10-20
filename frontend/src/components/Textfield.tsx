@@ -15,12 +15,17 @@ import { cn } from "../lib/utils";
 type BaseProps<T extends FieldValues> = {
   register: UseFormRegister<T>;
   name: Path<T>;
+  placeholder: string;
   label?: string;
   type?: string;
-  placeholder: string;
+  disabled?: boolean;
   handleInputChange?: React.ChangeEventHandler<HTMLInputElement>;
   defaultValue?: string;
   className?: string;
+  unitsClassName?: string;
+  units?: string;
+  icon?: React.ReactNode;
+  mode?: "filled" | "outlined";
   registerOptions?: RegisterOptions;
 };
 
@@ -43,9 +48,15 @@ export function Textfield<T extends FieldValues>({
   name, //Must be a key in form data type specified in useForm hook
   placeholder,
   calendar = false,
+  handleInputChange,
   className,
+  icon,
   type = "text",
+  disabled = false,
   defaultValue = "",
+  units = "",
+  mode = "outlined",
+  unitsClassName = "",
   registerOptions = {},
 }: TextFieldProps<T>) {
   const [date, setDate] = useState<Date>();
@@ -61,7 +72,7 @@ export function Textfield<T extends FieldValues>({
     }
   }, [date]);
 
-  return (
+  return mode === "outlined" ? (
     <Popover>
       <div
         className={cn(
@@ -69,14 +80,19 @@ export function Textfield<T extends FieldValues>({
           className,
         )}
       >
+        {icon ? <span className={"grid place-items-center pl-1"}>{icon}</span> : null}
         <input
           {...register(name as Path<T>, registerOptions)}
           className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
-          id={label + placeholder}
+          id={name + label + placeholder}
           type={type}
+          disabled={disabled}
+          onChange={handleInputChange ?? register(name as Path<T>, registerOptions).onChange}
           placeholder={placeholder}
           defaultValue={defaultValue}
         />
+
+        {units !== "" && <h1 className={cn("ml-[-20px]", unitsClassName)}>{units}</h1>}
 
         {label ? (
           <label
@@ -118,5 +134,23 @@ export function Textfield<T extends FieldValues>({
         )}
       </div>
     </Popover>
+  ) : (
+    <div
+      className={cn(
+        "relative flex flex-grow flex-col border-b-2 border-pia_accent py-1 focus-within:border-pia_dark_green",
+        className,
+      )}
+    >
+      <input
+        {...register(name as Path<T>, registerOptions)}
+        className="focus-visible:out w-full appearance-none bg-inherit placeholder-pia_accent outline-none placeholder:italic"
+        id={label + placeholder}
+        type={type}
+        onChange={handleInputChange ?? register(name as Path<T>, registerOptions).onChange}
+        placeholder={placeholder}
+        defaultValue={defaultValue}
+      />
+      {units !== "" && <h1 className={cn(unitsClassName, "ml-[-20px]")}>{units}</h1>}
+    </div>
   );
 }

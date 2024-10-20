@@ -5,6 +5,8 @@
 import { body } from "express-validator";
 import mongoose from "mongoose";
 
+import { programValidatorUtil } from "../util/student";
+
 //designed these to use the globstar operator from express-validator to more cleanly
 
 const makeIdValidator = () =>
@@ -113,24 +115,59 @@ const makeTourDateValidator = () =>
     .toDate()
     .withMessage("Tour Date string must be a valid date-time string");
 
-//prog1 --placeholder, will later validate for a program objectid
-const makeRegularProgramsValidator = () =>
-  body("regularPrograms")
+const makeConservationValidator = () =>
+  body("conservation")
     .exists()
-    .withMessage("Regular Programs field required")
+    .withMessage("Conservation field required")
     .bail()
-    .isArray({ min: 1 })
-    .withMessage("Regular Programs must be a non-empty array")
-    .bail();
+    .isBoolean()
+    .withMessage("Conservation must be a boolean");
 
-//prog2
-const makeVaryingProgramsValidator = () =>
-  body("varyingPrograms")
+const makeUCINumberValidator = () =>
+  body("UCINumber")
     .exists()
-    .withMessage("Varying Programs field required")
+    .withMessage("UCI Number field required")
     .bail()
-    .isArray({ min: 1 })
-    .withMessage("Varying Programs must be a non-empty array");
+    .isString()
+    .withMessage("UCI Number must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("UCI Number field required");
+
+const makeIncidentFormValidator = () =>
+  body("incidentForm")
+    .exists()
+    .withMessage("Incident Form field required")
+    .bail()
+    .isString()
+    .withMessage("Incident Form must be a string")
+    .bail()
+    .notEmpty()
+    .withMessage("Incident Form field required");
+
+const makeDocumentsValidator = () =>
+  body("documents")
+    .exists()
+    .withMessage("Documents field required")
+    .bail()
+    .isArray()
+    .withMessage("Documents must be an array")
+    .bail()
+    .custom((value: string[]) => value.every((doc) => typeof doc === "string"))
+    .withMessage("Documents must be an array of strings");
+
+const makeProfilePictureValidator = () =>
+  body("profilePicture").optional().isString().withMessage("Profile picture must be a string");
+
+const makeEnrollments = () =>
+  body("enrollments")
+    .exists()
+    .withMessage("Enrollments field required")
+    .bail()
+    .isArray()
+    .withMessage("Enrollments must be a non-empty array")
+    .bail()
+    .custom(programValidatorUtil);
 
 //dietary
 //validates entire array
@@ -160,8 +197,12 @@ export const createStudent = [
   makeBirthdayValidator(),
   makeIntakeDateValidator(),
   makeTourDateValidator(),
-  makeRegularProgramsValidator(),
-  makeVaryingProgramsValidator(),
+  makeConservationValidator(),
+  makeUCINumberValidator(),
+  makeIncidentFormValidator(),
+  makeDocumentsValidator(),
+  makeProfilePictureValidator(),
+  makeEnrollments(),
   makeDietaryArrayValidator(),
   makeDietaryItemsValidator(),
   makeDietaryOtherValidator(),

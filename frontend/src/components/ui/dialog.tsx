@@ -50,6 +50,27 @@ const DialogContent = React.forwardRef<
 ));
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
+const DialogContentSlide = React.forwardRef<
+  React.ElementRef<typeof DialogPrimitive.Content>,
+  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
+>(({ className, children, ...props }, ref) => (
+  <DialogPortal>
+    <DialogOverlay />
+    <DialogPrimitive.Content
+      ref={ref}
+      className={cn(
+        "scrollbar fixed inset-y-0 right-0 z-50 grid max-h-[100%] w-full max-w-[100%] gap-4 overflow-y-auto border bg-background shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right-1/2",
+        className,
+        poppins.className,
+      )}
+      {...props}
+    >
+      {children}
+    </DialogPrimitive.Content>
+  </DialogPortal>
+));
+DialogContentSlide.displayName = DialogPrimitive.Content.displayName;
+
 const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
   <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />
 );
@@ -94,6 +115,7 @@ export {
   DialogClose,
   DialogTrigger,
   DialogContent,
+  DialogContentSlide,
   DialogHeader,
   DialogFooter,
   DialogTitle,

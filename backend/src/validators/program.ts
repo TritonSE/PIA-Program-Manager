@@ -173,7 +173,7 @@ const makeSessionsValidator = () =>
     .isArray()
     .withMessage("Sessions must be a 2D String Array")
     .bail()
-    .custom((sessions: string[][], { req }) => {
+    .custom((sessions: { start_time: string; end_time: string }[], { req }) => {
       if ((req.body as Program).type === "varying") {
         if (sessions.length !== 0) throw new Error("Varying sessions cannot have session times");
         return true;
@@ -181,15 +181,14 @@ const makeSessionsValidator = () =>
       // Assumes program type is regular
       if (sessions.length === 0) throw new Error("Must specify a session time");
       sessions.forEach((session) => {
-        if (!Array.isArray(session)) throw new Error("Session must be an array");
-        if (session.length !== 2)
-          throw new Error("Session must only have a start time and an end time");
-        if (typeof session[0] !== "string") throw new Error("Session times must be strings");
-        if (!(session[0] && session[1])) throw new Error("Must specify a session time");
-        session.forEach((time: string) => {
-          if (!new RegExp("^([01][0-9]|[0-9]|2[0-3]):[0-5][0-9]$").test(time))
-            throw new Error("Time must mach HH:MM format");
-        });
+        if (!(session.start_time && session.end_time))
+          throw new Error("Must specify a session time");
+        if (typeof session.start_time !== "string" || typeof session.end_time !== "string")
+          throw new Error("Session times must be strings");
+        if (!new RegExp("^([01][0-9]|0[0-9]|2[0-3]):[0-5][0-9]$").test(session.start_time))
+          throw new Error("Time must mach HH:MM format (ex. 09:00)");
+        if (!new RegExp("^([01][0-9]|0[0-9]|2[0-3]):[0-5][0-9]$").test(session.end_time))
+          throw new Error("Time must mach HH:MM format (ex. 09:00)");
       });
       return true;
     });

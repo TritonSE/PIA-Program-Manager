@@ -99,6 +99,9 @@ module.exports = {
       },
     },
     extend: {
+      aria: {
+        current: 'current="true"',
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -122,11 +125,17 @@ module.exports = {
         pia_primary_light_green: {
           DEFAULT: "#EEF7F7",
         },
+        pia_primary_light_green_hover: {
+          DEFAULT: "#188B8A14",
+        },
         pia_accent_green: {
           DEFAULT: "#A1DAD7",
         },
         pia_neutral_gray: {
           DEFAULT: "#D8D8D8",
+        },
+        pia_light_gray: {
+          DEFAULT: "#F3F3F3",
         },
         pia_primary_white: {
           DEFAULT: "#FFFFFF",
@@ -145,7 +154,7 @@ module.exports = {
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive))",
+          DEFAULT: "#B93B45",
           foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
@@ -163,6 +172,39 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        secondary_yellow: {
+          DEFAULT: "#FFB800",
+        },
+        secondary_red: {
+          DEFAULT: "#FF7A5E",
+        },
+        secondary_teal: {
+          DEFAULT: "#4FA197",
+        },
+        secondary_green: {
+          DEFAULT: "#B6BF0E",
+        },
+        secondary_blue: {
+          DEFAULT: "#5DADE2",
+        },
+        secondary_violet: {
+          DEFAULT: "#7986CB",
+        },
+        secondary_fuchsia: {
+          DEFAULT: "#EE6CEE",
+        },
+        joined_green: {
+          DEFAULT: "#3BB966",
+        },
+        archived_gray: {
+          DEFAULT: "#909090",
+        },
+        waitlisted_yellow: {
+          DEFAULT: "#DEBB01",
+        },
+        notafit_red: {
+          DEFAULT: "#B93B3B",
         },
       },
       borderRadius: {
@@ -183,6 +225,9 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      transitionProperty: {
+        height: "height",
       },
     },
   },

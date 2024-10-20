@@ -1,3 +1,4 @@
+import { useContext, useMemo } from "react";
 import { UseFormRegister, UseFormSetValue } from "react-hook-form";
 
 import { Student } from "../../api/students";
@@ -8,6 +9,9 @@ import { Textfield } from "../Textfield";
 import { convertDateToString } from "./StudentBackground";
 import { StudentFormData } from "./types";
 
+import { Program } from "@/api/programs";
+import { ProgramsContext } from "@/contexts/program";
+
 type StudentInfoProps = {
   register: UseFormRegister<StudentFormData>;
   classname?: string;
@@ -15,15 +19,16 @@ type StudentInfoProps = {
   data: Student | null;
 };
 
-const regularPrograms = ["Intro", "ENTR"];
-const varyingPrograms = ["TDS", "SDP"];
-
 export default function StudentInfo({
   register,
   classname,
   setCalendarValue,
   data,
 }: StudentInfoProps) {
+  const { allPrograms: programsMap } = useContext(ProgramsContext);
+  const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
+  if (!allPrograms) return null;
+
   return (
     <div className="grid w-full gap-5 lg:grid-cols-2">
       <div className={cn("grid flex-1 gap-x-3 gap-y-5 md:grid-cols-2", classname)}>
@@ -56,8 +61,13 @@ export default function StudentInfo({
           <Checkbox
             register={register}
             name="regular_programs"
-            options={regularPrograms}
-            defaultValue={data?.regularPrograms}
+            options={allPrograms
+              .filter((prog) => prog.type === "regular")
+              .slice(0, 2)
+              .map((program: Program) => program.abbreviation)}
+            defaultValue={data?.programs.map(
+              (program) => programsMap[program.programId].abbreviation,
+            )}
           />
         </div>
         <div>
@@ -65,8 +75,13 @@ export default function StudentInfo({
           <Checkbox
             register={register}
             name="varying_programs"
-            options={varyingPrograms}
-            defaultValue={data?.varyingPrograms}
+            options={allPrograms
+              .filter((prog) => prog.type === "varying")
+              .slice(0, 2)
+              .map((program: Program) => program.abbreviation)}
+            defaultValue={data?.programs.map(
+              (program) => programsMap[program.programId].abbreviation,
+            )}
           />
         </div>
       </div>

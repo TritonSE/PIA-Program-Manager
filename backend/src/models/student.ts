@@ -35,15 +35,20 @@ const studentSchema = new Schema({
   intakeDate: { type: Date, required: true },
   tourDate: { type: Date, required: true },
 
-  //For now, chose to express these as a list of strings. Will probably be replaced with
-  //program subdocs in the future once they have been defined
-  regularPrograms: { type: [String], required: true },
-  varyingPrograms: { type: [String], required: true },
+  conservation: { type: Boolean, required: true },
+  UCINumber: { type: String, required: true },
+  incidentForm: { type: String, required: true },
+  documents: { type: [String], required: true },
+  profilePicture: { type: Schema.Types.ObjectId, ref: "Image", required: false },
+  progressNotes: {
+    type: [Schema.Types.ObjectId],
+    ref: "ProgressNote",
+    default: [],
+    required: false,
+  },
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },
-
-  otherString: { type: String, default: "" },
 });
 
 type Student = InferSchemaType<typeof studentSchema>;

@@ -8,6 +8,7 @@ import { UserContext } from "@/contexts/user";
 export const LOGIN_URL = "/login";
 export const HOME_URL = "/home";
 export const NOT_FOUND_URL = "/404-not-found";
+export const NOT_APPROVED_URL = "/create_user_3";
 
 /**
  * An interface for the user's current authentication credentials
@@ -52,7 +53,8 @@ export const useRedirection = ({ checkShouldRedirect, redirectURL }: UseRedirect
  */
 export const useRedirectToHomeIfSignedIn = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser !== null && piaUser !== null,
+    checkShouldRedirect: ({ firebaseUser, piaUser }) =>
+      firebaseUser !== null && piaUser !== null && piaUser.approvalStatus,
     redirectURL: HOME_URL,
   });
 };
@@ -62,11 +64,12 @@ export const useRedirectToHomeIfSignedIn = () => {
  */
 export const useRedirectToLoginIfNotSignedIn = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => {
-      console.log(firebaseUser);
-      return firebaseUser === null || piaUser === null;
-    },
+    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null,
     redirectURL: LOGIN_URL,
+  });
+  useRedirection({
+    checkShouldRedirect: ({ piaUser }) => piaUser === null || !piaUser.approvalStatus,
+    redirectURL: NOT_APPROVED_URL,
   });
 };
 
@@ -75,7 +78,8 @@ export const useRedirectToLoginIfNotSignedIn = () => {
  */
 export const useRedirectTo404IfNotAdmin = () => {
   useRedirection({
-    checkShouldRedirect: ({ firebaseUser, piaUser }) => firebaseUser === null || piaUser === null,
+    checkShouldRedirect: ({ firebaseUser, piaUser }) =>
+      firebaseUser === null || piaUser === null || piaUser.accountType !== "admin",
     redirectURL: NOT_FOUND_URL,
   });
 };

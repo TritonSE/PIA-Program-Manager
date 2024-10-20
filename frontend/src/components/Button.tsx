@@ -14,15 +14,18 @@ type ButtonStyles = {
   default: string;
   selected: string;
   big: string;
+  wide: string;
+  rounded: string;
 };
 
 const poppins = Poppins({ weight: "400", style: "normal", subsets: [] });
 
 export type ButtonProps = {
   label: React.ReactNode | string;
-
+  icon?: React.ReactNode | null;
   kind?: "primary" | "secondary" | "destructive" | "destructive-secondary";
-  size?: "default" | "small" | "big";
+  size?: "default" | "small" | "big" | "wide";
+  rounded?: boolean;
   disabled?: boolean;
   selected?: boolean;
 } & React.ComponentProps<"button">;
@@ -30,8 +33,10 @@ export type ButtonProps = {
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     label,
+    icon = null,
     kind = "primary",
     size = "default",
+    rounded = false,
     disabled = false,
     selected = false,
     className,
@@ -73,6 +78,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     case "big":
       buttonClass += ` ${buttonStyles.big}`;
       break;
+    case "wide":
+      buttonClass += ` ${buttonStyles.wide}`;
+      break;
     default:
       buttonClass += ` ${buttonStyles.default}`;
       break;
@@ -87,10 +95,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
     buttonClass += ` ${className}`;
   }
 
+  if (rounded) {
+    buttonClass += ` ${buttonStyles.rounded}`;
+  }
+
   // Set font to poppins
   buttonClass += ` ${poppins.className}`;
   return (
     <button ref={ref} className={buttonClass} {...props}>
+      {icon && <span aria-hidden="true">{icon}</span>}
       {label}
     </button>
   );

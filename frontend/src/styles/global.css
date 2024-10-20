@@ -1,6 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+/*
+  2. Remove default margin
+*/
+* {
+  margin: 0;
+}
 
 @font-face {
   font-family: "alternate-gothic";
@@ -93,10 +104,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "poppins";
   }
 }
 
 @layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
   .scrollbar::-webkit-scrollbar {
     width: 12px;
   }
