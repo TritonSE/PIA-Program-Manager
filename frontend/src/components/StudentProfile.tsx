@@ -1,4 +1,56 @@
-export default function StudentProfile() {
+import { useEffect, useState } from "react";
+
+import { getStudent } from "../api/students";
+
+type StudentProfileProps = {
+  id: string;
+};
+
+export default function StudentProfile({ id }: StudentProfileProps) {
+  const [notFound, setNotFound] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (id === "loading") return;
+    getStudent(id)
+      .then((result) => {
+        setLoading(false);
+        if (result.success) {
+          setNotFound(false);
+          console.log(result.data);
+        } else {
+          setNotFound(true);
+          console.log(notFound);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
+
+  if (loading) return;
+
+  if (notFound) {
+    return (
+      <main className="mx-[30px] space-y-[60px]">
+        <div id="top" className="flex justify-between">
+          <svg
+            width="25"
+            height="20"
+            viewBox="0 0 10 8"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M1.10752 3.63111C0.878224 3.86041 0.878224 4.23216 1.10752 4.46146L4.04322 7.39716C4.27252 7.62646 4.64427 7.62646 4.87357 7.39716C5.10286 7.16787 5.10286 6.79611 4.87357 6.56682L2.94017 4.63343L8.56838 4.63343C8.89265 4.63343 9.15553 4.37055 9.15553 4.04629C9.15553 3.72202 8.89265 3.45914 8.56838 3.45914L2.94017 3.45914L4.87357 1.52575C5.10286 1.29646 5.10286 0.9247 4.87357 0.695407C4.64427 0.466114 4.27252 0.466114 4.04322 0.695407L1.10752 3.63111Z"
+              fill="black"
+            />
+          </svg>
+        </div>
+        <div className="font-[alternate-gothic] text-4xl text-[96px]">Student Not Found</div>{" "}
+      </main>
+    );
+  }
   return (
     <main className="mx-[30px] space-y-[60px]">
       <div id="top" className="flex justify-between">

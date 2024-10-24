@@ -209,3 +209,4 @@ export const createStudent = [
 ];
 
 export const editStudent = [...createStudent, makeIdValidator()];
+export const getStudent = makeIdValidator();

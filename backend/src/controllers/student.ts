@@ -89,3 +89,24 @@ export const getAllStudents: RequestHandler = async (_, res, next) => {
     next(error);
   }
 };
+
+export const getStudent: RequestHandler = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+
+    validationErrorParser(errors);
+
+    const studentId = req.params.id;
+    const studentData = await StudentModel.findById(req.params.id);
+
+    if (!studentData) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const enrollments = await EnrollmentModel.find({ studentId });
+
+    res.status(200).json({ ...studentData.toObject(), programs: enrollments });
+  } catch (error) {
+    next(error);
+  }
+};
