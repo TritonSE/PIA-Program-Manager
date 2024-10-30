@@ -13,7 +13,11 @@ export type Enrollment = {
   dateUpdated: Date;
   hoursLeft: number;
   schedule: string[];
-  sessionTime: string[];
+  sessionTime: {
+    start_time: string;
+    end_time: string;
+  };
+  required: true;
   startDate: Date;
   renewalDate: Date;
   authNumber: string;

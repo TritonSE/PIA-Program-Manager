@@ -14,9 +14,10 @@ export default function Student() {
     setStudentID(id);
   });
 
-  return (
-    <div>
-      <StudentProfile id={studentID ? studentID : "loading"}></StudentProfile>
-    </div>
-  );
+  if (studentID !== undefined)
+    return (
+      <div>
+        <StudentProfile id={studentID} />
+      </div>
+    );
 }

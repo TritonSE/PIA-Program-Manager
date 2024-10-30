@@ -8,6 +8,8 @@ export type Student = CreateStudentRequest & {
   medication: string;
   otherString: string;
   progressNotes?: string[];
+  UCINumber?: string;
+  conservation?: boolean;
 };
 
 export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {
@@ -43,7 +45,6 @@ export async function getAllStudents(): Promise<APIResult<[Student]>> {
 
 export async function getStudent(id: string): Promise<APIResult<Student>> {
   try {
-    console.log(id);
     const response = await GET(`/student/${id}`);
     const json = (await response.json()) as Student;
     return { success: true, data: json };
