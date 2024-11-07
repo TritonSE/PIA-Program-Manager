@@ -195,8 +195,8 @@ export default function StudentProfile({ id }: StudentProfileProps) {
   return (
     studentData &&
     enrollmentInfo && (
-      <main className="mx-[30px] space-y-[60px] bg-blue-100">
-        <div id="top" className="flex justify-between bg-gray-200">
+      <main className="mx-[30px] space-y-[60px]">
+        <div id="top" className="flex justify-between">
           <ArrowHome />
           {/*no need to set all students*/}
           <StudentFormButton
