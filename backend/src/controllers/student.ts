@@ -8,6 +8,7 @@ import { validationResult } from "express-validator";
 import mongoose, { HydratedDocument } from "mongoose";
 
 import EnrollmentModel from "../models/enrollment";
+import ProgressNoteModel from "../models/progressNote";
 import StudentModel from "../models/student";
 import { Enrollment } from "../types/enrollment";
 import { createEnrollment, editEnrollment } from "../util/enrollment";
@@ -106,6 +107,26 @@ export const getStudent: RequestHandler = async (req, res, next) => {
     const enrollments = await EnrollmentModel.find({ studentId });
 
     res.status(200).json({ ...studentData.toObject(), programs: enrollments });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteStudent: RequestHandler = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    validationErrorParser(errors);
+
+    const studentId = req.params.id;
+    if (!(await StudentModel.findById(req.params.id))) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    await EnrollmentModel.deleteMany({ studentId });
+    await ProgressNoteModel.deleteMany({ studentId });
+    await StudentModel.deleteOne({ _id: studentId });
+
+    res.status(200);
   } catch (error) {
     next(error);
   }
