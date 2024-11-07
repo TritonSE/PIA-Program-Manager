@@ -1,13 +1,32 @@
 import Link from "next/link";
-import { Dispatch, SetStateAction, useContext, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import { useReactToPrint } from "react-to-print";
 
-import { Enrollment, Program } from "../api/programs";
+import { Enrollment } from "../api/programs";
 import { Student, getStudent } from "../api/students";
 import { ProgramsContext } from "../contexts/program";
 
 import { Contact } from "./StudentForm/types";
 import StudentFormButton from "./StudentFormButton";
+import StudentProfilePrintComponent from "./StudentProfilePrintComponent";
 import { StudentMap } from "./StudentsTable/types";
+
+// Aggregate only the fields necessary for display on frontend
+// to reduce confusion when managing programs/programlinks/enrollments
+export type EnrollmentDisplayInfo = {
+  name: string;
+  type: string;
+  status: string;
+  abbreviation: string;
+  startDate: Date;
+  renewalDate: Date;
+  authNumber: string;
+  sessionTime: {
+    start_time: string;
+    end_time: string;
+  };
+  schedule: string[];
+};
 
 type StudentProfileProps = {
   id: string;
@@ -20,8 +39,7 @@ type ContactLayoutProps = {
 };
 
 type ProgramLayoutProps = {
-  program: Program;
-  enrollment: Enrollment;
+  enrollmentInfo: EnrollmentDisplayInfo;
 };
 
 function formatDate(d: Date) {
@@ -56,14 +74,14 @@ function ContactLayout({ contact, header, children }: ContactLayoutProps) {
   );
 }
 
-function ProgramLayout({ program, enrollment }: ProgramLayoutProps) {
-  const regular = program.type === "regular";
+function ProgramLayout({ enrollmentInfo }: ProgramLayoutProps) {
+  const regular = enrollmentInfo.type === "regular";
   return (
     <>
       <div className="flex space-x-[5px] font-[Poppins-Bold] text-[24px]">
-        <div>{program.abbreviation} -</div>
+        <div>{enrollmentInfo.abbreviation} -</div>
         {(() => {
-          switch (enrollment.status) {
+          switch (enrollmentInfo.status) {
             case "Joined":
               return <div className="font-bold text-pia_dark_green">Joined</div>;
             case "Waitlisted":
@@ -78,16 +96,21 @@ function ProgramLayout({ program, enrollment }: ProgramLayoutProps) {
         })()}
       </div>
       <div className="font-[Poppins] text-[24px]">
-        Start Date: {formatDate(enrollment.startDate)}
+        Start Date: {formatDate(enrollmentInfo.startDate)}
       </div>
       <div className="font-[Poppins] text-[24px]">
-        End Date: {formatDate(enrollment.renewalDate)}
+        End Date: {formatDate(enrollmentInfo.renewalDate)}
       </div>
-      <div className="font-[Poppins] text-[24px]">Authorization Code: {enrollment.authNumber} </div>
+      <div className="font-[Poppins] text-[24px]">
+        Authorization Code: {enrollmentInfo.authNumber}{" "}
+      </div>
       {regular && (
         <div className="font-[Poppins] text-[24px]">
           Session Time:
-          {" " + enrollment.sessionTime.start_time + " - " + enrollment.sessionTime.end_time}
+          {" " +
+            enrollmentInfo.sessionTime.start_time +
+            " - " +
+            enrollmentInfo.sessionTime.end_time}
         </div>
       )}
       {regular && (
@@ -96,7 +119,7 @@ function ProgramLayout({ program, enrollment }: ProgramLayoutProps) {
           <div className="flex space-x-[15px]">
             {["M", "T", "W", "Th", "F", "Sa", "Su"].map((value) => {
               if (
-                enrollment.schedule.find((day) => {
+                enrollmentInfo.schedule.find((day) => {
                   return day === value;
                 })
               )
@@ -117,28 +140,6 @@ function ProgramLayout({ program, enrollment }: ProgramLayoutProps) {
                 </div>
               );
             })}
-
-            {/*<div className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center">
-              <div className="absolute">SU</div>
-            </div>
-            <div className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center">
-              <div className="absolute">M</div>
-            </div>
-            <div className="relative flex items-center justify-center rounded-full border border-pia_border bg-pia_secondary_green p-[20px] text-center text-pia_primary_white">
-              <div className="absolute">T</div>
-            </div>
-            <div className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center">
-              <div className="absolute">W</div>
-            </div>
-            <div className="relative flex items-center justify-center rounded-full border border-pia_border bg-pia_secondary_green p-[20px] text-center text-pia_primary_white">
-              <div className="absolute">TH</div>
-            </div>
-            <div className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center">
-              <div className="absolute">F</div>
-            </div>
-            <div className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center">
-              <div className="absolute">SA</div>
-            </div>*/}
           </div>
         </>
       )}
@@ -146,15 +147,13 @@ function ProgramLayout({ program, enrollment }: ProgramLayoutProps) {
   );
 }
 
-function printProfile(student: students) {
-  
-}
-
 export default function StudentProfile({ id }: StudentProfileProps) {
   const [notFound, setNotFound] = useState<boolean>(false);
   const [studentData, setStudentData] = useState<Student>();
-  const [programs, setPrograms] = useState<Program[]>();
+  const [enrollmentInfo, setEnrollmentInfo] = useState<EnrollmentDisplayInfo[]>();
   const { allPrograms } = useContext(ProgramsContext);
+  const contentRef = useRef(null);
+  const reactToPrintFn = useReactToPrint({ contentRef });
 
   useEffect(() => {
     getStudent(id)
@@ -174,12 +173,16 @@ export default function StudentProfile({ id }: StudentProfileProps) {
 
   useEffect(() => {
     if (studentData) {
-      setPrograms(studentData.programs.map((programLink) => allPrograms[programLink.programId]));
+      setEnrollmentInfo(
+        studentData.programs.map((value) => {
+          return {
+            ...allPrograms[value.programId],
+            ...(value as unknown as Enrollment),
+          };
+        }),
+      );
     }
   }, [studentData]);
-
-  if (studentData) console.log(studentData);
-  if (programs) console.log(programs);
 
   if (notFound) {
     return (
@@ -191,7 +194,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
   }
   return (
     studentData &&
-    programs && (
+    enrollmentInfo && (
       <main className="mx-[30px] space-y-[60px] bg-blue-100">
         <div id="top" className="flex justify-between bg-gray-200">
           <ArrowHome />
@@ -202,15 +205,15 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             setAllStudents={undefined as unknown as Dispatch<SetStateAction<StudentMap>>}
           />
         </div>
-        <div id="ult header" className="flex space-x-[80px] bg-blue-200">
-          <div id="header" className="mt-[20px] w-2/3 space-y-[60px] bg-blue-300">
-            <div className="w-full overflow-hidden text-ellipsis bg-red-100 font-[alternate-gothic] text-[96px] leading-none">
+        <div id="ult header" ref={contentRef.current} className="flex space-x-[80px]">
+          <div id="header" className="mt-[20px] w-3/5 space-y-[60px]">
+            <div className="w-full overflow-hidden text-ellipsis whitespace-nowrap font-[alternate-gothic] text-[96px] leading-none">
               {studentData.student.firstName + " " + studentData.student.lastName}
             </div>
 
-            <div id="contact" className="space-y-[16px] font-[Poppins-Bold] text-[21px]">
-              <div id="line 1" className="flex space-x-[40px]">
-                <div className="flex space-x-[20px]">
+            <div id="contact" className="font-[Poppins-Bold] text-[21px] ">
+              <div id="line 1" className="flex flex-wrap ">
+                <div className="mb-[16px] mr-[40px] flex space-x-[20px]">
                   <svg
                     width="29"
                     height="23"
@@ -223,7 +226,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                       fill="#202124"
                     />
                   </svg>
-                  <div>{studentData.student.email} </div>
+                  <div className="w-full">{studentData.student.email} </div>
                 </div>
                 <div className="flex space-x-[20px]">
                   <svg
@@ -310,7 +313,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             <div className="font-[Poppins-Bold] text-[28px]">Student Background:</div>
             <div className="font-[Poppins] text-[24px]">Address: {studentData.location}</div>
             <div className="font-[Poppins] text-[24px]">
-              Birthdate: {formatDate(studentData.birthday)};
+              Birthdate: {formatDate(studentData.birthday)}
             </div>
           </div>
           <div id="student information" className="basis-1/2 space-y-[20px]">
@@ -352,31 +355,17 @@ export default function StudentProfile({ id }: StudentProfileProps) {
         <div id="row4" className="flex space-x-[230px]">
           <div id="regular" className="basis-1/2 space-y-[20px]">
             <div className="font-[Poppins-Bold] text-[28px]">Regular Programs:</div>
-            {studentData.programs.map((value, index) => {
-              const program = allPrograms[value.programId];
-              if (program.type === "regular")
-                return (
-                  <ProgramLayout
-                    program={program}
-                    enrollment={value as unknown as Enrollment}
-                    key={"regular" + index}
-                  />
-                );
+            {enrollmentInfo.map((value, index) => {
+              if (value.type === "regular")
+                return <ProgramLayout enrollmentInfo={value} key={"regular" + index} />;
               return <></>;
             })}
           </div>
           <div id="varying" className="basis-1/2 space-y-[20px]">
             <div className="font-[Poppins-Bold] text-[28px]">Varying Programs:</div>
-            {studentData.programs.map((value, index) => {
-              const program = allPrograms[value.programId];
-              if (program.type === "varying")
-                return (
-                  <ProgramLayout
-                    program={program}
-                    enrollment={value as unknown as Enrollment}
-                    key={"varying" + index}
-                  />
-                );
+            {enrollmentInfo.map((value, index) => {
+              if (value.type === "varying")
+                return <ProgramLayout enrollmentInfo={value} key={"varying" + index} />;
               return <></>;
             })}
           </div>
@@ -395,11 +384,18 @@ export default function StudentProfile({ id }: StudentProfileProps) {
           <button
             className="h-[48px] w-[96px] rounded-sm border border-pia_dark_green bg-pia_dark_green text-pia_primary_white"
             onClick={() => {
-              printProfile(studentData);
+              reactToPrintFn();
             }}
           >
             Print
           </button>
+          <div className="hidden">
+            <StudentProfilePrintComponent
+              data={studentData}
+              contentRef={contentRef}
+              enrollments={enrollmentInfo}
+            />
+          </div>
         </div>
       </main>
     )
