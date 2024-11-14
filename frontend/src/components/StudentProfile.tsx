@@ -1,15 +1,28 @@
 import Link from "next/link";
-import { Dispatch, SetStateAction, useContext, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  Dispatch,
+  MouseEventHandler,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
 
 import { Enrollment } from "../api/programs";
 import { Student, getStudent } from "../api/students";
 import { ProgramsContext } from "../contexts/program";
 
+import { Button } from "./Button";
 import { Contact } from "./StudentForm/types";
 import StudentFormButton from "./StudentFormButton";
 import StudentProfilePrintComponent from "./StudentProfilePrintComponent";
 import { StudentMap } from "./StudentsTable/types";
+import { Textfield } from "./Textfield";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 // Aggregate only the fields necessary for display on frontend
 // to reduce confusion when managing programs/programlinks/enrollments
@@ -62,7 +75,7 @@ function ArrowHome() {
 
 function ContactLayout({ contact, header, children }: ContactLayoutProps) {
   return (
-    <div id={header.toLowerCase()} className="basis-1/2 space-y-[20px]">
+    <div id={header.toLowerCase()} className="basis-1/2 space-y-[20px] break-all">
       <div className="font-[Poppins-Bold] text-[28px]">{header}:</div>
       <div className="font-[Poppins] text-[24px]">
         Name: {contact.firstName + " " + contact.lastName}
@@ -154,6 +167,18 @@ export default function StudentProfile({ id }: StudentProfileProps) {
   const { allPrograms } = useContext(ProgramsContext);
   const contentRef = useRef(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
+
+  const { register: deleteRegister, getValues: getDeleteValue } = useForm<{ lastname: string }>();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
+
+  const router = useRouter();
+
+  const deleteStudent: MouseEventHandler = () => {
+    const lastName = getDeleteValue("lastname");
+    if (studentData && studentData.student.lastName === lastName) {
+      router.push("/home");
+    } else alert("Please enter the student's last name (case-sensitive)");
+  };
 
   useEffect(() => {
     getStudent(id)
@@ -378,9 +403,41 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             <NotificationTable />
           </div> */}
         <div id="Bottom Buttons" className="flex justify-between">
-          <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
-            Delete
-          </button>
+          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+            <DialogTrigger asChild>
+              <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
+                Delete
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-h-[60%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[40%]">
+              <div className="p-3 min-[450px]:p-10">
+                <p className="mb-3 mt-5 text-center text-base font-bold sm:text-xl">
+                  Are you sure you want to delete this student?
+                </p>
+                <div className="flex w-full justify-center">
+                  <div className="font-base w-[60%] text-sm sm:text-base">
+                    <li className="font-bold text-destructive">This cannot be undone!</li>
+                    <li>
+                      This will remove this student from all enrolled programs and delete all notes
+                      and documents.
+                    </li>
+                  </div>
+                </div>
+
+                <div className="mx-8 mb-8 mt-6">
+                  Enter the student&apos;s last name to proceed
+                  <Textfield name="lastname" placeholder="Last Name" register={deleteRegister} />
+                </div>
+
+                <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
+                  <DialogClose asChild>
+                    <Button label="Back" kind="destructive-secondary" />
+                  </DialogClose>
+                  <Button label="Delete" onClick={deleteStudent} kind="destructive" />
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
           <button
             className="h-[48px] w-[96px] rounded-sm border border-pia_dark_green bg-pia_dark_green text-pia_primary_white"
             onClick={() => {
