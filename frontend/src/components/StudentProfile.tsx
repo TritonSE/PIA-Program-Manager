@@ -13,16 +13,16 @@ import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
 
 import { Enrollment } from "../api/programs";
-import { Student, getStudent } from "../api/students";
+import { Student, deleteStudent, getStudent } from "../api/students";
 import { ProgramsContext } from "../contexts/program";
+import { UserContext } from "../contexts/user";
 
-import { Button } from "./Button";
+import ModalConfirmation from "./Modals/ModalConfirmation";
 import { Contact } from "./StudentForm/types";
 import StudentFormButton from "./StudentFormButton";
 import StudentProfilePrintComponent from "./StudentProfilePrintComponent";
 import { StudentMap } from "./StudentsTable/types";
 import { Textfield } from "./Textfield";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 // Aggregate only the fields necessary for display on frontend
 // to reduce confusion when managing programs/programlinks/enrollments
@@ -161,6 +161,8 @@ function ProgramLayout({ enrollmentInfo }: ProgramLayoutProps) {
 }
 
 export default function StudentProfile({ id }: StudentProfileProps) {
+  const { firebaseUser } = useContext(UserContext);
+  const [firebaseToken, setFirebaseToken] = useState<string>();
   const [notFound, setNotFound] = useState<boolean>(false);
   const [studentData, setStudentData] = useState<Student>();
   const [enrollmentInfo, setEnrollmentInfo] = useState<EnrollmentDisplayInfo[]>();
@@ -173,10 +175,19 @@ export default function StudentProfile({ id }: StudentProfileProps) {
 
   const router = useRouter();
 
-  const deleteStudent: MouseEventHandler = () => {
+  const deleteStudentHandler: MouseEventHandler = () => {
     const lastName = getDeleteValue("lastname");
-    if (studentData && studentData.student.lastName === lastName) {
-      router.push("/home");
+    if (studentData && firebaseToken && studentData.student.lastName === lastName) {
+      deleteStudent(studentData._id, firebaseToken)
+        .then((result) => {
+          if (result.success) {
+            //console.log("Deletion Successful");
+            router.push("/home");
+          } else console.log(result.error);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } else alert("Please enter the student's last name (case-sensitive)");
   };
 
@@ -208,6 +219,19 @@ export default function StudentProfile({ id }: StudentProfileProps) {
       );
     }
   }, [studentData]);
+
+  useEffect(() => {
+    if (firebaseUser) {
+      firebaseUser
+        .getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [firebaseUser]);
 
   if (notFound) {
     return (
@@ -403,19 +427,13 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             <NotificationTable />
           </div> */}
         <div id="Bottom Buttons" className="flex justify-between">
-          <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-            <DialogTrigger asChild>
-              <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
-                Delete
-              </button>
-            </DialogTrigger>
-            <DialogContent className="max-h-[60%] max-w-[80%] rounded-[8px] md:max-w-[50%]  lg:max-w-[40%]">
-              <div className="p-3 min-[450px]:p-10">
-                <p className="mb-3 mt-5 text-center text-base font-bold sm:text-xl">
-                  Are you sure you want to delete this student?
-                </p>
-                <div className="flex w-full justify-center">
-                  <div className="font-base w-[60%] text-sm sm:text-base">
+          <ModalConfirmation
+            className="h-[60%] w-[40%] rounded-[8px]"
+            title="Are you sure you want to delete this student?"
+            innerContent={
+              <>
+                <div className="flex w-[60%] justify-center">
+                  <div className="font-base text-sm sm:text-base">
                     <li className="font-bold text-destructive">This cannot be undone!</li>
                     <li>
                       This will remove this student from all enrolled programs and delete all notes
@@ -423,21 +441,24 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                     </li>
                   </div>
                 </div>
-
                 <div className="mx-8 mb-8 mt-6">
                   Enter the student&apos;s last name to proceed
                   <Textfield name="lastname" placeholder="Last Name" register={deleteRegister} />
                 </div>
-
-                <div className="grid justify-center gap-5 min-[450px]:flex min-[450px]:justify-between">
-                  <DialogClose asChild>
-                    <Button label="Back" kind="destructive-secondary" />
-                  </DialogClose>
-                  <Button label="Delete" onClick={deleteStudent} kind="destructive" />
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </>
+            }
+            kind="destructive"
+            triggerElement={
+              <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
+                Delete
+              </button>
+            }
+            confirmText="Delete"
+            icon={<div />}
+            isParentOpen={deleteDialogOpen}
+            setIsParentOpen={setDeleteDialogOpen}
+            onConfirmClick={deleteStudentHandler}
+          />
           <button
             className="h-[48px] w-[96px] rounded-sm border border-pia_dark_green bg-pia_dark_green text-pia_primary_white"
             onClick={() => {
