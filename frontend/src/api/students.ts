@@ -46,9 +46,10 @@ export async function getAllStudents(): Promise<APIResult<[Student]>> {
   }
 }
 
-export async function getStudent(id: string): Promise<APIResult<Student>> {
+export async function getStudent(id: string, firebaseToken: string): Promise<APIResult<Student>> {
   try {
-    const response = await GET(`/student/${id}`);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET(`/student/${id}`, headers);
     const json = (await response.json()) as Student;
     return { success: true, data: json };
   } catch (error) {

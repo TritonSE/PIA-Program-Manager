@@ -194,20 +194,22 @@ export default function StudentProfile({ id }: StudentProfileProps) {
   };
 
   useEffect(() => {
-    getStudent(id)
-      .then((result) => {
-        if (result.success) {
-          setStudentData(result.data);
-        } else {
-          setNotFound(true);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (firebaseToken) {
+      getStudent(id, firebaseToken)
+        .then((result) => {
+          if (result.success) {
+            setStudentData(result.data);
+          } else {
+            setNotFound(true);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-    console.log(allPrograms);
-  }, []);
+      console.log(allPrograms);
+    }
+  }, [firebaseToken]);
 
   useEffect(() => {
     if (studentData) {
