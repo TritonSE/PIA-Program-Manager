@@ -1,8 +1,9 @@
-import { GET, POST, PUT, DELETE, handleAPIError } from "../api/requests";
+import { DELETE, GET, POST, PUT, handleAPIError } from "../api/requests";
 import { StudentData as CreateStudentRequest } from "../components/StudentForm/types";
 
-import type { APIResult } from "../api/requests";
 import { createAuthHeader } from "./progressNotes";
+
+import type { APIResult } from "../api/requests";
 
 export type Student = CreateStudentRequest & {
   _id: string;

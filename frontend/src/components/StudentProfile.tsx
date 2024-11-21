@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -166,6 +167,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
   const [notFound, setNotFound] = useState<boolean>(false);
   const [studentData, setStudentData] = useState<Student>();
   const [enrollmentInfo, setEnrollmentInfo] = useState<EnrollmentDisplayInfo[]>();
+  const [image, setImage] = useState<string>("default");
   const { allPrograms } = useContext(ProgramsContext);
   const contentRef = useRef(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
@@ -217,6 +219,10 @@ export default function StudentProfile({ id }: StudentProfileProps) {
           };
         }),
       );
+
+      if (studentData.profilePicture && studentData.profilePicture !== "default") {
+        setImage(studentData.profilePicture);
+      }
     }
   }, [studentData]);
 
@@ -327,21 +333,12 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             </div>
           </div>
           {/*profile picture*/}
-          <svg
-            width="191"
-            height="214"
-            className=""
-            viewBox="0 0 191 214"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <circle cx="95.2142" cy="95.2142" r="95.2142" fill="#B9B9B9" />
-            <circle cx="94.0389" cy="58.7743" r="35.2645" fill="black" />
-            <path
-              d="M36.7455 154.383C37.1285 139.994 43.1232 126.314 53.4714 116.215C63.8195 106.116 77.7163 100.383 92.2447 100.219C106.773 100.056 120.804 105.474 131.391 115.338C141.978 125.201 148.298 138.742 149.026 153.119L92.9112 155.878L36.7455 154.383Z"
-              fill="black"
-            />
-          </svg>
+          <Image
+            alt="Profile Picture"
+            src={image !== "default" ? image : "/../defaultProfilePic.svg"}
+            width={191}
+            height={214}
+          />
         </div>
         <div id="row1" className="flex space-x-[230px]">
           <ContactLayout contact={studentData.emergency} header="Emergency Contact">

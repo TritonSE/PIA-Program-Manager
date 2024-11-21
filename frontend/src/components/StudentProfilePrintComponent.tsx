@@ -1,6 +1,7 @@
 import { LegacyRef } from "react";
 
 import { Student } from "../api/students";
+
 import { EnrollmentDisplayInfo } from "./StudentProfile";
 
 type PrintComponentProps = {
@@ -19,6 +20,12 @@ type PrintContactProps = {
 type PrintProgramProps = {
   enrollmentInfo: EnrollmentDisplayInfo;
 };
+
+function formatDate(d: Date) {
+  const date = new Date(d);
+  return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
+}
+
 function Contact({ firstName, lastName, email, phoneNumber, header }: PrintContactProps) {
   return (
     <div className="inline-block">
@@ -52,11 +59,6 @@ function Program({ enrollmentInfo }: PrintProgramProps) {
       {regular && <div className="">Days of the Week: {enrollmentInfo.schedule.join(", ")}</div>}
     </div>
   );
-}
-
-function formatDate(d: Date) {
-  const date = new Date(d);
-  return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
 }
 
 export default function StudentProfilePrintComponent({
