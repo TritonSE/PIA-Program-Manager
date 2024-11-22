@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
 
-const ProgramPill = ({ name, color }: { name: string; color: string }) => {
+export const ProgramPill = ({ name, color }: { name: string; color: string }) => {
   const { isTablet } = useWindowSize();
 
   return (
