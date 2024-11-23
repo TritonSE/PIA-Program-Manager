@@ -7,9 +7,9 @@ export type DateboxProps = {
 };
 
 export function Datebox({ day, hours, saturday }: DateboxProps) {
-  let boxClass = "border-r border-t p-2 flex flex-col items-center";
+  let boxClass = "border-r border-t p-4 flex flex-col items-center";
   if (saturday) {
-    boxClass = "border-t p-2 flex flex-col items-center";
+    boxClass = "border-t p-4 flex flex-col items-center";
   }
 
   return (

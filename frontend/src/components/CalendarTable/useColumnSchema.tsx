@@ -1,17 +1,28 @@
+import Image from "next/image";
+import Link from "next/link";
 import { useMemo } from "react";
 
-import { ProgramLink } from "../StudentForm/types";
 import { ProgramMap } from "../StudentsTable/types";
 import { ProgramPill } from "../StudentsTable/useColumnSchema";
 
-import { Columns } from "./types";
+import { Columns, EnrollmentLink } from "./types";
 
 export function useColumnSchema({ allPrograms }: { allPrograms: ProgramMap }) {
   const columns: Columns = [
     {
       accessorKey: "profilePicture",
       header: "Profile Picture",
-      cell: () => <span className="truncate pl-10 pr-2.5 hover:text-clip">filler</span>,
+      cell: (info) => (
+        <div className="flex h-full w-full items-center justify-center">
+          <Image
+            alt="Profile Picture"
+            src={(info.getValue() as string) === "default" ? "../defaultProfilePic.svg" : ""}
+            className="rounded-full object-cover"
+            width={50}
+            height={50}
+          />
+        </div>
+      ),
       enableColumnFilter: false,
     },
     {
@@ -26,10 +37,23 @@ export function useColumnSchema({ allPrograms }: { allPrograms: ProgramMap }) {
       accessorKey: "programs",
       header: "Attendance",
       cell: (info) => {
-        const programLink = info.getValue() as unknown as ProgramLink;
-        const link = programLink.programId;
-        const program = allPrograms[link];
-        return <ProgramPill name={program.abbreviation} color={program.color} />;
+        const enrollmentLink = info.getValue() as unknown as EnrollmentLink;
+        const studentId = enrollmentLink.studentId;
+        const programId = enrollmentLink.programId;
+        const program = allPrograms[programId];
+        return (
+          <Link
+            href={{
+              pathname: "./calendar",
+              query: {
+                student: studentId,
+                program: programId,
+              },
+            }}
+          >
+            <ProgramPill name={program.abbreviation} color={program.color} />
+          </Link>
+        );
       },
     },
   ];

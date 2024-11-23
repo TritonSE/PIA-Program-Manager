@@ -5,6 +5,7 @@
 
 import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
+import createHttpError from "http-errors";
 import mongoose, { HydratedDocument } from "mongoose";
 
 import EnrollmentModel from "../models/enrollment";
@@ -85,6 +86,22 @@ export const getAllStudents: RequestHandler = async (_, res, next) => {
     );
 
     res.status(200).json(hydratedStudents);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getStudent: RequestHandler = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+
+    const student = await StudentModel.findById(id);
+
+    if (student === null) {
+      throw createHttpError(404, "Student not found");
+    }
+
+    res.status(200).json(student);
   } catch (error) {
     next(error);
   }

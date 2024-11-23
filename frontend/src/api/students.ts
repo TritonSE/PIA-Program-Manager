@@ -40,3 +40,13 @@ export async function getAllStudents(): Promise<APIResult<[Student]>> {
     return handleAPIError(error);
   }
 }
+
+export async function getStudent(id: string): Promise<APIResult<Student>> {
+  try {
+    const response = await GET(`/student/${id}`);
+    const json = (await response.json()) as Student;
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}

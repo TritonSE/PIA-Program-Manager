@@ -10,9 +10,10 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { getAllStudents } from "../../api/students";
 import LoadingSpinner from "../LoadingSpinner";
-import { fuzzyFilter, programFilterFn, statusFilterFn } from "../StudentsTable/FilterFns";
 import { StudentMap } from "../StudentsTable/types";
 import { Table } from "../ui/table";
+
+import Filter, { fuzzyFilter, programFilterFn, statusFilterFn } from "./Filters";
 
 // import Filter from "./Filters";
 import TBody from "./TBody";
@@ -67,9 +68,9 @@ export default function CalendarTable() {
         (program) =>
           ({
             id: student._id,
-            profilePicture: "filler",
+            profilePicture: "default",
             student: `${student.student.firstName} ${student.student.lastName}`,
-            programs: program,
+            programs: { ...program, studentId: student._id },
           }) as CalendarTableRow,
       );
     });
@@ -94,7 +95,7 @@ export default function CalendarTable() {
       globalFilter,
     },
     onGlobalFilterChange: setGlobalFilter,
-    // globalFilterFn: fuzzyFilter,
+    globalFilterFn: fuzzyFilter,
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
@@ -117,6 +118,8 @@ export default function CalendarTable() {
         </h1>
 
         <p>Choose a Student to View Attendance</p>
+
+        <Filter globalFilter={globalFilter} setGlobalFilter={setGlobalFilter} table={table} />
       </div>
       {isLoading ? (
         <LoadingSpinner />
