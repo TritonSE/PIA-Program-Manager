@@ -128,6 +128,7 @@ export default function StudentFormButton({
             setAllStudents((prevStudents: StudentMap) => {
               return { ...prevStudents, [newStudent._id]: { ...newStudent } };
             });
+            console.log(newStudent);
           } else {
             console.log(result.error);
             alert("Unable to create student: " + result.error);
@@ -155,6 +156,7 @@ export default function StudentFormButton({
                 return prevStudents;
               }
             });
+            console.log(editedStudent);
           } else {
             console.log(result.error);
             alert("Unable to edit student: " + result.error);

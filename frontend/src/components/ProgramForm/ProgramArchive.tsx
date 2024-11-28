@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { MouseEventHandler, useState } from "react";
 import { useForm } from "react-hook-form";
 
-import { Program } from "../../api/programs";
+import { Program, archiveProgram } from "../../api/programs";
 import { Button } from "../Button";
+import { ProgramMap } from "../StudentsTable/types";
 import { Textfield } from "../Textfield";
 import { Dialog, DialogClose, DialogContentSlide, DialogTrigger } from "../ui/dialog";
 
@@ -14,6 +15,8 @@ type archiveProps = {
   setOpenParent: React.Dispatch<React.SetStateAction<boolean>>;
   data: Program;
   isMobile?: boolean;
+  setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
+  setAlertState: React.Dispatch<React.SetStateAction<{ open: boolean; message: string }>>;
 };
 
 function ProgramArchiveHeader({ label }: props) {
@@ -48,7 +51,13 @@ function ProgramArchiveHeader({ label }: props) {
 }
 
 //Currently no functionality, just a button that closes the form
-export default function ProgramArchive({ setOpenParent, data, isMobile = false }: archiveProps) {
+export default function ProgramArchive({
+  setOpenParent,
+  data,
+  isMobile = false,
+  setPrograms,
+  setAlertState,
+}: archiveProps) {
   const [openArchive, setOpenArchive] = useState(false);
   const {
     register: archiveRegister,
@@ -57,21 +66,55 @@ export default function ProgramArchive({ setOpenParent, data, isMobile = false }
     getValues: getArchiveValue,
   } = useForm<{ date: string }>();
 
+  const archive: MouseEventHandler = () => {
+    const date = new Date(getArchiveValue("date"));
+    const today = new Date();
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
+      archiveProgram(data)
+        .then((result) => {
+          if (result.success) {
+            console.log(result.data);
+            archiveReset();
+            setOpenArchive(false);
+            setOpenParent(false);
+            setAlertState({ open: true, message: result.data.name + " has been archived" });
+            setPrograms((prevPrograms: ProgramMap) => {
+              if (Object.keys(prevPrograms).includes(result.data._id))
+                return { ...prevPrograms, [result.data._id]: { ...result.data } };
+              else console.log("Program ID does not exist");
+              return prevPrograms;
+            });
+          } else {
+            console.log(result.error);
+            alert("Unable to archive program: " + result.error);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
+
   return (
     <Dialog open={openArchive}>
-      <div className="absolute inset-3 flex h-[10%] justify-end">
+      <div className="pointer-events-none absolute inset-3 flex h-[10%] justify-end">
         <DialogTrigger asChild>
           {!isMobile ? (
             <Button
               label="Archive"
               kind="destructive-secondary"
+              className="pointer-events-auto"
               onClick={() => {
                 setOpenArchive(true);
               }}
             />
           ) : (
             <div
-              className="pt-1 text-destructive"
+              className="pointer-events-auto pt-1 text-destructive"
               onClick={() => {
                 setOpenArchive(true);
               }}
@@ -84,7 +127,7 @@ export default function ProgramArchive({ setOpenParent, data, isMobile = false }
       <DialogContentSlide className="w-full bg-white object-right sm:w-[50%]">
         <div className="flex flex-col justify-center">
           <div className="pl-12 pr-20 sm:pl-24">
-            <ProgramArchiveHeader label={data ? data.name : ""} />
+            <ProgramArchiveHeader label={data.name} />
             <p className="pb-3 pt-4 text-sm">Confirm by entering today&apos;s date</p>
             <form>
               <Textfield
@@ -101,29 +144,12 @@ export default function ProgramArchive({ setOpenParent, data, isMobile = false }
                     label="Back"
                     kind="destructive-secondary"
                     onClick={() => {
-                      setOpenParent(false);
+                      setOpenArchive(false);
                     }}
                   />
                 </DialogClose>
                 <DialogClose asChild>
-                  <Button
-                    label="Archive"
-                    onClick={() => {
-                      const date = new Date(getArchiveValue("date"));
-                      const today = new Date();
-                      if (
-                        date.getUTCDate() === today.getUTCDate() &&
-                        date.getUTCMonth() === today.getUTCMonth() &&
-                        date.getUTCFullYear() === today.getUTCFullYear()
-                      ) {
-                        //set archive to true
-                        archiveReset();
-                        setOpenArchive(false);
-                        setOpenParent(false);
-                      }
-                    }}
-                    kind="destructive"
-                  />
+                  <Button label="Archive" onClick={archive} kind="destructive" />
                 </DialogClose>
               </div>{" "}
             </form>

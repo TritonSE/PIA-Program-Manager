@@ -1,12 +1,19 @@
-import { Button } from "../Button";
-
 type UserInfo = {
   name: string;
   email: string;
   account_type: string;
+  onApprove: () => void;
+  onDeny: () => void;
 };
 
-export default function NotificationCard({ name, email, account_type }: UserInfo) {
+// export default function NotificationCard({ name, email, account_type }: UserInfo) {
+export default function NotificationCard({
+  name,
+  email,
+  account_type,
+  onApprove,
+  onDeny,
+}: UserInfo) {
   return (
     <>
       <div
@@ -21,9 +28,19 @@ export default function NotificationCard({ name, email, account_type }: UserInfo
           Account Type: {account_type}
         </div>
 
-        <div id="buttons" className="flex w-[calc(8em*2)] items-center gap-5">
-          <Button label="Deny" kind="secondary" rounded={true} className="flex-1" />
-          <Button label="Approve" rounded={true} className="flex-1" />
+        <div id="buttons" className="flex items-center space-x-[30px]">
+          <button
+            className="h-[48px] w-[116px] rounded-full border border-pia_dark_green bg-pia_primary_white text-pia_dark_green"
+            onClick={onDeny}
+          >
+            Deny
+          </button>
+          <button
+            className="h-[48px] w-[116px] rounded-full border bg-pia_dark_green text-pia_primary_white"
+            onClick={onApprove}
+          >
+            Approve
+          </button>
         </div>
       </div>
     </>

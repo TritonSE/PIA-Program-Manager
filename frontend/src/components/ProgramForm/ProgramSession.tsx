@@ -8,7 +8,7 @@ type SessionListProps<T extends FieldValues> = {
   className?: string;
   name: Path<T>;
   register: UseFormRegister<T>;
-  defaultValue?: string[][];
+  defaultValue?: { start_time: string; end_time: string }[];
 };
 
 export function SessionList<T extends FieldValues>({
@@ -17,7 +17,9 @@ export function SessionList<T extends FieldValues>({
   className,
   defaultValue,
 }: SessionListProps<T>) {
-  const [sessions, setSessions] = useState(defaultValue ? defaultValue : [["", ""]]);
+  const [sessions, setSessions] = useState(
+    defaultValue ? defaultValue : [{ start_time: "", end_time: "" }],
+  );
 
   return (
     <div>
@@ -26,7 +28,7 @@ export function SessionList<T extends FieldValues>({
           const sessionName = name + "." + index;
           return (
             <div
-              key={item[0] + index}
+              key={item.start_time + index}
               className="relative flex w-full flex-wrap gap-3 ease-in animate-in fade-in-0 sm:flex-row sm:flex-nowrap sm:gap-6"
             >
               <div className="flex w-1/2 w-full flex-col gap-1 sm:gap-3">
@@ -36,14 +38,14 @@ export function SessionList<T extends FieldValues>({
                     register={register}
                     name={(sessionName + ".0") as Path<T>}
                     placeholder="hh:mm"
-                    defaultValue={sessions[index][0]}
+                    defaultValue={sessions[index].start_time}
                   />
                   to
                   <Textfield
                     register={register}
                     name={(sessionName + ".1") as Path<T>}
                     placeholder="hh:mm"
-                    defaultValue={sessions[index][1]}
+                    defaultValue={sessions[index].end_time}
                   />
                 </div>
               </div>
@@ -55,7 +57,7 @@ export function SessionList<T extends FieldValues>({
         className="mb-3 mt-3 text-neutral-400 underline-offset-2 hover:underline sm:mb-0 sm:mt-6"
         type="button"
         onClick={() => {
-          setSessions([...sessions, ["", ""]]);
+          setSessions([...sessions, { start_time: "", end_time: "" }]);
         }}
       >
         + Add Session

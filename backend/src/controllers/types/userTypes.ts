@@ -25,6 +25,10 @@ export type EditLastChangedPasswordRequestBody = UserId & {
   currentDate: string;
 };
 
+export type UpdateAccountTypeRequestBody = UserId & {
+  updateUserId: string;
+};
+
 export type SaveImageRequest = {
   body: {
     previousImageId: string;

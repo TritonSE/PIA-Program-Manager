@@ -48,7 +48,7 @@ const ModalConfirmation = forwardRef<HTMLDivElement, ModalConfirmationProps>(
           <div className="grid place-items-center p-3 min-[450px]:p-10">
             <div className="mb-8">{icon}</div>
             <h3 className="text-bold mb-2 text-lg font-bold">{title}</h3>
-            {description ? <p>{description}</p> : null}
+            {description ? <p className="text-center">{description}</p> : null}
             <div className="grid justify-center gap-5 pt-6 min-[450px]:flex min-[450px]:w-[70%] min-[450px]:justify-between min-[450px]:[&>*]:basis-full">
               <DialogClose asChild>
                 <Button

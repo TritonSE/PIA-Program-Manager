@@ -9,6 +9,15 @@ const router = express.Router();
 router.use(express.json());
 
 router.post("/create", UserValidator.createUser, UserController.createUser);
+
+router.post("/approve", [verifyAuthToken], UserController.approveUser);
+
+router.post("/deny", [verifyAuthToken], UserController.denyUser);
+
+router.delete("/delete/:email", [verifyAuthToken], UserController.deleteUser);
+
+router.get("/not-approved", [verifyAuthToken], UserController.getNotApprovedUsers);
+
 router.get("/", [verifyAuthToken], UserController.loginUser);
 router.post("/editPhoto", [verifyAuthToken], UserValidator.editPhoto, UserController.editPhoto);
 router.get("/getPhoto/:id", [verifyAuthToken], UserController.getPhoto);
@@ -19,6 +28,19 @@ router.patch(
   [verifyAuthToken],
   UserValidator.editLastChangedPassword,
   UserController.editLastChangedPassword,
+);
+router.get("/getAllTeamAccounts", [verifyAuthToken], UserController.getAllTeamAccounts);
+router.patch(
+  "/editAccountType",
+  [verifyAuthToken],
+  UserValidator.editAccountType,
+  UserController.editAccountType,
+);
+router.patch(
+  "/editArchiveStatus",
+  [verifyAuthToken],
+  UserValidator.editArchiveStatus,
+  UserController.editArchiveStatus,
 );
 
 export default router;

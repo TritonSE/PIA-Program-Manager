@@ -122,8 +122,7 @@ const EnrollmentFormItem = ({
   const sessionOptions = useMemo(() => {
     return (
       programsMap[item.programId]?.sessions?.map((timeSlot) => {
-        if (timeSlot.length !== 2) return "Invalid Time Slot";
-        return `${timeToAmPm(timeSlot[0])} - ${timeToAmPm(timeSlot[1])}`;
+        return `${timeToAmPm(timeSlot.start_time)} - ${timeToAmPm(timeSlot.end_time)}`;
       }) || []
     );
   }, [item.programId]);
@@ -251,8 +250,6 @@ function EnrollmentsEdit({ classname, data, varying }: EnrollmentsEditProps) {
         .map((program) => program.abbreviation),
     [programsMap],
   );
-
-  console.log(varyingPrograms);
 
   const fieldName = varying ? "varyingEnrollments" : "regularEnrollments";
   const { fields, append, update } = useFieldArray({

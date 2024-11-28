@@ -7,7 +7,18 @@ const programSchema = new Schema({
   daysOfWeek: { type: [String], required: true }, // M, T, W, TH, F
   color: { type: String, required: true },
   hourlyPay: { type: Number, required: true },
-  sessions: { type: [[String]], required: true },
+  sessions: {
+    type: [
+      {
+        start_time: { type: String, required: true },
+        end_time: { type: String, required: true },
+      },
+    ],
+    required: true,
+  },
+  archived: { type: Boolean, required: true },
+
+  dateUpdated: { type: String, required: true },
 });
 
 type Program = InferSchemaType<typeof programSchema>;
