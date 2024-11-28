@@ -75,7 +75,7 @@ export default function StudentInfo({ classname, data }: StudentInfoProps) {
               // TODO: Implement file upload
             }}
           >
-            <Image src="../plus.svg" alt="edit profile picture" height="20" width="20" />
+            <Image src="/plus.svg" alt="edit profile picture" height="20" width="20" />
             <span className="whitespace-nowrap leading-normal tracking-tight">Edit Image</span>
           </button>
         </span>

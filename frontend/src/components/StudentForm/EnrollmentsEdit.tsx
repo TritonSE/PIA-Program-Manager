@@ -265,12 +265,22 @@ function EnrollmentsEdit({ classname, data, varying }: EnrollmentsEditProps) {
 
   useEffect(() => {
     if (data) {
+      console.log({ data });
+      console.log(data.enrollments);
+      console.log({ programsMap });
       data.enrollments
-        .filter((enrollment) =>
-          varying
-            ? programsMap[enrollment.programId].type === "varying"
-            : programsMap[enrollment.programId].type === "regular",
-        )
+        .filter((enrollment) => {
+          console.log(enrollment.programId);
+          console.log(programsMap[enrollment.programId]);
+          if (varying) {
+            return programsMap[enrollment.programId].type === "varying";
+          } else {
+            return programsMap[enrollment.programId].type === "regular";
+          }
+          // varying
+          // ? programsMap[enrollment.programId].type === "varying"
+          // : programsMap[enrollment.programId].type === "regular",
+        })
         .forEach((enrollment, index) => {
           update(index, {
             ...enrollment,
@@ -298,7 +308,7 @@ function EnrollmentsEdit({ classname, data, varying }: EnrollmentsEditProps) {
               append({ ...emptyEnrollment, varying });
             }}
           >
-            <Image src="../plus.svg" alt="add program" height="20" width="20" />
+            <Image src="/plus.svg" alt="add program" height="20" width="20" />
             <span className="leading-normal tracking-tight">Add Program</span>
           </button>
         </span>

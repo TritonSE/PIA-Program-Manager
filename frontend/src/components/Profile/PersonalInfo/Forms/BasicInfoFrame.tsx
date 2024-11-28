@@ -163,7 +163,7 @@ export function BasicInfoFrame({
                     {data.image !== "" ? (
                       <Image
                         alt="Profile Picture"
-                        src={data.image !== "default" ? data.image : "../defaultProfilePic.svg"}
+                        src={data.image !== "default" ? data.image : "/defaultProfilePic.svg"}
                         className="flex items-center rounded-full object-cover"
                         fill={true}
                       />
@@ -180,7 +180,7 @@ export function BasicInfoFrame({
                 <div className="relative h-80  ">
                   <Image
                     alt="Profile Picture"
-                    src={data.image !== "default" ? data.image : "../defaultProfilePic.svg"}
+                    src={data.image !== "default" ? data.image : "/defaultProfilePic.svg"}
                     className="object-contain"
                     fill={true}
                   />

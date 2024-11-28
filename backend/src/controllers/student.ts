@@ -8,6 +8,8 @@ import { validationResult } from "express-validator";
 import mongoose, { HydratedDocument } from "mongoose";
 
 import EnrollmentModel from "../models/enrollment";
+import { Image } from "../models/image";
+import ProgressNoteModel from "../models/progressNote";
 import StudentModel from "../models/student";
 import { Enrollment } from "../types/enrollment";
 import { createEnrollment, editEnrollment } from "../util/enrollment";
@@ -87,6 +89,8 @@ export const editStudent: RequestHandler = async (req, res, next) => {
       "enrollments",
     );
 
+    console.log({ populatedStudent });
+
     res.status(200).json(populatedStudent);
   } catch (error) {
     next(error);
@@ -98,6 +102,49 @@ export const getAllStudents: RequestHandler = async (_, res, next) => {
     const students = await StudentModel.find().populate("enrollments");
 
     res.status(200).json(students);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getStudent: RequestHandler = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+
+    validationErrorParser(errors);
+
+    const studentId = req.params.id;
+    const studentData = await StudentModel.findById(req.params.id);
+
+    if (!studentData) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const enrollments = await EnrollmentModel.find({ studentId });
+
+    res.status(200).json({ ...studentData.toObject(), enrollments });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteStudent: RequestHandler = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    validationErrorParser(errors);
+
+    const studentId = req.params.id;
+    const deletedStudent = await StudentModel.findById(studentId);
+    if (!deletedStudent) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    await EnrollmentModel.deleteMany({ studentId });
+    await ProgressNoteModel.deleteMany({ studentId });
+    await Image.deleteMany({ userId: studentId });
+    await StudentModel.deleteOne({ _id: studentId });
+
+    res.status(200).json(deletedStudent);
   } catch (error) {
     next(error);
   }

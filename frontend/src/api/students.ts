@@ -1,11 +1,16 @@
-import { GET, POST, PUT, handleAPIError } from "../api/requests";
+import { DELETE, GET, POST, PUT, handleAPIError } from "../api/requests";
 import { StudentData as CreateStudentRequest } from "../components/StudentForm/types";
+
+import { createAuthHeader } from "./progressNotes";
 
 import type { APIResult } from "../api/requests";
 
 export type Student = CreateStudentRequest & {
   _id: string;
   progressNotes?: string[];
+  UCINumber?: string;
+  conservation?: boolean;
+  profilePicture?: string;
 };
 
 export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {
@@ -33,6 +38,31 @@ export async function getAllStudents(): Promise<APIResult<[Student]>> {
   try {
     const response = await GET("/student/all");
     const json = (await response.json()) as [Student];
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function getStudent(id: string, firebaseToken: string): Promise<APIResult<Student>> {
+  try {
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET(`/student/${id}`, headers);
+    const json = (await response.json()) as Student;
+    return { success: true, data: json };
+  } catch (error) {
+    return handleAPIError(error);
+  }
+}
+
+export async function deleteStudent(
+  id: string,
+  firebaseToken: string,
+): Promise<APIResult<Student>> {
+  try {
+    const headers = createAuthHeader(firebaseToken);
+    const response = await DELETE(`/student/${id}`, undefined, headers);
+    const json = (await response.json()) as Student;
     return { success: true, data: json };
   } catch (error) {
     return handleAPIError(error);

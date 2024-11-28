@@ -79,12 +79,12 @@ export default function StudentBackground({ data, classname }: StudentBackground
               // TODO: Implement image upload
             }}
           >
-            <Image src="../pencil.svg" alt="edit profile picture" width="20" height="20" />
+            <Image src="/pencil.svg" alt="edit profile picture" width="20" height="20" />
             <span className="whitespace-nowrap leading-normal tracking-tight">Edit Image</span>
           </button>
         </span>
         <Image
-          src={data?.profilePicture ?? "../defaultProfilePic.svg"}
+          src={data?.profilePicture ?? "/defaultProfilePic.svg"}
           alt="Profile Picture"
           height="85"
           width="85"

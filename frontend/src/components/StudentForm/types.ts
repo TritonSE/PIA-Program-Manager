@@ -28,6 +28,7 @@ export type StudentData = {
   documents: string[];
   profilePicture: string;
   enrollments: Enrollment[];
+  dietary?: string[];
 };
 
 export type StudentFormData = {
