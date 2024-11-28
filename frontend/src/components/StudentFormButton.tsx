@@ -17,7 +17,6 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from "./ui/dialog";
 
 import { ProgramsContext } from "@/contexts/program";
 import { UserContext } from "@/contexts/user";
-import { amPmToTime } from "@/lib/sessionTimeParsing";
 
 type BaseProps = {
   classname?: string;
@@ -92,19 +91,24 @@ export default function StudentFormButton({
             dateUpdated: new Date(enrollment.dateUpdated),
             startDate: new Date(enrollment.startDate),
             renewalDate: new Date(enrollment.renewalDate),
-            sessionTime: amPmToTime(enrollment.sessionTime)[0],
+            sessionTime: {
+              start_time: enrollment.sessionTime.start_time,
+              end_time: enrollment.sessionTime.end_time,
+            },
           };
         })
         .concat(
           formData?.varyingEnrollments.map((enrollment) => {
             console.log("enrollment varying: ", enrollment);
-
             return {
               ...enrollment,
               dateUpdated: new Date(enrollment.dateUpdated),
               startDate: new Date(enrollment.startDate),
               renewalDate: new Date(enrollment.renewalDate),
-              sessionTime: amPmToTime(enrollment.sessionTime)[0],
+              sessionTime: {
+                start_time: enrollment.sessionTime.start_time,
+                end_time: enrollment.sessionTime.end_time,
+              },
             };
           }),
         ),

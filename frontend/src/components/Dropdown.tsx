@@ -28,7 +28,7 @@ type DropdownProps<T extends FieldValues> = BaseProps<T> & {
 
 export function Dropdown<T extends FieldValues>({
   setDropdownValue,
-  label,
+  placeholder,
   name,
   options, // list of options - should be memoized
   onChange = () => void 0,
@@ -64,8 +64,9 @@ export function Dropdown<T extends FieldValues>({
           className,
         )}
       >
-        {label && <span className="text-neutral-400">{label + ": "}</span>}
-        <span className="text-neutral-800">{selectedOption ?? ""}</span>
+        <span className={`text-neutral-${selectedOption ? 800 : 400}`}>
+          {selectedOption ? selectedOption : placeholder}
+        </span>
         <Image
           src="/ic_round-arrow-drop-up.svg"
           width={40}

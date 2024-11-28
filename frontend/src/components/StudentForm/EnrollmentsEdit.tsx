@@ -17,7 +17,7 @@ import { Textfield } from "../Textfield";
 import { convertDateToString } from "./StudentBackground";
 import { StatusOptions, StudentFormData } from "./types";
 
-import { timeToAmPm } from "@/lib/sessionTimeParsing";
+import { amPmToTime, timeToAmPm } from "@/lib/sessionTimeParsing";
 
 type EnrollmentsEditProps = {
   classname?: string;
@@ -32,7 +32,10 @@ export const emptyEnrollment = {
   dateUpdated: new Date(),
   hoursLeft: 8,
   schedule: [] as string[],
-  sessionTime: [] as string[],
+  sessionTime: {
+    start_time: "",
+    end_time: "",
+  },
   startDate: "",
   renewalDate: "",
   authNumber: "",
@@ -114,8 +117,12 @@ const EnrollmentFormItem = ({
   const { allPrograms: programsMap } = useContext(ProgramsContext);
   const { register, setValue } = useFormContext<StudentFormData>();
 
-  const initialTime = `${timeToAmPm(item.sessionTime[0])} - ${timeToAmPm(item.sessionTime[1])}`;
-  const [selectedSession, setSelectedSession] = useState<string>(initialTime);
+  const initialTime =
+    item.sessionTime.start_time === ""
+      ? ""
+      : `${timeToAmPm(item.sessionTime.start_time)} - ${timeToAmPm(item.sessionTime.end_time)}`;
+  // const initialTime = "0:00 AM - 0:00 AM";
+  const [selectedSession, setSelectedSession] = useState(item.sessionTime);
   const [selectedStatus, setSelectedStatus] = useState<string>(item.status);
   const [selectedProgram, setSelectedProgram] = useState<string>("");
 
@@ -129,8 +136,7 @@ const EnrollmentFormItem = ({
 
   // these 3 useEffects keep our custom dropdown and react-hook-form in sync
   useEffect(() => {
-    item.sessionTime = [selectedSession];
-    setValue(`${fieldName}.${index}.sessionTime`, [selectedSession]);
+    setValue(`${fieldName}.${index}.sessionTime`, selectedSession);
   }, [selectedSession]);
 
   useEffect(() => {
@@ -141,11 +147,10 @@ const EnrollmentFormItem = ({
       item.programId = progId;
       setValue(`${fieldName}.${index}.programId`, progId);
     }
-    setSelectedSession(sessionOptions[0] || "");
+    setSelectedSession({ start_time: "", end_time: "" });
   }, [selectedProgram]);
 
   useEffect(() => {
-    item.sessionTime = [selectedStatus];
     setValue(`${fieldName}.${index}.status`, selectedStatus);
   }, [selectedStatus]);
 
@@ -157,7 +162,6 @@ const EnrollmentFormItem = ({
           <Dropdown
             name="name"
             placeholder="Select Program"
-            label="Select Program"
             className={`h-[50px] w-full rounded-md`}
             options={allPrograms}
             initialValue={programsMap[item.programId]?.abbreviation}
@@ -171,7 +175,6 @@ const EnrollmentFormItem = ({
           <Dropdown
             name="status"
             placeholder="Select Status"
-            label="Select Status"
             className={`h-[50px] w-full rounded-md`}
             initialValue={item.status}
             options={useMemo(() => Object.values(StatusOptions), [StatusOptions])}
@@ -204,7 +207,7 @@ const EnrollmentFormItem = ({
             options={sessionOptions}
             initialValue={initialTime}
             onChange={(value): void => {
-              setSelectedSession(value);
+              setSelectedSession(amPmToTime(value));
             }}
           />
         </div>

@@ -25,6 +25,13 @@ const studentSchema = new Schema({
     phoneNumber: { type: String, required: true },
   },
 
+  enrollments: {
+    type: [Schema.Types.ObjectId],
+    ref: "Enrollment",
+    default: [],
+    required: false,
+  },
+
   //Address of student
   location: { type: String, required: true },
 
