@@ -32,7 +32,8 @@ export type UpdateAccountTypeRequestBody = UserId & {
 export type SaveImageRequest = {
   body: {
     previousImageId: string;
-    userId: string;
+    ownerId: string;
+    ownerType: string;
   };
   file: {
     buffer: Buffer;
@@ -42,6 +43,15 @@ export type SaveImageRequest = {
   };
 };
 
-export type EditPhotoRequestBody = Request<Record<string, never>, Record<string, never>, UserId> & {
+export type OwnerInfo = {
+  ownerId: string;
+  ownerType: string;
+};
+
+export type EditPhotoRequestBody = Request<
+  Record<string, never>,
+  Record<string, never>,
+  OwnerInfo
+> & {
   rawBody?: Buffer;
 };

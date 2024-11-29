@@ -10,7 +10,7 @@ export type Student = CreateStudentRequest & {
   progressNotes?: string[];
   UCINumber?: string;
   conservation?: boolean;
-  profilePicture?: string;
+  profilePicture: string;
 };
 
 export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {

@@ -17,6 +17,7 @@ import SaveCancelButtons from "@/components/Modals/SaveCancelButtons";
 type ProfileBasicData = {
   name: string;
   image: string;
+  userId: string;
 };
 
 type BasicInfoFrameProps = {
@@ -72,7 +73,7 @@ export function BasicInfoFrame({
     if (imageFile) {
       const formData = new FormData();
       formData.append("image", imageFile);
-      editPhoto(formData, previousImageId, firebaseToken)
+      editPhoto(formData, previousImageId, data.userId, "user", firebaseToken)
         .then((result) => {
           if (result.success) {
             setCurrentImageId(result.data);

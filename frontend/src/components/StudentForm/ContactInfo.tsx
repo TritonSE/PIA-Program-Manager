@@ -19,11 +19,13 @@ type ContactInfoProps = {
 };
 
 type FieldProps = {
-  name: string;
-  label: string;
-  placeholder: string;
-  type?: string;
-  defaultValue?: string;
+  title: string;
+  props: {
+    name: string;
+    placeholder: string;
+    type?: string;
+    defaultValue?: string;
+  };
 };
 
 type FinalFieldProps = {
@@ -43,25 +45,33 @@ export default function ContactInfo({ type, data, classname }: ContactInfoProps)
 
   const defaultFields: DefaultFields = {
     firstName: {
-      name: "name",
-      label: "First",
-      placeholder: "John",
+      title: "First",
+      props: {
+        name: "name",
+        placeholder: "John",
+      },
     },
     lastName: {
-      name: "last",
-      label: "Last",
-      placeholder: "Smith",
+      title: "Last",
+      props: {
+        name: "last",
+        placeholder: "Smith",
+      },
     },
     email: {
-      name: "email",
-      label: "Email",
-      placeholder: "johnsmith@gmail.com",
+      title: "Email",
+      props: {
+        name: "email",
+        placeholder: "johnsmith@gmail.com",
+      },
     },
     phoneNumber: {
-      name: "phone",
-      label: "Phone #",
-      placeholder: "000-000-0000",
-      type: "tel",
+      title: "Phone",
+      props: {
+        name: "phone",
+        placeholder: "000-000-0000",
+        type: "tel",
+      },
     },
   };
 
@@ -71,6 +81,12 @@ export default function ContactInfo({ type, data, classname }: ContactInfoProps)
       .split(" ")
       .map((s) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase())
       .join(" ");
+  };
+
+  const parseTitle = (contactTitle: string) => {
+    return ["student", "emergency"].includes(contactTitle)
+      ? contactTitle + " Contact"
+      : contactTitle;
   };
 
   const contactInfo: ContactInfo = {
@@ -83,7 +99,7 @@ export default function ContactInfo({ type, data, classname }: ContactInfoProps)
   //Rename fields to be unique
   Object.entries(contactInfo).forEach(([contactType, fieldList]) => {
     Object.entries(fieldList).forEach(([_fieldType, fieldProps]) => {
-      fieldProps.name = camelize(`${contactType} ${fieldProps.name}`);
+      fieldProps.props.name = camelize(`${contactType} ${fieldProps.props.name}`);
     });
   });
 
@@ -91,25 +107,32 @@ export default function ContactInfo({ type, data, classname }: ContactInfoProps)
     //Set default input values from passed in student data
     Object.entries(contactInfo).forEach(([contactType, fieldList]) => {
       Object.entries(fieldList).forEach(([fieldType, fieldProps]) => {
-        fieldProps.defaultValue = data[contactType as ContactRole][fieldType as PersonalInfoField];
+        fieldProps.props.defaultValue =
+          data[contactType as ContactRole][fieldType as PersonalInfoField];
       });
     });
   }
 
   return (
-    <div className={cn("grid w-full grid-rows-3 gap-5", classname)}>
+    <div className={cn("grid w-full grid-rows-3 gap-10", classname)}>
       {Object.entries(contactInfo).map(([contactType, fieldList]) => {
         return (
           <div className="" key={contactType}>
-            <h3 className="mb-5">{toTitleCase(contactType)}</h3>
-            <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-4">
-              {Object.entries(fieldList).map(([_fieldType, fieldProps]) => {
+            <h3 className="mb-5 text-left text-lg font-bold">
+              {toTitleCase(parseTitle(contactType))}
+            </h3>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+              {Object.entries(fieldList).map(([fieldType, fieldProps]) => {
                 return (
-                  <Textfield
-                    key={fieldProps.name}
-                    register={register}
-                    {...(fieldProps as FinalFieldProps)}
-                  />
+                  <div key={fieldType}>
+                    <h3 className="mb-3">{fieldProps.title}</h3>
+                    <Textfield
+                      key={fieldProps.props.name}
+                      register={register}
+                      className="bg-white"
+                      {...(fieldProps.props as FinalFieldProps)}
+                    />
+                  </div>
                 );
               })}
             </div>

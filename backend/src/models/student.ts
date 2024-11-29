@@ -46,7 +46,8 @@ const studentSchema = new Schema({
   UCINumber: { type: String, required: true },
   incidentForm: { type: String, required: true },
   documents: { type: [String], required: true },
-  profilePicture: { type: Schema.Types.ObjectId, ref: "Image", required: false },
+  profilePicture: { type: String, ref: "Image", required: false, default: "default" },
+
   progressNotes: {
     type: [Schema.Types.ObjectId],
     ref: "ProgressNote",

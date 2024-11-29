@@ -24,9 +24,9 @@ export default function StudentInfo({ classname, data }: StudentInfoProps) {
   if (!allPrograms) return null;
 
   return (
-    <div className={cn("grid flex-1 gap-x-3 gap-y-5 md:grid-cols-2", classname)}>
+    <div className={cn("grid flex-1 gap-x-8 gap-y-10 md:grid-cols-2", classname)}>
       <div>
-        <h3>Intake date</h3>
+        <h3 className="mb-5">Intake date</h3>
         <Textfield
           register={register}
           name="intakeDate"
@@ -37,7 +37,7 @@ export default function StudentInfo({ classname, data }: StudentInfoProps) {
         />
       </div>
       <div>
-        <h3>Tour date</h3>
+        <h3 className="mb-5">Tour date</h3>
         <Textfield
           register={register}
           name="tourDate"
@@ -67,7 +67,7 @@ export default function StudentInfo({ classname, data }: StudentInfoProps) {
       </div>
       <div className="col-span-2">
         <span className="align-center flex w-full justify-between">
-          <h3 className="mb-5 w-full text-left text-lg font-bold">Documents</h3>
+          <h3 className="mb-5 text-left text-lg font-bold">Documents</h3>
           <button
             className="flex w-fit gap-2"
             onClick={(e) => {
@@ -75,8 +75,8 @@ export default function StudentInfo({ classname, data }: StudentInfoProps) {
               // TODO: Implement file upload
             }}
           >
-            <Image src="/plus.svg" alt="edit profile picture" height="20" width="20" />
-            <span className="whitespace-nowrap leading-normal tracking-tight">Edit Image</span>
+            <Image src="/plus.svg" alt="Edit Document" height="20" width="20" />
+            <span className="whitespace-nowrap leading-normal tracking-tight">Add Document</span>
           </button>
         </span>
       </div>

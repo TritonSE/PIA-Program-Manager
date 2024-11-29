@@ -2,7 +2,6 @@ import { format, parse } from "date-fns";
 export const timeToAmPm = (time: string): string => {
   if (!time) return "";
   const parsedTime = parse(time, "HH:mm", new Date());
-  console.log({ time });
   return format(parsedTime, "hh:mm a");
 };
 

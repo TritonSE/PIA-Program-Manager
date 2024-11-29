@@ -11,7 +11,7 @@ import { decodeAuthToken } from "../util/auth";
 
 type RequestBody = {
   uid: string;
-  role: string;
+  accountType: string;
 };
 
 type RequestWithUserId = Request<object, object, RequestBody> & {
@@ -42,7 +42,7 @@ const verifyAuthToken = async (req: RequestWithUserId, res: Response, next: Next
 
   if (userInfo) {
     req.body.uid = userInfo.user_id as string;
-    req.body.role = userInfo.role as string;
+    req.body.accountType = userInfo.accountType as string;
     next();
     return;
   }

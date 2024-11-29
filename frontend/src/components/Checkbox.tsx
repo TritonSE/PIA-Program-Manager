@@ -24,7 +24,7 @@ export function Checkbox<T extends FieldValues>({
   defaultValue = defaultValue?.map((item) => item.toLowerCase());
 
   return (
-    <div className={cn("sm:min-w-2/5 min-w-4/5 grid gap-x-5 gap-y-5 sm:grid-cols-3", className)}>
+    <div className={cn("min-w-4/5 grid w-full gap-x-5 gap-y-5", className)}>
       {options.map((item, index) => {
         return item === "Other" ? (
           <OtherCheckbox

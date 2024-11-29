@@ -1,16 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { validationResult } from "express-validator";
 import admin from "firebase-admin";
-import mongoose from "mongoose";
 
-import { InternalError } from "../errors";
-import { ServiceError } from "../errors/service";
 import { ValidationError } from "../errors/validation";
-import { Image } from "../models/image";
 import UserModel from "../models/user";
 import { sendApprovalEmail, sendDenialEmail } from "../util/email";
 import { firebaseAdminAuth } from "../util/firebase";
-import { handleImageParsing } from "../util/image";
 import { deleteUserFromFirebase, deleteUserFromMongoDB } from "../util/user";
 import validationErrorParser from "../util/validationErrorParser";
 
@@ -20,7 +15,6 @@ import {
   EditEmailRequestBody,
   EditLastChangedPasswordRequestBody,
   EditNameRequestBody,
-  EditPhotoRequestBody,
   LoginUserRequestBody,
   UpdateAccountTypeRequestBody,
 } from "./types/userTypes";
@@ -171,57 +165,6 @@ export const loginUser = async (
     return res.status(400).json({
       error: e,
     });
-  }
-};
-
-export const editPhoto = (req: EditPhotoRequestBody, res: Response, nxt: NextFunction) => {
-  try {
-    //Validation logic inside handleImageParsing
-    handleImageParsing(req, res, nxt);
-  } catch (e) {
-    console.log(e);
-    nxt(e);
-  }
-};
-
-export const getPhoto = async (
-  req: Request<Record<string, never>, Record<string, never>, UserIdRequestBody>,
-  res: Response,
-  nxt: NextFunction,
-) => {
-  try {
-    const { uid } = req.body;
-    const { id: imageId } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(imageId)) {
-      return res
-        .status(ValidationError.INVALID_MONGO_ID.status)
-        .send({ error: ValidationError.INVALID_MONGO_ID.message });
-    }
-
-    const user = await UserModel.findById(uid);
-    if (!user) {
-      throw ValidationError.USER_NOT_FOUND;
-    }
-
-    const image = await Image.findById(imageId);
-    if (!image) {
-      throw ValidationError.IMAGE_NOT_FOUND;
-    }
-
-    if (image.userId !== uid) {
-      throw ValidationError.IMAGE_USER_MISMATCH;
-    }
-
-    return res.status(200).set("Content-type", image.mimetype).send(image.buffer);
-  } catch (e) {
-    console.log(e);
-    if (e instanceof ServiceError) {
-      nxt(e);
-    }
-    return res
-      .status(InternalError.ERROR_GETTING_IMAGE.status)
-      .send(InternalError.ERROR_GETTING_IMAGE.displayMessage(true));
   }
 };
 

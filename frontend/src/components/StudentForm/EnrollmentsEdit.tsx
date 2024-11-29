@@ -116,7 +116,6 @@ const EnrollmentFormItem = ({
   ];
   const { allPrograms: programsMap } = useContext(ProgramsContext);
   const { register, setValue } = useFormContext<StudentFormData>();
-
   const initialTime =
     item.sessionTime.start_time === ""
       ? ""
@@ -136,6 +135,7 @@ const EnrollmentFormItem = ({
 
   // these 3 useEffects keep our custom dropdown and react-hook-form in sync
   useEffect(() => {
+    item.sessionTime = selectedSession;
     setValue(`${fieldName}.${index}.sessionTime`, selectedSession);
   }, [selectedSession]);
 
@@ -265,21 +265,13 @@ function EnrollmentsEdit({ classname, data, varying }: EnrollmentsEditProps) {
 
   useEffect(() => {
     if (data) {
-      console.log({ data });
-      console.log(data.enrollments);
-      console.log({ programsMap });
       data.enrollments
         .filter((enrollment) => {
-          console.log(enrollment.programId);
-          console.log(programsMap[enrollment.programId]);
           if (varying) {
             return programsMap[enrollment.programId].type === "varying";
           } else {
             return programsMap[enrollment.programId].type === "regular";
           }
-          // varying
-          // ? programsMap[enrollment.programId].type === "varying"
-          // : programsMap[enrollment.programId].type === "regular",
         })
         .forEach((enrollment, index) => {
           update(index, {
