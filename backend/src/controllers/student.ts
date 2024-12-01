@@ -61,6 +61,21 @@ export const editStudent: RequestHandler = async (req, res, next) => {
       return res.status(400).json({ message: "Invalid student ID" });
     }
 
+    if (!enrollments) {
+      const updatedStudent = await StudentModel.findByIdAndUpdate(
+        studentId,
+        { ...studentData },
+        {
+          new: true,
+        },
+      );
+      if (!updatedStudent) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+
+      return res.status(200).json(updatedStudent);
+    }
+
     // update enrollments for the student
     const updatedEnrollments = await Promise.all(
       enrollments.map(async (enrollment: Enrollment) => {

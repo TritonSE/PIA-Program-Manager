@@ -100,12 +100,17 @@ export async function editPhoto(
   previousImageId: string,
   ownerId: string,
   ownerType: string,
+  uploadType: string,
+  imageId: string,
   firebaseToken: string,
 ): Promise<APIResult<ObjectId>> {
   try {
     form.append("previousImageId", previousImageId);
     form.append("ownerId", ownerId);
     form.append("ownerType", ownerType);
+    form.append("uploadType", uploadType);
+    form.append("imageId", imageId);
+
     const method = "POST";
     const headers = createAuthHeader(firebaseToken);
 

@@ -1,6 +1,6 @@
 import { AlertCircle } from "lucide-react";
 import Image from "next/image";
-import { useContext, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useFormContext } from "react-hook-form";
 
 import { Student } from "../../api/students";
@@ -14,12 +14,14 @@ import { Dialog, DialogContent } from "../ui/dialog";
 
 import { StudentFormData } from "./types";
 
-import { editPhoto, getPhoto } from "@/api/user";
-import { UserContext } from "@/contexts/user";
+import { getPhoto } from "@/api/user";
 
 type StudentBackgroundProps = {
   classname?: string;
   data: Student | null;
+  type: "edit" | "add";
+  setImageFormData: Dispatch<SetStateAction<FormData | null>>;
+  firebaseToken: string;
 };
 
 const conservationList = ["Yes", "No"];
@@ -34,12 +36,18 @@ export const convertDateToString = (date: Date | undefined) => {
     : "";
 };
 
-export default function StudentBackground({ data, classname }: StudentBackgroundProps) {
+export default function StudentBackground({
+  data,
+  classname,
+  type,
+  setImageFormData,
+  firebaseToken,
+}: StudentBackgroundProps) {
   const { register, setValue: setCalendarValue } = useFormContext<StudentFormData>();
   const [modalOpen, setModalOpen] = useState(false);
 
   const [imageFile, setImageFile] = useState<File>();
-  const [previousImage, setPreviousImage] = useState(data?.profilePicture);
+  const [previousImage, setPreviousImage] = useState(data?.profilePicture ?? "default");
   const [imagePreview, setImagePreview] = useState<string>("");
   const [clickedAddProfile, setClickedAddProfile] = useState(false);
   const [imageError, setImageError] = useState("");
@@ -47,40 +55,28 @@ export default function StudentBackground({ data, classname }: StudentBackground
   const [_openSaveCancel, setOpenSaveCancel] = useState(false);
   const fileUploadRef = useRef<HTMLInputElement>(null);
 
-  const { firebaseUser } = useContext(UserContext);
-  const [firebaseToken, setFirebaseToken] = useState("");
-
   useEffect(() => {
-    if (!firebaseUser || !data) return;
-    if (firebaseUser) {
-      firebaseUser
-        ?.getIdToken()
-        .then((token) => {
-          setFirebaseToken(token);
-          if (data?.profilePicture === "default") {
-            setImagePreview("default");
-            return;
+    if (firebaseToken) {
+      if (data?.profilePicture === "default" || type === "add" || !data) {
+        setImagePreview("default");
+        return;
+      }
+      getPhoto(data.profilePicture, data._id, "student", firebaseToken).then(
+        (result) => {
+          if (result.success) {
+            const newImage = result.data;
+            setImagePreview(newImage);
+            setPreviousImage(newImage);
+          } else {
+            console.error(result.error);
           }
-          getPhoto(data.profilePicture, data._id, "student", token).then(
-            (result) => {
-              if (result.success) {
-                const newImage = result.data;
-                setImagePreview(newImage);
-                setPreviousImage(newImage);
-              } else {
-                console.error(result.error);
-              }
-            },
-            (error) => {
-              console.error(error);
-            },
-          );
-        })
-        .catch((error) => {
+        },
+        (error) => {
           console.error(error);
-        });
+        },
+      );
     }
-  }, [firebaseUser]);
+  }, [firebaseToken]);
 
   const onCancelImage = () => {
     setClickedAddProfile(false);
@@ -94,27 +90,13 @@ export default function StudentBackground({ data, classname }: StudentBackground
       setImageError("Please upload an image");
       return;
     }
-    if (imageFile && data) {
-      const formData = new FormData();
-      formData.append("image", imageFile);
-      editPhoto(formData, data.profilePicture, data._id, "student", firebaseToken)
-        .then((result) => {
-          if (result.success) {
-            setModalOpen(false);
-            // Wait for the dialog to close before resetting the state
-            setTimeout(() => {
-              setClickedAddProfile(false);
-            }, 150);
-            console.log("Successfully added photo");
-          } else {
-            console.log("Error has occured");
-            setImageError(result.error);
-          }
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-    }
+
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    setImageFormData(formData);
+    setModalOpen(false);
+    setClickedAddProfile(false);
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -258,7 +240,6 @@ export default function StudentBackground({ data, classname }: StudentBackground
                 onSaveClick={onSaveImage}
               />
             ) : (
-              // <button onClick={() => fileUploadRef.current?.click()}>Add Photo</button>
               <div className="grid w-full">
                 <Button onClick={() => fileUploadRef.current?.click()} label="Add Photo" />
                 <input

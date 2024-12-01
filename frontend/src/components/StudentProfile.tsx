@@ -199,29 +199,6 @@ export default function StudentProfile({ id }: StudentProfileProps) {
           if (result.success) {
             const studentResult = result.data;
             setStudentData(studentResult);
-            if (studentResult.profilePicture === "default") {
-              setImage("default");
-              return;
-            }
-            getPhoto(
-              studentResult.profilePicture,
-              studentResult._id,
-              "student",
-              firebaseToken,
-            ).then(
-              (photoResult) => {
-                if (photoResult.success) {
-                  const newImage = photoResult.data;
-                  setImage(newImage);
-                  // setCurrentData((prev) => ({ ...prev, profilePicture: newImage }));
-                } else {
-                  console.error(photoResult.error);
-                }
-              },
-              (error) => {
-                console.error(error);
-              },
-            );
           } else {
             setNotFound(true);
           }
@@ -231,6 +208,28 @@ export default function StudentProfile({ id }: StudentProfileProps) {
         });
     }
   }, [firebaseToken]);
+
+  // Get student image
+  useEffect(() => {
+    if (!studentData || !firebaseToken) return;
+    if (studentData.profilePicture === "default") {
+      setImage("default");
+      return;
+    }
+    getPhoto(studentData.profilePicture, studentData._id, "student", firebaseToken).then(
+      (photoResult) => {
+        if (photoResult.success) {
+          const newImage = photoResult.data;
+          setImage(newImage);
+        } else {
+          console.error(photoResult.error);
+        }
+      },
+      (error) => {
+        console.error(error);
+      },
+    );
+  }, [studentData]);
 
   useEffect(() => {
     if (studentData) {
@@ -528,7 +527,12 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             </div>
           </>
         ) : (
-          <StudentForm type="edit" data={studentData} />
+          <StudentForm
+            type="edit"
+            data={studentData}
+            setCurrentView={setCurrentView}
+            setStudentData={setStudentData}
+          />
         )}
       </main>
     )

@@ -4,19 +4,19 @@ import { Student, getAllStudents } from "@/api/students";
 import { StudentMap } from "@/components/StudentsTable/types";
 
 type StudentsContext = {
-  allStudents: StudentMap;
+  allStudents: StudentMap | undefined;
   isLoading: boolean;
-  setAllStudents: React.Dispatch<React.SetStateAction<StudentMap>>;
+  setAllStudents: React.Dispatch<React.SetStateAction<StudentMap | undefined>>;
 };
 
 export const StudentsContext = createContext<StudentsContext>({
-  allStudents: {},
+  allStudents: undefined,
   setAllStudents: () => {},
   isLoading: true,
 });
 
 export const StudentsContextProvider = ({ children }: { children: ReactNode }) => {
-  const [allStudents, setAllStudents] = useState<StudentMap>({});
+  const [allStudents, setAllStudents] = useState<StudentMap | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import { FirebaseOptions, initializeApp } from "firebase/app";
 // import { fetchSignInMethodsForEmail, getAuth } from "firebase/auth";
 import { getAuth } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 dotenv.config();
 
@@ -15,10 +16,12 @@ export const initFirebase = () => {
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  return { app, auth };
+  const storage = getStorage(app);
+
+  return { app, auth, storage };
 };
 
-const { app, auth } = initFirebase();
+const { app, auth, storage } = initFirebase();
 
 // const checkEmailExists = async (email: string) => {
 //   try {
@@ -31,4 +34,4 @@ const { app, auth } = initFirebase();
 // };
 
 // export { app, auth, checkEmailExists };
-export { app, auth };
+export { app, auth, storage };

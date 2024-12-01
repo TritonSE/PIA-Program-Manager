@@ -1,6 +1,7 @@
+import { ObjectId } from "bson";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, useState } from "react";
+import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
 import { Student, createStudent, editStudent } from "../api/students";
@@ -15,12 +16,16 @@ import StudentInfo from "./StudentForm/StudentInfo";
 import { StudentData, StudentFormData } from "./StudentForm/types";
 import { StudentMap } from "./StudentsTable/types";
 
+import { editPhoto } from "@/api/user";
 import { ProgramsContext } from "@/contexts/program";
 import { StudentsContext } from "@/contexts/students";
 import { UserContext } from "@/contexts/user";
 
 type BaseProps = {
   classname?: string;
+  setCurrentView: Dispatch<SetStateAction<"View" | "Edit">>;
+  // Used to update single student data if editing on StudentProfile page
+  setStudentData?: Dispatch<SetStateAction<Student | undefined>>;
 };
 
 type EditProps = BaseProps & {
@@ -41,14 +46,74 @@ export default function StudentForm({
   type,
   data = null, //Student data so form can be populated
   classname,
+  setCurrentView,
+  setStudentData,
 }: StudentFormProps) {
   const [openSaveDialog, setOpenSaveDialog] = useState(false);
   const router = useRouter();
   const methods = useForm<StudentFormData>();
-  const { reset, handleSubmit } = methods;
+  const { handleSubmit, setValue } = methods;
   const { setAllStudents } = useContext(StudentsContext);
   const { allPrograms } = useContext(ProgramsContext);
-  const { isAdmin } = useContext(UserContext);
+  const { isAdmin, firebaseUser } = useContext(UserContext);
+  const [firebaseToken, setFirebaseToken] = useState("");
+
+  const newStudentId = new ObjectId().toHexString();
+  const newImageId = new ObjectId().toHexString();
+
+  const [imageFormData, setImageFormData] = useState<FormData | null>(null);
+
+  useEffect(() => {
+    if (!firebaseUser) return;
+    if (firebaseUser) {
+      firebaseUser
+        ?.getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  }, [firebaseUser]);
+
+  const handleAddingNewImage = () => {
+    if (!imageFormData) return;
+
+    let studentId = newStudentId;
+    let uploadType = "new";
+    let previousImageId = "default";
+    let imageId = newImageId;
+
+    if (type === "edit" && data) {
+      studentId = data._id;
+      uploadType = "edit";
+      previousImageId = data.profilePicture;
+      if (previousImageId !== "default") {
+        imageId = "";
+      }
+    }
+
+    editPhoto(
+      imageFormData,
+      previousImageId,
+      studentId,
+      "student",
+      uploadType,
+      imageId,
+      firebaseToken,
+    )
+      .then((result) => {
+        if (result.success) {
+          console.log("Successfully added photo");
+        } else {
+          console.log("Error has occured", result.error);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
 
   const onFormSubmit: SubmitHandler<StudentFormData> = (formData: StudentFormData) => {
     const programAbbreviationToId = {} as Record<string, string>; // abbreviation -> programId
@@ -56,8 +121,16 @@ export default function StudentForm({
       (program) => (programAbbreviationToId[program.abbreviation] = program._id),
     );
 
+    let newProfilePictureLink = "default";
+
+    if (imageFormData && data?.profilePicture === "default") {
+      newProfilePictureLink = newImageId;
+    } else {
+      newProfilePictureLink = formData.profilePicture;
+    }
+
     const transformedData: StudentData = {
-      _id: data?._id,
+      _id: data?._id ?? newStudentId,
       student: {
         firstName: formData.studentName,
         lastName: formData.studentLast,
@@ -113,21 +186,24 @@ export default function StudentForm({
       conservation: formData.conservation === "yes",
       UCINumber: formData.UCINumber,
       incidentForm: formData.incidentForm,
-      documents: formData.documents || [], // TODO: add documents support
-      profilePicture: formData.profilePicture || "default",
+      documents: formData.documents || [],
+      profilePicture: newProfilePictureLink,
     };
+
+    if (imageFormData) {
+      handleAddingNewImage();
+    }
 
     if (type === "add") {
       createStudent(transformedData).then(
         (result) => {
           if (result.success) {
             const newStudent = result.data;
-            reset(); // only clear form on success
+            // reset(); // only clear form on success
             console.log("Student created successfully");
-            setAllStudents((prevStudents: StudentMap) => {
+            setAllStudents((prevStudents: StudentMap | undefined) => {
               return { ...prevStudents, [newStudent._id]: { ...newStudent } };
             });
-            console.log(newStudent);
           } else {
             console.log(result.error);
             alert("Unable to create student: " + result.error);
@@ -145,16 +221,18 @@ export default function StudentForm({
         (result) => {
           if (result.success) {
             const editedStudent = result.data;
-            setAllStudents((prevStudents: StudentMap) => {
+            if (setStudentData) {
+              setStudentData(editedStudent);
+            }
+            setAllStudents((prevStudents: StudentMap | undefined) => {
+              if (!prevStudents) return prevStudents;
               if (Object.keys(prevStudents).includes(editedStudent._id)) {
                 return { ...prevStudents, [editedStudent._id]: { ...editedStudent } };
               } else {
                 console.log("Student ID is invalid");
-                alert("Student ID is invalid");
                 return prevStudents;
               }
             });
-            console.log(editedStudent);
           } else {
             console.log(result.error);
             alert("Unable to edit student: " + result.error);
@@ -167,7 +245,7 @@ export default function StudentForm({
     }
 
     setTimeout(() => {
-      router.push("/home");
+      setCurrentView("View");
     }, 1500);
   };
 
@@ -183,14 +261,24 @@ export default function StudentForm({
               <legend className="mb-5 w-full text-left text-lg font-bold">
                 Student Background
               </legend>
-              <StudentBackground data={data ?? null} />
+              <StudentBackground
+                data={data ?? null}
+                type={type}
+                setImageFormData={setImageFormData}
+                firebaseToken={firebaseToken}
+              />
             </fieldset>
             <fieldset disabled={!isAdmin}>
               <legend className="mb-5 w-full text-left text-lg font-bold">
                 Student Information
               </legend>
 
-              <StudentInfo data={data ?? null} />
+              <StudentInfo
+                data={data ?? null}
+                studentId={data?._id ?? newStudentId}
+                type={type}
+                setValue={setValue}
+              />
             </fieldset>
           </div>
           <div className="grid w-full gap-10 lg:grid-cols-2">

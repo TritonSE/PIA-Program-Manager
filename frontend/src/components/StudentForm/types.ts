@@ -12,6 +12,12 @@ export type ProgramLink = {
   hoursLeft: number;
 };
 
+export type Document = {
+  name: string;
+  link: string;
+  markedAdmin: boolean;
+};
+
 export type StudentData = {
   _id?: string;
   student: Contact;
@@ -25,7 +31,7 @@ export type StudentData = {
   conservation: boolean;
   UCINumber: string;
   incidentForm: string;
-  documents: string[];
+  documents: Document[];
   profilePicture: string;
   enrollments: Enrollment[];
   dietary?: string[];
@@ -53,7 +59,7 @@ export type StudentFormData = {
   conservation: string;
   UCINumber: string;
   incidentForm: string;
-  documents: string[];
+  documents: Document[];
   profilePicture: string;
   regularEnrollments: EnrollmentFormEntry[];
   varyingEnrollments: EnrollmentFormEntry[];

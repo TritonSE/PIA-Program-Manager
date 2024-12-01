@@ -1,6 +1,6 @@
 import { Request } from "express";
 
-import { UserId } from "./types";
+import { OwnerInfo, UserId } from "./types";
 
 export type CreateUserRequestBody = {
   name: string;
@@ -34,6 +34,8 @@ export type SaveImageRequest = {
     previousImageId: string;
     ownerId: string;
     ownerType: string;
+    uploadType: string;
+    imageId: string;
   };
   file: {
     buffer: Buffer;
@@ -41,11 +43,6 @@ export type SaveImageRequest = {
     mimetype: string;
     size: number;
   };
-};
-
-export type OwnerInfo = {
-  ownerId: string;
-  ownerType: string;
 };
 
 export type EditPhotoRequestBody = Request<

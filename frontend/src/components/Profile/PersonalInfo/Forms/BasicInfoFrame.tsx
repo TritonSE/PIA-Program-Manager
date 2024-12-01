@@ -73,7 +73,7 @@ export function BasicInfoFrame({
     if (imageFile) {
       const formData = new FormData();
       formData.append("image", imageFile);
-      editPhoto(formData, previousImageId, data.userId, "user", firebaseToken)
+      editPhoto(formData, previousImageId, data.userId, "user", "edit", "", firebaseToken)
         .then((result) => {
           if (result.success) {
             setCurrentImageId(result.data);

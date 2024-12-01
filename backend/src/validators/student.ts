@@ -134,6 +134,12 @@ const makeUCINumberValidator = () =>
     .notEmpty()
     .withMessage("UCI Number field required");
 
+type DocumentItem = {
+  name: string;
+  link: string;
+  markedAdmin: boolean;
+};
+
 const makeIncidentFormValidator = () =>
   body("incidentForm")
     .exists()
@@ -153,7 +159,25 @@ const makeDocumentsValidator = () =>
     .isArray()
     .withMessage("Documents must be an array")
     .bail()
-    .custom((value: string[]) => value.every((doc) => typeof doc === "string"))
+    .custom((value: unknown): value is DocumentItem[] => {
+      // Type guard to ensure value is an array of DocumentItem
+      return (
+        Array.isArray(value) &&
+        value.every(
+          (doc): doc is DocumentItem =>
+            typeof doc === "object" &&
+            doc !== null &&
+            // Check 'name' property
+            typeof doc.name === "string" &&
+            doc.name.trim() !== "" &&
+            // Check 'link' property
+            typeof doc.link === "string" &&
+            doc.link.trim() !== "" &&
+            // Check 'markedAdmin' property (optional, must be boolean if present)
+            (doc.markedAdmin === undefined || typeof doc.markedAdmin === "boolean"),
+        )
+      );
+    })
     .withMessage("Documents must be an array of strings");
 
 const makeProfilePictureValidator = () =>
@@ -187,4 +211,10 @@ export const createStudent = [
   makeEnrollments(),
 ];
 
-export const editStudent = [...createStudent, makeIdValidator()];
+export const editStudent = [
+  makeIdValidator(),
+  [...createStudent].map((validator) => {
+    validator.optional();
+    return validator;
+  }),
+];

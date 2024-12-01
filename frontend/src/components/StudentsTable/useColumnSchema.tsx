@@ -107,9 +107,9 @@ export function useColumnSchema({
   allPrograms,
   setAllStudents,
 }: {
-  allStudents: StudentMap;
+  allStudents: StudentMap | undefined;
   allPrograms: ProgramMap;
-  setAllStudents: React.Dispatch<React.SetStateAction<StudentMap>>;
+  setAllStudents: React.Dispatch<React.SetStateAction<StudentMap | undefined>>;
 }) {
   const { isTablet } = useWindowSize();
 
@@ -183,7 +183,7 @@ export function useColumnSchema({
       cell: (info) => {
         return (
           <div className="flex justify-end pr-10">
-            <Link href={`/student/${allStudents[info.getValue() as string]._id}`}>
+            <Link href={`/student/${allStudents?.[info.getValue() as string]._id}`}>
               <Image
                 src="/eye.svg"
                 alt="view student"

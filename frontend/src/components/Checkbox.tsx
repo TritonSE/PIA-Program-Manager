@@ -44,7 +44,7 @@ export function Checkbox<T extends FieldValues>({
               <input
                 {...register(name)}
                 id={item + index}
-                className="peer h-[40px] w-[40px]  appearance-none rounded-[5px] bg-[#D9D9D9] transition-colors hover:cursor-pointer hover:bg-[#00686766] focus-visible:bg-[#00686766]"
+                className="peer h-[40px] w-[40px]  appearance-none rounded-[5px] border-[1px] border-black bg-white transition-colors hover:cursor-pointer hover:bg-[#00686766] focus-visible:bg-[#00686766]"
                 type="checkbox"
                 name={name}
                 value={item}

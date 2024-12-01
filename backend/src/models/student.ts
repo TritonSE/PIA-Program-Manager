@@ -45,7 +45,16 @@ const studentSchema = new Schema({
   conservation: { type: Boolean, required: true },
   UCINumber: { type: String, required: true },
   incidentForm: { type: String, required: true },
-  documents: { type: [String], required: true },
+  documents: {
+    type: [
+      {
+        name: { type: String, required: true },
+        link: { type: String, required: true },
+        markedAdmin: { type: Boolean, required: true, default: false },
+      },
+    ],
+    required: true,
+  },
   profilePicture: { type: String, ref: "Image", required: false, default: "default" },
 
   progressNotes: {

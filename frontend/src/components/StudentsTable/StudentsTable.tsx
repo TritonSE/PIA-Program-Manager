@@ -9,7 +9,6 @@ import {
 import { PlusIcon } from "lucide-react";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
-import { getAllStudents } from "../../api/students";
 import { Button } from "../Button";
 import LoadingSpinner from "../LoadingSpinner";
 import StudentForm from "../StudentForm";
@@ -18,49 +17,36 @@ import { Table } from "../ui/table";
 import { fuzzyFilter, programFilterFn, statusFilterFn } from "./FilterFns";
 import TBody from "./TBody";
 import THead from "./THead";
-import { StudentMap, StudentTableRow } from "./types";
+import { StudentTableRow } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
 
 import { ProgramsContext } from "@/contexts/program";
+import { StudentsContext } from "@/contexts/students";
 import { UserContext } from "@/contexts/user";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function StudentsTable() {
   const [currentView, setCurrentView] = useState<"View" | "Edit">("View");
-  const [allStudents, setAllStudents] = useState<StudentMap>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const { allStudents, setAllStudents } = useContext(StudentsContext);
   const [studentTable, setStudentTable] = useState<StudentTableRow[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const { isTablet } = useWindowSize();
 
   const { allPrograms } = useContext(ProgramsContext);
   const { isAdmin } = useContext(UserContext);
 
   useEffect(() => {
-    getAllStudents().then(
-      (result) => {
-        console.log(result);
-        if (result.success) {
-          // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
-
-          setAllStudents(studentsObject);
-          setIsLoading(false);
-        } else {
-          console.log(result.error);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  }, []);
+    if (allStudents) {
+      setIsLoading(false);
+    }
+  }, [allStudents]);
 
   useEffect(() => {
+    if (!allStudents) {
+      return;
+    }
     const studentsInformation: StudentTableRow[] = Object.values(allStudents).map((studentObj) => {
       return {
         id: studentObj._id,
@@ -121,7 +107,7 @@ export default function StudentsTable() {
               />
             </svg>
           </div>
-          <StudentForm data={null} type="add" />
+          <StudentForm data={null} type="add" setCurrentView={setCurrentView} />
         </section>
       ) : (
         <>
@@ -134,13 +120,11 @@ export default function StudentsTable() {
             >
               Students
             </h1>
-            {/* {isAdmin && <StudentForm type="add" setAllStudents={setAllStudents} />} */}
             {isAdmin && (
               <Button
                 label="Add Student"
                 icon={<PlusIcon />}
                 onClick={() => {
-                  // setOpenForm(true);
                   setCurrentView("Edit");
                 }}
               />

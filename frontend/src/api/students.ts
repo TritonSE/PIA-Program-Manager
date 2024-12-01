@@ -13,6 +13,10 @@ export type Student = CreateStudentRequest & {
   profilePicture: string;
 };
 
+type EditStudentRequest = {
+  _id: string;
+} & Partial<Student>;
+
 export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {
   try {
     const response = await POST("/student/create", student);
@@ -24,7 +28,7 @@ export async function createStudent(student: CreateStudentRequest): Promise<APIR
   }
 }
 
-export async function editStudent(student: Student): Promise<APIResult<Student>> {
+export async function editStudent(student: EditStudentRequest): Promise<APIResult<Student>> {
   try {
     const response = await PUT(`/student/edit/${student._id}`, student);
     const json = (await response.json()) as Student;
