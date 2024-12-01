@@ -217,7 +217,7 @@ export default function StudentBackground({
               </svg>
             </button>
             <h3 className="text-xl sm:text-2xl ">Edit Photo</h3>
-            <div className="relative mx-auto aspect-square h-[190px] py-5">
+            <div className="relative mx-auto aspect-square h-[190px]">
               <Image
                 alt="Profile Picture"
                 src={imagePreview !== "default" ? imagePreview : "/defaultProfilePic.svg"}

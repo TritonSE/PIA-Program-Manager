@@ -4,19 +4,19 @@ import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
-import { Student, createStudent, editStudent } from "../api/students";
-import { cn } from "../lib/utils";
+import { Student, createStudent, editStudent } from "../../api/students";
+import { cn } from "../../lib/utils";
+import { Button } from "../Button";
+import SaveCancelButtons from "../Modals/SaveCancelButtons";
+import { StudentMap } from "../StudentsTable/types";
 
-import { Button } from "./Button";
-import SaveCancelButtons from "./Modals/SaveCancelButtons";
-import ContactInfo from "./StudentForm/ContactInfo";
-import EnrollmentsEdit from "./StudentForm/EnrollmentsEdit";
-import StudentBackground from "./StudentForm/StudentBackground";
-import StudentInfo from "./StudentForm/StudentInfo";
-import { StudentData, StudentFormData } from "./StudentForm/types";
-import { StudentMap } from "./StudentsTable/types";
+import ContactInfo from "./ContactInfo";
+import EnrollmentsEdit from "./EnrollmentsEdit";
+import StudentBackground from "./StudentBackground";
+import StudentInfo from "./StudentInfo";
+import { useHandleImageDocumentUpload } from "./hooks/useHandleImageDocumentUpload";
+import { Document, StudentData, StudentFormData } from "./types";
 
-import { editPhoto } from "@/api/user";
 import { ProgramsContext } from "@/contexts/program";
 import { StudentsContext } from "@/contexts/students";
 import { UserContext } from "@/contexts/user";
@@ -52,7 +52,7 @@ export default function StudentForm({
   const [openSaveDialog, setOpenSaveDialog] = useState(false);
   const router = useRouter();
   const methods = useForm<StudentFormData>();
-  const { handleSubmit, setValue } = methods;
+  const { handleSubmit } = methods;
   const { setAllStudents } = useContext(StudentsContext);
   const { allPrograms } = useContext(ProgramsContext);
   const { isAdmin, firebaseUser } = useContext(UserContext);
@@ -62,6 +62,39 @@ export default function StudentForm({
   const newImageId = new ObjectId().toHexString();
 
   const [imageFormData, setImageFormData] = useState<FormData | null>(null);
+  // These are all uploaded files that are in memory.
+  const [currentFiles, setCurrentFiles] = useState<File[]>([]);
+  const [studentDocuments, setStudentDocuments] = useState<Document[]>(data?.documents ?? []);
+  const [didDeleteOrMark, setDidDeleteOrMark] = useState(false);
+
+  const documentData = {
+    currentFiles,
+    setCurrentFiles,
+    studentDocuments,
+    setStudentDocuments,
+    setDidDeleteOrMark,
+  };
+
+  const { handleAddingNewImage, handleUploadingDocument, handleDidDeleteOrMark } =
+    useHandleImageDocumentUpload({
+      imageDataProp: {
+        imageFormData,
+        newStudentId,
+        newImageId,
+        type,
+        data,
+        firebaseToken,
+      },
+      documentDataProp: {
+        currentFiles,
+        studentId: data?._id ?? newStudentId,
+        type,
+        studentDocuments,
+        setStudentDocuments,
+        didDeleteOrMark,
+        previousDocuments: data?.documents,
+      },
+    });
 
   useEffect(() => {
     if (!firebaseUser) return;
@@ -77,45 +110,7 @@ export default function StudentForm({
     }
   }, [firebaseUser]);
 
-  const handleAddingNewImage = () => {
-    if (!imageFormData) return;
-
-    let studentId = newStudentId;
-    let uploadType = "new";
-    let previousImageId = "default";
-    let imageId = newImageId;
-
-    if (type === "edit" && data) {
-      studentId = data._id;
-      uploadType = "edit";
-      previousImageId = data.profilePicture;
-      if (previousImageId !== "default") {
-        imageId = "";
-      }
-    }
-
-    editPhoto(
-      imageFormData,
-      previousImageId,
-      studentId,
-      "student",
-      uploadType,
-      imageId,
-      firebaseToken,
-    )
-      .then((result) => {
-        if (result.success) {
-          console.log("Successfully added photo");
-        } else {
-          console.log("Error has occured", result.error);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
-  const onFormSubmit: SubmitHandler<StudentFormData> = (formData: StudentFormData) => {
+  const onFormSubmit: SubmitHandler<StudentFormData> = async (formData: StudentFormData) => {
     const programAbbreviationToId = {} as Record<string, string>; // abbreviation -> programId
     Object.values(allPrograms).forEach(
       (program) => (programAbbreviationToId[program.abbreviation] = program._id),
@@ -186,12 +181,27 @@ export default function StudentForm({
       conservation: formData.conservation === "yes",
       UCINumber: formData.UCINumber,
       incidentForm: formData.incidentForm,
-      documents: formData.documents || [],
+      documents: studentDocuments,
       profilePicture: newProfilePictureLink,
     };
 
     if (imageFormData) {
-      handleAddingNewImage();
+      const uploadedImageId = await handleAddingNewImage();
+      transformedData.profilePicture = uploadedImageId;
+    }
+
+    if (currentFiles.length > 0) {
+      const newDocumentData = await handleUploadingDocument();
+      transformedData.documents = newDocumentData;
+    }
+
+    if (didDeleteOrMark) {
+      handleDidDeleteOrMark();
+
+      // If no files were uploaded, we need to update the documents field. Otherwise it is updated by the if statement above.
+      if (currentFiles.length === 0) {
+        transformedData.documents = studentDocuments;
+      }
     }
 
     if (type === "add") {
@@ -273,12 +283,7 @@ export default function StudentForm({
                 Student Information
               </legend>
 
-              <StudentInfo
-                data={data ?? null}
-                studentId={data?._id ?? newStudentId}
-                type={type}
-                setValue={setValue}
-              />
+              <StudentInfo data={data ?? null} documentData={documentData} />
             </fieldset>
           </div>
           <div className="grid w-full gap-10 lg:grid-cols-2">

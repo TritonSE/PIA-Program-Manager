@@ -178,7 +178,9 @@ const makeDocumentsValidator = () =>
         )
       );
     })
-    .withMessage("Documents must be an array of strings");
+    .withMessage(
+      "Documents must be an array of objects with 'name', 'link', and 'markedAdmin' properties",
+    );
 
 const makeProfilePictureValidator = () =>
   body("profilePicture").optional().isString().withMessage("Profile picture must be a string");

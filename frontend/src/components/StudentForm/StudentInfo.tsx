@@ -1,18 +1,25 @@
 // Dashed Border Credit: https://kovart.github.io/dashed-border-generator/
 
-import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { AlertCircle } from "lucide-react";
 import Image from "next/image";
-import { DragEvent, useContext, useMemo, useRef, useState } from "react";
-import { UseFormSetValue, useFormContext } from "react-hook-form";
+import {
+  Dispatch,
+  DragEvent,
+  Fragment,
+  SetStateAction,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useFormContext } from "react-hook-form";
 
 import CloseIcon from "../../../public/icons/close.svg";
 import GreenQuestionIcon from "../../../public/icons/green_question_mark.svg";
 import RedDeleteIcon from "../../../public/icons/red_delete.svg";
-import { Student, editStudent } from "../../api/students";
+import { Student } from "../../api/students";
 import { cn } from "../../lib/utils";
 import { Button } from "../Button";
-import LoadingSpinner from "../LoadingSpinner";
 import ModalConfirmation from "../Modals/ModalConfirmation";
 import SaveCancelButtons from "../Modals/SaveCancelButtons";
 import { Textfield } from "../Textfield";
@@ -24,14 +31,17 @@ import styles from "./styles/StudentInfo.module.css";
 import { Document, StudentFormData } from "./types";
 
 import { ProgramsContext } from "@/contexts/program";
-import { storage } from "@/firebase/firebase";
 
 type StudentInfoProps = {
   classname?: string;
   data: Student | null;
-  studentId: string;
-  type: "edit" | "add";
-  setValue: UseFormSetValue<StudentFormData>;
+  documentData: {
+    currentFiles: File[];
+    studentDocuments: Document[];
+    setCurrentFiles: Dispatch<SetStateAction<File[]>>;
+    setStudentDocuments: Dispatch<SetStateAction<Document[]>>;
+    setDidDeleteOrMark: Dispatch<SetStateAction<boolean>>;
+  };
 };
 
 const SUPPORTED_FILETYPES = [
@@ -42,108 +52,80 @@ const SUPPORTED_FILETYPES = [
   "image/webp",
 ];
 
-export default function StudentInfo({
-  classname,
-  data,
-  studentId,
-  type,
-  setValue,
-}: StudentInfoProps) {
+export default function StudentInfo({ classname, data, documentData }: StudentInfoProps) {
   const { register, setValue: setCalendarValue } = useFormContext<StudentFormData>();
   const [modalOpen, setModalOpen] = useState(false);
   const [documentError, setDocumentError] = useState("");
   const fileUploadRef = useRef<HTMLInputElement>(null);
   const [_openSaveCancel, setOpenSaveCancel] = useState(false);
 
-  const [currentFiles, setCurrentFiles] = useState<File[]>([]);
-  const [studentDocuments, setStudentDocuments] = useState<Document[]>(data?.documents ?? []);
+  const {
+    currentFiles,
+    studentDocuments,
+    setCurrentFiles,
+    setStudentDocuments,
+    setDidDeleteOrMark,
+  } = documentData;
+  // These are temporary files that only exist in the upload file modal
+  const [modalFiles, setModalFiles] = useState<File[]>([]);
 
-  const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const dropZoneRef = useRef<HTMLDivElement>(null);
+
+  const existingDocumentNames = studentDocuments.map((doc) => doc.name);
 
   const { allPrograms: programsMap } = useContext(ProgramsContext);
   const allPrograms = useMemo(() => Object.values(programsMap), [programsMap]);
   if (!allPrograms) return null;
 
-  const uploadDocument = async () => {
-    if (!currentFiles.length) {
-      setDocumentError("Please select a file to upload.");
-      return;
-    }
-    setDocumentError("");
-    setIsUploading(true);
-    const uploadPromises = currentFiles.map(async (file) => {
-      const storageRef = ref(storage, `documents/${studentId}/` + file.name);
+  // console.log("All files in memory (Current Files)", currentFiles);
+  // console.log("All files in modal (Modal Files)", modalFiles);
+  // console.log("All files including database (Student Documents)", studentDocuments);
 
-      return uploadBytes(storageRef, file)
-        .then(async (snapshot) => {
-          console.log(`Uploaded: ${file.name}`);
-          const downloadURL = await getDownloadURL(snapshot.ref);
-          return { link: downloadURL, name: file.name, markedAdmin: false };
-        })
-        .catch((error) => {
-          console.error("Error uploading file:", file.name, error);
-          throw error;
-        });
+  const uploadDocument = () => {
+    setDocumentError("");
+
+    // This is invalid because the links are empty. This will be checked before the edit student API is called
+    const temporaryDocumentData = modalFiles.map((file) => {
+      return { link: "", name: file.name, markedAdmin: false };
     });
 
-    // Use Promise.all to wait for all uploads to complete
-    let documentData = await Promise.all(uploadPromises);
-
-    if (type === "add") {
-      setValue("documents", documentData);
-      setStudentDocuments(documentData);
-      setIsUploading(false);
-      setModalOpen(false);
-      setCurrentFiles([]);
-    } else {
-      if (studentDocuments.length > 0) {
-        documentData = [...studentDocuments, ...documentData];
-      }
-      const studentData = {
-        _id: studentId,
-        documents: documentData,
-      };
-
-      // Edit the student with the new documents
-      editStudent(studentData).then(
-        (result) => {
-          if (result.success) {
-            const editedStudent = result.data;
-            setStudentDocuments(editedStudent.documents);
-            setIsUploading(false);
-            setModalOpen(false);
-            setCurrentFiles([]);
-          } else {
-            console.log(result.error);
-            alert("Unable to edit student: " + result.error);
-          }
-        },
-        (error) => {
-          console.log(error);
-        },
-      );
-    }
+    setCurrentFiles((prev) => [...prev, ...modalFiles]);
+    setStudentDocuments((prev) => [...prev, ...temporaryDocumentData]);
+    setModalOpen(false);
+    setModalFiles([]);
   };
 
   const handleImageUpload = (files: File[] | null) => {
     if (files) {
-      const containsLargeFiles = Array.from(files).some((file) => file.size > 10 * 1024 * 1024);
+      const tempFiles = [...Array.from(files)];
+      const containsLargeFiles = tempFiles.some((file) => file.size > 10 * 1024 * 1024);
       if (containsLargeFiles) {
         setDocumentError("File size should not exceed 10MB");
         return;
       }
       setDocumentError("");
-      const containsInvalidFiles = Array.from(files).some(
+      const containsInvalidFiles = tempFiles.some(
         (file) => !SUPPORTED_FILETYPES.includes(file.type),
       );
       if (containsInvalidFiles) {
         setDocumentError("Invalid file type. Please upload a PDF, PNG, JPG, or WEBP file.");
         return;
       }
-      setCurrentFiles((prev) => [...prev, ...Array.from(files)]);
-      // check for duplicate file names
+      const duplicateFiles = tempFiles.filter((file) => existingDocumentNames.includes(file.name));
+      if (duplicateFiles.length > 0) {
+        setDocumentError("Document with this name already exists.");
+        return;
+      }
+
+      const fileNames = tempFiles.map((file) => file.name);
+      const fileSet = new Set(fileNames);
+
+      if (fileSet.size !== fileNames.length) {
+        setDocumentError("Duplicate files are not allowed.");
+        return;
+      }
+      setModalFiles(tempFiles);
     }
   };
 
@@ -176,62 +158,16 @@ export default function StudentInfo({
   };
 
   const handleMarkAdmin = (document: Document) => {
-    const studentData = {
-      _id: studentId,
-      documents: studentDocuments.map((doc) => {
-        if (doc.name === document.name) {
-          return { ...doc, markedAdmin: !document.markedAdmin };
-        }
-        return doc;
-      }),
-    };
-    editStudent(studentData).then(
-      (result) => {
-        if (result.success) {
-          const editedStudent = result.data;
-          setStudentDocuments(editedStudent.documents);
-        } else {
-          console.log(result.error);
-          alert("Unable to edit student: " + result.error);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
+    setStudentDocuments((prev) =>
+      prev.map((doc) =>
+        doc.name === document.name ? { ...doc, markedAdmin: !doc.markedAdmin } : doc,
+      ),
     );
   };
 
   const handleDeleteDocument = (document: Document) => {
-    const studentData = {
-      _id: studentId,
-      documents: studentDocuments.filter((doc) => doc.name !== document.name),
-    };
-
-    const deleteFileRef = ref(storage, `documents/${studentId}/` + document.name);
-
-    // Delete the file from Firebase storage
-    deleteObject(deleteFileRef)
-      .then(() => {
-        console.log(`Deleted file: ${document.name}`);
-      })
-      .catch((error) => {
-        console.error("Error deleting file:", document.name, error);
-      });
-
-    editStudent(studentData).then(
-      (result) => {
-        if (result.success) {
-          const editedStudent = result.data;
-          setStudentDocuments(editedStudent.documents);
-        } else {
-          console.log(result.error);
-          alert("Unable to edit student: " + result.error);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
+    setStudentDocuments((prev) => prev.filter((doc) => doc.name !== document.name));
+    setCurrentFiles((prev) => prev.filter((file) => file.name !== document.name));
   };
 
   const TruncateDocument = ({
@@ -328,8 +264,8 @@ export default function StudentInfo({
         </span>
         <ul className="flex flex-wrap gap-3">
           {studentDocuments?.map((document) => (
-            <>
-              <Popover key={document.name}>
+            <Fragment key={document.name}>
+              <Popover>
                 <PopoverTrigger asChild>
                   <li
                     className="rounded-4 w-fit cursor-pointer rounded-md border-[1px] border-solid border-[#929292] bg-[#ececec] px-4 py-2"
@@ -342,18 +278,23 @@ export default function StudentInfo({
                   </li>
                 </PopoverTrigger>
                 <PopoverContent className="grid w-auto p-0">
-                  <button
-                    onClick={() => {
-                      window.open(document.link, "_blank");
-                    }}
-                    className="rounded-tl-md rounded-tr-md border-[1px] border-solid border-black bg-white px-10 py-4"
-                  >
-                    View File
-                  </button>
+                  {document.link && (
+                    <button
+                      onClick={() => {
+                        window.open(document.link, "_blank");
+                      }}
+                      className="rounded-tl-md rounded-tr-md border-[1px] border-solid border-black bg-white px-10 py-4"
+                    >
+                      View File
+                    </button>
+                  )}
+
                   <ModalConfirmation
                     icon={<GreenQuestionIcon />}
                     triggerElement={
-                      <button className="border-[1px] border-b-0 border-t-0 border-solid border-black bg-white px-10 py-4 text-pia_dark_green">
+                      <button
+                        className={`${!document.link && "rounded-tl-md rounded-tr-md border-t-[1px]"} border-[1px] border-b-0 border-t-0 border-solid border-black bg-white px-10 py-4 text-pia_dark_green`}
+                      >
                         {document.markedAdmin ? "Unmark" : "Mark"} Admin
                       </button>
                     }
@@ -363,6 +304,7 @@ export default function StudentInfo({
                     kind="primary"
                     onConfirmClick={() => {
                       handleMarkAdmin(document);
+                      setDidDeleteOrMark(true);
                     }}
                   />
                   <ModalConfirmation
@@ -377,11 +319,12 @@ export default function StudentInfo({
                     kind="destructive"
                     onConfirmClick={() => {
                       handleDeleteDocument(document);
+                      setDidDeleteOrMark(true);
                     }}
                   />
                 </PopoverContent>
               </Popover>
-            </>
+            </Fragment>
           ))}
         </ul>
       </div>
@@ -426,27 +369,18 @@ export default function StudentInfo({
             >
               <CloseIcon />
             </button>
-            {isUploading ? (
-              <LoadingSpinner label="Uploading Documents" classname="w-auto h-auto" />
-            ) : (
-              <>
-                <Image src="/icons/plant.svg" width={49} height={64} alt="Plant Icon" aria-hidden />
-                <h3 className="text-center text-lg font-bold">
-                  Select a file or drag and drop here
-                </h3>
-                <p className="text-center opacity-40">
-                  JPG, PNG or PDF, file size no more than 10MB
-                </p>
-              </>
-            )}
 
-            {currentFiles.length > 0 && (
+            <Image src="/icons/plant.svg" width={49} height={64} alt="Plant Icon" aria-hidden />
+            <h3 className="text-center text-lg font-bold">Select a file or drag and drop here</h3>
+            <p className="text-center opacity-40">JPG, PNG or PDF, file size no more than 10MB</p>
+
+            {modalFiles.length > 0 && (
               <ul className="flex flex-wrap gap-3">
-                {currentFiles.map((document) => (
+                {modalFiles.map((document) => (
                   <li
                     key={document.name}
                     onClick={() => {
-                      setCurrentFiles((prev) => prev.filter((file) => file.name !== document.name));
+                      setModalFiles((prev) => prev.filter((file) => file.name !== document.name));
                     }}
                     title={document.name}
                     className="rounded-4 flex w-fit cursor-pointer items-center gap-3 rounded-md border-[1px] border-solid border-[#929292] bg-[#ececec] px-4 py-2"
@@ -462,15 +396,35 @@ export default function StudentInfo({
                 ))}
               </ul>
             )}
-            {currentFiles.length > 0 ? (
-              <SaveCancelButtons
-                setOpen={setOpenSaveCancel}
-                onCancelClick={() => {
-                  setCurrentFiles([]);
-                }}
-                onSaveClick={uploadDocument}
-                primaryLabel="Upload"
-              />
+            {modalFiles.length > 0 ? (
+              <div className="flex w-full justify-between">
+                <div>
+                  <Button
+                    onClick={() => fileUploadRef.current?.click()}
+                    label="Select File"
+                    kind="secondary"
+                  />
+                  <input
+                    onChange={(e) => {
+                      handleImageUpload(e.target.files ? Array.from(e.target.files) : null);
+                    }}
+                    ref={fileUploadRef}
+                    className="hidden"
+                    type="file"
+                    accept={SUPPORTED_FILETYPES.join(",")}
+                    multiple
+                  ></input>
+                </div>
+                <SaveCancelButtons
+                  className="mt-0"
+                  setOpen={setOpenSaveCancel}
+                  onCancelClick={() => {
+                    setModalFiles([]);
+                  }}
+                  onSaveClick={uploadDocument}
+                  primaryLabel="Upload"
+                />
+              </div>
             ) : (
               <div className="mx-auto">
                 <Button

@@ -12,7 +12,7 @@ import { UserContext } from "../contexts/user";
 
 import LoadingSpinner from "./LoadingSpinner";
 import ModalConfirmation from "./Modals/ModalConfirmation";
-import StudentForm from "./StudentForm";
+import StudentForm from "./StudentForm/StudentForm";
 import { Contact } from "./StudentForm/types";
 import StudentProfilePrintComponent from "./StudentProfilePrintComponent";
 import { Textfield } from "./Textfield";

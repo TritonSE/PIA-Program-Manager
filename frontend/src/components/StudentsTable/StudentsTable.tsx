@@ -11,7 +11,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { Button } from "../Button";
 import LoadingSpinner from "../LoadingSpinner";
-import StudentForm from "../StudentForm";
+import StudentForm from "../StudentForm/StudentForm";
 import { Table } from "../ui/table";
 
 import { fuzzyFilter, programFilterFn, statusFilterFn } from "./FilterFns";
