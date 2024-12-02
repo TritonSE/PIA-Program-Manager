@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Program, createProgram, editProgram } from "../api/programs";
@@ -12,6 +12,7 @@ import { ProgramInfo } from "./ProgramForm/ProgramInfo";
 import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
 import { ProgramMap } from "./StudentsTable/types";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
+import { UserContext } from "../contexts/user";
 
 type BaseProperties = {
   classname?: string;
@@ -42,12 +43,29 @@ export default function ProgramFormButton({
 }: ProgramFormProperties) {
   const { register, setValue: setCalendarValue, reset, handleSubmit } = useForm<ProgramData>();
 
+  const { firebaseUser } = useContext(UserContext);
   const [openForm, setOpenForm] = useState(false);
   const [openCancel, setOpenCancel] = useState(false);
   const { width } = useWindowSize().windowSize;
   const isMobile = useMemo(() => width <= 640, [width]);
+  const [firebaseToken, setFirebaseToken] = useState<string>();
+
+  useEffect(() => {
+    if (firebaseUser) {
+      firebaseUser
+        .getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [firebaseUser]);
 
   const onSubmit: SubmitHandler<ProgramData> = (formData: ProgramData) => {
+    if (!firebaseToken) return;
+
     const sanitizedSessions = formData.sessions
       ? formData.sessions.map((session: string[]) =>
           session[0] && session[1]
@@ -73,7 +91,7 @@ export default function ProgramFormButton({
 
     console.log(`${type} program`, programRequest);
     if (type === "add") {
-      createProgram(programRequest)
+      createProgram(programRequest, firebaseToken)
         .then((result) => {
           if (result.success) {
             setOpenForm(false);
@@ -99,7 +117,7 @@ export default function ProgramFormButton({
         dateUpdated: data.dateUpdated,
       };
       console.log(`${type} program`, updatedProgram);
-      editProgram(updatedProgram)
+      editProgram(updatedProgram, firebaseToken)
         .then((result) => {
           if (result.success) {
             setOpenForm(false);

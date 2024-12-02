@@ -29,33 +29,50 @@ export default function StudentsTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [studentTable, setStudentTable] = useState<StudentTableRow[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [firebaseToken, setFirebaseToken] = useState<string>();
+  const { firebaseUser } = useContext(UserContext);
   const { isTablet } = useWindowSize();
 
   const { allPrograms } = useContext(ProgramsContext);
   const { isAdmin } = useContext(UserContext);
 
   useEffect(() => {
-    getAllStudents().then(
-      (result) => {
-        console.log(result);
-        if (result.success) {
-          // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
+    if (firebaseUser) {
+      firebaseUser
+        .getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [firebaseUser]);
 
-          setAllStudents(studentsObject);
-          setIsLoading(false);
-        } else {
-          console.log(result.error);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  }, []);
+  useEffect(() => {
+    if (firebaseToken) {
+      getAllStudents(firebaseToken).then(
+        (result) => {
+          console.log(result);
+          if (result.success) {
+            // Convert student array to object with keys as ids and values as corresponding student
+            const studentsObject = result.data.reduce((obj, student) => {
+              obj[student._id] = student;
+              return obj;
+            }, {} as StudentMap);
+
+            setAllStudents(studentsObject);
+            setIsLoading(false);
+          } else {
+            console.log(result.error);
+          }
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    }
+  }, [firebaseToken]);
 
   useEffect(() => {
     const studentsInformation: StudentTableRow[] = Object.values(allStudents).map((studentObj) => {
