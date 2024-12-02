@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { Program, createProgram, editProgram } from "../api/programs";
+import { UserContext } from "../contexts/user";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -12,7 +13,7 @@ import { ProgramInfo } from "./ProgramForm/ProgramInfo";
 import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
 import { ProgramMap } from "./StudentsTable/types";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
-import { UserContext } from "../contexts/user";
+
 
 type BaseProperties = {
   classname?: string;
