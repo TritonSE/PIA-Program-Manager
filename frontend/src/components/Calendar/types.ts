@@ -2,6 +2,7 @@ export type Day = {
   month: number;
   year: number;
   day: number;
+  hours: number;
 };
 
 export const Months: string[] = [

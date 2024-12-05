@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /**
- * Functions that process task route requests.
+ * Functions that process student route requests.
  */
 
 import { RequestHandler } from "express";
