@@ -6,8 +6,8 @@ import { getAllStudents } from "@/api/students";
 import { AttendanceCard } from "@/components/AttendanceCard";
 import { AttendanceTable } from "@/components/AttendanceTable";
 import { ProgramMap, StudentMap } from "@/components/StudentsTable/types";
-import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 import { UserContext } from "@/contexts/user";
+import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export type Sessions = [Session];
 export type AbsenceSessions = AbsenceSession[];
@@ -30,7 +30,7 @@ export default function AttendanceDashboard() {
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [firebaseToken, setFirebaseToken] = useState("");
-  const {firebaseUser} = useContext(UserContext);
+  const { firebaseUser } = useContext(UserContext);
 
   useEffect(() => {
     if (firebaseUser) {
