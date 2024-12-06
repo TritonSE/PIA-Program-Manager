@@ -12,7 +12,6 @@ import { cn } from "../lib/utils";
 
 import { ProgramMap } from "./StudentsTable/types";
 
-
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
 
 export type CardProps = {

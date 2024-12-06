@@ -14,7 +14,6 @@ import { CreateProgramRequest, ProgramData } from "./ProgramForm/types";
 import { ProgramMap } from "./StudentsTable/types";
 import { Dialog, DialogClose, DialogContent, DialogContentSlide, DialogTrigger } from "./ui/dialog";
 
-
 type BaseProperties = {
   classname?: string;
   component: React.JSX.Element;

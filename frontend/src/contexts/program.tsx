@@ -5,7 +5,6 @@ import { UserContext } from "./user";
 import { Program, getAllPrograms } from "@/api/programs";
 import { ProgramMap } from "@/components/StudentsTable/types";
 
-
 type ProgramsContext = {
   allPrograms: ProgramMap;
   isLoading: boolean;
