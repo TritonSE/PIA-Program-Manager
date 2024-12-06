@@ -207,7 +207,7 @@ export const useProgressNotes = () => {
     setFilteredStudents(
       allStudents.filter((student) => {
         return (
-          student.programs.filter((studentProgram) => {
+          student.enrollments.filter((studentProgram) => {
             if (programId === "") return true;
             return studentProgram.programId === programId && studentProgram.status === "Joined";
           }).length > 0

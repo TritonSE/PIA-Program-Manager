@@ -82,9 +82,7 @@ export default function StudentProfilePrintComponent({
           <div className="font-[Poppins-Bold]">Medication & Medical</div>
           <div className="font-[Poppins]">Dietary Restrictions:</div>
           <div className="font-[Poppins]">
-            {data.dietary.map((value) => (
-              <li key={value}>{value}</li>
-            ))}
+            {data.dietary?.map((value) => <li key={value}>{value}</li>)}
           </div>
           <div className="font-[Poppins]">Medication: {data.medication}</div>
         </div>

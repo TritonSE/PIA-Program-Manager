@@ -76,14 +76,14 @@ export function Textfield<T extends FieldValues>({
     <Popover>
       <div
         className={cn(
-          "relative flex flex-grow rounded-md border-[1px] border-pia_border px-2 py-3 focus-within:border-pia_dark_green ",
+          "relative flex flex-grow rounded-md border-[1px] border-pia_border bg-white px-2 py-3 focus-within:border-pia_dark_green ",
           className,
         )}
       >
         {icon ? <span className={"grid place-items-center pl-1"}>{icon}</span> : null}
         <input
           {...register(name as Path<T>, registerOptions)}
-          className="focus-visible:out w-full appearance-none bg-inherit px-2 placeholder-pia_accent outline-none"
+          className="focus-visible:out w-full appearance-none  px-2 placeholder-pia_accent outline-none"
           id={name + label + placeholder}
           type={type}
           disabled={disabled}

@@ -9,9 +9,8 @@ import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
 import { ProgramProfileTable } from "./ProgramProfileTable";
-import { StudentMap } from "./StudentsTable/types";
 
-import { getAllStudents } from "@/api/students";
+import { StudentsContext } from "@/contexts/students";
 
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
 
@@ -27,7 +26,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
   const [program, setProgram] = useState<Program>();
   const [fillerText, setFillerText] = useState<string>("Loading");
   const [enrollments, setEnrollments] = useState<[Enrollment]>();
-  const [allStudents, setAllStudents] = useState<StudentMap>({});
+  const { allStudents } = useContext(StudentsContext);
   const [firebaseToken, setFirebaseToken] = useState<string>();
   const { firebaseUser } = useContext(UserContext);
 
@@ -68,24 +67,6 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
           console.log("Enrollments Found");
         } else {
           console.log("Enrollments Not Found");
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-    getAllStudents(firebaseToken).then(
-      (result) => {
-        if (result.success) {
-          // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
-
-          setAllStudents(studentsObject);
-        } else {
-          console.log(result.error);
         }
       },
       (error) => {

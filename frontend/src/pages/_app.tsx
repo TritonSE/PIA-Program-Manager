@@ -8,6 +8,7 @@ import Navigation from "@/components/Navigation";
 // eslint-disable-next-line import/order
 import { NextPage } from "next";
 import { ProgramsContextProvider } from "@/contexts/program";
+import { StudentsContextProvider } from "@/contexts/students";
 import { UserContextProvider } from "@/contexts/user";
 
 // import Navigation from "../components/Navigation";
@@ -24,7 +25,9 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => <Navigation>{page}</Navigation>);
   return (
     <UserContextProvider>
-      <ProgramsContextProvider>{getLayout(<Component {...pageProps} />)}</ProgramsContextProvider>
+      <ProgramsContextProvider>
+        <StudentsContextProvider>{getLayout(<Component {...pageProps} />)}</StudentsContextProvider>
+      </ProgramsContextProvider>
     </UserContextProvider>
   );
 }

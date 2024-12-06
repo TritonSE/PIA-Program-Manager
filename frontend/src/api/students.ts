@@ -7,13 +7,15 @@ import type { APIResult } from "../api/requests";
 
 export type Student = CreateStudentRequest & {
   _id: string;
-  medication: string;
-  otherString: string;
   progressNotes?: string[];
   UCINumber?: string;
   conservation?: boolean;
-  profilePicture?: string;
+  profilePicture: string;
 };
+
+type EditStudentRequest = {
+  _id: string;
+} & Partial<Student>;
 
 export async function createStudent(
   student: CreateStudentRequest,
@@ -31,7 +33,7 @@ export async function createStudent(
 }
 
 export async function editStudent(
-  student: Student,
+  student: EditStudentRequest,
   firebaseToken: string,
 ): Promise<APIResult<Student>> {
   try {

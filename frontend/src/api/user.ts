@@ -98,15 +98,24 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 export async function editPhoto(
   form: FormData,
   previousImageId: string,
+  ownerId: string,
+  ownerType: string,
+  uploadType: string,
+  imageId: string,
   firebaseToken: string,
 ): Promise<APIResult<ObjectId>> {
   try {
     form.append("previousImageId", previousImageId);
+    form.append("ownerId", ownerId);
+    form.append("ownerType", ownerType);
+    form.append("uploadType", uploadType);
+    form.append("imageId", imageId);
+
     const method = "POST";
     const headers = createAuthHeader(firebaseToken);
 
     // Don't use the POST function from requests.ts because we need to send a FormData object
-    const response = await fetch(`${API_BASE_URL}/user/editPhoto`, {
+    const response = await fetch(`${API_BASE_URL}/image/edit`, {
       method,
       body: form,
       headers,
@@ -128,11 +137,14 @@ export async function editPhoto(
 
 export async function getPhoto(
   imageId: string,
+  ownerId: string,
+  ownerType: string,
   firebaseToken: string,
 ): Promise<APIResult<ObjectId>> {
   try {
+    const imageData = { imageId, ownerId, ownerType };
     const headers = createAuthHeader(firebaseToken);
-    const response = await GET(`/user/getPhoto/${imageId}`, headers);
+    const response = await POST(`/image/get`, imageData, headers);
     if (response.ok) {
       const blob = await response.blob();
 

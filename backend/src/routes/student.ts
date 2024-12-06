@@ -18,7 +18,7 @@ router.post(
 router.put(
   "/edit/:id",
   [verifyAuthToken],
-  StudentValidator.editStudent,
+  ...StudentValidator.editStudent,
   StudentController.editStudent,
 );
 router.get("/all", StudentController.getAllStudents);

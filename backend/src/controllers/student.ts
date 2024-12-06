@@ -24,16 +24,25 @@ export const createStudent: RequestHandler = async (req, res, next) => {
 
     validationErrorParser(errors);
 
+    const newStudentId = new mongoose.Types.ObjectId();
+
     const { enrollments, ...studentData } = req.body as StudentRequest;
-    const newStudent = await StudentModel.create(studentData);
+
     // create enrollments for the student
-    await Promise.all(
+    const createdEnrollments = await Promise.all(
       enrollments.map(async (program: Enrollment) => {
-        await createEnrollment({ ...program, studentId: newStudent._id });
+        return await EnrollmentModel.create({ ...program, studentId: newStudentId });
       }),
     );
 
-    res.status(201).json(newStudent);
+    const newStudent = await StudentModel.create({
+      ...studentData,
+      enrollments: createdEnrollments.map((enrollment) => enrollment._id),
+    });
+
+    const populatedStudent = await StudentModel.findById(newStudent._id).populate("enrollments");
+
+    res.status(201).json(populatedStudent);
   } catch (error) {
     next(error);
   }
@@ -51,24 +60,53 @@ export const editStudent: RequestHandler = async (req, res, next) => {
     if (studentId !== studentData._id.toString()) {
       return res.status(400).json({ message: "Invalid student ID" });
     }
-    const updatedStudent = await StudentModel.findByIdAndUpdate(studentId, studentData, {
-      new: true,
-    });
+
+    if (!enrollments) {
+      const updatedStudent = await StudentModel.findByIdAndUpdate(
+        studentId,
+        { ...studentData },
+        {
+          new: true,
+        },
+      );
+      if (!updatedStudent) {
+        return res.status(404).json({ message: "Student not found" });
+      }
+
+      return res.status(200).json(updatedStudent);
+    }
+
+    // update enrollments for the student
+    const updatedEnrollments = await Promise.all(
+      enrollments.map(async (enrollment: Enrollment) => {
+        const enrollmentExists = await EnrollmentModel.findById(enrollment._id);
+        const enrollmentBody = { ...enrollment, studentId: new mongoose.Types.ObjectId(studentId) };
+        if (!enrollmentExists) {
+          return await createEnrollment(enrollmentBody);
+        } else {
+          return await editEnrollment(enrollmentBody);
+        }
+      }),
+    );
+
+    const updatedStudent = await StudentModel.findByIdAndUpdate(
+      studentId,
+      { ...studentData, enrollments: updatedEnrollments.map((enrollment) => enrollment?._id) },
+      {
+        new: true,
+      },
+    );
     if (!updatedStudent) {
       return res.status(404).json({ message: "Student not found" });
     }
 
-    // update enrollments for the student
-    await Promise.all(
-      enrollments.map(async (enrollment: Enrollment) => {
-        const enrollmentExists = await EnrollmentModel.findById(enrollment._id);
-        const enrollmentBody = { ...enrollment, studentId: new mongoose.Types.ObjectId(studentId) };
-        if (!enrollmentExists) await createEnrollment(enrollmentBody);
-        else await editEnrollment(enrollmentBody);
-      }),
+    const populatedStudent = await StudentModel.findById(updatedStudent._id).populate(
+      "enrollments",
     );
 
-    res.status(200).json({ ...updatedStudent, enrollments });
+    console.log({ populatedStudent });
+
+    res.status(200).json(populatedStudent);
   } catch (error) {
     next(error);
   }
@@ -76,17 +114,9 @@ export const editStudent: RequestHandler = async (req, res, next) => {
 
 export const getAllStudents: RequestHandler = async (_, res, next) => {
   try {
-    const students = await StudentModel.find();
+    const students = await StudentModel.find().populate("enrollments");
 
-    // gather all enrollments for each student and put them in student.programs
-    const hydratedStudents = await Promise.all(
-      students.map(async (student) => {
-        const enrollments = await EnrollmentModel.find({ studentId: student._id });
-        return { ...student.toObject(), programs: enrollments };
-      }),
-    );
-
-    res.status(200).json(hydratedStudents);
+    res.status(200).json(students);
   } catch (error) {
     next(error);
   }
@@ -107,7 +137,7 @@ export const getStudent: RequestHandler = async (req, res, next) => {
 
     const enrollments = await EnrollmentModel.find({ studentId });
 
-    res.status(200).json({ ...studentData.toObject(), programs: enrollments });
+    res.status(200).json({ ...studentData.toObject(), enrollments });
   } catch (error) {
     next(error);
   }
