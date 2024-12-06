@@ -34,7 +34,7 @@ export const ProgramsContextProvider = ({ children }: { children: ReactNode }) =
           console.log(err);
         });
     }
-  });
+  }, [firebaseUser]);
 
   useEffect(() => {
     if (firebaseToken) {
