@@ -112,9 +112,21 @@ export const editStudent: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const getAllStudents: RequestHandler = async (_, res, next) => {
+export const getAllStudents: RequestHandler = async (req, res, next) => {
   try {
     const students = await StudentModel.find().populate("enrollments");
+
+    // Even though this is a get request, we have verifyAuthToken middleware that sets the accountType in the request body
+    const { accountType } = req.body;
+
+    // Ensure that documents that are marked admin are not returned to non-admin users
+    if (accountType !== "admin") {
+      students.forEach((student) => {
+        student.documents = student.documents.filter(
+          (doc) => !doc.markedAdmin,
+        ) as typeof student.documents;
+      });
+    }
 
     res.status(200).json(students);
   } catch (error) {
@@ -126,6 +138,8 @@ export const getStudent: RequestHandler = async (req, res, next) => {
   try {
     const errors = validationResult(req);
 
+    const { accountType } = req.body;
+
     validationErrorParser(errors);
 
     const studentId = req.params.id;
@@ -133,6 +147,13 @@ export const getStudent: RequestHandler = async (req, res, next) => {
 
     if (!studentData) {
       return res.status(404).json({ message: "Student not found" });
+    }
+
+    // Ensure that documents that are marked admin are not returned to non-admin users
+    if (accountType !== "admin") {
+      studentData.documents = studentData.documents.filter(
+        (doc) => !doc.markedAdmin,
+      ) as typeof studentData.documents;
     }
 
     const enrollments = await EnrollmentModel.find({ studentId });

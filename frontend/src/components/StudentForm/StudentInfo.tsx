@@ -42,6 +42,7 @@ type StudentInfoProps = {
     setStudentDocuments: Dispatch<SetStateAction<Document[]>>;
     setDidDeleteOrMark: Dispatch<SetStateAction<boolean>>;
   };
+  isAdmin: boolean;
 };
 
 const SUPPORTED_FILETYPES = [
@@ -52,7 +53,7 @@ const SUPPORTED_FILETYPES = [
   "image/webp",
 ];
 
-export default function StudentInfo({ classname, data, documentData }: StudentInfoProps) {
+export default function StudentInfo({ classname, data, documentData, isAdmin }: StudentInfoProps) {
   const { register, setValue: setCalendarValue } = useFormContext<StudentFormData>();
   const [modalOpen, setModalOpen] = useState(false);
   const [documentError, setDocumentError] = useState("");
@@ -200,6 +201,8 @@ export default function StudentInfo({ classname, data, documentData }: StudentIn
     );
   };
 
+  console.log({ isAdmin });
+
   return (
     <div className={cn("grid flex-1 gap-x-8 gap-y-10 md:grid-cols-2", classname)}>
       <div>
@@ -283,45 +286,51 @@ export default function StudentInfo({ classname, data, documentData }: StudentIn
                       onClick={() => {
                         window.open(document.link, "_blank");
                       }}
-                      className="rounded-tl-md rounded-tr-md border-[1px] border-solid border-black bg-white px-10 py-4"
+                      className={`${!isAdmin ? "rounded-bl-md rounded-br-md" : ""} rounded-tl-md rounded-tr-md border-[1px] border-solid border-black bg-white px-10 py-4`}
                     >
                       View File
                     </button>
                   )}
 
-                  <ModalConfirmation
-                    icon={<GreenQuestionIcon />}
-                    triggerElement={
-                      <button
-                        className={`${!document.link && "rounded-tl-md rounded-tr-md border-t-[1px]"} border-[1px] border-b-0 border-t-0 border-solid border-black bg-white px-10 py-4 text-pia_dark_green`}
-                      >
-                        {document.markedAdmin ? "Unmark" : "Mark"} Admin
-                      </button>
-                    }
-                    title={document.markedAdmin ? "Unmark admin?" : "Mark admin only?"}
-                    description={`${document.markedAdmin ? "Everyone will be able to" : "Only admin will"} see these files`}
-                    confirmText={document.markedAdmin ? "Unmark" : "Mark"}
-                    kind="primary"
-                    onConfirmClick={() => {
-                      handleMarkAdmin(document);
-                      setDidDeleteOrMark(true);
-                    }}
-                  />
-                  <ModalConfirmation
-                    icon={<RedDeleteIcon />}
-                    triggerElement={
-                      <button className="rounded-bl-md rounded-br-md border-[1px] border-solid border-black bg-white px-10 py-4 text-destructive">
-                        Delete File
-                      </button>
-                    }
-                    title="Are you sure you want to delete?"
-                    confirmText="Delete"
-                    kind="destructive"
-                    onConfirmClick={() => {
-                      handleDeleteDocument(document);
-                      setDidDeleteOrMark(true);
-                    }}
-                  />
+                  {isAdmin ? (
+                    <>
+                      <ModalConfirmation
+                        icon={<GreenQuestionIcon />}
+                        triggerElement={
+                          <button
+                            className={`${!document.link && "rounded-tl-md rounded-tr-md border-t-[1px]"}  border-[1px] border-b-0 border-t-0 border-solid border-black bg-white px-10 py-4 text-pia_dark_green`}
+                          >
+                            {document.markedAdmin ? "Unmark" : "Mark"} Admin
+                          </button>
+                        }
+                        title={document.markedAdmin ? "Unmark admin?" : "Mark admin only?"}
+                        description={`${document.markedAdmin ? "Everyone will be able to" : "Only admin will"} see these files`}
+                        confirmText={document.markedAdmin ? "Unmark" : "Mark"}
+                        kind="primary"
+                        onConfirmClick={() => {
+                          handleMarkAdmin(document);
+                          setDidDeleteOrMark(true);
+                        }}
+                      />
+                      <ModalConfirmation
+                        icon={<RedDeleteIcon />}
+                        triggerElement={
+                          <button className="rounded-bl-md rounded-br-md border-[1px] border-solid border-black bg-white px-10 py-4 text-destructive">
+                            Delete File
+                          </button>
+                        }
+                        title="Are you sure you want to delete?"
+                        confirmText="Delete"
+                        kind="destructive"
+                        onConfirmClick={() => {
+                          handleDeleteDocument(document);
+                          setDidDeleteOrMark(true);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    ""
+                  )}
                 </PopoverContent>
               </Popover>
             </Fragment>

@@ -38,9 +38,10 @@ export async function editStudent(student: EditStudentRequest): Promise<APIResul
   }
 }
 
-export async function getAllStudents(): Promise<APIResult<[Student]>> {
+export async function getAllStudents(firebaseToken: string): Promise<APIResult<[Student]>> {
   try {
-    const response = await GET("/student/all");
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET("/student/all", headers);
     const json = (await response.json()) as [Student];
     return { success: true, data: json };
   } catch (error) {

@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { Program, getAllPrograms } from "@/api/programs";
 import { AbsenceSession, Session, getAbsenceSessions, getRecentSessions } from "@/api/sessions";
-import { getAllStudents } from "@/api/students";
 import { AttendanceCard } from "@/components/AttendanceCard";
 import { AttendanceTable } from "@/components/AttendanceTable";
-import { ProgramMap, StudentMap } from "@/components/StudentsTable/types";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { ProgramMap } from "@/components/StudentsTable/types";
+import { StudentsContext } from "@/contexts/students";
 import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export type Sessions = [Session];
@@ -17,12 +18,13 @@ export default function AttendanceDashboard() {
 
   const [allSessions, setAllSessions] = useState<Sessions>(); // map from program id to program
   const [allPrograms, setAllPrograms] = useState<ProgramMap>({}); // map from program id to program
-  const [allStudents, setAllStudents] = useState<StudentMap>({});
   const [allAbsenceSessions, setAllAbsenceSessions] = useState<AbsenceSessions>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [programsLoading, setProgramsLoading] = useState(true);
-  const [studentsLoading, setStudentsLoading] = useState(true);
   const [absencsSessionsLoading, setAbsenceSessionsLoading] = useState(true);
+
+  const { allStudents } = useContext(StudentsContext);
+  const studentsLoading = allStudents === undefined;
 
   const [remainingSessions, setRemainingSessions] = useState(0);
   const [remainingAbsenceSessions, setRemainingAbsenceSessions] = useState(0);
@@ -88,26 +90,6 @@ export default function AttendanceDashboard() {
   }, []);
 
   useEffect(() => {
-    getAllStudents().then(
-      (result) => {
-        // console.log(result);
-        if (result.success) {
-          // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
-          setAllStudents(studentsObject);
-          setStudentsLoading(false);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  }, []);
-
-  useEffect(() => {
     getAbsenceSessions().then(
       (result) => {
         if (result.success) {
@@ -124,7 +106,7 @@ export default function AttendanceDashboard() {
   }, []);
 
   if (sessionsLoading || studentsLoading || programsLoading || absencsSessionsLoading)
-    return <p>Loading...</p>;
+    return <LoadingSpinner />;
   else {
     return (
       <main>

@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post("/create", StudentValidator.createStudent, StudentController.createStudent);
 router.put("/edit/:id", ...StudentValidator.editStudent, StudentController.editStudent);
-router.get("/all", StudentController.getAllStudents);
+router.get("/all", [verifyAuthToken], StudentController.getAllStudents);
 router.get("/:id", [verifyAuthToken], StudentController.getStudent);
 router.delete("/:id", [verifyAuthToken], StudentController.deleteStudent);
 
