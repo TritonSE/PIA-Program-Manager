@@ -49,7 +49,7 @@ export const useProgressNotes = () => {
 
   const fetchStudentData = async (progressNotes: Record<string, ProgressNote>) => {
     try {
-      const result = await getAllStudents();
+      const result = await getAllStudents(firebaseToken);
       if (result.success) {
         const studentDataWithNotes: StudentWithNotes[] = result.data.map((student) => ({
           ...student,
