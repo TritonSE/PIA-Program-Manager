@@ -304,8 +304,8 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                 </div>
 
                 <div id="contact" className="font-[Poppins-Bold] text-[21px] ">
-                  <div id="line 1" className="flex flex-wrap ">
-                    <div className="mb-[16px] mr-[40px] flex space-x-[20px]">
+                  <div id="line 1" className="mb-5 flex flex-wrap gap-5">
+                    <div className="flex items-center space-x-[20px]">
                       <svg
                         width="29"
                         height="23"
@@ -320,7 +320,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                       </svg>
                       <div className="w-full">{studentData.student.email} </div>
                     </div>
-                    <div className="flex space-x-[20px]">
+                    <div className="flex items-center space-x-[20px]">
                       <svg
                         width="26"
                         height="26"
@@ -338,34 +338,21 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                       <div>{studentData.student.phoneNumber}</div>
                     </div>
                   </div>
-                  <div className="flex space-x-[20px]">
+                  <div className="flex items-center space-x-[20px]">
                     <svg
-                      width="35"
-                      height="36"
-                      viewBox="0 0 35 36"
+                      width="23"
+                      height="23"
+                      viewBox="0 0 23 23"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      xmlnsXlink="http://www.w3.org/1999/xlink"
                     >
-                      <rect y="0.322266" width="35" height="35" fill="url(#pattern0_4713_48633)" />
-                      <defs>
-                        <pattern
-                          id="pattern0_4713_48633"
-                          patternContentUnits="objectBoundingBox"
-                          width="1"
-                          height="1"
-                        >
-                          <use xlinkHref="#image0_4713_48633" transform="scale(0.0111111)" />
-                        </pattern>
-                        <image
-                          id="image0_4713_48633"
-                          width="90"
-                          height="90"
-                          xlinkHref="data:image/png;base64,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"
-                        />
-                      </defs>
+                      <path
+                        d="M10.35 17.25H12.65V10.35H10.35V17.25ZM11.5 8.04999C11.8258 8.04999 12.0991 7.93959 12.3199 7.71879C12.5407 7.49799 12.6508 7.22506 12.65 6.89999C12.6492 6.57493 12.5388 6.302 12.3188 6.0812C12.0988 5.8604 11.8258 5.75 11.5 5.75C11.1742 5.75 10.9012 5.8604 10.6812 6.0812C10.4612 6.302 10.3508 6.57493 10.35 6.89999C10.3492 7.22506 10.4596 7.49838 10.6812 7.71994C10.9028 7.94151 11.1757 8.05153 11.5 8.04999ZM11.5 23C9.90916 23 8.41416 22.6979 7.015 22.0938C5.61583 21.4897 4.39875 20.6705 3.36375 19.6362C2.32875 18.602 1.50957 17.3849 0.906201 15.985C0.302835 14.5851 0.000768122 13.0901 1.45569e-06 11.5C-0.00076521 9.90993 0.301301 8.41493 0.906201 7.015C1.5111 5.61506 2.33028 4.39798 3.36375 3.36375C4.39722 2.32952 5.6143 1.51033 7.015 0.906199C8.4157 0.302067 9.91069 0 11.5 0C13.0893 0 14.5843 0.302067 15.985 0.906199C17.3857 1.51033 18.6028 2.32952 19.6362 3.36375C20.6697 4.39798 21.4893 5.61506 22.0949 7.015C22.7006 8.41493 23.0023 9.90993 23 11.5C22.9977 13.0901 22.6956 14.5851 22.0938 15.985C21.492 17.3849 20.6728 18.602 19.6362 19.6362C18.5997 20.6705 17.3826 21.49 15.985 22.0949C14.5874 22.6998 13.0924 23.0015 11.5 23ZM11.5 20.7C14.0683 20.7 16.2437 19.8087 18.0262 18.0262C19.8087 16.2437 20.7 14.0683 20.7 11.5C20.7 8.93166 19.8087 6.75624 18.0262 4.97375C16.2437 3.19125 14.0683 2.3 11.5 2.3C8.93166 2.3 6.75625 3.19125 4.97375 4.97375C3.19125 6.75624 2.3 8.93166 2.3 11.5C2.3 14.0683 3.19125 16.2437 4.97375 18.0262C6.75625 19.8087 8.93166 20.7 11.5 20.7Z"
+                        fill="black"
+                      />
                     </svg>
-                    <div className="">{`UCI # ${studentData.UCINumber?.slice(3)}`}</div>
+
+                    <div>{`UCI # ${studentData.UCINumber?.slice(3)}`}</div>
                   </div>
                 </div>
               </div>
