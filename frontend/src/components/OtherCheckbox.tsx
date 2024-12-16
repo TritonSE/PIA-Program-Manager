@@ -30,11 +30,11 @@ export default function OtherCheckbox<T extends FieldValues>({
     }
   }, [checked]);
 
-  return checked ? (
+  return checked || defaultOtherValue ? (
     <Textfield
       className="animate-in fade-in"
       register={register}
-      name={"other" as Path<T>}
+      name={"dietaryOther" as Path<T>}
       label="Other"
       placeholder="Type Here..."
       defaultValue={defaultOtherValue}
@@ -49,7 +49,7 @@ export default function OtherCheckbox<T extends FieldValues>({
       </label>
       <input
         id={"Othercheckbox"}
-        className="h-[40px] w-[40px] appearance-none self-center rounded-[10px] bg-[#D9D9D9] checked:bg-pia_dark_green hover:cursor-pointer"
+        className="peer h-[40px] w-[40px]  appearance-none rounded-[5px] border-[1px] border-black bg-white transition-colors hover:cursor-pointer hover:bg-[#00686766] focus-visible:bg-[#00686766]"
         type="checkbox"
         onChange={() => {
           setChecked(true);

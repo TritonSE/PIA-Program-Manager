@@ -201,8 +201,6 @@ export default function StudentInfo({ classname, data, documentData, isAdmin }: 
     );
   };
 
-  console.log({ isAdmin });
-
   return (
     <div className={cn("grid flex-1 gap-x-8 gap-y-10 md:grid-cols-2", classname)}>
       <div>

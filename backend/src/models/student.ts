@@ -66,6 +66,7 @@ const studentSchema = new Schema({
 
   //Will contain list of all dietary restrictions
   dietary: { type: [String] },
+  dietaryOther: { type: String },
 });
 
 type Student = InferSchemaType<typeof studentSchema>;

@@ -441,6 +441,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                       <br />
                     </div>
                   ))}
+                  {studentData.dietaryOther}
                 </div>
                 <div className="font-[Poppins] text-[24px]">
                   Medication: {studentData.medication}

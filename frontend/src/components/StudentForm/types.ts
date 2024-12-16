@@ -35,6 +35,7 @@ export type StudentData = {
   profilePicture: string;
   enrollments: Enrollment[];
   dietary?: string[];
+  dietaryOther?: string;
 };
 
 export type StudentFormData = {
@@ -56,6 +57,8 @@ export type StudentFormData = {
   other: string;
   intakeDate: Date;
   tourDate: Date;
+  dietary: string[];
+  dietaryOther: string;
   conservation: string;
   UCINumber: string;
   incidentForm: string;

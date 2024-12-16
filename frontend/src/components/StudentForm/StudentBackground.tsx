@@ -26,6 +26,8 @@ type StudentBackgroundProps = {
 
 const conservationList = ["Yes", "No"];
 
+const dietaryList = ["Nuts", "Eggs", "Seafood", "Pollen", "Dairy", "Other"];
+
 export const convertDateToString = (date: Date | undefined) => {
   return date
     ? new Date(date).toLocaleDateString(undefined, {
@@ -132,6 +134,17 @@ export default function StudentBackground({
         />
       </div>
       <div className="col-span-2">
+        <h3 className="mb-5 w-full text-left text-lg font-bold">Dietary Restrictions</h3>
+        <Checkbox
+          register={register}
+          name="dietary"
+          options={dietaryList}
+          defaultValue={data?.dietary}
+          defaultOtherValue={data?.dietaryOther}
+          className="grid-cols-2"
+        />
+      </div>
+      <div className="col-span-2">
         <h3 className="mb-5 w-full text-left text-lg font-bold">Conserved</h3>
         <Checkbox
           register={register}
@@ -141,6 +154,7 @@ export default function StudentBackground({
           className="grid-cols-2"
         />
       </div>
+
       <div className="col-span-2">
         <h3 className="mb-5 w-full text-left text-lg font-bold">Medication and Medical</h3>
         <Textfield

@@ -96,9 +96,10 @@ export function Textfield<T extends FieldValues>({
 
         {label ? (
           <label
-            className="absolute left-[1em] top-[-1em] select-none bg-[white] p-[3px] text-xs text-pia_border-200"
+            className="absolute left-[1em] top-[-1em] z-[0] select-none bg-pia_primary_light_green p-[3px] text-xs text-pia_border-200"
             htmlFor={label + placeholder}
           >
+            <span className="absolute bottom-[0] left-[0] z-[-1] h-[50%] w-full bg-white"></span>
             {label}
           </label>
         ) : (

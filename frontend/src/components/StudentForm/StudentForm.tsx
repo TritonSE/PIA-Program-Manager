@@ -178,6 +178,8 @@ export default function StudentForm({
             };
           }),
         ),
+      dietary: formData.dietary ?? [],
+      dietaryOther: formData.dietaryOther,
       conservation: formData.conservation === "yes",
       UCINumber: formData.UCINumber,
       incidentForm: formData.incidentForm,
