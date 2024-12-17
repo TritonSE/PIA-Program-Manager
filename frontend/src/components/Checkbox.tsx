@@ -24,7 +24,7 @@ export function Checkbox<T extends FieldValues>({
   defaultValue = defaultValue?.map((item) => item.toLowerCase());
 
   return (
-    <div className={cn("sm:min-w-2/5 min-w-4/5 grid gap-x-5 gap-y-5 sm:grid-cols-3", className)}>
+    <div className={cn("min-w-4/5 grid w-full gap-x-5 gap-y-5", className)}>
       {options.map((item, index) => {
         return item === "Other" ? (
           <OtherCheckbox
@@ -44,7 +44,7 @@ export function Checkbox<T extends FieldValues>({
               <input
                 {...register(name)}
                 id={item + index}
-                className="peer h-[40px] w-[40px]  appearance-none rounded-[5px] bg-[#D9D9D9] transition-colors hover:cursor-pointer hover:bg-[#00686766] focus-visible:bg-[#00686766]"
+                className="peer h-[40px] w-[40px]  appearance-none rounded-[5px] border-[1px] border-black bg-white transition-colors hover:cursor-pointer hover:bg-[#00686766] focus-visible:bg-[#00686766]"
                 type="checkbox"
                 name={name}
                 value={item}

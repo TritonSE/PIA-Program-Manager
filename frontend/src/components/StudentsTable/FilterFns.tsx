@@ -64,7 +64,6 @@ export function ProgramFilter({
 
   return (
     <Dropdown
-      label="Program"
       name="program"
       placeholder="Program"
       className={cn(`rounded-md`, className)}
@@ -94,7 +93,6 @@ export function StatusFilter({ column }: { column: Column<StudentTableRow> }) {
 
   return (
     <Dropdown
-      label="Status"
       name="status"
       placeholder="Status"
       className={`rounded-md`}

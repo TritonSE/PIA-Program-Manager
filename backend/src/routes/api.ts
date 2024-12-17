@@ -1,5 +1,6 @@
 import express from "express";
 
+import imageRouter from "./image";
 import programRoutes from "./program";
 import progressNoteRoutes from "./progressNote";
 import sessionRoutes from "./session";
@@ -14,5 +15,6 @@ router.use("/student", studentRoutes);
 router.use("/program", programRoutes);
 router.use("/session", sessionRoutes);
 router.use("/progressNote", progressNoteRoutes);
+router.use("/image", imageRouter);
 
 export default router;
