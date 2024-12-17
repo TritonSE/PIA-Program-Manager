@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useContext, useEffect, useMemo, useState } from "react";
 
 import { Enrollment, Program, getProgram, getProgramEnrollments } from "../api/programs";
+import { UserContext } from "../contexts/user";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -26,9 +27,26 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
   const [fillerText, setFillerText] = useState<string>("Loading");
   const [enrollments, setEnrollments] = useState<[Enrollment]>();
   const { allStudents } = useContext(StudentsContext);
+  const [firebaseToken, setFirebaseToken] = useState<string>();
+  const { firebaseUser } = useContext(UserContext);
 
   useEffect(() => {
-    getProgram(id).then(
+    if (firebaseUser) {
+      firebaseUser
+        .getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [firebaseUser]);
+
+  useEffect(() => {
+    if (!firebaseToken) return;
+
+    getProgram(id, firebaseToken).then(
       (result) => {
         if (result.success) {
           setProgram(result.data);
@@ -42,7 +60,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
         console.log(error);
       },
     );
-    getProgramEnrollments(id).then(
+    getProgramEnrollments(id, firebaseToken).then(
       (result) => {
         if (result.success) {
           setEnrollments(result.data);
@@ -55,7 +73,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
         console.log(error);
       },
     );
-  }, []);
+  }, [firebaseToken]);
 
   let headerClass = "bg-pia_primary_light_green  text-secondary_teal";
   let titleClass = "font-bold";

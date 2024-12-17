@@ -1,7 +1,6 @@
 import { ReactElement } from "react";
 
 import Login from "./login";
-// import CreateUser from "./create_user";
 
 import Landing from "@/components/Landing";
 

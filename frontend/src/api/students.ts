@@ -17,9 +17,13 @@ type EditStudentRequest = {
   _id: string;
 } & Partial<Student>;
 
-export async function createStudent(student: CreateStudentRequest): Promise<APIResult<Student>> {
+export async function createStudent(
+  student: CreateStudentRequest,
+  firebaseToken: string,
+): Promise<APIResult<Student>> {
   try {
-    const response = await POST("/student/create", student);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await POST("/student/create", student, headers);
     const json = (await response.json()) as Student;
     console.log({ json });
     return { success: true, data: json };
@@ -28,9 +32,13 @@ export async function createStudent(student: CreateStudentRequest): Promise<APIR
   }
 }
 
-export async function editStudent(student: EditStudentRequest): Promise<APIResult<Student>> {
+export async function editStudent(
+  student: EditStudentRequest,
+  firebaseToken: string,
+): Promise<APIResult<Student>> {
   try {
-    const response = await PUT(`/student/edit/${student._id}`, student);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PUT(`/student/edit/${student._id}`, student, headers);
     const json = (await response.json()) as Student;
     return { success: true, data: json };
   } catch (error) {
