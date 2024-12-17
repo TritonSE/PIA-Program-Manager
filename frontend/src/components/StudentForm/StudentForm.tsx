@@ -205,7 +205,7 @@ export default function StudentForm({
     }
 
     if (type === "add") {
-      createStudent(transformedData).then(
+      createStudent(transformedData, firebaseToken).then(
         (result) => {
           if (result.success) {
             const newStudent = result.data;
@@ -227,7 +227,7 @@ export default function StudentForm({
 
     if (type === "edit" && data) {
       const editedData: Student = { ...transformedData, _id: data._id };
-      editStudent(editedData).then(
+      editStudent(editedData, firebaseToken).then(
         (result) => {
           if (result.success) {
             const editedStudent = result.data;
