@@ -17,9 +17,15 @@ export type CardProps = {
   program: Program;
   student: Student;
   setRemainingSessions: Dispatch<SetStateAction<number>>;
+  firebaseToken: string;
 };
 
-export function AttendanceCard({ program, student, setRemainingSessions }: CardProps) {
+export function AttendanceCard({
+  program,
+  student,
+  setRemainingSessions,
+  firebaseToken,
+}: CardProps) {
   const {
     register,
     setValue,
@@ -43,7 +49,7 @@ export function AttendanceCard({ program, student, setRemainingSessions }: CardP
       student: { studentId: student._id, attended: true, hoursAttended: data.hoursAttended },
     };
     console.log(newAbsenceSession);
-    createAbsenceSession(newAbsenceSession)
+    createAbsenceSession(newAbsenceSession, firebaseToken)
       .then((res) => {
         if (res.success) {
           console.log(res);

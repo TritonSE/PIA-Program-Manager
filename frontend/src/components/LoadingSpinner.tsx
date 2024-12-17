@@ -3,19 +3,31 @@ import Image from "next/image";
 import loadingSpinner from "../../public/loading-spinner.png";
 import styles from "../styles/LoadingSpinner.module.css";
 
-export default function LoadingSpinner() {
+import { cn } from "@/lib/utils";
+
+type LoadingSpinnerProps = {
+  classname?: string;
+  label?: string;
+  spinnerSize?: number;
+};
+
+export default function LoadingSpinner({
+  classname,
+  label = "Loading...",
+  spinnerSize = 80,
+}: LoadingSpinnerProps) {
   return (
-    <div className="grid h-[80vh] w-full place-items-center">
-      <div>
+    <div className={cn("grid h-[80vh] w-full place-items-center", classname)}>
+      <div className="grid place-items-center">
         <Image
           className={styles.spinner}
           src={loadingSpinner}
           alt="Loading Spinner"
-          width={80}
-          height={80}
+          width={spinnerSize}
+          height={spinnerSize}
           priority
         />
-        <p className="mt-5 text-center text-pia_dark_green">Loading...</p>
+        <p className="mt-5 text-center text-pia_dark_green">{label}</p>
       </div>
     </div>
   );

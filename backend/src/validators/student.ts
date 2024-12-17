@@ -134,6 +134,12 @@ const makeUCINumberValidator = () =>
     .notEmpty()
     .withMessage("UCI Number field required");
 
+type DocumentItem = {
+  name: string;
+  link: string;
+  markedAdmin: boolean;
+};
+
 const makeIncidentFormValidator = () =>
   body("incidentForm")
     .exists()
@@ -153,8 +159,28 @@ const makeDocumentsValidator = () =>
     .isArray()
     .withMessage("Documents must be an array")
     .bail()
-    .custom((value: string[]) => value.every((doc) => typeof doc === "string"))
-    .withMessage("Documents must be an array of strings");
+    .custom((value: unknown): value is DocumentItem[] => {
+      // Type guard to ensure value is an array of DocumentItem
+      return (
+        Array.isArray(value) &&
+        value.every(
+          (doc): doc is DocumentItem =>
+            typeof doc === "object" &&
+            doc !== null &&
+            // Check 'name' property
+            typeof doc.name === "string" &&
+            doc.name.trim() !== "" &&
+            // Check 'link' property
+            typeof doc.link === "string" &&
+            doc.link.trim() !== "" &&
+            // Check 'markedAdmin' property (optional, must be boolean if present)
+            (doc.markedAdmin === undefined || typeof doc.markedAdmin === "boolean"),
+        )
+      );
+    })
+    .withMessage(
+      "Documents must be an array of objects with 'name', 'link', and 'markedAdmin' properties",
+    );
 
 const makeProfilePictureValidator = () =>
   body("profilePicture").optional().isString().withMessage("Profile picture must be a string");
@@ -168,24 +194,6 @@ const makeEnrollments = () =>
     .withMessage("Enrollments must be a non-empty array")
     .bail()
     .custom(programValidatorUtil);
-
-//dietary
-//validates entire array
-const makeDietaryArrayValidator = () =>
-  body("dietary")
-    .optional()
-    .exists()
-    .isArray()
-    .withMessage("Dietary restrictions must be an array");
-//validates individual items
-const makeDietaryItemsValidator = () =>
-  body("dietary.*").exists().isString().withMessage("Dietary restriction element must be a string");
-
-const makeDietaryOtherValidator = () =>
-  body("otherString")
-    .optional()
-    .isString()
-    .withMessage("Other dietary restriction must be a string");
 
 export const createStudent = [
   makeLastNamesValidator(),
@@ -203,9 +211,12 @@ export const createStudent = [
   makeDocumentsValidator(),
   makeProfilePictureValidator(),
   makeEnrollments(),
-  makeDietaryArrayValidator(),
-  makeDietaryItemsValidator(),
-  makeDietaryOtherValidator(),
 ];
 
-export const editStudent = [...createStudent, makeIdValidator()];
+export const editStudent = [
+  makeIdValidator(),
+  [...createStudent].map((validator) => {
+    validator.optional();
+    return validator;
+  }),
+];

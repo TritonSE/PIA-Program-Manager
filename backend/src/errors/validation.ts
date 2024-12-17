@@ -11,6 +11,7 @@ const IMAGE_NOT_FOUND = "Image was not found. Please make sure id passed in rout
 const INVALID_MONGO_ID = "Mongo ID was invalid. Please ensure that the id is correct";
 const IMAGE_USER_MISMATCH = "Image does not belong to the user";
 const PROGRESS_NOTE_NOT_FOUND = "Progress note not found in database";
+const IMAGE_UPDATED_FAILED = "Image was not updated successfully";
 
 export class ValidationError extends CustomError {
   static USER_CREATION_UNSUCCESSFUL = new ValidationError(1, 400, USER_CREATION_UNSUCCESSFUL);
@@ -24,4 +25,5 @@ export class ValidationError extends CustomError {
   static INVALID_MONGO_ID = new ValidationError(9, 400, INVALID_MONGO_ID);
   static IMAGE_USER_MISMATCH = new ValidationError(10, 401, IMAGE_USER_MISMATCH);
   static PROGRESS_NOTE_NOT_FOUND = new ValidationError(11, 404, PROGRESS_NOTE_NOT_FOUND);
+  static IMAGE_UPDATED_FAILED = new ValidationError(12, 400, IMAGE_UPDATED_FAILED);
 }

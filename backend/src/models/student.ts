@@ -25,6 +25,13 @@ const studentSchema = new Schema({
     phoneNumber: { type: String, required: true },
   },
 
+  enrollments: {
+    type: [Schema.Types.ObjectId],
+    ref: "Enrollment",
+    default: [],
+    required: false,
+  },
+
   //Address of student
   location: { type: String, required: true },
 
@@ -38,8 +45,18 @@ const studentSchema = new Schema({
   conservation: { type: Boolean, required: true },
   UCINumber: { type: String, required: true },
   incidentForm: { type: String, required: true },
-  documents: { type: [String], required: true },
-  profilePicture: { type: Schema.Types.ObjectId, ref: "Image", required: false },
+  documents: {
+    type: [
+      {
+        name: { type: String, required: true },
+        link: { type: String, required: true },
+        markedAdmin: { type: Boolean, required: true, default: false },
+      },
+    ],
+    required: true,
+  },
+  profilePicture: { type: String, ref: "Image", required: false, default: "default" },
+
   progressNotes: {
     type: [Schema.Types.ObjectId],
     ref: "ProgressNote",

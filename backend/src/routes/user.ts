@@ -19,8 +19,6 @@ router.delete("/delete/:email", [verifyAuthToken], UserController.deleteUser);
 router.get("/not-approved", [verifyAuthToken], UserController.getNotApprovedUsers);
 
 router.get("/", [verifyAuthToken], UserController.loginUser);
-router.post("/editPhoto", [verifyAuthToken], UserValidator.editPhoto, UserController.editPhoto);
-router.get("/getPhoto/:id", [verifyAuthToken], UserController.getPhoto);
 router.patch("/editName", [verifyAuthToken], UserValidator.editName, UserController.editName);
 router.patch("/editEmail", [verifyAuthToken], UserValidator.editEmail, UserController.editEmail);
 router.patch(

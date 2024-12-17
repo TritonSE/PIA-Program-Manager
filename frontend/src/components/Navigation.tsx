@@ -80,6 +80,7 @@ const Links = ({ setShelf, isMobile }: LinkProps) => {
 function Navigation({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [offset, setOffset] = React.useState(0);
+  const [isVisible, setVisible] = React.useState(true);
   const [shelf, setShelf] = React.useState(false); // on mobile whether the navbar is open
   const { isMobile } = useWindowSize();
   const navigation = useNavigation();
@@ -87,7 +88,12 @@ function Navigation({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const ordering = navigation.map((item) => item.href);
     const idx = ordering.indexOf(router.pathname) || 0;
-    setOffset(idx * 68);
+    if (idx === -1)
+      setVisible(false); // if the page is not on the navigation list, do not display bar
+    else {
+      if (!isVisible) setVisible(true);
+      setOffset(idx * 68);
+    }
   }, [router.pathname]);
 
   return (
@@ -124,7 +130,7 @@ function Navigation({ children }: { children: React.ReactNode }) {
       >
         <Logo setShelf={setShelf} isMobile={isMobile} />
         <div className="relative flex flex-col gap-7 max-sm:gap-2 sm:max-lg:flex-row">
-          {router.pathname !== "/" && (
+          {router.pathname !== "/" && isVisible && (
             <div
               className="absolute h-10 w-2 rounded-br-lg rounded-tr-lg bg-[white] max-lg:w-1 sm:max-lg:hidden"
               style={{

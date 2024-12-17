@@ -17,6 +17,7 @@ import SaveCancelButtons from "@/components/Modals/SaveCancelButtons";
 type ProfileBasicData = {
   name: string;
   image: string;
+  userId: string;
 };
 
 type BasicInfoFrameProps = {
@@ -72,7 +73,7 @@ export function BasicInfoFrame({
     if (imageFile) {
       const formData = new FormData();
       formData.append("image", imageFile);
-      editPhoto(formData, previousImageId, firebaseToken)
+      editPhoto(formData, previousImageId, data.userId, "user", "edit", "", firebaseToken)
         .then((result) => {
           if (result.success) {
             setCurrentImageId(result.data);
@@ -163,7 +164,7 @@ export function BasicInfoFrame({
                     {data.image !== "" ? (
                       <Image
                         alt="Profile Picture"
-                        src={data.image !== "default" ? data.image : "../defaultProfilePic.svg"}
+                        src={data.image !== "default" ? data.image : "/defaultProfilePic.svg"}
                         className="flex items-center rounded-full object-cover"
                         fill={true}
                       />
@@ -180,7 +181,7 @@ export function BasicInfoFrame({
                 <div className="relative h-80  ">
                   <Image
                     alt="Profile Picture"
-                    src={data.image !== "default" ? data.image : "../defaultProfilePic.svg"}
+                    src={data.image !== "default" ? data.image : "/defaultProfilePic.svg"}
                     className="object-contain"
                     fill={true}
                   />
