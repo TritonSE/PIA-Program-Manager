@@ -157,7 +157,7 @@ function ProgramLayout({ enrollmentInfo }: ProgramLayoutProps) {
 
 export default function StudentProfile({ id }: StudentProfileProps) {
   const [currentView, setCurrentView] = useState<"View" | "Edit">("View");
-  const { firebaseUser } = useContext(UserContext);
+  const { firebaseUser, isAdmin } = useContext(UserContext);
   const [firebaseToken, setFirebaseToken] = useState<string>();
   const [notFound, setNotFound] = useState<boolean>(false);
   const [studentData, setStudentData] = useState<Student>();
@@ -508,43 +508,46 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             </div>
             <NotificationTable />
           </div> */}
+
             <div id="Bottom Buttons" className="flex justify-between">
-              <ModalConfirmation
-                className="h-[60%] w-[40%] rounded-[8px]"
-                title="Are you sure you want to delete this student?"
-                innerContent={
-                  <>
-                    <div className="flex w-[60%] justify-center">
-                      <div className="font-base text-sm sm:text-base">
-                        <li className="font-bold text-destructive">This cannot be undone!</li>
-                        <li>
-                          This will remove this student from all enrolled programs and delete all
-                          notes and documents.
-                        </li>
+              {isAdmin && (
+                <ModalConfirmation
+                  className="h-[60%] w-[40%] rounded-[8px]"
+                  title="Are you sure you want to delete this student?"
+                  innerContent={
+                    <>
+                      <div className="flex w-[60%] justify-center">
+                        <div className="font-base text-sm sm:text-base">
+                          <li className="font-bold text-destructive">This cannot be undone!</li>
+                          <li>
+                            This will remove this student from all enrolled programs and delete all
+                            notes and documents.
+                          </li>
+                        </div>
                       </div>
-                    </div>
-                    <div className="mx-8 mb-8 mt-6">
-                      Enter the student&apos;s last name to proceed
-                      <Textfield
-                        name="lastname"
-                        placeholder="Last Name"
-                        register={deleteRegister}
-                      />
-                    </div>
-                  </>
-                }
-                kind="destructive"
-                triggerElement={
-                  <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
-                    Delete
-                  </button>
-                }
-                confirmText="Delete"
-                icon={<div />}
-                isParentOpen={deleteDialogOpen}
-                setIsParentOpen={setDeleteDialogOpen}
-                onConfirmClick={deleteStudentHandler}
-              />
+                      <div className="mx-8 mb-8 mt-6">
+                        Enter the student&apos;s last name to proceed
+                        <Textfield
+                          name="lastname"
+                          placeholder="Last Name"
+                          register={deleteRegister}
+                        />
+                      </div>
+                    </>
+                  }
+                  kind="destructive"
+                  triggerElement={
+                    <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
+                      Delete
+                    </button>
+                  }
+                  confirmText="Delete"
+                  icon={<div />}
+                  isParentOpen={deleteDialogOpen}
+                  setIsParentOpen={setDeleteDialogOpen}
+                  onConfirmClick={deleteStudentHandler}
+                />
+              )}
               <button
                 className="h-[48px] w-[96px] rounded-sm border border-pia_dark_green bg-pia_dark_green text-pia_primary_white"
                 onClick={() => {
