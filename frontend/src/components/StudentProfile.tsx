@@ -176,6 +176,30 @@ export default function StudentProfile({ id }: StudentProfileProps) {
     setCurrentView(currentView === "View" ? "Edit" : "View");
   };
 
+  const TruncateDocument = ({
+    documentName,
+    documentLength,
+  }: {
+    documentName: string;
+    documentLength: number;
+  }) => {
+    const minLength = 9; // Shortest truncation
+    const maxLength = 20; // Longest truncation
+    const baseName = documentName.slice(0, documentName.lastIndexOf("."));
+
+    // Use an inverse relationship: fewer documents = longer names
+    const dynamicLength = Math.max(
+      minLength,
+      Math.min(maxLength, 20 - Math.floor((documentLength - 1) * 2)),
+    );
+
+    // Only truncate and add ellipsis if the basename is longer than dynamicLength
+    const displayName =
+      baseName.length > dynamicLength ? baseName.substring(0, dynamicLength) + "..." : baseName;
+
+    return displayName;
+  };
+
   const deleteStudentHandler: MouseEventHandler = () => {
     const lastName = getDeleteValue("lastname");
     if (studentData && firebaseToken && studentData.student.lastName === lastName) {
@@ -423,12 +447,24 @@ export default function StudentProfile({ id }: StudentProfileProps) {
               <div id="documents" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Documents</div>
                 <div className="flex space-x-[20px]">
-                  <button className="h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_secondary_green text-pia_primary_white">
-                    Student Info
-                  </button>
-                  <button className="h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_light_gray">
-                    Waivers
-                  </button>
+                  {studentData.documents?.map((doc, index) => (
+                    <button
+                      onClick={() => {
+                        window.open(doc.link, "_blank");
+                      }}
+                      key={index}
+                      className={
+                        index % 2 === 0
+                          ? "h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_light_gray"
+                          : "h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_secondary_green text-pia_primary_white"
+                      }
+                    >
+                      {TruncateDocument({
+                        documentName: doc.name,
+                        documentLength: doc.name.length,
+                      }) || `Document ${index + 1}`}
+                    </button>
+                  ))}
                 </div>
               </div>
               <div id="medications" className="basis-1/2 space-y-[20px]">
