@@ -20,45 +20,39 @@ export const StudentsContext = createContext<StudentsContext>({
 export const StudentsContextProvider = ({ children }: { children: ReactNode }) => {
   const [allStudents, setAllStudents] = useState<StudentMap | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  const [firebaseToken, setFirebaseToken] = useState<string>();
   const { firebaseUser } = useContext(UserContext);
 
+  // Fetch Progress Notes and Students
   useEffect(() => {
     if (firebaseUser) {
       firebaseUser
-        .getIdToken()
+        ?.getIdToken()
         .then((token) => {
-          setFirebaseToken(token);
+          getAllStudents(token).then(
+            (result) => {
+              if (result.success) {
+                const StudentsObject = result.data.reduce(
+                  (obj, student) => {
+                    obj[student._id] = student;
+                    return obj;
+                  },
+                  {} as Record<string, Student>,
+                );
+                setAllStudents(StudentsObject);
+                setIsLoading(false);
+              }
+            },
+            (error) => {
+              console.log(error);
+              setIsLoading(false);
+            },
+          );
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          console.error(error);
         });
     }
   }, [firebaseUser]);
-
-  useEffect(() => {
-    if (firebaseToken) {
-      getAllStudents(firebaseToken).then(
-        (result) => {
-          if (result.success) {
-            const StudentsObject = result.data.reduce(
-              (obj, student) => {
-                obj[student._id] = student;
-                return obj;
-              },
-              {} as Record<string, Student>,
-            );
-            setAllStudents(StudentsObject);
-            setIsLoading(false);
-          }
-        },
-        (error) => {
-          console.log(error);
-          setIsLoading(false);
-        },
-      );
-    }
-  }, [firebaseToken]);
 
   return (
     <StudentsContext.Provider value={{ allStudents, setAllStudents, isLoading }}>

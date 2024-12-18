@@ -157,7 +157,7 @@ function ProgramLayout({ enrollmentInfo }: ProgramLayoutProps) {
 
 export default function StudentProfile({ id }: StudentProfileProps) {
   const [currentView, setCurrentView] = useState<"View" | "Edit">("View");
-  const { firebaseUser } = useContext(UserContext);
+  const { firebaseUser, isAdmin } = useContext(UserContext);
   const [firebaseToken, setFirebaseToken] = useState<string>();
   const [notFound, setNotFound] = useState<boolean>(false);
   const [studentData, setStudentData] = useState<Student>();
@@ -174,6 +174,30 @@ export default function StudentProfile({ id }: StudentProfileProps) {
 
   const handleViewChange = () => {
     setCurrentView(currentView === "View" ? "Edit" : "View");
+  };
+
+  const TruncateDocument = ({
+    documentName,
+    documentLength,
+  }: {
+    documentName: string;
+    documentLength: number;
+  }) => {
+    const minLength = 9; // Shortest truncation
+    const maxLength = 20; // Longest truncation
+    const baseName = documentName.slice(0, documentName.lastIndexOf("."));
+
+    // Use an inverse relationship: fewer documents = longer names
+    const dynamicLength = Math.max(
+      minLength,
+      Math.min(maxLength, 20 - Math.floor((documentLength - 1) * 2)),
+    );
+
+    // Only truncate and add ellipsis if the basename is longer than dynamicLength
+    const displayName =
+      baseName.length > dynamicLength ? baseName.substring(0, dynamicLength) + "..." : baseName;
+
+    return displayName;
   };
 
   const deleteStudentHandler: MouseEventHandler = () => {
@@ -423,12 +447,24 @@ export default function StudentProfile({ id }: StudentProfileProps) {
               <div id="documents" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Documents</div>
                 <div className="flex space-x-[20px]">
-                  <button className="h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_secondary_green text-pia_primary_white">
-                    Student Info
-                  </button>
-                  <button className="h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_light_gray">
-                    Waivers
-                  </button>
+                  {studentData.documents?.map((doc, index) => (
+                    <button
+                      onClick={() => {
+                        window.open(doc.link, "_blank");
+                      }}
+                      key={index}
+                      className={
+                        index % 2 === 0
+                          ? "h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_light_gray"
+                          : "h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_secondary_green text-pia_primary_white"
+                      }
+                    >
+                      {TruncateDocument({
+                        documentName: doc.name,
+                        documentLength: doc.name.length,
+                      }) || `Document ${index + 1}`}
+                    </button>
+                  ))}
                 </div>
               </div>
               <div id="medications" className="basis-1/2 space-y-[20px]">
@@ -472,43 +508,46 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             </div>
             <NotificationTable />
           </div> */}
+
             <div id="Bottom Buttons" className="flex justify-between">
-              <ModalConfirmation
-                className="h-[60%] w-[40%] rounded-[8px]"
-                title="Are you sure you want to delete this student?"
-                innerContent={
-                  <>
-                    <div className="flex w-[60%] justify-center">
-                      <div className="font-base text-sm sm:text-base">
-                        <li className="font-bold text-destructive">This cannot be undone!</li>
-                        <li>
-                          This will remove this student from all enrolled programs and delete all
-                          notes and documents.
-                        </li>
+              {isAdmin && (
+                <ModalConfirmation
+                  className="h-[60%] w-[40%] rounded-[8px]"
+                  title="Are you sure you want to delete this student?"
+                  innerContent={
+                    <>
+                      <div className="flex w-[60%] justify-center">
+                        <div className="font-base text-sm sm:text-base">
+                          <li className="font-bold text-destructive">This cannot be undone!</li>
+                          <li>
+                            This will remove this student from all enrolled programs and delete all
+                            notes and documents.
+                          </li>
+                        </div>
                       </div>
-                    </div>
-                    <div className="mx-8 mb-8 mt-6">
-                      Enter the student&apos;s last name to proceed
-                      <Textfield
-                        name="lastname"
-                        placeholder="Last Name"
-                        register={deleteRegister}
-                      />
-                    </div>
-                  </>
-                }
-                kind="destructive"
-                triggerElement={
-                  <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
-                    Delete
-                  </button>
-                }
-                confirmText="Delete"
-                icon={<div />}
-                isParentOpen={deleteDialogOpen}
-                setIsParentOpen={setDeleteDialogOpen}
-                onConfirmClick={deleteStudentHandler}
-              />
+                      <div className="mx-8 mb-8 mt-6">
+                        Enter the student&apos;s last name to proceed
+                        <Textfield
+                          name="lastname"
+                          placeholder="Last Name"
+                          register={deleteRegister}
+                        />
+                      </div>
+                    </>
+                  }
+                  kind="destructive"
+                  triggerElement={
+                    <button className="h-[48px] w-[96px] rounded-sm border border-pia_border text-pia_border">
+                      Delete
+                    </button>
+                  }
+                  confirmText="Delete"
+                  icon={<div />}
+                  isParentOpen={deleteDialogOpen}
+                  setIsParentOpen={setDeleteDialogOpen}
+                  onConfirmClick={deleteStudentHandler}
+                />
+              )}
               <button
                 className="h-[48px] w-[96px] rounded-sm border border-pia_dark_green bg-pia_dark_green text-pia_primary_white"
                 onClick={() => {

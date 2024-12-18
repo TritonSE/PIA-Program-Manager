@@ -283,7 +283,7 @@ export default function StudentForm({
                 Student Information
               </legend>
 
-              <StudentInfo data={data ?? null} documentData={documentData} />
+              <StudentInfo data={data ?? null} documentData={documentData} isAdmin={isAdmin} />
             </fieldset>
           </div>
           <div className="grid w-full gap-10 lg:grid-cols-2">
