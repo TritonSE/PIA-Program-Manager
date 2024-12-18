@@ -5,7 +5,9 @@ import { AbsenceSession, Session, getAbsenceSessions, getRecentSessions } from "
 import { getAllStudents } from "@/api/students";
 import { AttendanceCard } from "@/components/AttendanceCard";
 import { AttendanceTable } from "@/components/AttendanceTable";
-import { ProgramMap, StudentMap } from "@/components/StudentsTable/types";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { ProgramMap } from "@/components/StudentsTable/types";
+import { StudentsContext } from "@/contexts/students";
 import { UserContext } from "@/contexts/user";
 import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
@@ -18,12 +20,14 @@ export default function AttendanceDashboard() {
 
   const [allSessions, setAllSessions] = useState<Sessions>(); // map from program id to program
   const [allPrograms, setAllPrograms] = useState<ProgramMap>({}); // map from program id to program
-  const [allStudents, setAllStudents] = useState<StudentMap>({});
   const [allAbsenceSessions, setAllAbsenceSessions] = useState<AbsenceSessions>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [programsLoading, setProgramsLoading] = useState(true);
-  const [studentsLoading, setStudentsLoading] = useState(true);
+  // const [studentsLoading, setStudentsLoading] = useState(true);
   const [absencsSessionsLoading, setAbsenceSessionsLoading] = useState(true);
+
+  const { allStudents } = useContext(StudentsContext);
+  const studentsLoading = allStudents === undefined;
 
   const [remainingSessions, setRemainingSessions] = useState(0);
   const [remainingAbsenceSessions, setRemainingAbsenceSessions] = useState(0);
@@ -109,12 +113,12 @@ export default function AttendanceDashboard() {
         // console.log(result);
         if (result.success) {
           // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
-          setAllStudents(studentsObject);
-          setStudentsLoading(false);
+          // const studentsObject = result.data.reduce((obj, student) => {
+          //   obj[student._id] = student;
+          //   return obj;
+          // }, {} as StudentMap);
+          // setAllStudents(studentsObject);
+          // setStudentsLoading(false);
         }
       },
       (error) => {
@@ -140,7 +144,7 @@ export default function AttendanceDashboard() {
   }, [firebaseToken]);
 
   if (sessionsLoading || studentsLoading || programsLoading || absencsSessionsLoading)
-    return <p>Loading...</p>;
+    return <LoadingSpinner />;
   else {
     return (
       <main>
