@@ -1,7 +1,8 @@
+import { deleteObject, listAll, ref } from "firebase/storage";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { MouseEventHandler, useContext, useEffect, useRef, useState } from "react";
+import { Fragment, MouseEventHandler, useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
 
@@ -13,11 +14,14 @@ import { UserContext } from "../contexts/user";
 import LoadingSpinner from "./LoadingSpinner";
 import ModalConfirmation from "./Modals/ModalConfirmation";
 import StudentForm from "./StudentForm/StudentForm";
+import { TruncateDocument } from "./StudentForm/TruncateDocument";
 import { Contact } from "./StudentForm/types";
 import StudentProfilePrintComponent from "./StudentProfilePrintComponent";
 import { Textfield } from "./Textfield";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 import { getPhoto } from "@/api/user";
+import { storage } from "@/firebase/firebase";
 
 // Aggregate only the fields necessary for display on frontend
 // to reduce confusion when managing programs/programlinks/enrollments
@@ -179,6 +183,28 @@ export default function StudentProfile({ id }: StudentProfileProps) {
   const deleteStudentHandler: MouseEventHandler = () => {
     const lastName = getDeleteValue("lastname");
     if (studentData && firebaseToken && studentData.student.lastName === lastName) {
+      // Handle deleting documents
+      const deleteFileRef = ref(storage, `documents/${studentData._id}`);
+      listAll(deleteFileRef)
+        .then((res) => {
+          const deletedPromises = res.items.map((item) => {
+            const fileRef = ref(storage, item.fullPath);
+            return deleteObject(fileRef)
+              .then(() => {
+                console.log("Deleted document ", item.name);
+              })
+              .catch((error) => {
+                console.error("Error deleting document ", item.name, error);
+                throw error;
+              });
+          });
+          return Promise.all(deletedPromises);
+        })
+        .catch((error) => {
+          console.error("Error deleting all of student's documents");
+          throw error;
+        });
+
       deleteStudent(studentData._id, firebaseToken)
         .then((result) => {
           if (result.success) {
@@ -409,14 +435,45 @@ export default function StudentProfile({ id }: StudentProfileProps) {
             <div id="row3" className="flex space-x-[230px]">
               <div id="documents" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Documents</div>
-                <div className="flex space-x-[20px]">
+                {/* <div className="flex space-x-[20px]">
                   <button className="h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_secondary_green text-pia_primary_white">
                     Student Info
                   </button>
                   <button className="h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_light_gray">
                     Waivers
                   </button>
-                </div>
+                </div> */}
+                <ul className="flex flex-wrap gap-3">
+                  {studentData.documents?.map((document) => (
+                    <Fragment key={document.name}>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <li
+                            className="rounded-4 w-fit cursor-pointer rounded-md border-[1px] border-solid border-[#929292] bg-[#ececec] px-4 py-2"
+                            title={document.name}
+                          >
+                            <TruncateDocument
+                              documentName={document.name}
+                              documentLength={studentData.documents.length}
+                            />
+                          </li>
+                        </PopoverTrigger>
+                        <PopoverContent className="grid w-auto p-0">
+                          {document.link && (
+                            <button
+                              onClick={() => {
+                                window.open(document.link, "_blank");
+                              }}
+                              className="rounded-md border-[1px] border-solid border-black bg-white px-10 py-4"
+                            >
+                              View File
+                            </button>
+                          )}
+                        </PopoverContent>
+                      </Popover>
+                    </Fragment>
+                  ))}
+                </ul>
               </div>
               <div id="medications" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Medication & Medical</div>
