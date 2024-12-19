@@ -1,6 +1,7 @@
 import express from "express";
 
 import calendarRouter from "./calendar";
+import imageRouter from "./image";
 import programRoutes from "./program";
 import progressNoteRoutes from "./progressNote";
 import sessionRoutes from "./session";
@@ -16,5 +17,6 @@ router.use("/program", programRoutes);
 router.use("/session", sessionRoutes);
 router.use("/progressNote", progressNoteRoutes);
 router.use("/calendar", calendarRouter);
+router.use("/image", imageRouter);
 
 export default router;

@@ -1,4 +1,4 @@
-import { GET, PATCH, POST, handleAPIError } from "../api/requests";
+import { GET, PATCH, POST, createAuthHeader, handleAPIError } from "../api/requests";
 
 import type { APIResult } from "../api/requests";
 
@@ -33,9 +33,10 @@ export type AbsenceCreateBody = {
   };
 };
 
-export async function getRecentSessions(): Promise<APIResult<[Session]>> {
+export async function getRecentSessions(firebaseToken: string): Promise<APIResult<[Session]>> {
   try {
-    const response = await GET("/session/get");
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET("/session/get", headers);
     const json = (await response.json()) as [Session];
     return { success: true, data: json };
   } catch (error) {
@@ -43,9 +44,12 @@ export async function getRecentSessions(): Promise<APIResult<[Session]>> {
   }
 }
 
-export async function getAbsenceSessions(): Promise<APIResult<[AbsenceSession]>> {
+export async function getAbsenceSessions(
+  firebaseToken: string,
+): Promise<APIResult<[AbsenceSession]>> {
   try {
-    const response = await GET("/session/getAbsences");
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET("/session/getAbsences", headers);
     const json = (await response.json()) as [AbsenceSession];
     return { success: true, data: json };
   } catch (error) {
@@ -53,9 +57,13 @@ export async function getAbsenceSessions(): Promise<APIResult<[AbsenceSession]>>
   }
 }
 
-export async function updateSession(session: Session): Promise<APIResult<Session>> {
+export async function updateSession(
+  session: Session,
+  firebaseToken: string,
+): Promise<APIResult<Session>> {
   try {
-    const response = await PATCH(`/session/mark`, session);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/session/mark`, session, headers);
     const json = (await response.json()) as Session;
     return { success: true, data: json };
   } catch (error) {
@@ -65,9 +73,11 @@ export async function updateSession(session: Session): Promise<APIResult<Session
 
 export async function createAbsenceSession(
   session: AbsenceCreateBody,
+  firebaseToken: string,
 ): Promise<APIResult<Session>> {
   try {
-    const response = await POST(`/session/markAbsence`, session);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await POST(`/session/markAbsence`, session, headers);
     const json = (await response.json()) as Session;
     return { success: true, data: json };
   } catch (error) {

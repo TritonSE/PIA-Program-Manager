@@ -8,11 +8,10 @@ import {
 } from "@tanstack/react-table";
 import React, { useContext, useEffect, useMemo, useState } from "react";
 
-import { getAllStudents } from "../../api/students";
 import LoadingSpinner from "../LoadingSpinner";
-import { StudentMap } from "../StudentsTable/types";
 import { Table } from "../ui/table";
 
+// eslint-disable-next-line import/order
 import Filter, { fuzzyFilter, programFilterFn, statusFilterFn } from "./Filters";
 
 // import Filter from "./Filters";
@@ -23,54 +22,45 @@ import { useColumnSchema } from "./useColumnSchema";
 
 import { ProgramsContext } from "@/contexts/program";
 // import { UserContext } from "@/contexts/user";
+import { StudentsContext } from "@/contexts/students";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
 export default function CalendarTable() {
-  const [allStudents, setAllStudents] = useState<StudentMap>({});
+  const { allStudents } = useContext(StudentsContext);
   const [isLoading, setIsLoading] = useState(true);
   const [calendarTable, setCalendarTable] = useState<CalendarTableRow[]>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const { isTablet } = useWindowSize();
 
   const { allPrograms } = useContext(ProgramsContext);
-  // const { isAdmin } = useContext(UserContext);
 
-  // get all students and store them in allStudents
   useEffect(() => {
-    getAllStudents().then(
-      (result) => {
-        console.log(result);
-        if (result.success) {
-          // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
-
-          setAllStudents(studentsObject);
-          setIsLoading(false);
-        } else {
-          console.log(result.error);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  }, []);
+    if (allStudents) {
+      setIsLoading(false);
+    }
+  }, [allStudents]);
 
   // Take all students and put them in rows for table
   useEffect(() => {
+    if (!allStudents) {
+      return;
+    }
     const tableRows: CalendarTableRow[] = Object.values(allStudents).flatMap((student) => {
       // Generate a row for each program the student is enrolled in
-      return student.programs.map(
-        (program) =>
+      return student.enrollments.map(
+        (enrollment) =>
           ({
             id: student._id,
             profilePicture: "default",
             student: `${student.student.firstName} ${student.student.lastName}`,
-            programs: { ...program, studentId: student._id },
+            programs: {
+              programId: enrollment.programId,
+              status: enrollment.status,
+              dateUpdated: enrollment.dateUpdated,
+              hoursLeft: enrollment.hoursLeft,
+              studentId: student._id,
+            },
           }) as CalendarTableRow,
       );
     });

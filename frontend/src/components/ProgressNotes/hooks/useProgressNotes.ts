@@ -47,9 +47,9 @@ export const useProgressNotes = () => {
     }
   };
 
-  const fetchStudentData = async (progressNotes: Record<string, ProgressNote>) => {
+  const fetchStudentData = async (progressNotes: Record<string, ProgressNote>, token: string) => {
     try {
-      const result = await getAllStudents();
+      const result = await getAllStudents(token);
       if (result.success) {
         const studentDataWithNotes: StudentWithNotes[] = result.data.map((student) => ({
           ...student,
@@ -92,7 +92,7 @@ export const useProgressNotes = () => {
 
           const progressNotes = await fetchProgressNotes(token);
           if (progressNotes) {
-            await fetchStudentData(progressNotes);
+            await fetchStudentData(progressNotes, token);
           }
         })
         .catch((error) => {
@@ -207,7 +207,7 @@ export const useProgressNotes = () => {
     setFilteredStudents(
       allStudents.filter((student) => {
         return (
-          student.programs.filter((studentProgram) => {
+          student.enrollments.filter((studentProgram) => {
             if (programId === "") return true;
             return studentProgram.programId === programId && studentProgram.status === "Joined";
           }).length > 0

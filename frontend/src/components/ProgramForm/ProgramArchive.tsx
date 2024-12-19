@@ -17,6 +17,7 @@ type archiveProps = {
   isMobile?: boolean;
   setPrograms: React.Dispatch<React.SetStateAction<ProgramMap>>;
   setAlertState: React.Dispatch<React.SetStateAction<{ open: boolean; message: string }>>;
+  firebaseToken: string | undefined;
 };
 
 function ProgramArchiveHeader({ label }: props) {
@@ -50,13 +51,13 @@ function ProgramArchiveHeader({ label }: props) {
   );
 }
 
-//Currently no functionality, just a button that closes the form
 export default function ProgramArchive({
   setOpenParent,
   data,
   isMobile = false,
   setPrograms,
   setAlertState,
+  firebaseToken,
 }: archiveProps) {
   const [openArchive, setOpenArchive] = useState(false);
   const {
@@ -67,6 +68,8 @@ export default function ProgramArchive({
   } = useForm<{ date: string }>();
 
   const archive: MouseEventHandler = () => {
+    if (!firebaseToken) return;
+
     const date = new Date(getArchiveValue("date"));
     const today = new Date();
     if (
@@ -74,7 +77,7 @@ export default function ProgramArchive({
       date.getMonth() === today.getMonth() &&
       date.getFullYear() === today.getFullYear()
     ) {
-      archiveProgram(data)
+      archiveProgram(data, firebaseToken)
         .then((result) => {
           if (result.success) {
             console.log(result.data);

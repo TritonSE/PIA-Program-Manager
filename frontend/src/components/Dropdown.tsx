@@ -16,6 +16,7 @@ type BaseProps<T extends FieldValues> = {
   label?: string;
   placeholder: string;
   defaultValue?: string;
+  initialValue?: string;
   className?: string;
 };
 
@@ -27,14 +28,15 @@ type DropdownProps<T extends FieldValues> = BaseProps<T> & {
 
 export function Dropdown<T extends FieldValues>({
   setDropdownValue,
-  label,
+  placeholder,
   name,
-  options,
+  options, // list of options - should be memoized
   onChange = () => void 0,
-  defaultValue = "",
+  defaultValue, // value if you want a permanent default label that is not really a value (see home page dropdowns)
+  initialValue, // value if you want a default value that is a value in the list of options (see create/edit student dropdowns)
   className,
 }: DropdownProps<T>) {
-  const [selectedOption, setSelectedOption] = useState<string>(defaultValue);
+  const [selectedOption, setSelectedOption] = useState<string>(defaultValue ?? initialValue ?? "");
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -58,12 +60,13 @@ export function Dropdown<T extends FieldValues>({
       <DropdownMenuTrigger
         ref={triggerRef}
         className={cn(
-          "relative inline-flex h-[46px] w-[244px] items-center justify-start gap-2 rounded-sm border border-pia_border px-4 py-3 ",
+          "relative inline-flex h-[46px] w-[244px] items-center justify-start gap-2 rounded-sm border border-pia_border bg-white px-4 py-3 ",
           className,
         )}
       >
-        <span className="text-neutral-400">{label + ": "}</span>
-        <span className="text-neutral-800">{selectedOption ?? ""}</span>
+        <span className={`text-neutral-${selectedOption ? 800 : 400}`}>
+          {selectedOption ? selectedOption : placeholder}
+        </span>
         <Image
           src="/ic_round-arrow-drop-up.svg"
           width={40}
@@ -74,17 +77,19 @@ export function Dropdown<T extends FieldValues>({
         />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem
-          className={menuItemStyle}
-          style={triggerRef.current ? { width: `${triggerRef.current.clientWidth}px` } : {}}
-          key={""}
-          onSelect={() => {
-            onChange("");
-            setSelectedOption(defaultValue);
-          }}
-        >
-          <span className="px-3">{defaultValue}</span>
-        </DropdownMenuItem>
+        {defaultValue && (
+          <DropdownMenuItem
+            className={menuItemStyle}
+            style={triggerRef.current ? { width: `${triggerRef.current.clientWidth}px` } : {}}
+            key={""}
+            onSelect={() => {
+              onChange("");
+              setSelectedOption(defaultValue);
+            }}
+          >
+            <span className="px-3">{defaultValue}</span>
+          </DropdownMenuItem>
+        )}
         {options.map((option) => (
           <DropdownMenuItem
             className={menuItemStyle}

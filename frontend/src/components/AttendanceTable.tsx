@@ -21,6 +21,7 @@ export type TableProps = {
   setRemainingSessions: Dispatch<SetStateAction<number>>;
   setAllAbsenceSessions: Dispatch<SetStateAction<AbsenceSessions>>;
   setRemainingAbsenceSessions: Dispatch<SetStateAction<number>>;
+  firebaseToken: string;
 };
 
 export function AttendanceTable({
@@ -30,6 +31,7 @@ export function AttendanceTable({
   setRemainingSessions,
   setAllAbsenceSessions,
   setRemainingAbsenceSessions,
+  firebaseToken,
 }: TableProps) {
   const {
     register,
@@ -77,7 +79,7 @@ export function AttendanceTable({
     });
     session.students = studentInfo;
     session.marked = true;
-    updateSession(session)
+    updateSession(session, firebaseToken)
       .then((newSession) => {
         if (newSession.success) {
           const absentStudents = newSession.data.students.filter((student) => !student.attended);

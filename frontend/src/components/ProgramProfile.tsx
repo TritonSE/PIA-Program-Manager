@@ -1,16 +1,16 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import { Enrollment, Program, getProgram, getProgramEnrollments } from "../api/programs";
+import { UserContext } from "../contexts/user";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
 import { ProgramProfileTable } from "./ProgramProfileTable";
-import { StudentMap } from "./StudentsTable/types";
 
-import { getAllStudents } from "@/api/students";
+import { StudentsContext } from "@/contexts/students";
 
 const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] });
 
@@ -26,10 +26,27 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
   const [program, setProgram] = useState<Program>();
   const [fillerText, setFillerText] = useState<string>("Loading");
   const [enrollments, setEnrollments] = useState<[Enrollment]>();
-  const [allStudents, setAllStudents] = useState<StudentMap>({});
+  const { allStudents } = useContext(StudentsContext);
+  const [firebaseToken, setFirebaseToken] = useState<string>();
+  const { firebaseUser } = useContext(UserContext);
 
   useEffect(() => {
-    getProgram(id).then(
+    if (firebaseUser) {
+      firebaseUser
+        .getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [firebaseUser]);
+
+  useEffect(() => {
+    if (!firebaseToken) return;
+
+    getProgram(id, firebaseToken).then(
       (result) => {
         if (result.success) {
           setProgram(result.data);
@@ -43,7 +60,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
         console.log(error);
       },
     );
-    getProgramEnrollments(id).then(
+    getProgramEnrollments(id, firebaseToken).then(
       (result) => {
         if (result.success) {
           setEnrollments(result.data);
@@ -56,25 +73,7 @@ export function ProgramProfile({ id }: ProgramProfileProps) {
         console.log(error);
       },
     );
-    getAllStudents().then(
-      (result) => {
-        if (result.success) {
-          // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
-
-          setAllStudents(studentsObject);
-        } else {
-          console.log(result.error);
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  }, []);
+  }, [firebaseToken]);
 
   let headerClass = "bg-pia_primary_light_green  text-secondary_teal";
   let titleClass = "font-bold";

@@ -138,7 +138,13 @@ module.exports = {
           DEFAULT: "#F3F3F3",
         },
         pia_primary_white: {
-          DEFAULT: "#FFF",
+          DEFAULT: "#FFFFFF",
+        },
+        pia_secondary_green: {
+          DEFAULT: "#4FA197",
+        },
+        pia_orange: {
+          DEFAULT: "#FF7A5E",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",

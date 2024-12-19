@@ -1,11 +1,12 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { Enrollment, Program, getProgramEnrollments } from "../api/programs";
 import ProgramFormButton from "../components/ProgramFormButton";
 import { ProgramProfile } from "../components/ProgramProfile";
+import { UserContext } from "../contexts/user";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { cn } from "../lib/utils";
 
@@ -55,6 +56,8 @@ export function ProgramCard({
   archiveView = false,
 }: CardProps) {
   const { isTablet } = useWindowSize();
+  const [firebaseToken, setFirebaseToken] = useState<string>();
+  const { firebaseUser } = useContext(UserContext);
 
   const cardId = "card" + program._id;
   const editId = "edit" + program._id;
@@ -65,20 +68,35 @@ export function ProgramCard({
   const [enrollments, setEnrollments] = useState<[Enrollment]>();
 
   useEffect(() => {
-    getProgramEnrollments(program._id).then(
-      (result) => {
-        if (result.success) {
-          setEnrollments(result.data);
-          console.log("enrollments found");
-        } else {
-          console.log("error finding enrollments");
-        }
-      },
-      (error) => {
-        console.log(error);
-      },
-    );
-  }, []);
+    if (firebaseUser) {
+      firebaseUser
+        .getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [firebaseUser]);
+
+  useEffect(() => {
+    if (firebaseToken) {
+      getProgramEnrollments(program._id, firebaseToken).then(
+        (result) => {
+          if (result.success) {
+            setEnrollments(result.data);
+            console.log("enrollments found");
+          } else {
+            console.log("error finding enrollments");
+          }
+        },
+        (error) => {
+          console.log(error);
+        },
+      );
+    }
+  }, [firebaseToken]);
 
   const optionsButton = document.getElementById(optionsId);
   if (optionsButton !== null) {

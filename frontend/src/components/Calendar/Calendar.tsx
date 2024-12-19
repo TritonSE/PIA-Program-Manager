@@ -40,7 +40,7 @@ export default function Calendar({ studentId, programId }: CalendarProps) {
           if (calendarResponse.success) {
             setCalendar(calendarResponse.data);
           }
-          const studentResponse = await getStudent(studentId);
+          const studentResponse = await getStudent(studentId, token);
           if (studentResponse.success) {
             setStudent(studentResponse.data);
             setIsLoading(false);

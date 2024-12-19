@@ -1,4 +1,4 @@
-import { GET, PATCH, POST, handleAPIError } from "../api/requests";
+import { GET, PATCH, POST, createAuthHeader, handleAPIError } from "../api/requests";
 import { CreateProgramRequest } from "../components/ProgramForm/types";
 
 import type { APIResult } from "../api/requests";
@@ -13,15 +13,23 @@ export type Enrollment = {
   dateUpdated: Date;
   hoursLeft: number;
   schedule: string[];
-  sessionTime: string[];
+  sessionTime: {
+    start_time: string;
+    end_time: string;
+  };
+  required: true;
   startDate: Date;
   renewalDate: Date;
   authNumber: string;
 };
 
-export async function createProgram(program: CreateProgramRequest): Promise<APIResult<Program>> {
+export async function createProgram(
+  program: CreateProgramRequest,
+  firebaseToken: string,
+): Promise<APIResult<Program>> {
   try {
-    const response = await POST("/program/create", program);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await POST("/program/create", program, headers);
     const json = (await response.json()) as Program;
     console.log({ json });
     return { success: true, data: json };
@@ -30,9 +38,10 @@ export async function createProgram(program: CreateProgramRequest): Promise<APIR
   }
 }
 
-export async function getProgram(id: string): Promise<APIResult<Program>> {
+export async function getProgram(id: string, firebaseToken: string): Promise<APIResult<Program>> {
   try {
-    const response = await GET(`/program/${id}`);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET(`/program/${id}`, headers);
     const json = (await response.json()) as Program;
     return { success: true, data: json };
   } catch (error) {
@@ -40,9 +49,13 @@ export async function getProgram(id: string): Promise<APIResult<Program>> {
   }
 }
 
-export async function getProgramEnrollments(id: string): Promise<APIResult<[Enrollment]>> {
+export async function getProgramEnrollments(
+  id: string,
+  firebaseToken: string,
+): Promise<APIResult<[Enrollment]>> {
   try {
-    const response = await GET(`/program/enrollments/${id}`);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET(`/program/enrollments/${id}`, headers);
     const json = (await response.json()) as [Enrollment];
     return { success: true, data: json };
   } catch (error) {
@@ -50,9 +63,13 @@ export async function getProgramEnrollments(id: string): Promise<APIResult<[Enro
   }
 }
 
-export async function editProgram(program: Program): Promise<APIResult<Program>> {
+export async function editProgram(
+  program: Program,
+  firebaseToken: string,
+): Promise<APIResult<Program>> {
   try {
-    const response = await PATCH(`/program/${program._id}`, program);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await PATCH(`/program/${program._id}`, program, headers);
     const json = (await response.json()) as Program;
     console.log({ json });
     return { success: true, data: json };
@@ -61,9 +78,10 @@ export async function editProgram(program: Program): Promise<APIResult<Program>>
   }
 }
 
-export async function getAllPrograms(): Promise<APIResult<[Program]>> {
+export async function getAllPrograms(firebaseToken: string): Promise<APIResult<[Program]>> {
   try {
-    const response = await GET("/program/all");
+    const headers = createAuthHeader(firebaseToken);
+    const response = await GET("/program/all", headers);
     const json = (await response.json()) as [Program];
     return { success: true, data: json };
   } catch (error) {
@@ -71,9 +89,13 @@ export async function getAllPrograms(): Promise<APIResult<[Program]>> {
   }
 }
 
-export async function archiveProgram(program: Program): Promise<APIResult<Program>> {
+export async function archiveProgram(
+  program: Program,
+  firebaseToken: string,
+): Promise<APIResult<Program>> {
   try {
-    const response = await POST(`/program/archive/${program._id}`, undefined);
+    const headers = createAuthHeader(firebaseToken);
+    const response = await POST(`/program/archive/${program._id}`, undefined, headers);
     const json = (await response.json()) as Program;
     return { success: true, data: json };
   } catch (error) {

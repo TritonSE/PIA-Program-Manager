@@ -1,11 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import { Program, getAllPrograms } from "@/api/programs";
 import { AbsenceSession, Session, getAbsenceSessions, getRecentSessions } from "@/api/sessions";
 import { getAllStudents } from "@/api/students";
 import { AttendanceCard } from "@/components/AttendanceCard";
 import { AttendanceTable } from "@/components/AttendanceTable";
-import { ProgramMap, StudentMap } from "@/components/StudentsTable/types";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { ProgramMap } from "@/components/StudentsTable/types";
+import { StudentsContext } from "@/contexts/students";
+import { UserContext } from "@/contexts/user";
 import { useRedirectTo404IfNotAdmin, useRedirectToLoginIfNotSignedIn } from "@/hooks/redirect";
 
 export type Sessions = [Session];
@@ -17,17 +20,34 @@ export default function AttendanceDashboard() {
 
   const [allSessions, setAllSessions] = useState<Sessions>(); // map from program id to program
   const [allPrograms, setAllPrograms] = useState<ProgramMap>({}); // map from program id to program
-  const [allStudents, setAllStudents] = useState<StudentMap>({});
   const [allAbsenceSessions, setAllAbsenceSessions] = useState<AbsenceSessions>([]);
   const [sessionsLoading, setSessionsLoading] = useState(true);
   const [programsLoading, setProgramsLoading] = useState(true);
-  const [studentsLoading, setStudentsLoading] = useState(true);
+  // const [studentsLoading, setStudentsLoading] = useState(true);
   const [absencsSessionsLoading, setAbsenceSessionsLoading] = useState(true);
+
+  const { allStudents } = useContext(StudentsContext);
+  const studentsLoading = allStudents === undefined;
 
   const [remainingSessions, setRemainingSessions] = useState(0);
   const [remainingAbsenceSessions, setRemainingAbsenceSessions] = useState(0);
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [firebaseToken, setFirebaseToken] = useState("");
+  const { firebaseUser } = useContext(UserContext);
+
+  useEffect(() => {
+    if (firebaseUser) {
+      firebaseUser
+        .getIdToken()
+        .then((token) => {
+          setFirebaseToken(token);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [firebaseUser]);
 
   useEffect(() => {
     if (sessionsLoading || studentsLoading || programsLoading || absencsSessionsLoading) {
@@ -51,7 +71,7 @@ export default function AttendanceDashboard() {
   }, [sessionsLoading || studentsLoading || programsLoading || absencsSessionsLoading]);
 
   useEffect(() => {
-    getRecentSessions().then(
+    getRecentSessions(firebaseToken).then(
       (result) => {
         if (result.success) {
           console.log(result.data);
@@ -64,10 +84,10 @@ export default function AttendanceDashboard() {
         console.log(error);
       },
     );
-  }, []);
+  }, [firebaseToken]);
 
   useEffect(() => {
-    getAllPrograms().then(
+    getAllPrograms(firebaseToken).then(
       (result) => {
         if (result.success) {
           const programsObject = result.data.reduce(
@@ -85,30 +105,30 @@ export default function AttendanceDashboard() {
         console.log(error);
       },
     );
-  }, []);
+  }, [firebaseToken]);
 
   useEffect(() => {
-    getAllStudents().then(
+    getAllStudents(firebaseToken).then(
       (result) => {
         // console.log(result);
         if (result.success) {
           // Convert student array to object with keys as ids and values as corresponding student
-          const studentsObject = result.data.reduce((obj, student) => {
-            obj[student._id] = student;
-            return obj;
-          }, {} as StudentMap);
-          setAllStudents(studentsObject);
-          setStudentsLoading(false);
+          // const studentsObject = result.data.reduce((obj, student) => {
+          //   obj[student._id] = student;
+          //   return obj;
+          // }, {} as StudentMap);
+          // setAllStudents(studentsObject);
+          // setStudentsLoading(false);
         }
       },
       (error) => {
         console.log(error);
       },
     );
-  }, []);
+  }, [firebaseToken]);
 
   useEffect(() => {
-    getAbsenceSessions().then(
+    getAbsenceSessions(firebaseToken).then(
       (result) => {
         if (result.success) {
           console.log(result.data);
@@ -121,10 +141,10 @@ export default function AttendanceDashboard() {
         console.log(error);
       },
     );
-  }, []);
+  }, [firebaseToken]);
 
   if (sessionsLoading || studentsLoading || programsLoading || absencsSessionsLoading)
-    return <p>Loading...</p>;
+    return <LoadingSpinner />;
   else {
     return (
       <main>
@@ -147,6 +167,7 @@ export default function AttendanceDashboard() {
                   student={student}
                   key={i}
                   setRemainingSessions={setRemainingAbsenceSessions}
+                  firebaseToken={firebaseToken}
                 />
               );
             })}
@@ -183,6 +204,7 @@ export default function AttendanceDashboard() {
                 session={session}
                 students={allStudents}
                 key={i}
+                firebaseToken={firebaseToken}
               />
             );
           })}

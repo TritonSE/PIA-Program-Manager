@@ -5,6 +5,8 @@ import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../ui/dialog"
 
 type ModalConfirmationProps = {
   ref?: React.RefObject<HTMLDivElement>;
+  // Optional dialog styling
+  className?: string;
   icon: React.ReactNode;
   triggerElement: React.ReactNode;
   onCancelClick?: (e: React.MouseEvent) => void;
@@ -15,6 +17,8 @@ type ModalConfirmationProps = {
   confirmText: string;
   kind: "primary" | "destructive";
   nestedDialog?: React.ReactNode;
+  //Used for inner react content (between title and buttons)
+  innerContent?: React.ReactNode;
   //Used for nested dialog to close parent dialog
   isParentOpen?: boolean;
   setIsParentOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,6 +27,7 @@ type ModalConfirmationProps = {
 const ModalConfirmation = forwardRef<HTMLDivElement, ModalConfirmationProps>(
   (
     {
+      className,
       icon,
       triggerElement,
       onCancelClick = () => {},
@@ -33,6 +38,7 @@ const ModalConfirmation = forwardRef<HTMLDivElement, ModalConfirmationProps>(
       confirmText,
       kind,
       nestedDialog,
+      innerContent,
       isParentOpen,
       setIsParentOpen,
     },
@@ -43,12 +49,17 @@ const ModalConfirmation = forwardRef<HTMLDivElement, ModalConfirmationProps>(
         <DialogTrigger asChild>{triggerElement}</DialogTrigger>
         <DialogContent
           ref={ref}
-          className="max-h-[50%] max-w-[80%] rounded-[8px] md:max-w-[50%] lg:max-w-[25%]"
+          className={
+            className
+              ? className
+              : "max-h-[50%] max-w-[80%] rounded-[8px] md:max-w-[50%] lg:max-w-[25%]"
+          }
         >
           <div className="grid place-items-center p-3 min-[450px]:p-10">
             <div className="mb-8">{icon}</div>
             <h3 className="text-bold mb-2 text-lg font-bold">{title}</h3>
             {description ? <p className="text-center">{description}</p> : null}
+            {innerContent}
             <div className="grid justify-center gap-5 pt-6 min-[450px]:flex min-[450px]:w-[70%] min-[450px]:justify-between min-[450px]:[&>*]:basis-full">
               <DialogClose asChild>
                 <Button

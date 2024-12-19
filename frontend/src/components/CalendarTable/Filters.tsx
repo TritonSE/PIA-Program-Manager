@@ -61,41 +61,6 @@ export const fuzzyFilter: FilterFn<CalendarTableRow> = (row, columnId, value, ad
   return itemRank.passed;
 };
 
-// export default function Filter({
-//   globalFilter,
-//   setGlobalFilter,
-//   table,
-// }: {
-//   globalFilter: string;
-//   setGlobalFilter: React.Dispatch<React.SetStateAction<string>>;
-//   table: Table<CalendarTableRow>;
-// }) {
-//   return (
-//     <div className="flex items-center space-x-4 mb-4">
-//       {table.getHeaderGroups().map((headerGroup) => (
-//         <React.Fragment key={headerGroup.id}>
-//           <DebouncedInput
-//             icon={<SearchIcon width="20" height="20" />}
-//             value={globalFilter ?? ""}
-//             onChange={(val) => {
-//               setGlobalFilter(val);
-//             }}
-//             placeholder="Search in Students"
-//             className="h-full min-w-[300px] p-0 px-2 border border-gray-300 rounded-md bg-white"
-//           />
-//           {headerGroup.headers.map((header) => {
-//             if (!header.column.getCanFilter()) return null;
-//             if (header.column.id === "programs") {
-//               return <ProgramFilter key={header.id} setValue={header.column.setFilterValue} />;
-//             }
-//             return null;
-//           })}
-//         </React.Fragment>
-//       ))}
-//     </div>
-//   );
-// }
-
 export default function Filter({
   globalFilter,
   setGlobalFilter,
