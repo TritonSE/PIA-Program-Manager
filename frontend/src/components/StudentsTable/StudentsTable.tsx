@@ -12,6 +12,7 @@ import React, { useContext, useEffect, useMemo, useState } from "react";
 import { Button } from "../Button";
 import LoadingSpinner from "../LoadingSpinner";
 import StudentForm from "../StudentForm/StudentForm";
+import StudentProfile from "../StudentProfile";
 import { Table } from "../ui/table";
 
 import { fuzzyFilter, programFilterFn, statusFilterFn } from "./FilterFns";
@@ -20,15 +21,19 @@ import THead from "./THead";
 import { StudentTableRow } from "./types";
 import { useColumnSchema } from "./useColumnSchema";
 
+import { Student } from "@/api/students";
 import { ProgramsContext } from "@/contexts/program";
 import { StudentsContext } from "@/contexts/students";
 import { UserContext } from "@/contexts/user";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { cn } from "@/lib/utils";
 
+export type View = "View" | "Edit" | "List";
+
 export default function StudentsTable() {
-  const [currentView, setCurrentView] = useState<"View" | "Edit">("View");
+  const [currentView, setCurrentView] = useState<View>("List");
   const { allStudents, setAllStudents } = useContext(StudentsContext);
+  const [selectedStudent, setSelectedStudent] = useState<Student | undefined>(undefined);
   const [studentTable, setStudentTable] = useState<StudentTableRow[]>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -58,7 +63,13 @@ export default function StudentsTable() {
     setStudentTable(studentsInformation);
   }, [allStudents]);
 
-  const columns = useColumnSchema({ allStudents, allPrograms, setAllStudents });
+  const columns = useColumnSchema({
+    allStudents,
+    allPrograms,
+    setAllStudents,
+    setCurrentView,
+    setSelectedStudent,
+  });
   const data = useMemo(() => studentTable, [studentTable]);
   // const data = useMemo(() => [], [allStudents]);  // uncomment this line and comment the line above to see empty table state
 
@@ -87,7 +98,7 @@ export default function StudentsTable() {
 
   return (
     <div className="w-full space-y-5 overflow-x-auto">
-      {currentView === "Edit" ? (
+      {currentView === "Edit" && (
         <section className="mx-[30px] grid space-y-[60px]">
           <div className="flex justify-between">
             <svg
@@ -109,7 +120,13 @@ export default function StudentsTable() {
           </div>
           <StudentForm data={null} type="add" setCurrentView={setCurrentView} />
         </section>
-      ) : (
+      )}
+
+      {currentView === "View" && selectedStudent && (
+        <StudentProfile studentData={selectedStudent} setStudentData={setSelectedStudent} />
+      )}
+
+      {currentView === "List" && (
         <>
           <div className="flex w-full items-center justify-between">
             <h1

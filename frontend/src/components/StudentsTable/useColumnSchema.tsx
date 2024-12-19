@@ -1,14 +1,15 @@
 import { Poppins } from "next/font/google";
 import Image from "next/image";
-import Link from "next/link";
 import { useMemo } from "react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
 import { Contact, Enrollment, ProgramLink } from "../StudentForm/types";
 
+import { View } from "./StudentsTable";
 import { Columns, ProgramMap, StudentMap } from "./types";
 
 import { Program } from "@/api/programs";
+import { Student } from "@/api/students";
 import { useWindowSize } from "@/hooks/useWindowSize";
 import { formatPhoneNumber } from "@/lib/formatPhoneNumber";
 import { cn } from "@/lib/utils";
@@ -106,10 +107,14 @@ export function useColumnSchema({
   allStudents,
   allPrograms,
   setAllStudents,
+  setCurrentView,
+  setSelectedStudent,
 }: {
   allStudents: StudentMap | undefined;
   allPrograms: ProgramMap;
   setAllStudents: React.Dispatch<React.SetStateAction<StudentMap | undefined>>;
+  setCurrentView: React.Dispatch<React.SetStateAction<View>>;
+  setSelectedStudent: React.Dispatch<React.SetStateAction<Student | undefined>>;
 }) {
   const { isTablet } = useWindowSize();
 
@@ -183,7 +188,13 @@ export function useColumnSchema({
       cell: (info) => {
         return (
           <div className="flex justify-end pr-10">
-            <Link href={`/student/${allStudents?.[info.getValue() as string]._id}`}>
+            <button
+              onClick={() => {
+                if (!allStudents) return;
+                setSelectedStudent(allStudents[info.getValue() as string]);
+                setCurrentView("View");
+              }}
+            >
               <Image
                 src="/eye.svg"
                 alt="view student"
@@ -191,7 +202,7 @@ export function useColumnSchema({
                 height={40}
                 className="cursor-pointer"
               />
-            </Link>
+            </button>
           </div>
         );
       },

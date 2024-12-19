@@ -1,6 +1,5 @@
 import { ObjectId } from "bson";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { Dispatch, SetStateAction, createContext, useContext, useEffect, useState } from "react";
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 
@@ -8,6 +7,7 @@ import { Student, createStudent, editStudent } from "../../api/students";
 import { cn } from "../../lib/utils";
 import { Button } from "../Button";
 import SaveCancelButtons from "../Modals/SaveCancelButtons";
+import { View } from "../StudentsTable/StudentsTable";
 import { StudentMap } from "../StudentsTable/types";
 
 import ContactInfo from "./ContactInfo";
@@ -23,7 +23,7 @@ import { UserContext } from "@/contexts/user";
 
 type BaseProps = {
   classname?: string;
-  setCurrentView: Dispatch<SetStateAction<"View" | "Edit">>;
+  setCurrentView: Dispatch<SetStateAction<View>>;
   // Used to update single student data if editing on StudentProfile page
   setStudentData?: Dispatch<SetStateAction<Student | undefined>>;
 };
@@ -50,7 +50,6 @@ export default function StudentForm({
   setStudentData,
 }: StudentFormProps) {
   const [openSaveDialog, setOpenSaveDialog] = useState(false);
-  const router = useRouter();
   const methods = useForm<StudentFormData>();
   const { handleSubmit } = methods;
   const { setAllStudents } = useContext(StudentsContext);
@@ -306,7 +305,7 @@ export default function StudentForm({
                 automaticClose={1500} //1.5 seconds
                 setOpen={setOpenSaveDialog}
                 onLeave={() => {
-                  router.push("/home");
+                  setCurrentView("List");
                 }}
               >
                 {/* Save Dialog Content */}

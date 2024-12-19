@@ -1,13 +1,21 @@
 import { deleteObject, listAll, ref } from "firebase/storage";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Fragment, MouseEventHandler, useContext, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  Fragment,
+  MouseEventHandler,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import { useReactToPrint } from "react-to-print";
 
 import { Enrollment } from "../api/programs";
-import { Student, deleteStudent, getStudent } from "../api/students";
+import { Student, deleteStudent } from "../api/students";
 import { ProgramsContext } from "../contexts/program";
 import { UserContext } from "../contexts/user";
 
@@ -17,6 +25,7 @@ import StudentForm from "./StudentForm/StudentForm";
 import { TruncateDocument } from "./StudentForm/TruncateDocument";
 import { Contact } from "./StudentForm/types";
 import StudentProfilePrintComponent from "./StudentProfilePrintComponent";
+import { View } from "./StudentsTable/StudentsTable";
 import { Textfield } from "./Textfield";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
@@ -41,7 +50,10 @@ export type EnrollmentDisplayInfo = {
 };
 
 type StudentProfileProps = {
-  id: string;
+  studentData: Student;
+  setStudentData: React.Dispatch<React.SetStateAction<Student | undefined>>;
+  currentView: View;
+  setCurrentView: Dispatch<SetStateAction<View>>;
 };
 
 type ContactLayoutProps = {
@@ -59,16 +71,20 @@ function formatDate(d: Date) {
   return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear();
 }
 
-function ArrowHome() {
+function ArrowHome({ setCurrentView }: { setCurrentView: Dispatch<SetStateAction<View>> }) {
   return (
-    <Link href="/home">
+    <button
+      onClick={() => {
+        setCurrentView("List");
+      }}
+    >
       <svg width="25" height="20" viewBox="0 0 10 8" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           d="M1.10752 3.63111C0.878224 3.86041 0.878224 4.23216 1.10752 4.46146L4.04322 7.39716C4.27252 7.62646 4.64427 7.62646 4.87357 7.39716C5.10286 7.16787 5.10286 6.79611 4.87357 6.56682L2.94017 4.63343L8.56838 4.63343C8.89265 4.63343 9.15553 4.37055 9.15553 4.04629C9.15553 3.72202 8.89265 3.45914 8.56838 3.45914L2.94017 3.45914L4.87357 1.52575C5.10286 1.29646 5.10286 0.9247 4.87357 0.695407C4.64427 0.466114 4.27252 0.466114 4.04322 0.695407L1.10752 3.63111Z"
           fill="black"
         />
       </svg>
-    </Link>
+    </button>
   );
 }
 
@@ -159,12 +175,14 @@ function ProgramLayout({ enrollmentInfo }: ProgramLayoutProps) {
   );
 }
 
-export default function StudentProfile({ id }: StudentProfileProps) {
-  const [currentView, setCurrentView] = useState<"View" | "Edit">("View");
+export default function StudentProfile({
+  studentData,
+  setStudentData,
+  currentView,
+  setCurrentView,
+}: StudentProfileProps) {
   const { firebaseUser } = useContext(UserContext);
   const [firebaseToken, setFirebaseToken] = useState<string>();
-  const [notFound, setNotFound] = useState<boolean>(false);
-  const [studentData, setStudentData] = useState<Student>();
   const [enrollmentInfo, setEnrollmentInfo] = useState<EnrollmentDisplayInfo[]>();
   const [image, setImage] = useState<string>("");
   const { allPrograms } = useContext(ProgramsContext);
@@ -218,23 +236,6 @@ export default function StudentProfile({ id }: StudentProfileProps) {
     } else alert("Please enter the student's last name (case-sensitive)");
   };
 
-  useEffect(() => {
-    if (firebaseToken) {
-      getStudent(id, firebaseToken)
-        .then((result) => {
-          if (result.success) {
-            const studentResult = result.data;
-            setStudentData(studentResult);
-          } else {
-            setNotFound(true);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [firebaseToken]);
-
   // Get student image
   useEffect(() => {
     if (!studentData || !firebaseToken) return;
@@ -255,7 +256,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
         console.error(error);
       },
     );
-  }, [studentData]);
+  }, [studentData, firebaseToken]);
 
   useEffect(() => {
     if (studentData) {
@@ -283,20 +284,12 @@ export default function StudentProfile({ id }: StudentProfileProps) {
     }
   }, [firebaseUser]);
 
-  if (notFound) {
-    return (
-      <main className="mx-[30px] space-y-[60px]">
-        <ArrowHome />
-        <div className="font-[alternate-gothic] text-4xl text-[96px]">Student Not Found</div>
-      </main>
-    );
-  }
   return (
     studentData &&
     enrollmentInfo && (
       <main className="mx-[30px] space-y-[60px]">
         <div id="top" className="flex justify-between">
-          <ArrowHome />
+          <ArrowHome setCurrentView={setCurrentView} />
           {/*no need to set all students*/}
           <button
             className="flex cursor-pointer space-x-[5px]"
@@ -383,18 +376,22 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                 </div>
               </div>
               {/*profile picture*/}
-              {image !== "" ? (
+              {image ? (
                 <div>
                   <Image
-                    alt="Profile Picture"
-                    src={image !== "default" ? image : "/defaultProfilePic.svg"}
-                    width={190}
-                    height={190}
                     className="aspect-square rounded-full object-cover"
+                    src={image !== "default" ? image : "/defaultProfilePic.svg"}
+                    alt="Profile Picture"
+                    height="190"
+                    width="190"
                   />
                 </div>
               ) : (
-                <LoadingSpinner classname="h-auto w-auto" label="Loading Image..." />
+                <LoadingSpinner
+                  classname="h-auto w-auto flex"
+                  label="Loading Image..."
+                  spinnerSize={50}
+                />
               )}
             </div>
             <div id="row1" className="flex space-x-[230px]">
