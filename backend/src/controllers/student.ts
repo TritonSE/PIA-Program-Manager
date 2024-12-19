@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /**
- * Functions that process task route requests.
+ * Functions that process student route requests.
  */
 
 import { RequestHandler } from "express";
@@ -9,6 +9,7 @@ import mongoose, { HydratedDocument } from "mongoose";
 
 import EnrollmentModel from "../models/enrollment";
 import { Image } from "../models/image";
+import ProgramModel from "../models/program";
 import ProgressNoteModel from "../models/progressNote";
 import StudentModel from "../models/student";
 import { Enrollment } from "../types/enrollment";
@@ -81,6 +82,10 @@ export const editStudent: RequestHandler = async (req, res, next) => {
       enrollments.map(async (enrollment: Enrollment) => {
         const enrollmentExists = await EnrollmentModel.findById(enrollment._id);
         const enrollmentBody = { ...enrollment, studentId: new mongoose.Types.ObjectId(studentId) };
+        const program = await ProgramModel.findById({ _id: enrollment.programId });
+        if (program?.type === "regular") {
+          enrollmentBody.schedule = program.daysOfWeek;
+        }
         if (!enrollmentExists) {
           return await createEnrollment(enrollmentBody);
         } else {

@@ -1,6 +1,4 @@
-import { GET, PATCH, POST, handleAPIError } from "../api/requests";
-
-import { createAuthHeader } from "./progressNotes";
+import { GET, PATCH, POST, createAuthHeader, handleAPIError } from "../api/requests";
 
 import type { APIResult } from "../api/requests";
 

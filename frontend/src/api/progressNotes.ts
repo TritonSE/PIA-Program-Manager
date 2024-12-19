@@ -1,9 +1,13 @@
-import { APIResult, DELETE, GET, POST, PUT, handleAPIError } from "@/api/requests";
+import {
+  APIResult,
+  DELETE,
+  GET,
+  POST,
+  PUT,
+  createAuthHeader,
+  handleAPIError,
+} from "@/api/requests";
 import { ProgressNote } from "@/components/ProgressNotes/types";
-
-export const createAuthHeader = (firebaseToken: string) => ({
-  Authorization: `Bearer ${firebaseToken}`,
-});
 
 export async function createProgressNote(
   studentId: string,

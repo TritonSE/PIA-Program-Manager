@@ -1,7 +1,5 @@
-import { DELETE, GET, POST, PUT, handleAPIError } from "../api/requests";
+import { DELETE, GET, POST, PUT, createAuthHeader, handleAPIError } from "../api/requests";
 import { StudentData as CreateStudentRequest } from "../components/StudentForm/types";
-
-import { createAuthHeader } from "./progressNotes";
 
 import type { APIResult } from "../api/requests";
 

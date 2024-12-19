@@ -192,3 +192,7 @@ export function handleAPIError(error: unknown): APIError {
   }
   return { success: false, error: `Unknown error; ${String(error)}` };
 }
+
+export const createAuthHeader = (firebaseToken: string) => ({
+  Authorization: `Bearer ${firebaseToken}`,
+});

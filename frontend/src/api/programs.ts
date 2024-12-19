@@ -1,7 +1,5 @@
-import { GET, PATCH, POST, handleAPIError } from "../api/requests";
+import { GET, PATCH, POST, createAuthHeader, handleAPIError } from "../api/requests";
 import { CreateProgramRequest } from "../components/ProgramForm/types";
-
-import { createAuthHeader } from "./progressNotes";
 
 import type { APIResult } from "../api/requests";
 

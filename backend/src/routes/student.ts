@@ -1,5 +1,5 @@
 /**
- * Task route requests.
+ * Student route requests.
  */
 
 import express from "express";
