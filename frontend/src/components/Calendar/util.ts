@@ -23,7 +23,12 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
     let hours = 0;
     if (calendar) {
       for (const c of calendar.calendar) {
-        if (c.date === date) {
+        const calendarDate = new Date(c.date);
+        if (
+          calendarDate.getMonth() === date.getMonth() &&
+          calendarDate.getDate() === date.getDate() &&
+          calendarDate.getFullYear() === date.getFullYear()
+        ) {
           hours = c.hours;
         }
       }
@@ -37,7 +42,12 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
     let hours = 0;
     if (calendar) {
       for (const c of calendar.calendar) {
-        if (c.date === date) {
+        const calendarDate = new Date(c.date);
+        if (
+          calendarDate.getMonth() === date.getMonth() &&
+          calendarDate.getDate() === date.getDate() &&
+          calendarDate.getFullYear() === date.getFullYear()
+        ) {
           hours = c.hours;
         }
       }
@@ -53,7 +63,12 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
     let hours = 0;
     if (calendar) {
       for (const c of calendar.calendar) {
-        if (c.date === date) {
+        const calendarDate = new Date(c.date);
+        if (
+          calendarDate.getMonth() === date.getMonth() &&
+          calendarDate.getDate() === date.getDate() &&
+          calendarDate.getFullYear() === date.getFullYear()
+        ) {
           hours = c.hours;
         }
       }

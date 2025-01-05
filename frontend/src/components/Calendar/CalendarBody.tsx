@@ -24,7 +24,7 @@ export const CalendarBody: React.FC<CalendarBodyProps> = ({ calendar }: Calendar
 
   useEffect(() => {
     changeCalendarHeader(Months[month] + " " + year);
-    changeDates(generateDates(month, year));
+    changeDates(generateDates(month, year, calendar));
   }, [month, year]);
 
   const decrementMonth = () => {

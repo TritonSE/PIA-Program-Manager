@@ -42,7 +42,6 @@ import { Calendar } from "./types/calendarTypes";
  */
 export const getCalendar: RequestHandler = async (req, res, next) => {
   try {
-    console.log(getCalendar);
     const studentId = req.params.studentId;
     const programId = req.params.programId;
 
