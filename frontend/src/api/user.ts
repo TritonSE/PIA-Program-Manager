@@ -30,7 +30,6 @@ export const verifyUser = async (firebaseToken: string): Promise<APIResult<User>
 export async function getNotApprovedUsers(firebaseToken: string): Promise<APIResult<User[]>> {
   try {
     const headers = createAuthHeader(firebaseToken);
-    console.log(headers);
     const response = await GET("/user/not-approved", headers);
     const json = (await response.json()) as User[];
     return { success: true, data: json };

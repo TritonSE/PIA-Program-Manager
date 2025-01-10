@@ -266,6 +266,18 @@ export const updateSession: RequestHandler = async (req, res, next) => {
       return res.status(404).json({ message: "No object in database with provided ID" });
     }
 
+    programData.students.forEach(async (student: StudentInfo) => {
+      const enrollment = await EnrollmentModel.findOne({
+        studentId: student.studentId,
+        programId: programData.programId,
+      });
+      if (enrollment) {
+        const hours = enrollment.hoursLeft - student.hoursAttended;
+        enrollment.hoursLeft = hours > 0 ? hours : 0;
+        await enrollment.save();
+      }
+    });
+
     const absentStudents = programData.students.filter((student: StudentInfo) => !student.attended);
 
     const absenceSessions = absentStudents.map((absentStudent) => ({

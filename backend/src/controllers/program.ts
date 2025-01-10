@@ -68,6 +68,12 @@ export const updateProgram: RequestHandler = async (req, res, next) => {
       { $set: { status: "Waitlisted", dateUpdated: Date.now() } },
     );
 
+    // update days of week when changed
+    await EnrollmentModel.updateMany(
+      { programId: { $eq: programId }, status: { $eq: "Joined" } },
+      { $set: { schedule: programData.daysOfWeek } },
+    );
+
     res.status(200).json(editedProgram);
   } catch (error) {
     next(error);
