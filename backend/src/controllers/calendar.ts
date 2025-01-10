@@ -8,7 +8,7 @@ import createHttpError from "http-errors";
 import EnrollmentModel from "../models/enrollment";
 import SessionModel from "../models/session";
 
-import { Calendar } from "./types/calendarTypes";
+import { Calendar, CalendarSlot } from "./types/calendarTypes";
 
 /**
  * Calendar Body: {
@@ -23,16 +23,6 @@ import { Calendar } from "./types/calendarTypes";
  *
  * }
  */
-
-/**
- * Request handler for getting all possible calendars
- * @param req
- * @param res
- * @param next
- */
-// export const getCalendars: RequestHandler = async (req, res, next) => {
-
-// }
 
 /**
  * Request handler for getting calendar for student in program
@@ -70,6 +60,56 @@ export const getCalendar: RequestHandler = async (req, res, next) => {
     console.log(calendar);
 
     return res.status(200).send(calendar);
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Handler for editing a day in a calendar
+ * @param req
+ * @param res
+ * @param next
+ */
+export const editCalendar: RequestHandler = async (req, res, next) => {
+  try {
+    const studentId = req.params.studentId;
+    const programId = req.params.programId;
+
+    const enrollment = await EnrollmentModel.findOne({ studentId, programId });
+    if (!enrollment) {
+      throw createHttpError(404, "Enrollment not found");
+    }
+
+    const { hours, session } = req.body as CalendarSlot;
+
+    const sessionObject = await SessionModel.findById(session);
+
+    if (!sessionObject) {
+      throw createHttpError(404, "Session not found");
+    }
+
+    if (sessionObject.programId.toString() !== programId) {
+      throw createHttpError(404, "Incorrect program for session");
+    }
+
+    const student = sessionObject.students.find((s) => s.studentId.toString() === studentId);
+
+    if (!student) {
+      throw createHttpError(404, "Student not in session");
+    }
+
+    const prevHoursAttended = student.hoursAttended;
+    let hoursLeft = enrollment.hoursLeft + prevHoursAttended;
+
+    student.hoursAttended = hours;
+    hoursLeft -= student.hoursAttended;
+    enrollment.hoursLeft = hoursLeft > 0 ? hoursLeft : 0;
+
+    await sessionObject.save();
+    await enrollment.save();
+
+    res.status(200).send("Updated");
   } catch (error) {
     next(error);
   }

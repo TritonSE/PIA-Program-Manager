@@ -3,6 +3,7 @@ export type Day = {
   year: number;
   day: number;
   hours: number;
+  session: string;
 };
 
 export const Months: string[] = [

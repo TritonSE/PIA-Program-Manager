@@ -11,10 +11,14 @@ const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] }
 
 export type CalendarBodyProps = {
   calendar?: CalendarResponse;
+  updateCalendarFunc: (newHours: number, session: string) => Promise<void>;
 };
 
 //
-export const CalendarBody: React.FC<CalendarBodyProps> = ({ calendar }: CalendarBodyProps) => {
+export const CalendarBody: React.FC<CalendarBodyProps> = ({
+  calendar,
+  updateCalendarFunc,
+}: CalendarBodyProps) => {
   const today = new Date();
 
   const [month, changeMonth] = useState<number>(today.getMonth());
@@ -86,7 +90,13 @@ export const CalendarBody: React.FC<CalendarBodyProps> = ({ calendar }: Calendar
       </div>
       <div className="grid grid-cols-7  bg-white">
         {dates.slice(0, dates.length).map((date, i) => (
-          <Datebox key={i} day={date.day} hours={date.hours} />
+          <Datebox
+            key={i}
+            updateCalendarFunc={updateCalendarFunc}
+            session={date.session}
+            day={date.day}
+            hours={date.hours}
+          />
         ))}
       </div>
     </div>

@@ -20,7 +20,8 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
 
   for (let i = 0; i < startDay; i++) {
     const date = new Date(year, month, i - startDay + 1);
-    let hours = 0;
+    let hours = -1;
+    let session = "";
     if (calendar) {
       for (const c of calendar.calendar) {
         const calendarDate = new Date(c.date);
@@ -30,16 +31,24 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
           calendarDate.getFullYear() === date.getFullYear()
         ) {
           hours = c.hours;
+          session = c.session;
         }
       }
     }
-    days.push({ month: date.getMonth(), year: date.getFullYear(), day: date.getDate(), hours });
+    days.push({
+      month: date.getMonth(),
+      year: date.getFullYear(),
+      day: date.getDate(),
+      hours,
+      session,
+    });
   }
 
   // get current month days
   for (let day = 1; day <= last.getDate(); day++) {
     const date = new Date(year, month, day);
-    let hours = 0;
+    let hours = -1;
+    let session = "";
     if (calendar) {
       for (const c of calendar.calendar) {
         const calendarDate = new Date(c.date);
@@ -49,10 +58,17 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
           calendarDate.getFullYear() === date.getFullYear()
         ) {
           hours = c.hours;
+          session = c.session;
         }
       }
     }
-    days.push({ month: date.getMonth(), year: date.getFullYear(), day: date.getDate(), hours });
+    days.push({
+      month: date.getMonth(),
+      year: date.getFullYear(),
+      day: date.getDate(),
+      hours,
+      session,
+    });
   }
 
   // get days after end of month
@@ -60,7 +76,8 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
   const endDate = last.getDate();
   for (let i = endDay + 1; i <= 6; i++) {
     const date = new Date(year, month, i - endDay + endDate);
-    let hours = 0;
+    let hours = -1;
+    let session = "";
     if (calendar) {
       for (const c of calendar.calendar) {
         const calendarDate = new Date(c.date);
@@ -70,10 +87,17 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
           calendarDate.getFullYear() === date.getFullYear()
         ) {
           hours = c.hours;
+          session = c.session;
         }
       }
     }
-    days.push({ month: date.getMonth(), year: date.getFullYear(), day: date.getDate(), hours });
+    days.push({
+      month: date.getMonth(),
+      year: date.getFullYear(),
+      day: date.getDate(),
+      hours,
+      session,
+    });
   }
 
   return days;

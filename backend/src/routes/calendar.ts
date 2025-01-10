@@ -5,11 +5,16 @@ import express from "express";
 
 import * as CalendarController from "../controllers/calendar";
 import { verifyAuthToken } from "../validators/auth";
+import * as CalendarValidator from "../validators/calendar";
 
 const router = express.Router();
 
-router.get("/all", [verifyAuthToken]);
 router.get("/:studentId/:programId", [verifyAuthToken], CalendarController.getCalendar);
-router.put("/:studentId/:programId", [verifyAuthToken]);
+router.patch(
+  "/:studentId/:programId",
+  [verifyAuthToken],
+  CalendarValidator.editCalendar,
+  CalendarController.editCalendar,
+);
 
 export default router;

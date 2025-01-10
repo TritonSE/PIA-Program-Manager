@@ -3,7 +3,7 @@ import { useContext, useEffect, useMemo, useState } from "react";
 
 import Back from "../../../public/icons/back.svg";
 
-import { CalendarResponse, getCalendar } from "@/api/calendar";
+import { CalendarResponse, editCalendar, getCalendar } from "@/api/calendar";
 import { Student, getStudent } from "@/api/students";
 import { CalendarBody } from "@/components/Calendar/CalendarBody";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -25,6 +25,7 @@ export default function Calendar({ studentId, programId }: CalendarProps) {
   //   const [currProgram, setProgram ] = useState<Program>();
   const [calendar, setCalendar] = useState<CalendarResponse>();
   const [isLoading, setIsLoading] = useState(true);
+  const [firebaseToken, setFirebaseToken] = useState("");
 
   const { windowSize } = useWindowSize();
   const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);
@@ -45,12 +46,17 @@ export default function Calendar({ studentId, programId }: CalendarProps) {
             setStudent(studentResponse.data);
             setIsLoading(false);
           }
+          setFirebaseToken(token);
         })
         .catch((error) => {
           console.error(error);
         });
     }
   }, [firebaseUser]);
+
+  const updateCalendar = async (newHours: number, session: string) => {
+    await editCalendar(studentId, programId, firebaseToken, newHours, session);
+  };
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar flex flex-col";
   let headerClass = "mb-5 font-[alternate-gothic] text-2xl lg:text-4xl ";
@@ -91,10 +97,10 @@ export default function Calendar({ studentId, programId }: CalendarProps) {
             </div>
             <h1 className={titleClass}>
               {currStudent?.student.firstName + " " + currStudent?.student.lastName} - UCI #
-              123456789
+              {currStudent?.UCINumber}
             </h1>
           </div>
-          <CalendarBody calendar={calendar} />
+          <CalendarBody calendar={calendar} updateCalendarFunc={updateCalendar} />
         </main>
       )}
     </div>
