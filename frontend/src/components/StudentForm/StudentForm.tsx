@@ -66,6 +66,7 @@ export default function StudentForm({
   const [currentFiles, setCurrentFiles] = useState<File[]>([]);
   const [studentDocuments, setStudentDocuments] = useState<Document[]>(data?.documents ?? []);
   const [didDeleteOrMark, setDidDeleteOrMark] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const documentData = {
     currentFiles,
@@ -109,6 +110,15 @@ export default function StudentForm({
         });
     }
   }, [firebaseUser]);
+
+  useEffect(() => {
+    if (success) {
+      setOpenSaveDialog(true);
+      setTimeout(() => {
+        setCurrentView("View");
+      }, 1500);
+    }
+  }, [success]);
 
   const onFormSubmit: SubmitHandler<StudentFormData> = async (formData: StudentFormData) => {
     const programAbbreviationToId = {} as Record<string, string>; // abbreviation -> programId
@@ -214,9 +224,11 @@ export default function StudentForm({
             setAllStudents((prevStudents: StudentMap | undefined) => {
               return { ...prevStudents, [newStudent._id]: { ...newStudent } };
             });
+            setSuccess(true);
           } else {
             console.log(result.error);
             alert("Unable to create student: " + result.error);
+            setSuccess(false);
           }
         },
         (error) => {
@@ -243,9 +255,11 @@ export default function StudentForm({
                 return prevStudents;
               }
             });
+            setSuccess(true);
           } else {
             console.log(result.error);
             alert("Unable to edit student: " + result.error);
+            setSuccess(false);
           }
         },
         (error) => {
@@ -253,10 +267,6 @@ export default function StudentForm({
         },
       );
     }
-
-    setTimeout(() => {
-      setCurrentView("View");
-    }, 1500);
   };
 
   return (
@@ -305,21 +315,30 @@ export default function StudentForm({
                 setOpen={setOpenSaveDialog}
                 onLeave={() => {
                   router.push("/home");
+                  setCurrentView("View");
                 }}
               >
                 {/* Save Dialog Content */}
-                <div className="grid w-[400px] place-items-center gap-5 min-[450px]:px-12 min-[450px]:pb-12 min-[450px]:pt-10">
-                  <button
-                    className="ml-auto"
-                    onClick={() => {
-                      setOpenSaveDialog(false);
-                    }}
-                  >
-                    <Image src="/icons/close.svg" alt="close" width={13} height={13} />
-                  </button>
-                  <Image src="/icons/green_check_mark.svg" alt="checkmark" width={54} height={54} />
-                  <h3 className="text-lg font-bold">Student has been saved!</h3>
-                </div>
+
+                {success && (
+                  <div className="grid w-[400px] place-items-center gap-5 min-[450px]:px-12 min-[450px]:pb-12 min-[450px]:pt-10">
+                    <button
+                      className="ml-auto"
+                      onClick={() => {
+                        setOpenSaveDialog(false);
+                      }}
+                    >
+                      <Image src="/icons/close.svg" alt="close" width={13} height={13} />
+                    </button>
+                    <Image
+                      src="/icons/green_check_mark.svg"
+                      alt="checkmark"
+                      width={54}
+                      height={54}
+                    />
+                    <h3 className="text-lg font-bold">Student has been saved!</h3>
+                  </div>
+                )}
               </SaveCancelButtons>
             ) : (
               <Button label="Exit" kind="secondary" onClick={() => {}} />

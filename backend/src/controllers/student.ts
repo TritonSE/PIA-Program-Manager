@@ -127,6 +127,9 @@ export const getAllStudents: RequestHandler = async (req, res, next) => {
     // Ensure that documents that are marked admin are not returned to non-admin users
     if (accountType !== "admin") {
       students.forEach((student) => {
+        if (!student.documents) {
+          return;
+        }
         student.documents = student.documents.filter(
           (doc) => !doc.markedAdmin,
         ) as typeof student.documents;
@@ -155,7 +158,7 @@ export const getStudent: RequestHandler = async (req, res, next) => {
     }
 
     // Ensure that documents that are marked admin are not returned to non-admin users
-    if (accountType !== "admin") {
+    if (studentData.documents && accountType !== "admin") {
       studentData.documents = studentData.documents.filter(
         (doc) => !doc.markedAdmin,
       ) as typeof studentData.documents;

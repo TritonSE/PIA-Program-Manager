@@ -389,7 +389,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                         />
                       </defs>
                     </svg>
-                    <div className="">{`UCI # ${studentData.UCINumber?.slice(3)}`}</div>
+                    <div className="">{`UCI # ${studentData.UCINumber}`}</div>
                   </div>
                 </div>
               </div>
@@ -430,16 +430,16 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                 <div className="font-[Poppins-Bold] text-[28px]">Student Background:</div>
                 <div className="font-[Poppins] text-[24px]">Address: {studentData.location}</div>
                 <div className="font-[Poppins] text-[24px]">
-                  Birthdate: {formatDate(studentData.birthday)}
+                  Birthdate: {studentData.birthday ? formatDate(studentData.birthday) : "N/A"}
                 </div>
               </div>
               <div id="student information" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Student Information:</div>
                 <div className="font-[Poppins] text-[24px]">
-                  Intake Date: {formatDate(studentData.intakeDate)}
+                  Intake Date: {studentData.intakeDate ? formatDate(studentData.intakeDate) : "N/A"}
                 </div>
                 <div className="font-[Poppins] text-[24px]">
-                  Tour Date: {formatDate(studentData.tourDate)}
+                  Tour Date: {studentData.tourDate ? formatDate(studentData.tourDate) : "N/A"}
                 </div>
               </div>
             </div>
