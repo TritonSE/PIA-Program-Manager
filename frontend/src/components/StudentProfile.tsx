@@ -281,6 +281,21 @@ export default function StudentProfile({ id }: StudentProfileProps) {
     }
   }, [firebaseUser]);
 
+  const getAbsoluteUrl = (url: string) => {
+    if (!url) return url;
+    // Check if the URL is already absolute
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+
+    if (url.startsWith("www.")) {
+      // Prepend the protocol if the URL is missing it
+      return `https://${url.slice(4)}`;
+    }
+    // Prepend the base URL if the URL is relative
+    return `${window.location.origin}${url}`;
+  };
+
   if (notFound) {
     return (
       <main className="mx-[30px] space-y-[60px]">
@@ -483,6 +498,19 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                 </div>
               </div>
             </div>
+            {studentData.incidentForm && (
+              <div>
+                <div className="font-[Poppins-Bold] text-[28px]">Incident Form</div>
+                <button
+                  onClick={() => {
+                    window.open(getAbsoluteUrl(studentData.incidentForm), "_blank");
+                  }}
+                  className="h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_light_gray"
+                >
+                  Link
+                </button>
+              </div>
+            )}
             <div id="row4" className="flex space-x-[230px]">
               <div id="regular" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Regular Programs:</div>
