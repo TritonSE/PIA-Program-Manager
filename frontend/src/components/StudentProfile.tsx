@@ -484,18 +484,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
               </div>
               <div id="medications" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Medication & Medical</div>
-                <div className="font-[Poppins] text-[24px]">Dietary Restrictions:</div>
-                <div className="font-[Poppins] text-[24px]">
-                  {studentData.dietary?.map((value) => (
-                    <div key={value}>
-                      {value}
-                      <br />
-                    </div>
-                  ))}
-                </div>
-                <div className="font-[Poppins] text-[24px]">
-                  Medication: {studentData.medication}
-                </div>
+                <div className="font-[Poppins] text-[24px]">{studentData.medication}</div>
               </div>
             </div>
             {studentData.incidentForm && (

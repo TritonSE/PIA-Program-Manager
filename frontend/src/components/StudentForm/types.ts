@@ -34,7 +34,6 @@ export type StudentData = {
   documents: Document[];
   profilePicture: string;
   enrollments: Enrollment[];
-  dietary?: string[];
 };
 
 export type StudentFormData = {
