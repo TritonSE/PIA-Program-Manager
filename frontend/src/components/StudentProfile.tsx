@@ -121,36 +121,34 @@ function ProgramLayout({ enrollmentInfo }: ProgramLayoutProps) {
             enrollmentInfo.sessionTime.end_time}
         </div>
       )}
-      {regular && (
-        <>
-          <div className="font-[Poppins] text-[24px]">Days of the Week</div>
-          <div className="flex space-x-[15px]">
-            {["M", "T", "W", "Th", "F", "Sa", "Su"].map((value) => {
-              if (
-                enrollmentInfo.schedule.find((day) => {
-                  return day === value;
-                })
-              )
-                return (
-                  <div
-                    key={value}
-                    className="relative flex items-center justify-center rounded-full border border-pia_border bg-pia_secondary_green p-[20px] text-center text-pia_primary_white"
-                  >
-                    <div className="absolute">{value}</div>
-                  </div>
-                );
+      <>
+        <div className="font-[Poppins] text-[24px]">Days of the Week</div>
+        <div className="flex space-x-[15px]">
+          {["M", "T", "W", "Th", "F", "Sa", "Su"].map((value) => {
+            if (
+              enrollmentInfo.schedule.find((day) => {
+                return day === value;
+              })
+            )
               return (
                 <div
                   key={value}
-                  className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center"
+                  className="relative flex items-center justify-center rounded-full border border-pia_border bg-pia_secondary_green p-[20px] text-center text-pia_primary_white"
                 >
                   <div className="absolute">{value}</div>
                 </div>
               );
-            })}
-          </div>
-        </>
-      )}
+            return (
+              <div
+                key={value}
+                className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center"
+              >
+                <div className="absolute">{value}</div>
+              </div>
+            );
+          })}
+        </div>
+      </>
     </>
   );
 }
