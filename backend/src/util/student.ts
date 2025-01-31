@@ -10,11 +10,11 @@ export const programValidatorUtil = async (enrollments: Enrollment[]) => {
     "status",
     "hoursLeft",
     "schedule",
-    "sessionTime",
     "startDate",
     "renewalDate",
     "authNumber",
   ];
+
   enrollments.forEach((enrollment: Enrollment) => {
     requiredFields.forEach((field) => {
       if (!enrollment[field as keyof Enrollment])

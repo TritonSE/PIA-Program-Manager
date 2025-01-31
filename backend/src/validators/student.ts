@@ -9,6 +9,10 @@ import { programValidatorUtil } from "../util/student";
 
 //designed these to use the globstar operator from express-validator to more cleanly
 
+const isValidDateTimeString = (value: string) => {
+  return !isNaN(Date.parse(value));
+};
+
 const makeIdValidator = () =>
   body("**._id")
     .exists()
@@ -63,76 +67,59 @@ const makePhoneNumbersValidator = () =>
 
 //validate location
 const makeLocationValidator = () =>
-  body("location")
-    .exists()
-    .withMessage("Location field fequired")
-    .bail()
-    .isString()
-    .withMessage("Location must be a string")
-    .bail()
-    .notEmpty()
-    .withMessage("Location field required");
+  body("location").optional().isString().withMessage("Location must be a string").bail();
 
 //medication
 const makeMedicationValidator = () =>
-  body("medication")
-    .exists()
-    .withMessage("Medication field required")
-    .bail()
-    .isString()
-    .withMessage("Medication must be a string")
-    .bail()
-    .notEmpty()
-    .withMessage("Medication field required");
+  body("medication").optional().isString().withMessage("Medication must be a string").bail();
 
 //birthday
 const makeBirthdayValidator = () =>
   body("birthday")
-    .exists()
-    .withMessage("Birthday field required")
-    .bail()
-    .isISO8601()
-    .toDate()
-    .withMessage("Birthday string must be a valid date-time string");
+    .custom((value) => {
+      if (!value) {
+        return true;
+      }
+      if (!isValidDateTimeString(value as string)) {
+        throw new Error("Intake Date string must be a valid date-time string");
+      }
+      return true;
+    })
+    .toDate();
 
 //intake date
 const makeIntakeDateValidator = () =>
   body("intakeDate")
-    .exists()
-    .withMessage("Intake Date field required")
-    .bail()
-    .isISO8601()
-    .toDate()
-    .withMessage("Intake Date string must be a valid date-time string");
+    .custom((value) => {
+      if (!value) {
+        return true;
+      }
+      if (!isValidDateTimeString(value as string)) {
+        throw new Error("Intake Date string must be a valid date-time string");
+      }
+      return true;
+    })
+    .toDate();
 
 //tour date
 const makeTourDateValidator = () =>
   body("tourDate")
-    .exists()
-    .withMessage("Tour Date field required")
-    .bail()
-    .isISO8601()
-    .toDate()
-    .withMessage("Tour Date string must be a valid date-time string");
+    .custom((value) => {
+      if (!value) {
+        return true;
+      }
+      if (!isValidDateTimeString(value as string)) {
+        throw new Error("Intake Date string must be a valid date-time string");
+      }
+      return true;
+    })
+    .toDate();
 
 const makeConservationValidator = () =>
-  body("conservation")
-    .exists()
-    .withMessage("Conservation field required")
-    .bail()
-    .isBoolean()
-    .withMessage("Conservation must be a boolean");
+  body("conservation").optional().isBoolean().withMessage("Conservation must be a boolean");
 
 const makeUCINumberValidator = () =>
-  body("UCINumber")
-    .exists()
-    .withMessage("UCI Number field required")
-    .bail()
-    .isString()
-    .withMessage("UCI Number must be a string")
-    .bail()
-    .notEmpty()
-    .withMessage("UCI Number field required");
+  body("UCINumber").optional().isString().withMessage("UCI Number must be a string").bail();
 
 type DocumentItem = {
   name: string;
@@ -141,21 +128,11 @@ type DocumentItem = {
 };
 
 const makeIncidentFormValidator = () =>
-  body("incidentForm")
-    .exists()
-    .withMessage("Incident Form field required")
-    .bail()
-    .isString()
-    .withMessage("Incident Form must be a string")
-    .bail()
-    .notEmpty()
-    .withMessage("Incident Form field required");
+  body("incidentForm").optional().isString().withMessage("Incident Form must be a string").bail();
 
 const makeDocumentsValidator = () =>
   body("documents")
-    .exists()
-    .withMessage("Documents field required")
-    .bail()
+    .optional()
     .isArray()
     .withMessage("Documents must be an array")
     .bail()
@@ -187,9 +164,7 @@ const makeProfilePictureValidator = () =>
 
 const makeEnrollments = () =>
   body("enrollments")
-    .exists()
-    .withMessage("Enrollments field required")
-    .bail()
+    .optional()
     .isArray()
     .withMessage("Enrollments must be a non-empty array")
     .bail()

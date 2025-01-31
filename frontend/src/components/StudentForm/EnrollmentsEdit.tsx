@@ -30,7 +30,7 @@ export const emptyEnrollment = {
   programId: "",
   status: "",
   dateUpdated: new Date(),
-  hoursLeft: 8,
+  hoursLeft: 0,
   schedule: [] as string[],
   sessionTime: {
     start_time: "",
@@ -134,9 +134,68 @@ const EnrollmentFormItem = ({
   }, [item.programId]);
 
   // these 3 useEffects keep our custom dropdown and react-hook-form in sync
+  const calculateHoursLeft = (
+    startDate: Date,
+    endDate: Date,
+    daysOfWeek: string[],
+    sessionStartTime: string,
+    sessionEndTime: string,
+  ): number => {
+    console.log(startDate, endDate, daysOfWeek, sessionStartTime, sessionEndTime);
+    const dayMap = {
+      Su: "Sunday",
+      M: "Monday",
+      T: "Tuesday",
+      W: "Wednesday",
+      Th: "Thursday",
+      F: "Friday",
+      Sa: "Saturday",
+    };
+
+    const createDateWithTime = (time: string): Date => {
+      const [hours, minutes] = time.split(":").map((t) => parseInt(t));
+      const newDate = new Date();
+      newDate.setHours(hours);
+      newDate.setMinutes(minutes);
+      return newDate;
+    };
+
+    const days = [];
+    for (const day of daysOfWeek) {
+      days.push(dayMap[day as keyof typeof dayMap]);
+    }
+
+    const sessionStart = createDateWithTime(sessionStartTime);
+    const sessionEnd = createDateWithTime(sessionEndTime);
+    const sessionLength = (sessionEnd.getTime() - sessionStart.getTime()) / 1000 / 60 / 60;
+
+    let totalHours = 0;
+
+    for (let d = new Date(startDate); d <= new Date(endDate); d.setDate(d.getDate() + 1)) {
+      if (days.includes(d.toLocaleString("en-US", { weekday: "long" }))) {
+        totalHours += sessionLength;
+      }
+    }
+    console.log(totalHours);
+
+    return totalHours;
+  };
+
   useEffect(() => {
     item.sessionTime = selectedSession;
     setValue(`${fieldName}.${index}.sessionTime`, selectedSession);
+    if (!varying && selectedSession.start_time && selectedSession.end_time) {
+      setValue(
+        `${fieldName}.${index}.hoursLeft`,
+        calculateHoursLeft(
+          new Date(item.startDate),
+          new Date(item.renewalDate),
+          item.schedule,
+          selectedSession.start_time,
+          selectedSession.end_time,
+        ),
+      );
+    }
   }, [selectedSession]);
 
   useEffect(() => {
@@ -198,19 +257,38 @@ const EnrollmentFormItem = ({
             </div>
           );
         })}
-        <div>
-          <h3>Session</h3>
-          <Dropdown
-            name="sessions"
-            placeholder="Select Session"
-            className={`h-[50px] w-full rounded-md`}
-            options={sessionOptions}
-            initialValue={initialTime}
-            onChange={(value): void => {
-              setSelectedSession(amPmToTime(value));
-            }}
-          />
-        </div>
+        {!varying && (
+          <div>
+            <h3>Session</h3>
+            <Dropdown
+              name="sessions"
+              placeholder="Select Session"
+              className={`h-[50px] w-full rounded-md`}
+              options={sessionOptions}
+              initialValue={initialTime}
+              onChange={(value): void => {
+                setSelectedSession(amPmToTime(value));
+              }}
+            />
+          </div>
+        )}
+
+        {varying && (
+          <div>
+            <h3>Hours Left</h3>
+            <Textfield
+              register={register}
+              name={`${fieldName}.${index}.hoursLeft`}
+              placeholder="0"
+              defaultValue="0"
+              type="number"
+              handleInputChange={(e) => {
+                console.log(e.target.value);
+                setValue(`${fieldName}.${index}.hoursLeft`, Number(e.target.value));
+              }}
+            />
+          </div>
+        )}
 
         {/* <button
           type="button"
@@ -274,6 +352,7 @@ function EnrollmentsEdit({ classname, data, varying }: EnrollmentsEditProps) {
           }
         })
         .forEach((enrollment, index) => {
+          console.log(varying);
           update(index, {
             ...enrollment,
             varying,

@@ -19,10 +19,11 @@ const enrollmentSchema = new mongoose.Schema({
   schedule: { type: [String], required: true },
   sessionTime: {
     type: {
-      start_time: { type: String, required: true },
-      end_time: { type: String, required: true },
+      start_time: { type: String, required: false, default: "00:00" },
+      end_time: { type: String, required: false, default: "00:00" },
     },
-    required: true,
+    required: false,
+    default: { start_time: "00:00", end_time: "00:00" },
   },
   startDate: { type: Date, required: true },
   renewalDate: { type: Date, required: true },
