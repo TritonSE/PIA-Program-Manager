@@ -140,7 +140,7 @@ export function AttendanceTable({
           </h1>
           <h1 className="ml-5 mt-1 text-gray-400">
             {daysOfWeek[dateObj.getUTCDay()]}, {monthsOfYear[dateObj.getMonth()]}{" "}
-            {dateObj.getDate()}{" "}
+            {dateObj.getUTCDate()}{" "}
             {program.type === "regular" &&
               "from " + session.sessionTime.start_time + "to " + session.sessionTime.end_time}
           </h1>
