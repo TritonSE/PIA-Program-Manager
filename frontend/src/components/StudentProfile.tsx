@@ -121,36 +121,34 @@ function ProgramLayout({ enrollmentInfo }: ProgramLayoutProps) {
             enrollmentInfo.sessionTime.end_time}
         </div>
       )}
-      {regular && (
-        <>
-          <div className="font-[Poppins] text-[24px]">Days of the Week</div>
-          <div className="flex space-x-[15px]">
-            {["M", "T", "W", "Th", "F", "Sa", "Su"].map((value) => {
-              if (
-                enrollmentInfo.schedule.find((day) => {
-                  return day === value;
-                })
-              )
-                return (
-                  <div
-                    key={value}
-                    className="relative flex items-center justify-center rounded-full border border-pia_border bg-pia_secondary_green p-[20px] text-center text-pia_primary_white"
-                  >
-                    <div className="absolute">{value}</div>
-                  </div>
-                );
+      <>
+        <div className="font-[Poppins] text-[24px]">Days of the Week</div>
+        <div className="flex space-x-[15px]">
+          {["M", "T", "W", "Th", "F", "Sa", "Su"].map((value) => {
+            if (
+              enrollmentInfo.schedule.find((day) => {
+                return day === value;
+              })
+            )
               return (
                 <div
                   key={value}
-                  className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center"
+                  className="relative flex items-center justify-center rounded-full border border-pia_border bg-pia_secondary_green p-[20px] text-center text-pia_primary_white"
                 >
                   <div className="absolute">{value}</div>
                 </div>
               );
-            })}
-          </div>
-        </>
-      )}
+            return (
+              <div
+                key={value}
+                className="relative flex items-center justify-center rounded-full border border-pia_border p-[20px] text-center"
+              >
+                <div className="absolute">{value}</div>
+              </div>
+            );
+          })}
+        </div>
+      </>
     </>
   );
 }
@@ -281,6 +279,21 @@ export default function StudentProfile({ id }: StudentProfileProps) {
     }
   }, [firebaseUser]);
 
+  const getAbsoluteUrl = (url: string) => {
+    if (!url) return url;
+    // Check if the URL is already absolute
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      return url;
+    }
+
+    if (url.startsWith("www.")) {
+      // Prepend the protocol if the URL is missing it
+      return `https://${url.slice(4)}`;
+    }
+    // Prepend the base URL if the URL is relative
+    return `${window.location.origin}${url}`;
+  };
+
   if (notFound) {
     return (
       <main className="mx-[30px] space-y-[60px]">
@@ -389,7 +402,7 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                         />
                       </defs>
                     </svg>
-                    <div className="">{`UCI # ${studentData.UCINumber?.slice(3)}`}</div>
+                    <div className="">{`UCI # ${studentData.UCINumber}`}</div>
                   </div>
                 </div>
               </div>
@@ -430,16 +443,16 @@ export default function StudentProfile({ id }: StudentProfileProps) {
                 <div className="font-[Poppins-Bold] text-[28px]">Student Background:</div>
                 <div className="font-[Poppins] text-[24px]">Address: {studentData.location}</div>
                 <div className="font-[Poppins] text-[24px]">
-                  Birthdate: {formatDate(studentData.birthday)}
+                  Birthdate: {studentData.birthday ? formatDate(studentData.birthday) : "N/A"}
                 </div>
               </div>
               <div id="student information" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Student Information:</div>
                 <div className="font-[Poppins] text-[24px]">
-                  Intake Date: {formatDate(studentData.intakeDate)}
+                  Intake Date: {studentData.intakeDate ? formatDate(studentData.intakeDate) : "N/A"}
                 </div>
                 <div className="font-[Poppins] text-[24px]">
-                  Tour Date: {formatDate(studentData.tourDate)}
+                  Tour Date: {studentData.tourDate ? formatDate(studentData.tourDate) : "N/A"}
                 </div>
               </div>
             </div>
@@ -469,20 +482,22 @@ export default function StudentProfile({ id }: StudentProfileProps) {
               </div>
               <div id="medications" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Medication & Medical</div>
-                <div className="font-[Poppins] text-[24px]">Dietary Restrictions:</div>
-                <div className="font-[Poppins] text-[24px]">
-                  {studentData.dietary?.map((value) => (
-                    <div key={value}>
-                      {value}
-                      <br />
-                    </div>
-                  ))}
-                </div>
-                <div className="font-[Poppins] text-[24px]">
-                  Medication: {studentData.medication}
-                </div>
+                <div className="font-[Poppins] text-[24px]">{studentData.medication}</div>
               </div>
             </div>
+            {studentData.incidentForm && (
+              <div>
+                <div className="font-[Poppins-Bold] text-[28px]">Incident Form</div>
+                <button
+                  onClick={() => {
+                    window.open(getAbsoluteUrl(studentData.incidentForm), "_blank");
+                  }}
+                  className="h-[48px] w-[116px] rounded-lg border border-pia_border bg-pia_light_gray"
+                >
+                  Link
+                </button>
+              </div>
+            )}
             <div id="row4" className="flex space-x-[230px]">
               <div id="regular" className="basis-1/2 space-y-[20px]">
                 <div className="font-[Poppins-Bold] text-[28px]">Regular Programs:</div>
