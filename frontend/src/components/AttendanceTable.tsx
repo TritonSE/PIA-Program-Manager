@@ -44,9 +44,6 @@ export function AttendanceTable({
   const _errors = errors;
 
   const dateObj = new Date(session.date.toString());
-  console.log(session.date.toString());
-  console.log(dateObj);
-  console.log(dateObj.getDay());
 
   const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const monthsOfYear = [
