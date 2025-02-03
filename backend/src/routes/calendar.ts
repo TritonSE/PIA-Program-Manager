@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.get("/:studentId/:programId", [verifyAuthToken], CalendarController.getCalendar);
 router.patch(
-  "/:studentId/:programId",
+  "",
   [verifyAuthToken],
   CalendarValidator.editCalendar,
   CalendarController.editCalendar,

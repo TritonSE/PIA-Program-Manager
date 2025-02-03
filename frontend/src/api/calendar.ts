@@ -28,16 +28,12 @@ export async function getCalendar(
 }
 
 export async function editCalendar(
-  studentId: string,
-  programId: string,
+  calendar: CalendarResponse,
   firebaseToken: string,
-  hours: number,
-  session: string,
 ): Promise<APIResult<string>> {
   try {
     const headers = createAuthHeader(firebaseToken);
-    const body = { hours, session };
-    const res = await PATCH(`/calendar/${studentId}/${programId}`, body, headers);
+    const res = await PATCH(`/calendar`, calendar, headers);
     const json = (await res.json()) as string;
     return { success: true, data: json };
   } catch (error) {

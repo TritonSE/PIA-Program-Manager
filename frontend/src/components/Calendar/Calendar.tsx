@@ -1,7 +1,10 @@
+import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useContext, useEffect, useMemo, useState } from "react";
 
 import Back from "../../../public/icons/back.svg";
+import SaveCancelButtons from "../Modals/SaveCancelButtons";
 
 import { CalendarResponse, editCalendar, getCalendar } from "@/api/calendar";
 import { Student, getStudent } from "@/api/students";
@@ -20,12 +23,14 @@ export default function Calendar({ studentId, programId }: CalendarProps) {
   useRedirectToLoginIfNotSignedIn();
 
   const { firebaseUser } = useContext(UserContext);
+  const router = useRouter();
 
   const [currStudent, setStudent] = useState<Student>();
-  //   const [currProgram, setProgram ] = useState<Program>();
+  const [openSaveDialog, setOpenSaveDialog] = useState(false);
   const [calendar, setCalendar] = useState<CalendarResponse>();
   const [isLoading, setIsLoading] = useState(true);
   const [firebaseToken, setFirebaseToken] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const { windowSize } = useWindowSize();
   const isMobile = useMemo(() => windowSize.width < 640, [windowSize.width]);
@@ -54,8 +59,52 @@ export default function Calendar({ studentId, programId }: CalendarProps) {
     }
   }, [firebaseUser]);
 
-  const updateCalendar = async (newHours: number, session: string) => {
-    await editCalendar(studentId, programId, firebaseToken, newHours, session);
+  useEffect(() => {
+    if (calendar) {
+      console.log("Calendar loaded");
+    }
+  }, [calendar]);
+
+  useEffect(() => {
+    if (success) {
+      setOpenSaveDialog(true);
+    }
+  }, [success]);
+
+  const updateCalendar = (newHours: number, session: string) => {
+    const currCalendar = calendar?.calendar;
+    if (!currCalendar) {
+      return;
+    }
+    setCalendar({
+      ...calendar,
+      calendar: currCalendar.map((slot) => {
+        if (slot.session === session) {
+          return { ...slot, hours: newHours };
+        }
+        return slot;
+      }),
+    });
+  };
+
+  const saveCalendar = () => {
+    if (calendar) {
+      editCalendar(calendar, firebaseToken).then(
+        (res) => {
+          if (res.success) {
+            console.log("Calendar saved");
+            setSuccess(true);
+          } else {
+            console.log("Calendar not saved");
+            console.log(res.error);
+            setSuccess(false);
+          }
+        },
+        (error) => {
+          console.error(error);
+        },
+      );
+    }
   };
 
   let mainClass = "h-full overflow-y-scroll no-scrollbar flex flex-col";
@@ -101,6 +150,32 @@ export default function Calendar({ studentId, programId }: CalendarProps) {
             </h1>
           </div>
           <CalendarBody calendar={calendar} updateCalendarFunc={updateCalendar} />
+          <div className="ml-auto mt-5 flex gap-5">
+            <SaveCancelButtons
+              isOpen={openSaveDialog}
+              onSaveClick={saveCalendar}
+              automaticClose={1500}
+              setOpen={setOpenSaveDialog}
+              onLeave={async () => {
+                await router.push("/calendar");
+              }}
+            >
+              {success && (
+                <div className="grid w-[400px] place-items-center gap-5 min-[450px]:px-12 min-[450px]:pb-12 min-[450px]:pt-10">
+                  <button
+                    className="ml-auto"
+                    onClick={() => {
+                      setOpenSaveDialog(false);
+                    }}
+                  >
+                    <Image src="/icons/close.svg" alt="close" width={13} height={13} />
+                  </button>
+                  <Image src="/icons/green_check_mark.svg" alt="checkmark" width={54} height={54} />
+                  <h3 className="text-lg font-bold">Calendar has been saved!</h3>
+                </div>
+              )}
+            </SaveCancelButtons>
+          </div>
         </main>
       )}
     </div>

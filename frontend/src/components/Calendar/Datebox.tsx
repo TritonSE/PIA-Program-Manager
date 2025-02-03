@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 export type DateboxProps = {
-  updateCalendarFunc: (newHours: number, session: string) => Promise<void>;
+  updateCalendarFunc: (newHours: number, session: string) => void;
   session: string;
   day: number;
   hours: number;
@@ -14,12 +14,19 @@ export function Datebox({ updateCalendarFunc, session, day, hours, saturday }: D
     boxClass = "border-t p-4 flex flex-col items-center";
   }
 
-  const updateCalendar = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const [inputHours, setInputHours] = React.useState(hours);
+
+  useEffect(() => {
+    setInputHours(hours);
+  }, [hours]);
+
+  const updateCalendar = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newHours = Number(event.target.value);
     if (isNaN(newHours)) {
       return;
     }
-    await updateCalendarFunc(newHours, session);
+    setInputHours(newHours);
+    updateCalendarFunc(newHours, session);
   };
 
   return (
@@ -28,14 +35,14 @@ export function Datebox({ updateCalendarFunc, session, day, hours, saturday }: D
       {hours !== -1 && (
         <input
           type="text"
-          defaultValue={hours}
+          value={inputHours}
           className="w-1/2 rounded-md border border-gray-400 text-center"
           onChange={updateCalendar}
         />
       )}
-      {hours === -1 && (
+      {/* {hours === -1 && (
         <input type="text" className="w-1/2 rounded-md border border-gray-400 text-center" />
-      )}
+      )} */}
     </div>
   );
 }

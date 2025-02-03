@@ -11,7 +11,7 @@ const poppins = Poppins({ weight: ["400", "700"], style: "normal", subsets: [] }
 
 export type CalendarBodyProps = {
   calendar?: CalendarResponse;
-  updateCalendarFunc: (newHours: number, session: string) => Promise<void>;
+  updateCalendarFunc: (newHours: number, session: string) => void;
 };
 
 //
@@ -28,7 +28,9 @@ export const CalendarBody: React.FC<CalendarBodyProps> = ({
 
   useEffect(() => {
     changeCalendarHeader(Months[month] + " " + year);
-    changeDates(generateDates(month, year, calendar));
+    const newDates = generateDates(month, year, calendar);
+    console.log(newDates);
+    changeDates(newDates);
   }, [month, year]);
 
   const decrementMonth = () => {
