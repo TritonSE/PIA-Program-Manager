@@ -7,7 +7,7 @@ import DebouncedInput from "../DebouncedInput";
 import { ProgramLink } from "../StudentForm/types";
 import { ProgramFilter } from "../StudentsTable/FilterFns";
 
-import { CalendarTableRow } from "./types";
+import { CalendarTableRow, EnrollmentLink } from "./types";
 
 // Extend the FilterFns and FilterMeta interfaces
 /* eslint-disable */
@@ -26,12 +26,10 @@ declare module "@tanstack/table-core" {
 export const programFilterFn: FilterFn<unknown> = (rows, id, filterValue) => {
   if (filterValue === "") return true; // no filter case
   let containsProgram = false;
-  const programLinks: ProgramLink[] = rows.getValue(id);
-  programLinks.forEach((prog) => {
-    if (prog.programId === filterValue && prog.status === "Joined") {
-      containsProgram = true;
-    }
-  });
+  const enrollmentLink: EnrollmentLink = rows.getValue(id);
+  if (enrollmentLink.programId === filterValue) {
+    containsProgram = true;
+  }
   return containsProgram;
 };
 

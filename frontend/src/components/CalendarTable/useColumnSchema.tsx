@@ -12,17 +12,24 @@ export function useColumnSchema({ allPrograms }: { allPrograms: ProgramMap }) {
     {
       accessorKey: "profilePicture",
       header: "Profile Picture",
-      cell: (info) => (
-        <div className="flex h-full w-full items-center justify-center">
-          <Image
-            alt="Profile Picture"
-            src={(info.getValue() as string) === "default" ? "../defaultProfilePic.svg" : ""}
-            className="rounded-full object-cover"
-            width={50}
-            height={50}
-          />
-        </div>
-      ),
+      cell: (info) => {
+        console.log(info.getValue());
+        return (
+          <div className="flex h-full w-full items-center justify-center">
+            <Image
+              alt="Profile Picture"
+              src={
+                (info.getValue() as string) === "default"
+                  ? "../defaultProfilePic.svg"
+                  : (info.getValue() as string)
+              }
+              className="rounded-full object-cover"
+              width={50}
+              height={50}
+            />
+          </div>
+        );
+      },
       enableColumnFilter: false,
     },
     {
@@ -55,6 +62,7 @@ export function useColumnSchema({ allPrograms }: { allPrograms: ProgramMap }) {
           </Link>
         );
       },
+      filterFn: "programFilter",
     },
   ];
 
