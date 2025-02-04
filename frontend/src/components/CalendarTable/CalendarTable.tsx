@@ -110,7 +110,7 @@ export default function CalendarTable() {
       .catch((error) => {
         console.error(error);
       });
-  }, [allStudents]);
+  }, [allStudents, firebaseToken]);
 
   const columns = useColumnSchema({ allPrograms });
   const data = useMemo(() => calendarTable, [calendarTable]);
