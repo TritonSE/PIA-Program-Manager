@@ -25,7 +25,6 @@ export const useFetchTeamAccounts = ({
             (result) => {
               setFirebaseToken(token);
               if (result.success) {
-                console.log("Fetched all team accounts", result.data);
                 setAllAccounts(result.data);
                 setFilteredAccounts(result.data);
               } else {

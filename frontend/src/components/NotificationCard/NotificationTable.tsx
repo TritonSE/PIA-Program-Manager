@@ -16,8 +16,6 @@ export default function NotificationTable({ firebaseToken }: NotificationsProps)
       try {
         const result = await getNotApprovedUsers(firebaseToken);
         if (result.success) {
-          console.log("notApprovedUsers:", result.data);
-
           setNotApprovedUsers(result.data);
         } else {
           console.error("Failed to fetch not-approved users:", result.error);

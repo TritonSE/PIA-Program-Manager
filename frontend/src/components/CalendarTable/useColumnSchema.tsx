@@ -13,7 +13,6 @@ export function useColumnSchema({ allPrograms }: { allPrograms: ProgramMap }) {
       accessorKey: "profilePicture",
       header: "Profile Picture",
       cell: (info) => {
-        console.log(info.getValue());
         return (
           <div className="flex h-full w-full items-center justify-center">
             <Image

@@ -74,7 +74,6 @@ export default function AttendanceDashboard() {
     getRecentSessions(firebaseToken).then(
       (result) => {
         if (result.success) {
-          console.log(result.data);
           setAllSessions(result.data);
           setRemainingSessions(result.data.length);
           setSessionsLoading(false);
@@ -131,7 +130,6 @@ export default function AttendanceDashboard() {
     getAbsenceSessions(firebaseToken).then(
       (result) => {
         if (result.success) {
-          console.log(result.data);
           setAllAbsenceSessions(result.data);
           setRemainingAbsenceSessions(result.data.length);
           setAbsenceSessionsLoading(false);
