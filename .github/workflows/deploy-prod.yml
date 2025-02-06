@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build and Deploy to Prod
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
   build_and_preview:
     name: Build and Deploy
     runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
+    environment: production
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
