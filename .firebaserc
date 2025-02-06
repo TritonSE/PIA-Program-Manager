@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "pia-dev-60cea"
+    "default": "pia-dev-60cea",
+    "prod": "pia-database-780ab"
   }
 }
