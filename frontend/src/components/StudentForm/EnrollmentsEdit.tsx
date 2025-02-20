@@ -6,6 +6,7 @@ import {
   UseFormRegister,
   useFieldArray,
   useFormContext,
+  useWatch,
 } from "react-hook-form";
 
 import { Student } from "../../api/students";
@@ -133,6 +134,17 @@ const EnrollmentFormItem = ({
     );
   }, [item.programId]);
 
+  // Watch for changes to startDate and renewalDate
+  const watchedStartDate = useWatch<StudentFormData>({
+    control: useFormContext<StudentFormData>().control,
+    name: `${fieldName}.${index}.startDate`,
+  });
+
+  const watchedRenewalDate = useWatch<StudentFormData>({
+    control: useFormContext<StudentFormData>().control,
+    name: `${fieldName}.${index}.renewalDate`,
+  });
+
   // these 3 useEffects keep our custom dropdown and react-hook-form in sync
   const calculateHoursLeft = (
     startDate: Date,
@@ -141,7 +153,6 @@ const EnrollmentFormItem = ({
     sessionStartTime: string,
     sessionEndTime: string,
   ): number => {
-    console.log(startDate, endDate, daysOfWeek, sessionStartTime, sessionEndTime);
     const dayMap = {
       Su: "Sunday",
       M: "Monday",
@@ -184,19 +195,25 @@ const EnrollmentFormItem = ({
   useEffect(() => {
     item.sessionTime = selectedSession;
     setValue(`${fieldName}.${index}.sessionTime`, selectedSession);
-    if (!varying && selectedSession.start_time && selectedSession.end_time) {
+    if (!varying && watchedStartDate && watchedRenewalDate && selectedSession) {
+      if (item.schedule.length === 0) {
+        programsMap[item.programId]?.daysOfWeek.forEach((day) => {
+          item.schedule.push(day);
+        });
+      }
+
       setValue(
         `${fieldName}.${index}.hoursLeft`,
         calculateHoursLeft(
-          new Date(item.startDate),
-          new Date(item.renewalDate),
+          new Date(watchedStartDate as string),
+          new Date(watchedRenewalDate as string),
           item.schedule,
           selectedSession.start_time,
           selectedSession.end_time,
         ),
       );
     }
-  }, [selectedSession]);
+  }, [selectedSession, watchedStartDate, watchedRenewalDate]);
 
   useEffect(() => {
     const progId = Object.keys(programsMap).find(
