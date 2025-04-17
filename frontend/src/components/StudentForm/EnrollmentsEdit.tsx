@@ -182,9 +182,11 @@ const EnrollmentFormItem = ({
 
     let totalHours = 0;
 
-    for (let d = new Date(startDate); d <= new Date(endDate); d.setDate(d.getDate() + 1)) {
-      if (days.includes(d.toLocaleString("en-US", { weekday: "long" }))) {
-        totalHours += sessionLength;
+    if (!isNaN(sessionLength)) {
+      for (let d = new Date(startDate); d <= new Date(endDate); d.setDate(d.getDate() + 1)) {
+        if (days.includes(d.toLocaleString("en-US", { weekday: "long" }))) {
+          totalHours += sessionLength;
+        }
       }
     }
     console.log(totalHours);

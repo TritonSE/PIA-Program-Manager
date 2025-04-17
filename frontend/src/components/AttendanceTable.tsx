@@ -1,6 +1,6 @@
 import { Dot } from "lucide-react";
 import Image from "next/image";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { cn } from "../lib/utils";
@@ -33,6 +33,12 @@ export function AttendanceTable({
   setRemainingAbsenceSessions,
   firebaseToken,
 }: TableProps) {
+  // Exclude students that are not in the session students map for some reason
+  const existingStudents = useMemo(
+    () => session.students.filter(({ studentId }) => students[studentId]),
+    [session.students, students],
+  );
+
   const {
     register,
     setValue,
@@ -71,7 +77,7 @@ export function AttendanceTable({
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     if (clickedRef.current) return;
     clickedRef.current = true;
-    const studentInfo = session.students.map((student) => {
+    const studentInfo = existingStudents.map((student) => {
       return {
         studentId: student.studentId,
         attended: data["attended_" + student.studentId] === "true" ? true : false,
@@ -143,12 +149,12 @@ export function AttendanceTable({
           </h1>
         </div>
         <div className="mb-8 grid w-full overflow-x-auto text-left text-sm lg:grid-cols-2 rtl:text-right">
-          {session.students.map((student, index) => {
+          {existingStudents.map((student, index) => {
             return (
               <div
                 className={cn(
                   "mr-5 flex grid grid-cols-3 bg-white",
-                  index < session.students.length - (2 - (session.students.length % 2)) &&
+                  index < existingStudents.length - (2 - (existingStudents.length % 2)) &&
                     "border-b",
                   index % 2 === 0 ? "ml-5" : "ml-5 lg:ml-10",
                 )}

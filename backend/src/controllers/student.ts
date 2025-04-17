@@ -7,11 +7,13 @@ import { RequestHandler } from "express";
 import { validationResult } from "express-validator";
 import mongoose, { HydratedDocument } from "mongoose";
 
+import { ValidationError } from "../errors/validation";
 import EnrollmentModel from "../models/enrollment";
 import { Image } from "../models/image";
 import ProgramModel from "../models/program";
 import ProgressNoteModel from "../models/progressNote";
 import StudentModel from "../models/student";
+import UserModel from "../models/user";
 import { Enrollment } from "../types/enrollment";
 import { createEnrollment, editEnrollment } from "../util/enrollment";
 import validationErrorParser from "../util/validationErrorParser";
@@ -25,14 +27,12 @@ export const createStudent: RequestHandler = async (req, res, next) => {
 
     validationErrorParser(errors);
 
-    const newStudentId = new mongoose.Types.ObjectId();
-
     const { enrollments, ...studentData } = req.body as StudentRequest;
 
     // create enrollments for the student
     const createdEnrollments = await Promise.all(
       enrollments.map(async (program: Enrollment) => {
-        return await EnrollmentModel.create({ ...program, studentId: newStudentId });
+        return await EnrollmentModel.create({ ...program, studentId: studentData._id });
       }),
     );
 
@@ -51,6 +51,17 @@ export const createStudent: RequestHandler = async (req, res, next) => {
 
 export const editStudent: RequestHandler = async (req, res, next) => {
   try {
+    const { uid } = req.body;
+
+    const user = await UserModel.findById(uid);
+    if (!user) {
+      throw ValidationError.USER_NOT_FOUND;
+    }
+
+    if (user.accountType !== "admin") {
+      throw ValidationError.UNAUTHORIZED_USER;
+    }
+
     const errors = validationResult(req);
 
     validationErrorParser(errors);

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { Popover, PopoverContent, PopoverTrigger } from "../../components/ui/popover";
-import { Contact, Enrollment, ProgramLink } from "../StudentForm/types";
+import { Contact, Enrollment } from "../StudentForm/types";
 
 import { Columns, ProgramMap, StudentMap } from "./types";
 
@@ -38,13 +38,13 @@ const PopoverInfoRow = ({ label, value }: { label: string; value: string }) => (
   </span>
 );
 
-const ProgramPopover = ({ link, program }: { link: ProgramLink; program: Program }) => {
+const ProgramPopover = ({ link, program }: { link: Enrollment; program: Program }) => {
   if (!program) return null;
   const rowInfo = [
     ["Type", program.type],
     ["Schedule", program.daysOfWeek.join(", ")],
-    ["Start Date", new Date(/*program.startDate*/).toLocaleDateString("en-US")],
-    ["Renewal Date", new Date(/*program.endDate*/).toLocaleDateString("en-US")],
+    ["Start Date", new Date(link.startDate).toLocaleDateString("en-US")],
+    ["Renewal Date", new Date(link.renewalDate).toLocaleDateString("en-US")],
     ["Hours Left", link.hoursLeft.toString()],
   ];
 
@@ -127,7 +127,7 @@ export function useColumnSchema({
       id: isTablet ? "Curr. P1" : "Curr. Program 1",
       header: isTablet ? "Curr. P1" : "Curr. Program 1",
       cell: (info) => {
-        const enrollments = info.getValue() as unknown as ProgramLink[];
+        const enrollments = info.getValue() as unknown as Enrollment[];
         const link = enrollments.filter((enr) => enr.status === "Joined")[0];
         if (!link) return null;
         const program = allPrograms[link.programId];
@@ -140,7 +140,7 @@ export function useColumnSchema({
       id: isTablet ? "Curr. P2" : "Curr. Program 2",
       header: isTablet ? "Curr. P2" : "Curr. Program 2",
       cell: (info) => {
-        const enrollments = info.getValue() as unknown as ProgramLink[];
+        const enrollments = info.getValue() as unknown as Enrollment[];
         const link = enrollments.filter((enr) => enr.status === "Joined")[1];
         if (!link) return null;
         const program = allPrograms[link.programId];
