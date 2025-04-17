@@ -156,19 +156,22 @@ export default function AttendanceDashboard() {
             className="flex overflow-x-hidden overflow-y-hidden hover:overflow-x-auto"
             ref={scrollRef}
           >
-            {allAbsenceSessions?.map((absenceSession, i) => {
-              const program = allPrograms[absenceSession.programId];
-              const student = allStudents[absenceSession.studentId];
-              return (
-                <AttendanceCard
-                  program={program}
-                  student={student}
-                  key={i}
-                  setRemainingSessions={setRemainingAbsenceSessions}
-                  firebaseToken={firebaseToken}
-                />
-              );
-            })}
+            {// Exclude students that are not in the session students map for some reason
+            allAbsenceSessions
+              ?.filter((absenceSession) => allStudents[absenceSession.studentId])
+              .map((absenceSession, i) => {
+                const program = allPrograms[absenceSession.programId];
+                const student = allStudents[absenceSession.studentId];
+                return (
+                  <AttendanceCard
+                    program={program}
+                    student={student}
+                    key={i}
+                    setRemainingSessions={setRemainingAbsenceSessions}
+                    firebaseToken={firebaseToken}
+                  />
+                );
+              })}
             {remainingAbsenceSessions === 0 && (
               <div className="border-gray flex h-[326px] w-[240px] items-center justify-center rounded-2xl border bg-white">
                 <div className="ml-5">

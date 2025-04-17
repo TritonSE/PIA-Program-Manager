@@ -17,7 +17,11 @@ export const programValidatorUtil = async (enrollments: Enrollment[]) => {
 
   enrollments.forEach((enrollment: Enrollment) => {
     requiredFields.forEach((field) => {
-      if (!enrollment[field as keyof Enrollment])
+      // Can't just test for truthiness because 0 is a valid value for hoursLeft
+      if (
+        enrollment[field as keyof Enrollment] === undefined ||
+        enrollment[field as keyof Enrollment] === null
+      )
         throw new Error(`Field ${field} is required on enrollment`);
     });
   });
