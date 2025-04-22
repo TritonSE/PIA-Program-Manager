@@ -149,7 +149,7 @@ export default function AttendanceDashboard() {
         <div className="my-[30px] ml-[20px] mr-[80px]">
           <div className="font-[alternate-gothic] text-4xl uppercase">Attendance Dashboard</div>
           <div className="mt-[20px] font-[Poppins] text-[16px]">
-            Review information of new account creations below to approve or deny them.{" "}
+            View absences and mark attendance and makeup attendance.{" "}
           </div>
           <h1 className="mb-[20px] mt-[20px] font-[Poppins-Bold] text-[16px]">Absences</h1>
           <div
@@ -195,20 +195,22 @@ export default function AttendanceDashboard() {
           </div>
 
           <h1 className="mt-[20px] font-[Poppins-Bold] text-[16px]">Program Sessions</h1>
-          {allSessions?.map((session, i) => {
-            return (
-              <AttendanceTable
-                setRemainingSessions={setRemainingSessions}
-                setAllAbsenceSessions={setAllAbsenceSessions}
-                setRemainingAbsenceSessions={setRemainingAbsenceSessions}
-                program={allPrograms[session.programId]}
-                session={session}
-                students={allStudents}
-                key={i}
-                firebaseToken={firebaseToken}
-              />
-            );
-          })}
+          {allSessions
+            ?.filter((session) => session.students.some(({ studentId }) => allStudents[studentId]))
+            .map((session, i) => {
+              return (
+                <AttendanceTable
+                  setRemainingSessions={setRemainingSessions}
+                  setAllAbsenceSessions={setAllAbsenceSessions}
+                  setRemainingAbsenceSessions={setRemainingAbsenceSessions}
+                  program={allPrograms[session.programId]}
+                  session={session}
+                  students={allStudents}
+                  key={i}
+                  firebaseToken={firebaseToken}
+                />
+              );
+            })}
           {remainingSessions === 0 && (
             <div className="border-gray mt-[20px] flex h-[326px] w-[240px] items-center justify-center rounded-2xl border bg-white">
               <div className="ml-5">

@@ -225,7 +225,6 @@ const EnrollmentFormItem = ({
       item.programId = progId;
       setValue(`${fieldName}.${index}.programId`, progId);
     }
-    setSelectedSession({ start_time: "", end_time: "" });
   }, [selectedProgram]);
 
   useEffect(() => {
@@ -294,7 +293,7 @@ const EnrollmentFormItem = ({
 
         {varying && (
           <div>
-            <h3>Hours Left</h3>
+            <h3>Hours per Day</h3>
             <Textfield
               register={register}
               name={`${fieldName}.${index}.hoursLeft`}

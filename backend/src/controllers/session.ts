@@ -53,24 +53,12 @@ function getSessionsSince(start: Date, daysOfWeek: string[]): Date[] {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   }
 
-  if (start.getFullYear() === new Date(0).getFullYear()) {
-    const futureDate = setToMidnight(new Date());
-    while (true) {
-      const dayOfWeek = futureDate.getUTCDay();
-      const abbreviatedDay = ["Su", "M", "T", "W", "Th", "F", "Sa"][dayOfWeek];
-      if (daysOfWeek.includes(abbreviatedDay)) {
-        return [futureDate];
-      }
-      futureDate.setDate(futureDate.getDate() + 1);
-    }
-  }
-
   const datesBetween: Date[] = [];
   const currentDate = setToMidnight(new Date(start));
   while (currentDate <= new Date()) {
     const dayOfWeek = currentDate.getUTCDay();
     const abbreviatedDay = ["Su", "M", "T", "W", "Th", "F", "Sa"][dayOfWeek];
-    if (currentDate.getDate() !== start.getDate() && daysOfWeek.includes(abbreviatedDay)) {
+    if (daysOfWeek.includes(abbreviatedDay)) {
       datesBetween.push(new Date(currentDate));
     }
     currentDate.setDate(currentDate.getDate() + 1);
@@ -90,24 +78,23 @@ const hoursAttended = (start_time: string, end_time: string) => {
 const createMissingRegularSessions = async () => {
   const programs = await ProgramModel.find({ type: "regular" }).lean().exec();
   const programPromises = programs.map(async (program: Program) => {
-    // Find the most recent session for the given program
-    const mostRecentSession = await SessionModel.findOne({
+    // Get all dates since the earliest enrolled student's start date
+    const earliestEnrollment = await EnrollmentModel.findOne({
       programId: program._id,
-      isAbsenceSession: false,
     })
-      .sort({ date: -1 })
+      .sort({ startDate: 1 })
       .exec();
 
-    // Get all dates since the last session
-    let dates;
-    if (mostRecentSession !== undefined && mostRecentSession !== null) {
-      dates = getSessionsSince(mostRecentSession.date, program.daysOfWeek);
-    } else {
-      dates = getSessionsSince(new Date(0), program.daysOfWeek);
+    // Don't need to  create any sessions for a program with no enrolled students
+    if (earliestEnrollment === null) {
+      return Promise.resolve();
     }
+
+    const dates = getSessionsSince(earliestEnrollment.startDate, program.daysOfWeek);
+
     const sessionPromises = dates.map(async (date) => {
       const dayOfWeek = ["Su", "M", "T", "W", "Th", "F", "Sa"][date.getUTCDay()];
-      const newSessions = await Promise.all(
+      return await Promise.all(
         program.sessions.map(async (session) => {
           // Get all students who are enrolled in this particular session
           const enrollments = await EnrollmentModel.find({
@@ -118,28 +105,57 @@ const createMissingRegularSessions = async () => {
             programId: program._id,
           });
           if (enrollments.length === 0) {
-            return null;
+            return Promise.resolve();
           }
 
-          // Create default values for the new session
-          const studentsInfo: StudentInfo[] = enrollments.map((enrollment) => ({
-            studentId: enrollment.studentId,
-            attended: true,
-            hoursAttended: hoursAttended(session.start_time, session.end_time),
-          }));
-          const newSession: SessionBody = {
+          const existingSession = await SessionModel.findOne({
             programId: program._id,
             sessionTime: session,
-            students: studentsInfo,
-            marked: false,
-            isAbsenceSession: false,
             date,
-          };
+          });
 
-          return newSession;
+          if (existingSession !== null) {
+            // Existing session, see if any new students have been added that we need to add to studentInfo
+            const studentIdsToInfo: Record<string, StudentInfo> = {};
+            for (const student of existingSession.students) {
+              studentIdsToInfo[student.studentId.toString()] = student;
+            }
+
+            return SessionModel.updateOne(
+              { _id: existingSession._id },
+              {
+                students: enrollments.map(
+                  (enrollment) =>
+                    studentIdsToInfo[enrollment.studentId.toString()] ?? {
+                      studentId: enrollment.studentId,
+                      attended: true,
+                      hoursAttended: hoursAttended(session.start_time, session.end_time),
+                    },
+                ),
+              },
+            );
+          } else {
+            // New session
+
+            // Create default values for the new session
+            const studentsInfo: StudentInfo[] = enrollments.map((enrollment) => ({
+              studentId: enrollment.studentId,
+              attended: true,
+              hoursAttended: hoursAttended(session.start_time, session.end_time),
+            }));
+            const newSession: SessionBody = {
+              programId: program._id,
+              sessionTime: session,
+              students: studentsInfo,
+              marked: false,
+              isAbsenceSession: false,
+              date,
+            };
+
+            return SessionModel.create(newSession);
+          }
         }),
       );
-      return SessionModel.create(newSessions.filter((session) => session !== null));
     });
     await Promise.all(sessionPromises);
   });
@@ -151,24 +167,21 @@ const createMissingVaryingSessions = async () => {
   // Get all varying program
   const programs = await ProgramModel.find({ type: "varying" }).lean().exec();
   const programPromises = programs.map(async (program: Program) => {
-    // Find most recent session and generate from there
-    const mostRecentSession = await SessionModel.findOne({
+    // Get all dates since the earliest enrolled student's start date
+    const earliestEnrollment = await EnrollmentModel.findOne({
       programId: program._id,
-      isAbsenceSession: false,
     })
-      .sort({ date: -1 })
+      .sort({ startDate: 1 })
       .exec();
 
-    let mostRecentDate = new Date();
-    if (mostRecentSession !== undefined && mostRecentSession !== null) {
-      mostRecentDate = mostRecentSession.date;
+    // Don't need to  create any sessions for a program with no enrolled students
+    if (earliestEnrollment === null) {
+      return Promise.resolve();
     }
 
     // Get all enrollments belonging to this varying program
     const enrollments = await EnrollmentModel.find({
       programId: program._id,
-      startDate: { $lte: mostRecentDate },
-      renewalDate: { $gte: mostRecentDate },
     })
       .lean()
       .exec();
@@ -183,38 +196,69 @@ const createMissingVaryingSessions = async () => {
 
     const daysOfWeek: string[] = Array.from(allDays);
 
-    if (mostRecentSession === undefined || mostRecentSession === null) {
-      mostRecentDate = new Date(0);
-    }
+    const dates = getSessionsSince(earliestEnrollment.startDate, daysOfWeek);
 
-    const dates = getSessionsSince(mostRecentDate, daysOfWeek);
-
-    const newSessions = dates.map((date: Date) => {
+    const sessionPromises = dates.map(async (date) => {
       // Create default values for the new session
       const dayOfWeek = ["Su", "M", "T", "W", "Th", "F", "Sa"][date.getUTCDay()];
 
-      const enrolledStudents = enrollments.filter((enrollment) =>
+      const enrollmentsThisDate = await EnrollmentModel.find({
+        programId: program._id,
+        startDate: { $lte: new Date(date) },
+      })
+        .lean()
+        .exec();
+      const enrolledStudents = enrollmentsThisDate.filter((enrollment) =>
         enrollment.schedule.includes(dayOfWeek),
       );
 
-      const studentsInfo: StudentInfo[] = enrolledStudents.map((enrollment) => ({
-        studentId: enrollment.studentId,
-        attended: true,
-        hoursAttended: 0,
-      }));
-
-      const newSession: SessionBody = {
+      const existingSession = await SessionModel.findOne({
         programId: program._id,
-        students: studentsInfo,
-        marked: false,
         date,
-        sessionTime: { start_time: "00:00", end_time: "00:00" },
-        isAbsenceSession: false,
-      };
+      });
 
-      return newSession;
+      if (existingSession !== null) {
+        // Existing session, see if any new students have been added that we need to add to studentInfo
+        const studentIdsToInfo: Record<string, StudentInfo> = {};
+        for (const student of existingSession.students) {
+          studentIdsToInfo[student.studentId.toString()] = student;
+        }
+
+        return SessionModel.updateOne(
+          { _id: existingSession._id },
+          {
+            students: enrolledStudents.map(
+              (enrollment) =>
+                studentIdsToInfo[enrollment.studentId.toString()] ?? {
+                  studentId: enrollment.studentId,
+                  attended: true,
+                  hoursAttended: enrollment.hoursLeft,
+                },
+            ),
+          },
+        );
+      } else {
+        // New session
+
+        const studentsInfo: StudentInfo[] = enrolledStudents.map((enrollment) => ({
+          studentId: enrollment.studentId,
+          attended: true,
+          hoursAttended: enrollment.hoursLeft,
+        }));
+
+        const newSession: SessionBody = {
+          programId: program._id,
+          students: studentsInfo,
+          marked: false,
+          date,
+          sessionTime: { start_time: "00:00", end_time: "00:00" },
+          isAbsenceSession: false,
+        };
+
+        return SessionModel.create(newSession);
+      }
     });
-    return SessionModel.create(newSessions);
+    return Promise.all(sessionPromises);
   });
   return await Promise.all(programPromises);
 };
@@ -300,7 +344,10 @@ export const getRecentSessions: RequestHandler = async (_, res, next) => {
     await createMissingVaryingSessions();
     // Show in terms of pacific time
     const currTime = new Date(new Date().getTime() - 7 * 60 * 60 * 1000);
-    const sessions = await SessionModel.find({ marked: false, date: { $lte: currTime } });
+    const sessions = await SessionModel.find({ marked: false, date: { $lte: currTime } }).sort({
+      date: 1,
+      programId: 1,
+    });
 
     res.status(200).json(sessions);
   } catch (error) {
