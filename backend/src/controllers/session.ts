@@ -101,7 +101,9 @@ const createMissingRegularSessions = async () => {
             "sessionTime.start_time": session.start_time,
             "sessionTime.end_time": session.end_time,
             schedule: dayOfWeek,
+            status: "Joined",
             startDate: { $lte: new Date(date) },
+            renewalDate: { $gte: new Date(date) },
             programId: program._id,
           });
           if (enrollments.length === 0) {
@@ -205,6 +207,8 @@ const createMissingVaryingSessions = async () => {
       const enrollmentsThisDate = await EnrollmentModel.find({
         programId: program._id,
         startDate: { $lte: new Date(date) },
+        status: "Joined",
+        renewalDate: { $gte: new Date(date) },
       })
         .lean()
         .exec();

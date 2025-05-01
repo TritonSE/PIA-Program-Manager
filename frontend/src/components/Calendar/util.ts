@@ -26,9 +26,9 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
       for (const c of calendar.calendar) {
         const calendarDate = new Date(c.date);
         if (
-          calendarDate.getMonth() === date.getMonth() &&
-          calendarDate.getDate() === date.getDate() &&
-          calendarDate.getFullYear() === date.getFullYear()
+          calendarDate.getUTCMonth() === date.getMonth() &&
+          calendarDate.getUTCDate() === date.getDate() &&
+          calendarDate.getUTCFullYear() === date.getFullYear()
         ) {
           hours = c.hours;
           session = c.session;
@@ -53,9 +53,9 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
       for (const c of calendar.calendar) {
         const calendarDate = new Date(c.date);
         if (
-          calendarDate.getMonth() === date.getMonth() &&
-          calendarDate.getDate() === date.getDate() &&
-          calendarDate.getFullYear() === date.getFullYear()
+          calendarDate.getUTCMonth() === date.getMonth() &&
+          calendarDate.getUTCDate() === date.getDate() &&
+          calendarDate.getUTCFullYear() === date.getFullYear()
         ) {
           hours = c.hours;
           session = c.session;
@@ -82,9 +82,9 @@ export const generateDates = (month: number, year: number, calendar?: CalendarRe
       for (const c of calendar.calendar) {
         const calendarDate = new Date(c.date);
         if (
-          calendarDate.getMonth() === date.getMonth() &&
-          calendarDate.getDate() === date.getDate() &&
-          calendarDate.getFullYear() === date.getFullYear()
+          calendarDate.getUTCMonth() === date.getMonth() &&
+          calendarDate.getUTCDate() === date.getDate() &&
+          calendarDate.getUTCFullYear() === date.getFullYear()
         ) {
           hours = c.hours;
           session = c.session;
