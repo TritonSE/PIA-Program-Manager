@@ -41,7 +41,7 @@ export const getCalendar: RequestHandler = async (req, res, next) => {
     }
 
     // get all sessions with studentId and programId
-    const sessions = await SessionModel.find({ programId });
+    const sessions = await SessionModel.find({ programId, marked: true });
 
     const calendar: Calendar = { studentId, programId, calendar: [] };
     for (const session of sessions) {
