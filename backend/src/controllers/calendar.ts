@@ -48,7 +48,7 @@ export const getCalendar: RequestHandler = async (req, res, next) => {
       for (const student of session.students) {
         if (student.studentId.toString() === studentId) {
           let hours = 0;
-          if (student.hoursAttended !== 0) {
+          if (student.hoursAttended !== 0 && student.attended) {
             hours = student.hoursAttended;
           }
           const date = session.date;
@@ -103,6 +103,7 @@ export const editCalendar: RequestHandler = async (req, res, next) => {
         let hoursLeft = enrollment.hoursLeft + prevHoursAttended;
 
         student.hoursAttended = hours;
+        student.attended = true;
         hoursLeft -= student.hoursAttended;
         enrollment.hoursLeft = hoursLeft > 0 ? hoursLeft : 0;
 
